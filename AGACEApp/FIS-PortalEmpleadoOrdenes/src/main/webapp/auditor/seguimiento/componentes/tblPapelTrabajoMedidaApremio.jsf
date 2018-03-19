@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<p:outputLabel value="#{msj['titulo.panel.papeles.trabajo']}"
+			style="font-weight:bold;" />
+		<p:spacer width="50px" height="20px" />
+		<p:outputLabel value="#{msj['label.fecha.carga.documento']}: "
+			style="font-weight:bold;" />
+		<p:outputLabel
+			value="#{documentacionOrdenMB.attributeHelper.fechaCargaPapelTrabajo}"
+			style="font-weight:bold;">
+			<f:convertDateTime pattern="dd/MM/yyyy" />
+		</p:outputLabel>
+		<p:separator />
+
+		<p:outputLabel value="Adjuntar Papeles de trabajo:" />
+		<p:spacer width="50px" height="20px" />
+		
+
+		<h:panelGrid columns="3">
+			<h:panelGrid columns="1">
+				<p:fileUpload  widgetVar="flUpPapelOficio"
+					style="width:180px;"
+					fileUploadListener="#{documentacionOrdenMB.fileUploadPapelesTrabajoOficio}"
+					mode="advanced" dragDropSupport="false" multiple="false"
+					label="#{msj['label.examinar.documento']}"
+					cancelLabel="Cancelar todos" uploadLabel="Guardar"
+					showButtons="true" auto="true"
+					update=":formDocumentacionOrden:panelTabsDocumentos:fltMedidaApremio
+							:formDocumentacionOrden:messagesPapelesTrabajoOficio
+					"
+					oncomplete="ocultaMsgAgace('messagesPapelesTrabajoOficio');"
+					ajax="true" disabled="#{documentacionOrdenMB.attributeHelper.adjuntarArchivo}" process="@this"/>
+			</h:panelGrid>
+			<p:column>
+				<p:dataTable  style="border:none;"
+					value="#{documentacionOrdenMB.lstHelper.listaPapelesTrabajoOficio}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="5" var="papeles"
+					paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   
+					#{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+					<f:facet name="header">
+	                                   #{msj['titulo.panel.papeles.trabajo']}
+	                             </f:facet>
+					<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+						width="25%">
+						<div align="center">
+							<h:outputText 
+								value="#{papeles.papelesTrabajo.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+									timeZone="America/Mexico_City" />
+							</h:outputText>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['column.nombre.documento.trabajo']}"
+						width="50%">
+						<h:outputText value="#{papeles.papelesTrabajo.nombreArchivo}" />
+					</p:column>
+					<p:column headerText="#{msj['column.archivo.trabajo']}" width="10%">
+						<div align="center">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true" style="padding:0px 5px;">
+								<f:setPropertyActionListener value="#{papeles}"
+									target="#{documentacionOrdenMB.dtoHelper.papelTrabajoSeleccionado}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{documentacionOrdenMB.archivoDescargaPapelTrabajo}" />
+							</h:commandButton>
+						</div>
+					</p:column>
+					<p:column width="15%"
+						rendered="#{documentacionOrdenMB.attributeHelper.numeroDocumentoPapelTrabajoOficio!=0}">
+						<p:commandLink value="#{msj['column.eliminar.asignada']}"
+							style="color:blue;" ajax="true" rendered="#{papeles.isEliminar}" onclick="PF('dlgPapelTrabajoOficioEliminado').show();" >
+							<f:setPropertyActionListener value="#{papeles}"
+								target="#{documentacionOrdenMB.dtoHelper.papelTrabajoSeleccionado}" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</p:column>
+		</h:panelGrid>
+
+		<h:panelGrid columns="2">
+			<p:spacer width="400px" height="20px" />
+			<p:commandButton 
+				value="#{msj['btn.guardar.papeles']}"
+				disabled="#{documentacionOrdenMB.attributeHelper.numeroDocumentoPapelTrabajoOficio==0}"
+				action="#{documentacionOrdenMB.guardarPapeleTrabajoOficio}"
+				update=":formDocumentacionOrden:panelTabsDocumentos:fltMedidaApremio
+						:formDocumentacionOrden:messagesPapelesTrabajoOficio
+					" process="@this"/>
+		</h:panelGrid>
+		
+</f:view>

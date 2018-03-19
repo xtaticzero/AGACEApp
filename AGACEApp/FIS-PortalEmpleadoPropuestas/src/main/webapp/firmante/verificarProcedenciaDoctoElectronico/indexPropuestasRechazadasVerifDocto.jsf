@@ -1,0 +1,619 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formRechazadasVerifDocto">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelOrdenes"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" 
+                         styleClass="panel-principal" header="#{msj['label.ordenes.prop.rechazadas.verificacion.procedencia']}" >
+                         
+                    <h:panelGrid border="0" columns="4" width="100%">
+                        <p:spacer width="10" height="1"/>
+                        <p:spacer width="200" height="1"/>
+                        <h:outputLabel value="#{msj['label.ordenes.id.registro']}:" style="float:right;font-weight:bold;width:170px;"/>
+                        <h:outputLabel value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.idRegistro}"/>
+                    </h:panelGrid>
+                    
+                <!-- Datos del contribuyente BD -->
+                    <p:panel id="panelDatosContBD" header="#{msj['lbl.propuestas.datosContribuyente']}" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;">                        
+                        <table id="tableDatosContBD" border="0" width="100%" cellpadding="3" cellspacing="2">
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.rfc']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRFC" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.rfc}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.nombreRazonSocial']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtNombre" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.nombre}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.regimen']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.regimen}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.situacion}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.tipoContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.tipo}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.actividadPreponderante']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtActividad" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.actividadPreponderante}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.domicilioFiscalContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomFiscal" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.domicilioFiscal}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionDomicilio']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.situacionDomicilio}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.entidad}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%"></td> 
+                          </tr>
+                        </table>
+                    </p:panel>
+                    <br/>
+                <div style="text-align: center;"><p:commandButton value="#{msj['label.verificar.actualizacion']}" onclick="javascript:document.getElementById('#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.divMostrar}').style.display='block';" action="#"/></div>       
+                    
+                <div id="divDatosContAct" style="display: none;">
+                    <br/>
+                <!-- Datos del contribuyente IDC -->
+                    <p:panel id="panelDatosContAct" header="#{msj['label.propuestas.datos.contribuyente.actualizado']}" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;">
+                        <table id="tableDatosContAct" border="0" width="100%" cellpadding="3" cellspacing="2">
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.rfc']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRFCAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.rfc}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.nombreRazonSocial']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtNombreAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.nombre}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.regimen']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRegimenAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.regimen}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtSituacionAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.situacion}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.tipoContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtTipoAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.tipo}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.actividadPreponderante']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtActividadAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.actividadPreponderante}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.domicilioFiscalContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomFiscalAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.domicilioFiscal}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionDomicilio']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomicilioAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.situacionDomicilio}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtEntidadAct" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyenteAnt.entidad}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%"></td> 
+                          </tr>
+                        </table>                    
+                    </p:panel>
+                    <br/>
+                    
+                <!-- Datos del contribuyente Ant BD -->
+                    <p:panel id="panelDatosContAnt" header="#{msj['label.propuestas.datos.contribuyente.anteriores']}" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;">
+                    <table id="tableDatosContAnt" border="0" width="100%" cellpadding="3" cellspacing="2">
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.rfc']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRFCAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.rfc}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.nombreRazonSocial']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtNombreAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.nombre}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.regimen']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRegimenAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.regimen}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtSituacionAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.situacion}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.tipoContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtTipoAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.tipo}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.actividadPreponderante']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtActividadAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.actividadPreponderante}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.domicilioFiscalContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomFiscalAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.domicilioFiscal}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionDomicilio']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomicilioAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.situacionDomicilio}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtEntidadAnt" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.contribuyente.entidad}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%"></td> 
+                          </tr>
+                    </table>                    
+                    </p:panel>
+                </div>
+                
+                <div id="divDatosContNoAct" style="display: none;text-align: center;"><br/><h:outputLabel value="#{msj['label.no.actualizaciones.idc']}" style="font-weight:bold" /></div>
+                <br/>
+                
+                <!-- Datos de la propuesta -->
+                    <p:panel id="panelDatosPropuesta" header="#{msj['lbl.propuestas.datosPreviosPropuesta']}" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;">
+                             
+                    <!-- Info Nueva-->
+                    
+                    <table id="tableDatosPropuesta" border="0" width="100%" cellpadding="3" cellspacing="2">
+                       <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.metodo.revision']}" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputText id="txtMetodoDesc" style="width:200px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.feceaMetodo.nombre}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputTextarea id="txtSubprogramaDesc" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.fececSubprograma.descripcion}"/></td></tr>
+                                </table>
+                            </td>
+                       </tr>
+                       <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.tipo.propuesta']}" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputText id="txtTipoPropuestaDesc" style="width:200px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.fececTipoPropuesta.descripcion}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.causa.programacion']}" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputTextarea id="txtCausaProgDesc" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.fececCausaProgramacion.descripcion}"/></td></tr>
+                                </table>
+                            </td>
+                       </tr>
+                       <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.tipo.revision']}" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputText id="txtRevisionDesc" style="width:200px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.fececRevision.descripcion}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.encabezado.prioridad']}:" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:selectBooleanCheckbox id="prioridadInsumo" name="prioridadInsumo" disabled="true" ajax="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.prioridad}" /></td></tr>
+                                </table>
+                            </td>
+                       </tr>
+                    </table>
+                        
+                    <!-- Datos del periodo -->
+                        <h:panelGrid id="panelPeriodoPropuesto" columns="6" width="100%">
+                        
+                          <h:outputLabel  rendered="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.tipoPropuesta}" value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold" />
+                                        <h:outputLabel  rendered="#{!propuestasRechazadasVerifDoctoMB.propRechazadasHelper.tipoPropuesta}" value="#{msj['label.operaciones.especifica']}:" style="font-weight:bold" />
+                                        
+					    <h:outputLabel rendered="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.del']}:" style="font-weight:bold"/>
+                        <h:outputLabel  rendered="#{!propuestasRechazadasVerifDoctoMB.propRechazadasHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold"/>
+                            <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.fechaInicioPeriodo}" />
+                            <p:spacer width="1" height="1" />
+<h:outputLabel rendered="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.al']}:" style="font-weight:bold"/>
+                        <h:outputLabel  rendered="#{!propuestasRechazadasVerifDoctoMB.propRechazadasHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold"/>
+                                                
+    <p:calendar id="txtFechaFinal" locale="es" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.propuesta.fechaFinPeriodo}" />
+                        </h:panelGrid>
+                        <br/>
+                        
+                    <!-- Datos de impuestos -->
+                        <p:column rendered="true"> 
+				<div align="center">
+					<p:dataTable id="tblImpuestos2" var="impuesto"
+						value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.listaImpuestos}"
+						emptyMessage="#{msj['label.lista.vacia']}" style="width:500px;">
+						<f:facet name="header">
+							<h:outputLabel value="#{msj['label.impuestos']}" style="font-weight:bold" />
+						</f:facet>
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column colspan="2" headerText="Impuesto" />
+								<p:column rowspan="2" headerText="Monto" />
+								<p:column colspan="2" headerText="Periodo" />								
+							</p:row>
+							<p:row>
+								<p:column headerText="Abreviatura" />
+								<p:column headerText="Descripcion" />
+                                                                <p:column headerText="Inicio" />
+								<p:column headerText="Fin" />
+							</p:row>
+						</p:columnGroup>
+						<p:column>
+							<h:outputText value="#{impuesto.fececTipoImpuesto.abreviatura}" />
+						</p:column>
+                                                <p:column>
+							<h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}" />
+						</p:column>
+						<p:column>
+							<h:outputText value="#{impuesto.monto}">
+								<f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText id="txtFechaInicioI"
+								value="#{impuesto.periodoInicial}">
+								<f:convertDateTime pattern="dd-MM-yyyy" locale="es_MX" timeZone="America/Mexico_City" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<h:outputText id="txtFechaFinI" value="#{impuesto.periodoFinal}">
+								<f:convertDateTime pattern="dd-MM-yyyy" locale="es_MX" timeZone="America/Mexico_City" />
+							</h:outputText>
+						</p:column>
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column colspan="2" footerText="#{msj['label.presuntiva']}" style="text-align:center" />
+								<p:column colspan="3" style="text-align:left;">
+									<f:facet name="footer">
+										<h:outputText
+											value="#{propuestasRechazadasVerifDoctoMB.totalMonto}">
+											<f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+										</h:outputText>
+									</f:facet>
+								</p:column>
+							</p:row>
+						</p:columnGroup>
+					</p:dataTable>
+				</div>
+			</p:column> 
+                        
+                    <!-- Documentos del expediente -->
+                        <p:column rendered="true">
+				<br/>
+				<div align="center">
+					<p:dataTable id="tablaDocumentacionExpediente"
+						value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.listaDocumentosTabla}"
+						var="documento" editable="false"
+						emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+						rows="10"
+						paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({currentPage} de {totalPages})"
+						paginatorPosition="bottom">
+                        <f:facet name="header">
+							<h:outputLabel value="#{msj['label.propuestas.datos.propuesta.documentos']}" style="font-weight:bold" />
+						</f:facet>
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+							width="100px">
+							<h:outputText id="txtFechaCargaPromocion"
+								value="#{documento.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+							</h:outputText>
+						</p:column>
+						<p:column id="hdrNombreDocumento"
+							headerText="#{msj['column.expediente']}">
+							<div style="width: 200px;margin:auto;">#{documento.nombre}</div>
+						</p:column>
+						<p:column headerText="#{msj['column.documento']}">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true"
+								style="float:left;padding:0px 5px;">
+								<f:setPropertyActionListener value="#{documento}"
+									target="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.documentoSeleccionado}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{propuestasRechazadasVerifDoctoMB.documentoSeleccionDescarga}" />
+							</h:commandButton>
+						</p:column>
+					</p:dataTable>
+				</div>
+			</p:column>
+                        
+                        
+                    <!-- Motivos de Rechazo -->
+                        <p:column rendered="true">
+                            <br/>
+                            <p:dataTable var="listaRechazo" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.listaRechazos}"  editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                         rows="10" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                         {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" >
+                                <f:facet name="header">
+                                        <h:outputLabel value="#{msj['label.propuestas.rechazos']}" style="font-weight:bold" />
+                                </f:facet>
+                                <p:column headerText="#{msj['label.propuestas.rechazos.fecha']}" >
+                                    <h:outputText value="#{listaRechazo.fechaRechazo}" >
+                                       <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="#{msj['label.propuestas.rechazos.motivo']}" >
+                                    <h:outputText value="#{listaRechazo.descripcion}" />
+                                </p:column>
+                                <p:column headerText="#{msj['label.propuestas.rechazos.oficio']}" style="width:150px;">
+                                    <h:commandButton image="/resources/images/document.png" style="padding:0px 40px;"
+                                                                action="#{propuestasRechazadasVerifDoctoMB.visualizarDocumentos}" >                                    
+                                        <f:setPropertyActionListener value="${listaRechazo.idRechazoPropuesta}" target="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.idRechazoPropuesta}"/>
+                                    </h:commandButton>
+                                </p:column> 
+                            </p:dataTable>
+                        </p:column> 
+                    <!-- Oficios de Rechazo -->
+                        <p:dialog header="Oficio de Rechazo" widgetVar="dialogoDocumentosRechazo" width="500" height="250" onHide="rc()">
+                            <p:dataTable var="documentoRechazo" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.listaDocumentosRechazo}" emptyMessage="#{msj['label.lista.vacia']}">
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:75%;">
+                                    <h:outputText value="#{documentoRechazo.nombre}" />
+                                </p:column>
+                                <p:column headerText="Descargar" style="25%;">                                 
+                                    <div align="center">
+                                        <h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 40px;">
+                                                <f:setPropertyActionListener value="#{documentoRechazo}" target="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.documentoSeleccionadoRechazo}"/>
+                                                <p:fileDownload contentDisposition="attachment" value="#{propuestasRechazadasVerifDoctoMB.documentoSeleccionDescargaRechazo}"/>
+                                        </h:commandButton>
+                                    </div>    
+                                </p:column>
+                            </p:dataTable>
+                        </p:dialog>
+                    
+                    <!-- Documentos de la orden -->
+                        <p:column rendered="true">
+				<br/>
+				<div align="center">
+					<p:dataTable id="tablaDocumentacionOrden"
+						value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.listaDocumentosOrden}"
+						var="documentoOrden" editable="false"
+						emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+						rows="10"
+						paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({currentPage} de {totalPages})"
+						paginatorPosition="bottom">
+                        <f:facet name="header">
+							<h:outputLabel value="#{msj['label.propuestas.doctos.orden']}" style="font-weight:bold" />
+						</f:facet>
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+							<h:outputText id="txtFechaCargaDoctoOrden"
+								value="#{documentoOrden.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+							</h:outputText>
+						</p:column>
+						<p:column id="hdrNombreDocumentoOrden"
+							headerText="#{msj['column.expediente']}">
+							<div style="width: 200px;margin:auto;">#{documentoOrden.nombre}</div>
+						</p:column>
+						<p:column headerText="#{msj['column.documento']}">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true"
+								style="float:left;padding:0px 5px;">
+								<f:setPropertyActionListener value="#{documentoOrden}"
+									target="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.documentoSeleccionadoOrden}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{propuestasRechazadasVerifDoctoMB.documentoSeleccionDescargaOrden}" />
+							</h:commandButton>
+						</p:column>
+					</p:dataTable>
+				</div>
+			</p:column>
+                        
+                        <br/>
+                    <!-- panel representante legal y agente aduanal-->                   
+                        <h:panelGrid columns="2" id="panelDatosAdjuntar" border="1" style="border-color:#A4A4A4!important" >                       
+                        <p:column>                           
+                            <table id="tableRepresentante" border="0" width="100%" cellpadding="3" cellspacing="2">
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                        <br/>
+                                          <tr><td><div style="text-align:center"><h:outputLabel value="#{msj['label.representante.legal']}" style="font-weight:bold"/></div></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                          <tr><td><h:outputLabel value="#{msj['label.docElect.rfcRepresentante']}" style="font-weight:bold"/></td></tr>
+                                          <tr><td><p:inputText id="txtRfcRepresentante" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.representanteLegal.rfc}"/></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                          <tr><td><h:outputLabel value="#{msj['label.docElect.nombreRepresentante']}" style="font-weight:bold"/></td></tr>
+                                          <tr><td><p:inputText id="txtNombreRepresentante" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.representanteLegal.nombre}"/></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                          <tr><td><h:outputLabel value="#{msj['label.docElect.emailRepresentante']}" style="font-weight:bold"/></td></tr>
+                                          <tr><td><p:inputText id="txtEmailRepresentante" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.representanteLegal.correo}"/></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                            </table>
+                        </p:column>
+                        <p:column>                           
+                            <table id="tableAgente" border="0" width="100%" cellpadding="3" cellspacing="2">
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                        <br/>
+                                          <tr><td><div style="text-align:center"><h:outputLabel value="#{msj['label.agente.aduanal']}" style="font-weight:bold"/></div></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                          <tr><td><h:outputLabel value="#{msj['label.docElect.rfcRepresentante']}" style="font-weight:bold"/></td></tr>
+                                          <tr><td><p:inputText id="txtRfcAgente" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.agenteAduanal.rfc}"/></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                          <tr><td><h:outputLabel value="#{msj['label.docElect.nombreRepresentante']}" style="font-weight:bold"/></td></tr>
+                                          <tr><td><p:inputText id="txtNombreAgente" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.agenteAduanal.nombre}"/></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="100%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                          <tr><td><h:outputLabel value="#{msj['label.docElect.emailRepresentante']}" style="font-weight:bold"/></td></tr>
+                                          <tr><td><p:inputText id="txtEmailAgente" style="width:325px;height:auto;" disabled="true" value="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.agenteAduanal.correo}"/></td></tr>
+                                    </table>
+                                </td>
+                              </tr>
+                            </table>
+                        </p:column>
+                        </h:panelGrid>
+                        
+                        <br/>
+                            <div style="text-align: center;">
+                                <p:commandButton id="btnEnviarAuditor" value="#{msj['label.enviar.auditor']}" action="#{propuestasRechazadasVerifDoctoMB.muestraDialogoEnviarAuditor}" 
+                                disabled="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.botonEnviarAuditor}" />
+                                <p:spacer width="20" height="1"/>
+                                <p:commandButton value="#{msj['btn.pantalla.anterior']}" action="#{propuestasRechazadasVerifDoctoMB.regresar}"/>
+                            </div>       
+                        <br/>
+                        
+                        <div id="divMsgPropuestaEnviada" style="display: none;text-align: center;">
+                            <h:outputLabel value="#{msj['label.propuesta.enviada1']} #{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.idRegistro} #{msj['label.propuesta.enviada2']}" style="font-weight:bold" /><br/>
+                        </div>
+                        <br/>
+                        
+                        <!-- Ventana de Confirmar el envio a auditor -->
+                        <p:dialog id="dialogConfirmarEnviarAuditor" header="#{msj['label.enviar.auditor']}"
+                                  widgetVar="dialogConfirmarEnviarAuditor" showEffect="clip" hideEffect="clip" modal="true"
+                                  style="font-weight:bold" width="350" resizable="false">
+                            <h:outputText value="#{msj['label.enviar.registro.auditor1']} #{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.idRegistro} #{msj['label.enviar.registro.auditor2']}"/>
+                            <br/>
+                            <p:commandButton value="#{msj['btn.cancelar']}" style="float:right"
+                                             onclick="dialogConfirmarEnviarAuditor.hide();" icon="ui-icon-close"/>
+                            <p:commandButton value="#{msj['btn.aceptar']}" 
+                                        onclick="document.getElementById('divMsgPropuestaEnviada').style.display='block';" update="btnEnviarAuditor" 
+                                        action="#{propuestasRechazadasVerifDoctoMB.enviarAuditor}" icon="ui-icon-check" style="float:right;"      />
+                                            
+                        </p:dialog>
+                                 
+                    </p:panel> <!-- Panel datos propuesta -->
+                    <br/>
+                                       
+                </p:panel> <!-- Panel principal -->
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

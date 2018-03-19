@@ -1,0 +1,373 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+        <script type="text/javascript">
+		<!--
+		
+		//-->
+		
+		function validacion(){        		
+        		isSelected = false;
+        		$( ".ui-chkbox-icon" ).each(function(i, element){
+        			if($(element).hasClass("ui-icon ui-icon-check")){
+        				isSelected = true;            				
+        			}		
+        		});   	
+        		
+        		if(isSelected){        			
+        			confirmarEnviarSeleccion.show();   			
+        		}else{
+        			$("#msgExitoGuardarValidarP").show("slow").delay( 800 ).hide(1000);       			
+        		}
+        		return false;
+        	}
+		
+		</script>
+        
+        </h:head>
+        <h:body>
+            <h:form enctype="multipart/form-data" id="formOrdenes" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelOrdenes"
+                         style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;"
+                         styleClass="panel-interno" header="#{msj['titulo.panel.cargar.documento.electronico']}">
+                    <br/>
+                    <h:outputLabel value="#{msj['label.datos.orden']}" style="font-weight:bold"/>
+                    <hr size="1" noshade="noshade" align="left"/>
+                    <!--p:growl id="msgExitoGuardar" showDetail="true" sticky="false" globalOnly="true"/-->
+                    <h:panelGrid columns="3" id="panelDatosOrden" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="Id de registro *:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Fecha de carga:" style="font-weight:bold"/>
+                        <p:inputMask mask="a9999999999" id="txtIdRegistro" style="width:180px;"
+                                     value="#{cargarOrdenMB.feceaAgaceOrdenCaptura.cveRegistro}"
+                                     onkeypress="if(event.keyCode==13){return false;}">
+                            <p:ajax update="panelDatosOrden txtIdRegistro panelOrdenes"
+                                    event="blur" listener="#{cargarOrdenMB.accionValidaCampos}"/>
+                        </p:inputMask>
+                        <p:spacer width="50" height="1"/>
+                        <p:calendar locale="es" pattern="dd/MM/yyyy"
+                                    value="#{cargarOrdenMB.feceaAgaceOrdenCaptura.fechaCarga}" showOn="button"
+                                    readonlyInput="true" disabled="true"/>
+                        <p:message id="msgIdRegistro" for="txtIdRegistro" display="text"/>
+                        <p:spacer height="2"/>
+                        <p:spacer height="2"/>
+                        <h:outputLabel value="Método *:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:panelGrid id="panelLabels" style="font-weight:bold">
+                            <h:outputText value="#{msj['label.seleccion.metodo.eho']} *:"
+                                          rendered="#{cargarOrdenMB.mostrarEscritoHechos}"/>
+                            <h:outputLabel value="#{msj['label.seleccion.metodo.org']} *:"
+                                           rendered="#{cargarOrdenMB.mostrarGabinete}"/>
+                            <h:outputLabel value="#{msj['label.seleccion.metodo.mca']} *:"
+                                           rendered="#{cargarOrdenMB.mostrarCartaInvitacion}"/>
+                            <h:outputLabel value="#{msj['label.seleccion.metodo.ree']} *:"
+                                           rendered="#{cargarOrdenMB.mostrarRevisionElectronica}"/>
+                        </h:panelGrid>
+                        <p:selectOneMenu id="cmbMetodo" value="#{cargarOrdenMB.feceaAgaceOrdenCaptura.idMetodo}" >
+                            <f:selectItem itemLabel="Selecciona método" itemValue="-1"/>
+                            <f:selectItems value="#{cargarOrdenMB.listaMetodos}" var="lista" itemLabel="#{lista.nombre}"
+                                           itemValue="#{lista.idMetodo}"/>
+                            <p:ajax update="panelLabels panelInputText panelPrioridad panelPrioridadCheck msgMetodo panelOrdenes"
+                                    event="change" listener="#{cargarOrdenMB.mostrarSeleccionMetodo}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="50" height="1"/>
+                        <h:panelGrid id="panelInputText" columns="3">
+                            <p:selectOneMenu id="cmbInicialesGabinete" value="#{cargarOrdenMB.seleccionGabinete}"
+                                             rendered="#{!cargarOrdenMB.deshabilitarComboInicialesGabinete}">
+                                <f:selectItem itemLabel="Selecciona submétodo" itemValue=""/>
+                                <f:selectItems value="#{cargarOrdenMB.listaGabinetes}" var="lista" itemLabel="#{lista}"
+                                               itemValue="#{lista}"/>
+                                <p:ajax update="txtHomoClaves panelLabels panelInputText panelPrioridad panelPrioridadCheck msgMetodo panelOrdenes" event="change"
+                                        listener="#{cargarOrdenMB.seleccionComboGabinete}"/>
+                            </p:selectOneMenu>
+                            <p:inputText id="txtHomoClaves" value="#{cargarOrdenMB.localConMascara}" disabled="true"
+                                         style="width:45px;"/>
+                            <p:inputMask mask="99999/99" id="txtORG" widgetVar="orgVar"
+                                         rendered="#{cargarOrdenMB.mostrarGabinete}"
+                                         onkeypress="if(event.keyCode==13){return false;}"
+                                         value="#{cargarOrdenMB.campoClaveOrden}">
+                            <p:ajax update="panelDatosOrden txtIdRegistro panelOrdenes"
+                                    event="blur" listener="#{cargarOrdenMB.accionValidaCampos}"/>
+                            </p:inputMask>
+                            
+                            <p:inputMask mask="99999/99" id="txtEH" widgetVar="ehvVar"
+                                         rendered="#{cargarOrdenMB.mostrarEscritoHechos}"
+                                         value="#{cargarOrdenMB.campoClaveOrden}"
+                                         onkeypress="if(event.keyCode==13){return false;}">
+                            <p:ajax update="panelDatosOrden txtIdRegistro panelOrdenes"
+                                    event="blur" listener="#{cargarOrdenMB.accionValidaCampos}"/>
+                            </p:inputMask>
+                            
+                            <p:inputMask mask="99999/99" id="txtMCA" widgetVar="mcaVar"
+                                         rendered="#{cargarOrdenMB.mostrarCartaInvitacion}"
+                                         value="#{cargarOrdenMB.campoClaveOrden}"
+                                         onkeypress="if(event.keyCode==13){return false;}">
+                            <p:ajax update="panelDatosOrden txtIdRegistro panelOrdenes"
+                                    event="blur" listener="#{cargarOrdenMB.accionValidaCampos}"/>
+                            </p:inputMask>
+                            
+                            <p:inputMask mask="99999/99" id="txtREE" widgetVar="ehvVar"
+                                         rendered="#{cargarOrdenMB.mostrarRevisionElectronica}"
+                                         value="#{cargarOrdenMB.campoClaveOrden}"
+                                         onkeypress="if(event.keyCode==13){return false;}">
+                                <p:ajax update="panelDatosOrden txtIdRegistro panelOrdenes"
+                                    event="blur" listener="#{cargarOrdenMB.accionValidaCampos}"/>
+                            </p:inputMask>
+                            <p:message id="msgInicialesGabinete" for="cmbInicialesGabinete" display="text"/>
+                            <p:spacer/>
+                            <p:message id="msgTipoMetodo" for="txtHomoClaves" display="text"/>
+                        </h:panelGrid>
+                        <p:message id="msgMetodo" for="cmbMetodo" display="text"/>
+                        <p:spacer height="5"/>
+                        <p:message id="msgPanelInputText" for="panelInputText" display="text"/>
+                        <h:outputLabel value="RFC Contribuyente *:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Nombre:" style="font-weight:bold;"/>
+                        <h:panelGrid id="panelBuscarContribuyente" columns="1">
+                            <p:inputText ajax="false" id="txtRFC" maxlength="15"
+                                         value="#{cargarOrdenMB.feceaAgaceOrdenCaptura.rfcContribuyente}"
+                                         onkeypress="if(event.keyCode==13){return false;}">
+                                <f:validator validatorId="rfcValidator"/>
+                                <p:ajax update="txtRFC msgRFC txtNombre panelDatosOrden panelOrdenes" event="blur"
+                                        listener="#{cargarOrdenMB.buscarRfcContribuyente}"/>
+                            </p:inputText>
+                            <p:message id="msgRFC" for="txtRFC" display="text"/>
+                        </h:panelGrid>
+                        <p:spacer width="50" height="1"/>
+                        <p:outputLabel style="width:370px;height:auto;" id="txtNombre"
+                                     value="#{cargarOrdenMB.feceaAgaceOrdenCaptura.nombreContribuyente}"/>
+						<p:spacer width="5px" height="1px"/>
+                        <p:spacer width="5px" height="1px"/>
+                        <!--h:panelGrid columns="2" style="text-align:right;" width="100%" id="panelLinks">
+                                    <p:commandButton ajax="true" value="Representante Legal " onclick="dlgAgregaRepresentante.show();"  immediate="true" 
+                                    style="font-weight:bold;" update=":formRepresentanteAgente:rfcRepresentante"  id="linkRepresentante" icon="ui-icon-plus"/>
+                                    <p:commandButton value ="Agente Aduanal " onclick="dlgAgregaAgente.show();" update=":formRepresentanteAgente:rfcAgente"
+                                    style="font-weight:bold;text-align:right;" id="linkAgente" immediate="true" icon="ui-icon-plus"/>
+                        </h:panelGrid-->
+                        <h:panelGrid id="panelPrioridadCheck" columns="2">
+                            <h:outputLabel value="Prioridad Alta:" style="font-weight:bold"/>
+                            <p:selectBooleanCheckbox id="prioridadC" name="prioridad" ajax="true"
+                                                     value="#{cargarOrdenMB.feceaAgaceOrdenCaptura.prioridadAlta}"
+                                                     disabled="#{cargarOrdenMB.deshabilitarPrioridadAlta}">
+                                <p:ajax update="panelPrioridad" event="change"
+                                        listener="#{cargarOrdenMB.actualizarAltaPrioridad}"/>
+                            </p:selectBooleanCheckbox>
+                        </h:panelGrid>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:panelGrid id="panelPrioridad" columns="2">
+                            <p:inputTextarea id="txtPrioridadAlta" maxlength="100"
+                                             value="#{cargarOrdenMB.feceaAgaceOrdenCaptura.motivoPrioridad}" cols="50"
+                                             autoResize="true" disabled="#{cargarOrdenMB.mostrarMotivoPrioridadAlta}">
+                                <p:ajax update="panelDatosOrden txtIdRegistro panelOrdenes"
+                                    event="blur" listener="#{cargarOrdenMB.accionValidaCampos}"/>
+                            </p:inputTextarea>
+                            <br/>
+                            <p:message id="msgPrioridad" for="txtPrioridadAlta" display="text"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <br/>
+                    <h:outputText value="Adjuntar Documento (EHO./ORG./UCA./RE.) *:" style="font-weight:bold"/>
+                    <br/>
+                    <p:fileUpload id="fuFoliosMerma" fileUploadListener="#{cargarOrdenMB.handleFileUpload}"
+                                  mode="advance d" dragDropSupport="false" multiple="false" 
+                                  style="width:400px;" label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos"
+                                  uploadLabel="Guardar" showButtons="true" auto="true" ajax="true"
+                                  update="msgExitoGuardar tablaArchivosCargados" 
+                                  rendered="#{cargarOrdenMB.mostrarCargarArchivo}"
+                                  oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                    <br/><br/>
+                    
+                    <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true" /> 
+                                  
+                    <p:dataTable id="tablaArchivosCargados" var="archivoCargado" 
+                            editable="false" emptyMessage="#{msj['label.lista.vacia']}" value="#{cargarOrdenMB.ordenesArchivoCargado}">
+                        <p:column headerText="Nombre de archivo" styleClass="someClass">
+                            <h:outputText id="txtNombreArchivo" value="#{archivoCargado.nombreArchivo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Fecha de carga" styleClass="someClass">
+                            <h:outputText id="txtFechaCargaArchivo" value="#{archivoCargado.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                            </p:column>
+                    </p:dataTable>
+                    <br/>
+                                  
+                    <p:message id="fileUploadError" for="fileUploadError" display="text"/>              
+                    <h:panelGrid columns="2" id="panelBotones" width="700">
+                        <p:column rowspan="2">
+                            <p:commandButton update="formOrdenes" value="#{msj['btn.limpiar']}" style="float:right;"
+                                             action="#{cargarOrdenMB.init}" ajax="true" immediate="true"
+                                             process="@this">
+                                <p:resetInput target="panelOrdenes" />
+                            </p:commandButton>
+                            <p:commandButton value="#{msj['btn.guardar']}" style="float:right;width:80px;"
+                                             onclick="confirmarGuardarOrden.show();"/>
+                        </p:column>
+                    </h:panelGrid>
+                    <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarGuardarOrden"
+                              resizable="false" modal="true" width="315" height="55">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['label.confirm.guardar.orden']}"/>
+                        </h:panelGroup>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}"
+                                         onclick="confirmarGuardarOrden.hide();" styleClass="ui-confirmdialog-no"
+                                         icon="ui-icon-close" style="float:right;"/>
+                        <p:commandButton id="btnGuardarOrden" value="#{msj['label.confirm.aceptar']}"
+                                         onclick="confirmarGuardarOrden.hide();" styleClass="ui-confirmdialog-yes"
+                                         icon="ui-icon-check" action="#{cargarOrdenMB.guardarOrdenLista}"
+                                         update=":formListaOrdenes:tablaOrdenesAgregadas  formOrdenes :formListaOrdenes:panelEnviar"
+                                         style="float:right;" ajax="true"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                    </p:dialog>
+                </p:panel>
+            </h:form>
+            
+            <h:form id="formListaOrdenes" enctype="multipart/form-data">
+                <!--p:growl id="msgExitoGuardarLista" showDetail="true" sticky="false" globalOnly="true"/-->
+                <p:panel id="panelListaOrdenes" styleClass="panel-interno"
+                         style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;">
+                    <h:outputLabel value="Detalle de las órdenes por enviar" style="font-weight:bold"/>
+                    <hr size="1" noshade="noshade" align="left"/>
+                    <p:messages id="msgExitoGuardarLista" showDetail="true" globalOnly="true" closable="true" />
+                  <div aria-live="polite" class="ui-messages ui-widget" id="msgExitoGuardarValidarP" style="display: none;">
+					<div class="ui-messages-error ui-corner-all">
+						<a onclick="$(this).parent().slideUp();return false;"
+							class="ui-messages-close" href="#"><span
+							class="ui-icon ui-icon-close"></span></a><span
+							class="ui-messages-error-icon"></span>
+						<ul>
+							<li><span class="ui-messages-error-summary">Debe seleccionar por lo menos un elemento de la lista</span></li>
+						</ul>
+					</div>
+				</div>
+                    <p:dataTable id="tablaOrdenesAgregadas" var="datos" value="#{cargarOrdenMB.listaOrdenes}"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"
+                                 rowKey="#{datos.cveOrden}" selection="#{cargarOrdenMB.listaEnviarOrdenes}" >
+                        <p:column selectionMode="multiple" />
+                        <!--p:ajax event="rowSelect" listener="#{cargarOrdenMB.onRowSelect}" update=":formOrdenes" />  
+                        <p:ajax event="rowUnselect" listener="#{cargarOrdenMB.onRowUnselect}" update=":formOrdenes"/-->
+                        <p:column style="width:1%">
+                            <f:facet name="header">
+                                <p:outputPanel>Detalle</p:outputPanel>
+                            </f:facet>
+                            <p:rowToggler/>
+                        </p:column>
+                        <p:column headerText="ID registro" styleClass="someClass" style="width:25%">
+                            <h:outputText value="#{datos.cveRegistro}"/>
+                        </p:column>
+                        <p:column headerText="M&amp;eacute;todo" style="width:25%">
+                            <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                        </p:column>
+                        <p:column headerText="No. de orden" styleClass="someClass" style="width:24%">
+                            <h:outputText value="#{datos.cveOrden}"/>
+                        </p:column>
+                        <p:column headerText="Fecha carga" styleClass="someClass" style="width:24%">
+                            <h:outputText value="#{datos.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Prioridad" style="width:24%">
+                            <p:graphicImage rendered="#{datos.prioridad==1}" value="/resources/images/bandera.png"
+                                            style="border:0"/>
+                        </p:column>
+                        <p:column headerText="Documento" style="width:24%">
+                            <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                             style="float:left;padding:0px 5px;">
+                                <f:setPropertyActionListener value="#{datos}"
+                                                             target="#{cargarOrdenMB.ordenSeleccionDescarga}"/>
+                                <p:fileDownload contentDisposition="attachment"
+                                                value="#{cargarOrdenMB.archivoSeleccionDescarga}"/>
+                            </h:commandButton>
+                        </p:column>
+                        <p:column headerText="" style="width:10px">
+                            <p:commandLink value="Descartar" action="#{cargarOrdenMB.mostrarRechazo}" ajax="true"
+                                           immediate="true" process="@form" update="@form">
+                                <f:setPropertyActionListener value="#{datos}"
+                                                             target="#{cargarOrdenMB.ordenSeleccionDescarga}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <!-- DETALLE -->
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:300px;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="RFC del Contribuyente:"/>
+                                <h:outputText value="#{datos.rfcContribuyente}"/>
+                                <h:outputText value="Nombre del Contribuyente:"/>
+                                <h:outputText value="#{datos.nombreContribuyente}"/>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <br/>
+                    <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarDescartarSeleccion"
+                              resizable="false" visible="#{cargarOrdenMB.mostrarRechazarOrden}" modal="true" height="55"
+                              id="confirmaDescartar" width="350">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['label.confirm.descartar.crear.orden']} #{cargarOrdenMB.ordenSeleccionDescarga.cveOrden}?"/>
+                        </h:panelGroup>
+                        <p:commandButton action="#{cargarOrdenMB.ocultarRechazo}"
+                                         value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no"
+                                         update="@form" icon="ui-icon-close" style="float:right;"/>
+                        <p:commandButton id="btnDescartarSeleccion" value="#{msj['label.confirm.aceptar']}"
+                                         onclick="confirmarDescartarSeleccion.hide();" styleClass="ui-confirmdialog-yes"
+                                         icon="ui-icon-check" action="#{cargarOrdenMB.borrarArchivoLista}"
+                                         process="@this" update="formListaOrdenes" style="float:right;"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarLista');"/>
+                    </p:dialog>
+                    <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarEnviarSeleccion"
+                              resizable="false" modal="true" width="315" height="55">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['label.confirm.envio.datos']}"/>
+                        </h:panelGroup>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}"
+                                         onclick="confirmarEnviarSeleccion.hide();" styleClass="ui-confirmdialog-no"
+                                         icon="ui-icon-close" style="float:right;"/>
+                        <p:commandButton id="btnEnviarSeleccion" value="#{msj['label.confirm.aceptar']}"
+                                         onclick="confirmarEnviarSeleccion.hide();" styleClass="ui-confirmdialog-yes"
+                                         icon="ui-icon-check" action="#{cargarOrdenMB.enviarListaSeleccionOrdenes}"
+                                         process="@this" update="@form msgExitoGuardarLista" style="float:right;"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarLista');"/>
+                    </p:dialog>
+                    <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarEnviarTodo" resizable="false"
+                              modal="true" width="315" height="55">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['label.confirm.envio.datos']}"/>
+                        </h:panelGroup>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" onclick="confirmarEnviarTodo.hide();"
+                                         styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"/>
+                        <p:commandButton id="btnEnviarTodo" value="#{msj['label.confirm.aceptar']}"
+                                         onclick="confirmarEnviarTodo.hide();" styleClass="ui-confirmdialog-yes"
+                                         icon="ui-icon-check" action="#{cargarOrdenMB.enviarListaOrdenesCompleta}"
+                                         process="@this" update="formListaOrdenes" style="float:right;"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarLista');"/>
+                    </p:dialog>
+                    <h:panelGrid columns="2" id="panelEnviar" width="700">
+                        <p:column rowspan="2">
+                            <p:commandButton id="enviar" value="Enviar" onclick="validacion();" rendered="#{cargarOrdenMB.sizeListaOrdenes>0}"
+                                             style="float:right;width:80px;"/>
+                            <p:commandButton id="enviarTodo" value="Enviar Todo" onclick="confirmarEnviarTodo.show();" rendered="#{cargarOrdenMB.sizeListaOrdenes>1}"
+                                             style="float:right;width:100px;"/>
+                        </p:column>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

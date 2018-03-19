@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui" 
+        xmlns:pe="http://primefaces.org/ui/extensions" 
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+        <h:head>
+            <style type="text/css">
+               .ui-selectonemenu-panel
+               {
+                   max-width:58% !important;
+               }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form id="formReportes">
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelOrdenes" styleClass="panel-interno" header="#{reportePropuestasMB.reporteDTOHelper.tipoReporte.tituloReporte}">
+                    <br/>
+                    <p:messages id="msgReporte" showDetail="false" for="msgReporte" autoUpdate="true" globalOnly="true" closable="true" style="width:620px;"/>
+                    
+                    <!-- Tipo de Reporte (solo aplica para Ejecutivo) -->
+                    <h:panelGrid rendered="#{reportePropuestasMB.reporteDTOHelper.tipoReporte.mostrarEjecutivo}" id="divTipoReporteId" columns="2" border="0" cellpadding="2" cellspacing="2">
+                        <h:panelGroup><p:outputLabel for="tipoReporteId" value="#{msj['lbl.reporte.tipo.reporte']}: " /><h:outputText value=" *" style="color:red"/></h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneRadio id="tipoReporteId" value="#{reportePropuestasMB.reporteDTOHelper.reportesVO.tipoReporteEjecutivoSeleccionado}" valueChangeListener="#{reportePropuestasMB.selectRadioItem}">
+                                <p:ajax process="@this" update="@all" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.titulo.ejecutivo']}" itemValue="#{msj['lbl.reporte.titulo.ejecutivo']}" />
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.titulo.gerencial']}" itemValue="#{msj['lbl.reporte.titulo.gerencial']}" />
+                            </p:selectOneRadio>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                    
+                    <p:separator rendered="#{reportePropuestasMB.reporteDTOHelper.tipoReporte.mostrarEjecutivo}"/>
+                    
+                    <h:panelGrid id="includesId" columns="1" border="0" cellpadding="0" cellspacing="0">
+                        <h:panelGroup rendered="#{reportePropuestasMB.reporteDTOHelper.tipoReporte.mostrarGerencial || reportePropuestasMB.reporteDTOHelper.tipoReporteGerencial}">
+                            <ui:include src="/reportes/includes/propuestas/formularioGerencial.jsf"/>
+                            <ui:include src="/reportes/includes/propuestas/resultadoGerencial.jsf"/>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{reportePropuestasMB.reporteDTOHelper.tipoReporteEjecutivo}">
+                            <ui:include src="/reportes/includes/propuestas/formularioEjecutivo.jsf"/>
+                            <ui:include src="/reportes/includes/propuestas/resultadoEjecutivo.jsf"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                
+                </p:panel>
+                </h:form>
+           <br/><br/>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

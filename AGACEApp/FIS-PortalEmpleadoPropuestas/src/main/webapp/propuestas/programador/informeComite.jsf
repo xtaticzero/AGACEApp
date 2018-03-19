@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <title>AGACE</title>
+            <style type="text/css">
+               .ui-selectonemenu-panel
+               {
+                   max-width:58% !important;
+               }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form id="formPropuestasInfomeComite" styleClass="panel-principal" >
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardar" showDetail="false" globalOnly="true" closable="true"/>
+                
+                <p:panel id="panelPropuestasInformeComite" styleClass="panel-interno" header="#{msj['label.propuestas.informadas.comite']}" >
+                
+                    <h:panelGrid id="panelBusquedaPropuestasInformeComite" border="0" columns="7" width="100%">
+                        
+                        <p:outputLabel value="#{msj['label.rfc']}: " style="float:left;font-weight:bold;" />
+                        <h:inputText id="RFC" value ="#{informeComiteManagedBean.rfc}" style="width:150px;" maxlength="15"/>
+                        
+                        <h:outputLabel  value="#{msj['label.fecha.inf.comite']} a comité:" style="font-weight:bold"/>
+                        <p:calendar id="txtFechaInicialR" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                    readonlyInput="true" size="7"
+                                    value="#{informeComiteManagedBean.fechaInicio}"/>
+                              
+                        <h:outputLabel value="#{msj['label.al']}:" style="font-weight:bold;">                        
+                        <p:calendar id="txtFechaFinR" locale="es" pattern="dd/MM/yyyy" showOn="button" 
+                                    readonlyInput="true" size="7"
+                                    value="#{informeComiteManagedBean.fechaFin}">
+                        </p:calendar>
+                        </h:outputLabel>                               
+
+                        <p:spacer width="50" height="1" /> 
+
+                        <p:spacer width="50" height="1" /> 
+                        
+                        <p:outputLabel value="#{msj['label.id.registro']}:" style="float:left;font-weight:bold;" />
+                        <h:inputText id="IdRegistro" value ="#{informeComiteManagedBean.idRegistro}" style="width:150px;" maxlength="15"/>
+                                                
+                        <p:outputLabel value="#{msj['label.entidad']}: " style="float:left;font-weight:bold;" rendered="#{informeComiteManagedBean.mostrarComboEntidad}" />                                               
+                        <p:selectOneMenu id="cmbEntidad" value="#{informeComiteManagedBean.idEntidad}" style="width:150px;" rendered="#{informeComiteManagedBean.mostrarComboEntidad}">
+                            <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1"/>
+                            <f:selectItems value="#{informeComiteManagedBean.listaEntidades}" var="listaEntidad"
+                                                style="font;" itemLabel="#{listaEntidad}" itemValue="#{listaEntidad}"/>                    
+                        </p:selectOneMenu>                        
+	                                                                                                           
+                        <p:spacer width="150" height="1" />
+                        <p:spacer width="150" height="1" rendered="#{!informeComiteManagedBean.mostrarComboEntidad}"/>
+                        
+                        <p:commandButton value="#{msj['btn.buscar']}" styleClass="ui-confirmdialog-no" style="float:right;"
+                                                            actionListener="#{informeComiteManagedBean.buscarInformeComite}" update="formPropuestasInfomeComite panelPropuestasInformeComite" />
+                                             
+                        <p:spacer width="50" height="1" />                      
+
+                    </h:panelGrid>
+                    <br/>
+                    <br/>
+                    
+                    <h:panelGrid id="panelTablaInformeComite"  border="0" width="100%">
+                        <p:dataTable var="listaInforme" value="#{informeComiteManagedBean.listaInformeComite}"  editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                     {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" >
+                                    
+                                    <p:column width="9">
+                                        <p:rowToggler/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.folio']}" >
+                                        <h:outputText value="#{listaInforme.idRegistro}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.rfc']}" >
+                                        <h:outputText value="#{listaInforme.rfc}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.nombre.razon.social']}" >
+                                        <h:outputText value="#{listaInforme.nombre}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.regimen']}">
+                                        <h:outputText value="#{listaInforme.regimen}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.subprograma']}">
+                                        <h:outputText value="#{listaInforme.subprograma}" />
+                                    </p:column>
+                                                        
+                                    <p:column headerText="#{msj['label.expediente.electronico.informe']}" style="width:90px;">
+                                        <h:commandButton  ajax="true" image="/resources/images/document.png" style="padding:0px 40px;"
+                                                            actionListener="#{informeComiteManagedBean.visualizarDocumentos}"  process="@this">                                    
+                                            <f:setPropertyActionListener value="#{listaInforme.listaExpediente}" target="#{informeComiteManagedBean.listaDocumento}"/>
+                                        </h:commandButton>
+                                    </p:column>                                   
+                                    <p:rowExpansion>
+                                        <p:panelGrid id="display" columns="2" cellpadding="4"
+                                                    styleClass=" ui-widget-content grid" width="100%">
+                                                    
+                                            <h:outputText value="#{msj['label.entidad']}"/>
+                                            <h:outputText value="#{listaInforme.entidad}"/>        
+                                            <h:outputText value="#{msj['label.tipo.contribuyente']}  "/>
+                                            <h:outputText value="#{listaInforme.tipoContribuyente}"/>
+
+                                            <h:outputText value="#{msj['label.actividad.preponderante']} "/>
+                                            <h:outputText value="#{listaInforme.actividadPreponderante}"/>
+
+                                            <h:outputText value="#{msj['label.fecha.inf.comite']}  "/>
+                                            <h:outputText value="#{listaInforme.fechaInforme}" >                                    
+                                                <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+
+                                            <h:outputText value="#{msj['label.programador.subadministrador']}  "/>
+                                            <h:outputText value="#{listaInforme.rfcCreacion}"/>
+                                        </p:panelGrid>
+                                    </p:rowExpansion>
+                                </p:dataTable>                    
+                    </h:panelGrid>
+                    
+                    <p:dialog header="Oficio de Resolución" widgetVar="dialogoDocumentos" width="500" height="250" onHide="rc()">
+                        <p:dataTable var="documento" value="#{informeComiteManagedBean.listaDocumento}">
+                            <p:column headerText="#{msj['label.nombre.documento']}" style="width:75%;">
+                                <h:outputText value="#{documento.nombre}" />
+                            </p:column>
+                            <p:column headerText="Descargar" style="25%;">
+                                
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 40px;">
+                                            <f:setPropertyActionListener value="#{documento}" target="#{informeComiteManagedBean.documento}"/>
+                                            <p:fileDownload contentDisposition="attachment" value="#{informeComiteManagedBean.descargarArchivo}"/>
+                                    </h:commandButton>
+                                </div>    
+                            </p:column>
+                        </p:dataTable>
+                    </p:dialog>
+                    
+                    <h:panelGrid id="panelBotonesInformeComite" columns="2" style="width:100%">
+                                <p:commandButton value="#{msj['btn.exportar']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s"
+                                                styleClass="ui-confirmdialog-no" style="float:right;width:80px;" disabled="#{informeComiteManagedBean.mostrarExportar}">
+                                    <p:fileDownload value="#{informeComiteManagedBean.xlsReporte}"/>
+                                </p:commandButton>                                                                                                               
+                                <p:commandButton value="#{msj['btn.limpiar']}" styleClass="ui-confirmdialog-no" style="float:left;width:80px;"
+                                                            actionListener="#{informeComiteManagedBean.limpiarInformeComite}" update="formPropuestasInfomeComite" process="@this"/>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>             
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

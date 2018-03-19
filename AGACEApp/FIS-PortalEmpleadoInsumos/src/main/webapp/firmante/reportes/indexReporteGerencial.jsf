@@ -1,0 +1,547 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script type="text/javascript">  
+                function start() {  
+                    statusDialog.show();  
+                }  
+    
+                function stop() {  
+                    statusDialog.hide();  
+                }  
+            </script> 
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="idForm">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                          resizable="false" id="statusDialog" widgetVar="statusDialog">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelReporte" styleClass="panel-interno" header="Generar Reporte">
+                    <!--<p:panelGrid columns="3" style="width:95%; margin: 0 auto;">
+                        <p:row>
+                            <p:column >
+                                <p:outputLabel style="font-weight:bold;" value="Tipo de reporte:"/>
+                            </p:column>
+                            <p:column width="50px">
+                            asdasda
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel style="font-weight:bold" value="Tipo de reporte:"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>-->
+                    <!--styleClass="noBorders"-->
+                    <p:panelGrid style="margin: 0 auto; width:95%;" styleClass="noBorders">
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">Tipo de Consulta:</p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:selectOneRadio id="console" value="#{reporteManagedBean.tipoBusqueda}">
+                                    <f:selectItem itemLabel="Por número de orden" itemValue="0"/>
+                                    <f:selectItem itemLabel="Búsqueda compleja" itemValue="1"/>
+                                    <p:ajax update="cmbMetodo idForm" event="change"
+                                            listener="#{reporteManagedBean.actualizaBusqueda}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">
+                                <p:outputLabel for="cmbMetodo" value="Método"/>
+                            </p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:selectOneMenu disabled="#{reporteManagedBean.tipoBusquedaNumeroOrden}" id="cmbMetodo"
+                                                 value="#{reporteManagedBean.metodoSeleccionado}">
+                                    <f:selectItem itemLabel="Selecciona Método" itemValue="-1"/>
+                                    <f:selectItems value="#{reporteManagedBean.listaMetodos}" var="lista"
+                                                   itemLabel="#{lista.nombre}" itemValue="#{lista.idMetodo}"/>
+                                    <p:ajax update="labelNumeroMetodo idForm" event="change"
+                                            listener="#{reporteManagedBean.actualizaOrden}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column id="labelNumeroMetodo" style="text-align:right; font-weight: bold; width:40%;">
+                                <h:outputText value="#{reporteManagedBean.labelOrden} *:"
+                                              rendered="#{reporteManagedBean.ordenVisible}"/>
+                            </p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:inputMask mask="aaaa9999999/99" rendered="#{reporteManagedBean.ordenVisible}"
+                                             id="numeroMetodo" value="#{reporteManagedBean.cveOrden}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">&Aacute;rea emisora:</p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:selectOneMenu disabled="#{reporteManagedBean.tipoBusquedaCompleja}"
+                                                 value="#{reporteManagedBean.areaEmisora}" id="cmbAreaEmisora">
+                                    <f:selectItem itemLabel="Seleccione Área emisora" itemValue="-1"/>
+                                    <f:selectItems value="#{reporteManagedBean.listaArace}" var="lista"
+                                                   itemLabel="#{lista.nombre}" itemValue="#{lista.idArace}"/>
+                                    <p:ajax event="change" immediate="true"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">Estatus de la orden:</p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:column style="text-align:left; width:60%;">
+                                    <p:selectOneMenu disabled="#{reporteManagedBean.tipoBusquedaCompleja}"
+                                                     id="estatusOrden" value="#{reporteManagedBean.estatus}"
+                                                     immediate="true">
+                                        <f:selectItem itemLabel="Seleccione Estatus de la Orden" itemValue="0"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3" style="text-align:center;">
+                                <p:commandButton value="Buscar" update="idForm"
+                                                 action="#{reporteManagedBean.consultaGerencial}"
+                                                 oncomplete="ocultaMsgAgace('msgExitoGuardarLista');"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:messages id="msgExitoGuardarLista" showDetail="false" globalOnly="true" closable="true"/>
+                    <p:panel rendered="#{reporteManagedBean.visibleCompleja}" style="border:none">
+                        <h:outputLabel value="Detalle de las órdenes" style="font-weight:bold"/>
+                        <hr size="1" noshade="noshade" align="left"/>
+                        <p:dataTable  resizableColumns="true" id="tablaOrdenes" value="#{reporteManagedBean.listaReporteGerencial}" var="ordenes"
+                                     scrollWidth="97.8%" scrollable="true" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="ID de Registro" styleClass="someClass" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="ID de Registro"/>
+                                </f:facet>
+                                <h:outputText id="cveRegistro" value="#{ordenes.cveRegistro}"/>
+                            </p:column>
+                            <p:column headerText="No. de orden" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="No. de orden"/>
+                                </f:facet>
+                                <h:outputText id="cveOrden" value="#{ordenes.cveOrden}"/>
+                            </p:column>
+                            <p:column headerText="Método" styleClass="someClass" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Método"/>
+                                </f:facet>
+                                <h:outputText id="metodo" value="#{ordenes.metodo}"/>
+                            </p:column>
+                            <p:column headerText="RFC Contribuyente" styleClass="someClass" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Contribuyente"/>
+                                </f:facet>
+                                <h:outputText id="rfcContribuyente" value="#{ordenes.rfcContribuyente}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Contribuyente" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Contribuyente"/>
+                                </f:facet>
+                                <h:outputText id="nombreContribuyente" value="#{ordenes.nombrecontribuyente}"/>
+                            </p:column>
+                            <p:column headerText="RFC Rep. Legal" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Rep. Legal"/>
+                                </f:facet>
+                                <h:outputText id="rfcRepresentanteLegal" value="#{ordenes.rfcRepresentanteLegal}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Representante Legal" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Representante Legal"/>
+                                </f:facet>
+                                <h:outputText id="nombreRepresentanteLegal"
+                                              value="#{ordenes.nombreRepresentanteLegal}"/>
+                            </p:column>
+                            <p:column headerText="RFC Apod. Legal" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Apod. Legal"/>
+                                </f:facet>
+                                <h:outputText id="rfcApoderadoLegal" value="#{ordenes.rfcApoderadoLegal}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Apod. Legal" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Apod. Legal"/>
+                                </f:facet>
+                                <h:outputText id="nombreApoderadoLegal" value="#{ordenes.nombreApoderadoLegal}"/>
+                            </p:column>
+                            <p:column headerText="RFC Agte. Aduanal" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Agte. Aduanal"/>
+                                </f:facet>
+                                <h:outputText id="rfcAgenteAduanal" value="#{ordenes.rfcAgenteAduanal}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Agte. Aduanal" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Agte. Aduanal"/>
+                                </f:facet>
+                                <h:outputText id="nombreAgenteAduanal" value="#{ordenes.nombreAgenteAduanal}"/>
+                            </p:column>
+                            <p:column headerText="Área emisora" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="Área emisora"/>
+                                </f:facet>
+                                <h:outputText id="area" value="#{ordenes.area}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Auditor" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Auditor"/>
+                                </f:facet>
+                                <h:outputText id="nombreAuditor" value="#{ordenes.nombreAuditor}"/>
+                            </p:column>
+                            <p:column headerText="Fecha de Registro" style="width:100px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{ordenes.fechaRegistro}"/>
+                            </p:column>
+                            <p:column headerText="Fecha Envío Notificación" style="width:100px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha Envío Notificación"/>
+                                </f:facet>
+                                <h:outputText id="fechaEnvioNotificacion" value="#{ordenes.fechaEnvioNotificacion}"/>
+                            </p:column>
+                            <p:column headerText="Fecha de Envío" style="width:100px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Envío"/>
+                                </f:facet>
+                                <h:outputText id="idEstatus" value="#{ordenes.fechaEnvio}"/>
+                            </p:column>
+                            <p:column headerText="Estatus" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Estatus"/>
+                                </f:facet>
+                                <h:outputText value="#{ordenes.idEstatus}"/>
+                            </p:column>
+                            <!-- DETALLE -->
+                        </p:dataTable>
+                        <br/>
+                        <p:panel style="border:none; text-align:center;">
+                            <p:commandButton  value="Exportar" rendered="#{reporteManagedBean.visibleExportarGerencial}" onclick="PrimeFaces.monitorDownload(start, stop);" ajax="false">
+                                <p:dataExporter fileName="ordenes" type="xls" target="tablaOrdenes"/>
+                            </p:commandButton>
+                        </p:panel>
+                    </p:panel>
+                    <p:panel rendered="#{reporteManagedBean.visibleOrden}" style="border:none">
+                        <h:outputLabel value="Detalle de las órdenes" style="font-weight:bold"/>
+                        <hr size="1" noshade="noshade" align="left"/>
+                        <p:dataTable resizableColumns="true" id="tablaOrdenesOrden" value="#{reporteManagedBean.listaReporteGerencial}"
+                                     var="ordenes" scrollWidth="97.8%" scrollable="true" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="ID de Registro" styleClass="someClass" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="ID de Registro"/>
+                                </f:facet>
+                                <h:outputText id="cveRegistro" value="#{ordenes.cveRegistro}"/>
+                            </p:column>
+                            <p:column headerText="No. de orden" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="No. de orden"/>
+                                </f:facet>
+                                <h:outputText id="cveOrden" value="#{ordenes.cveOrden}"/>
+                            </p:column>
+                            <p:column headerText="Método" styleClass="someClass" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Método"/>
+                                </f:facet>
+                                <h:outputText id="metodo" value="#{ordenes.metodo}"/>
+                            </p:column>
+                            <p:column headerText="RFC Contribuyente" styleClass="someClass" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Contribuyente"/>
+                                </f:facet>
+                                <h:outputText id="rfcContribuyente" value="#{ordenes.rfcContribuyente}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Contribuyente" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Contribuyente"/>
+                                </f:facet>
+                                <h:outputText id="nombreContribuyente" value="#{ordenes.nombrecontribuyente}"/>
+                            </p:column>
+                            <p:column headerText="RFC Rep. Legal" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Rep. Legal"/>
+                                </f:facet>
+                                <h:outputText id="rfcRepresentanteLegal" value="#{ordenes.rfcRepresentanteLegal}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Representante Legal" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Representante Legal"/>
+                                </f:facet>
+                                <h:outputText id="nombreRepresentanteLegal"
+                                              value="#{ordenes.nombreRepresentanteLegal}"/>
+                            </p:column>
+                            <p:column headerText="RFC Apod. Legal" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Apod. Legal"/>
+                                </f:facet>
+                                <h:outputText id="rfcApoderadoLegal" value="#{ordenes.rfcApoderadoLegal}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Apod. Legal" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Apod. Legal"/>
+                                </f:facet>
+                                <h:outputText id="nombreApoderadoLegal" value="#{ordenes.nombreApoderadoLegal}"/>
+                            </p:column>
+                            <p:column headerText="RFC Agte. Aduanal" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="RFC Agte. Aduanal"/>
+                                </f:facet>
+                                <h:outputText id="rfcAgenteAduanal" value="#{ordenes.rfcAgenteAduanal}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Agte. Aduanal" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Agte. Aduanal"/>
+                                </f:facet>
+                                <h:outputText id="nombreAgenteAduanal" value="#{ordenes.nombreAgenteAduanal}"/>
+                            </p:column>
+                            <p:column headerText="Área emisora" style="width:90px">
+                                <f:facet name="header">
+                                    <h:outputText value="Área emisora"/>
+                                </f:facet>
+                                <h:outputText id="area" value="#{ordenes.area}"/>
+                            </p:column>
+                            <p:column headerText="Nombre Auditor" style="width:300px">
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre Auditor"/>
+                                </f:facet>
+                                <h:outputText id="nombreAuditor" value="#{ordenes.nombreAuditor}"/>
+                            </p:column>
+                            <p:column headerText="Fecha de Registro" style="width:100px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{ordenes.fechaRegistro}"/>
+                            </p:column>
+                            <p:column headerText="Fecha Envío Notificación" style="width:100px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha Envío Notificación"/>
+                                </f:facet>
+                                <h:outputText id="fechaEnvioNotificacion" value="#{ordenes.fechaEnvioNotificacion}"/>
+                            </p:column>
+                            <p:column headerText="Fecha de Envío" style="width:100px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Envío"/>
+                                </f:facet>
+                                <h:outputText id="idEstatus" value="#{ordenes.fechaEnvio}"/>
+                            </p:column>
+                            <p:column headerText="Estatus" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Estatus"/>
+                                </f:facet>
+                                <h:outputText value="#{ordenes.idEstatus}"/>
+                            </p:column>
+                            <!-- DETALLE -->
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable value="#{reporteManagedBean.reporteGerencialDTO.alegatos}" var="alegato"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputFormat value="Alegatos"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{alegato.fechaCarga}"/>
+                            </p:column>
+                            <p:column headerText="Documento" style="width:24%">
+                                <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{alegato}"
+                                                                 target="#{reporteManagedBean.fecetAlegato}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{reporteManagedBean.fecetAlegatoDescarga}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable value="#{reporteManagedBean.reporteGerencialDTO.oficiosAmpliacion}"
+                                     var="oficioAmpliacion" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true" rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputFormat value="Oficio de Ampliación de Plazo"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{oficioAmpliacion.fechaCarga}"/>
+                            </p:column>
+                            <p:column headerText="Documento" style="width:24%">
+                                <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{oficioAmpliacion}"
+                                                                 target="#{reporteManagedBean.fecetAmplPlazoSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{reporteManagedBean.fecetAmplPlazoDescarga}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable value="#{reporteManagedBean.reporteGerencialDTO.cartasInvitacion}"
+                                     var="cartaInvitacion" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true" rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputFormat value="Carta de Invitacion"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText value="#{cartaInvitacion.fechaCarga}"/>
+                            </p:column>
+                            <p:column headerText="Documento" style="width:24%">
+                                <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{cartaInvitacion}"
+                                                                 target="#{reporteManagedBean.fecetCartaInv}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{reporteManagedBean.fecetCartaInvDescarga}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable value="#{reporteManagedBean.reporteGerencialDTO.complementos}" var="complemento"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputFormat value="Complementos"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{complemento.fechaCarga}"/>
+                            </p:column>
+                            <p:column headerText="Documento" style="width:24%">
+                                <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{complemento}"
+                                                                 target="#{reporteManagedBean.fecetComplement}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{reporteManagedBean.fecetComplementDescarga}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable value="#{reporteManagedBean.reporteGerencialDTO.requerimientos}"
+                                     var="requerimiento" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true" rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputFormat value="Requerimientos"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{requerimiento.fechaCarga}"/>
+                            </p:column>
+                            <p:column headerText="Documento" style="width:24%">
+                                <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{requerimiento}"
+                                                                 target="#{reporteManagedBean.fecetRequerimiento}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{reporteManagedBean.fecetRequerimientoDescarga}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable value="#{reporteManagedBean.reporteGerencialDTO.observaciones}" var="observacion"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputFormat value="Observaciones"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{observacion.fechaCarga}"/>
+                            </p:column>
+                            <p:column headerText="Documento" style="width:24%">
+                                <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{observacion}"
+                                                                 target="#{reporteManagedBean.fecetObserv}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{reporteManagedBean.fecetObservDescarga}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable value="#{reporteManagedBean.reporteGerencialDTO.conclusiones}" var="conclusion"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputFormat value="Conclusiones"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" style="width:150px">
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha de Registro"/>
+                                </f:facet>
+                                <h:outputText id="fechaRegistro" value="#{conclusion.fechaCarga}"/>
+                            </p:column>
+                            <p:column headerText="Documento" style="width:24%">
+                                <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{conclusion}"
+                                                                 target="#{reporteManagedBean.fecetConclusion}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{reporteManagedBean.fecetConclusionDescarga}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:panel style="border:none; text-align:right">
+                        <p:commandButton rendered="#{reporteManagedBean.visibleExportarGerencial}" value="Exportar" ajax="false"
+                                         onclick="PrimeFaces.monitorDownload(start, stop);"
+                                         icon="ui-icon-arrowthick-1-s">
+                            <p:fileDownload value="#{reporteManagedBean.xlsGerencial}"/>
+                        </p:commandButton>
+                        </p:panel>
+                    </p:panel>
+                </p:panel>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

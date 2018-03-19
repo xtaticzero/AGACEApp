@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">       
+           <p:panel styleClass="panel-interno" style="width:100% !important;" id="panelPrincipal1">
+		   <h:inputHidden value="#{cifrasManagedBean.cifrasAttributeHelper.idCifraImpuestoConcepto}" id="idCifraImpuesto1"/>
+           <p:panelGrid id="panelResumen1" style="width:100% !important;" styleClass="noBorders">
+           <p:row>
+           		<p:column colspan="4">
+           			<p:outputLabel value="*#{msj['label.cifras.detalle.tipo']}"/>
+           		</p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="4">            			            		            
+           			<p:selectOneMenu id="tipoCifra1" value="#{cifrasManagedBean.cifrasAttributeHelper.tipoCifra.idCifra}" 
+           				validator="#{cifrasManagedBean.validarTipoCifra}" style="width: 650px;" disabled="#{cifrasManagedBean.cifrasAttributeHelper.esActualizacion}">
+						<p:ajax/>
+			            <f:selectItem itemLabel="#{msj['label.cifras.detalle.tipo']}" itemValue="-1" />
+			            <f:selectItems value="#{cifrasManagedBean.tipoCifras}" var="tipo"
+			            	itemLabel="#{tipo.descripcion}" 
+			            	itemValue="#{tipo.idCifra}" />					            
+			        </p:selectOneMenu>				        
+           		</p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="2">
+           			<p:message for="tipoCifra1"/>
+           		</p:column>
+           		<p:column/>
+           		<p:column/>
+           	</p:row>
+           	<p:row>
+           		<p:column style="width:25% !important;">            			
+			        <p:outputLabel for="derivado1" value="#{msj['label.cifras.detalle.derivado']}" />
+			    </p:column>
+			    <p:column style="width:25% !important;">  
+			        <p:selectOneRadio id="derivado1" value="#{cifrasManagedBean.cifrasAttributeHelper.derivaAntecedente}">
+			            <f:selectItem itemLabel="Si" itemValue="1" />
+			            <f:selectItem itemLabel="No" itemValue="2" />				            
+			        </p:selectOneRadio>				    
+           		</p:column>
+           		<p:column style="width:25% !important;"></p:column>
+           		<p:column style="width:25% !important;"></p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="2">
+			        <p:outputLabel for="derivado" value="*#{msj['label.cifras.detalle.impuesto']}" />
+           		</p:column>
+           		<p:column colspan="2">
+           			<p:outputLabel for="derivado" value="*#{msj['label.cifras.detalle.concepto']}" />           			
+           		</p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="2">
+           			<p:selectOneMenu id="tipoImpuesto1" value="#{cifrasManagedBean.cifrasAttributeHelper.tipoImpuesto.idTipoImpuesto}"
+           			validator="#{cifrasManagedBean.validarTipoImpuesto}" disabled="#{cifrasManagedBean.cifrasAttributeHelper.esActualizacion}">
+           				<p:ajax event="change" update="concepto1" listener="#{cifrasManagedBean.selectionChange}" process="@this"/>
+			            <f:selectItem itemLabel="#{msj['label.cifras.detalle.impuesto']}" itemValue="-1" />			
+			            <f:selectItems value="#{cifrasManagedBean.impuestos}" var="impuesto"
+			            	itemLabel="#{impuesto.descripcion}" 
+			            	itemValue="#{impuesto.idTipoImpuesto}" />		            
+			        </p:selectOneMenu>
+           		</p:column>
+           		<p:column colspan="2">
+           			<p:selectOneMenu id="concepto1" value="#{cifrasManagedBean.cifrasAttributeHelper.concepto.idConcepto}"
+           			validator="#{cifrasManagedBean.validarConcepto}" disabled="#{cifrasManagedBean.cifrasAttributeHelper.esActualizacion}"
+           			style="width: 250px;">
+           				<p:ajax event="change" update=":formCifras:confirmarActualizacion tipoCifra1" 
+           								listener="#{cifrasManagedBean.verificaExistenciaCifraImpuestoConcepto}" process="@this"/>
+			            <f:selectItem itemLabel="#{msj['label.cifras.detalle.concepto']}" itemValue="-1" />
+			            <f:selectItems value="#{cifrasManagedBean.conceptos}" var="concepto"
+			            	itemLabel="#{concepto.descripcion}" 
+			            	itemValue="#{concepto.idConcepto}" />		 				            
+			        </p:selectOneMenu>
+           		</p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="2">
+           			<p:message for="tipoImpuesto1"/>
+           		</p:column>
+           		<p:column colspan="2">
+           			<p:message for="concepto1"/>
+           		</p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column>
+           			<h:outputText value="*#{msj['label.cifras.detalle.fecha']}:"/>
+           		</p:column>
+           		<p:column>
+           			<p:calendar pattern="dd/MM/yyyy" locale="es" disabledWeekends="true"
+	                    	value="#{cifrasManagedBean.cifrasAttributeHelper.fechaPago}" id="fechaPago1"
+	                    	requiredMessage="Seleccionar fecha de pago"/>	                
+                </p:column>
+                <p:column/>
+           		<p:column/>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="2">
+           			<p:message for="fechaPago1"/>
+           		</p:column>
+           		<p:column/>
+           		<p:column/>
+           	</p:row>
+           	<p:row>
+           		<p:column>
+           			<h:outputText value="*#{msj['label.cifras.detalle.importe']}:"/>
+           		</p:column>
+           		<p:column>
+                    <p:inputText value="#{cifrasManagedBean.cifrasAttributeHelper.importeImpuesto}" required="true"
+                    	requiredMessage="Debe introducir el impuesto" id="importeImpuesto1" onkeypress="return soloNumerosPunto(event);">
+                    	<p:ajax  event="blur" update="importeImpuesto1"/>
+                    	<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+                    </p:inputText>
+                </p:column>
+                <p:column/>
+           		<p:column/>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="2">
+           			<p:message for="importeImpuesto1"/>
+           		</p:column>
+           		<p:column/>
+           		<p:column/>
+           	</p:row>           	     
+           	</p:panelGrid>      	
+           	<p:panelGrid id="tablaPie1" style="width:100% !important;" styleClass="noBorders">
+           	<p:row>
+           		<p:column colspan="4">
+           			<h:outputText value="#{msj['label.cifras.detalle.adjuntar']}:"/>
+           			<p:messages id="msgExitoGuardarDocs1" showDetail="true" globalOnly="true" />
+           		</p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="4">	            		            			 
+           			<p:fileUpload id="documentosCifras1"                                                                           
+                                     fileUploadListener="#{cifrasManagedBean.cargaDocumentacionCifras}"
+                                     mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                     label="#{msj['btn.examinar']}" cancelLabel="Cancelar" uploadLabel="Guardar"
+                                     showButtons="true" auto="true" ajax="true"
+                                     update="msgExitoGuardarDocs1 tablaDocumentos1"
+                                     immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');" process="@this"/>                      			                        	            		
+            	</p:column>
+            </p:row>
+            <p:row>
+            	<p:column colspan="4">	            		
+                       <p:dataTable id="tablaDocumentos1"
+                                    value="#{cifrasManagedBean.cifrasAttributeHelper.listaDocumentosCifra}" 
+                                    var="documento"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                           <f:facet name="header">
+                           	<h:outputText value="#{msj['titulo.panel.cifras.documentos']}"/>
+                           </f:facet>                               
+                           <p:column headerText="#{msj['column.label.fecha.documento']}" width="25%" styleClass="panel-principal">   
+                           	<h:outputText value="#{documento.fechaCreacion}">
+							  <f:convertDateTime type="date" pattern="dd/MM/yyyy hh:mm"/>
+							</h:outputText>                          
+                           </p:column>
+                           <p:column headerText="#{msj['column.label.nombre.documento']}" width="40%" styleClass="panel-principal">
+                               <h:outputText value="#{documento.nombre}"/>
+                           </p:column>
+                           <p:column headerText="#{msj['column.label.archivo']}" width="15%" styleClass="panel-principal">
+                               <div align="center">
+                                   <h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 5px;"
+                                    process="@this" immediate="true">
+                                       <f:setPropertyActionListener value="#{documento}"
+                                       	target="#{cifrasManagedBean.cifrasAttributeHelper.documentoSeleccionado}"/>
+                                       <p:fileDownload contentDisposition="attachment" 
+                                       	value="#{cifrasManagedBean.cifrasAttributeHelper.documento}"/>
+                                   </h:commandButton>
+                               </div>
+                           </p:column>
+                           <p:column width="20%" styleClass="panel-principal">
+                               <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;" onclick="PF('confirmarELiminarArchivoWidget').show();" 
+                               		process="@this">
+                               		<f:setPropertyActionListener value="#{documento}"
+                                       	target="#{cifrasManagedBean.cifrasAttributeHelper.documentoSeleccionado}"/>               
+							</p:commandLink>
+                           </p:column>
+                       </p:dataTable>                    
+            	</p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column>
+           			<h:outputText value="#{msj['label.cifras.detalle.observaciones']}:"/>
+           		</p:column>
+           		<p:column colspan="3">
+                    <p:inputTextarea id="observacionesVirtuales" rows="10" cols="50" value="#{cifrasManagedBean.cifrasAttributeHelper.observaciones}" maxlength="400" immediate="true"/>
+                    <input type="hidden" id="observacionesVirtualesHidden" value="#{cifrasManagedBean.cifrasAttributeHelper.observaciones}"/>
+                </p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="4">
+           			<p:commandButton value="#{msj['label.cifras.detalle.agregar']}" onclick="PF('confirmarAgregarCifraWidget').show();" 
+           				oncomplete="PF('tablaCifrasWidget1').unselectAllRows();" rendered="#{!cifrasManagedBean.cifrasAttributeHelper.esActualizacion}"/>
+                </p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="4">
+           			 <p:dataTable id="tablaCifras1"
+                                    value="#{cifrasManagedBean.listaEncabezadoCifras}" 
+                                    var="cifra"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                    selection="#{cifrasManagedBean.encabezadoCifraSeleccionada}" rowKey="#{cifra}"
+									widgetVar="tablaCifrasWidget1"
+									rendered="#{!cifrasManagedBean.cifrasAttributeHelper.esActualizacion}">
+                           <p:ajax event="rowSelectRadio" listener="#{cifrasManagedBean.onRowSelect}" 
+                           			update=":formCifras:acordeonCifras:panelImpuestos1" process="@this"/>
+                        	<f:facet name="header">
+                           	<h:outputText value="#{msj['label.cifras.resumen.titulo']}"/>
+                           </f:facet>   
+                           <p:column selectionMode="single" style="text-align:center"/>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.resumen.cifras']}" width="35%" >
+                           		<h:outputText value="#{cifra.tipoCifra.descripcion}"/>
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.resumen.historico']}" width="10%">
+                               <p:commandLink value="#{msj['btn.historico']}" style="color:blue;" oncomplete="PF('cifraHistoricoPanelWidget').show();"
+                               		process="@this" action="#{cifrasManagedBean.obtenerHistoricoEncabezado}" update=":formCifras:tablaCifrasHistorico">
+                               		<f:setPropertyActionListener value="#{cifra}"
+                                       	target="#{cifrasManagedBean.encabezadoCifraSeleccionada}"/>
+                               </p:commandLink>                             
+                           </p:column>
+                           <p:column width="15%" styleClass="panel-principal">
+                               <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;" onclick="PF('confirmarEliminarCifraWidget').show();"
+                               		process="@this">
+                               		<f:setPropertyActionListener value="#{cifra}"
+                                       	target="#{cifrasManagedBean.encabezadoCifraSeleccionada}"/>
+                               </p:commandLink>            							
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.resumen.total']}" width="20%" style="text-align:right">
+                               $<h:outputText value="#{cifra.total}">
+                               		 <f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+                               </h:outputText>
+                           </p:column> 
+                           <p:columnGroup type="footer">
+				               <p:row>
+						            <p:column style="text-align:right" footerText="Cifras Totales:"
+						            	colspan="4"/>
+						            <p:column style="text-align:right">
+						            	<f:facet name="footer">	
+							                $<h:outputText value="#{cifrasManagedBean.totalMontoCifras}" >
+							                    <f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+							                </h:outputText>
+							            </f:facet>
+						            </p:column>
+					            </p:row>
+				            </p:columnGroup>      
+                        </p:dataTable>
+                </p:column>
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="4">
+           			 <p:panel id="panelImpuestos1" style="width:100% !important;border-style: none !important">
+           			 <p:dataTable id="tablaImpuestos1"
+                                    value="#{cifrasManagedBean.impuestosSeleccionados}" 
+                                    var="impuesto"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                    rowKey="#{impuesto}"
+                                    rendered="#{cifrasManagedBean.cifrasAttributeHelper.tablaImpuestosVisible}">                               
+                        	<f:facet name="header">
+                           	<h:outputText value="#{msj['titulo.cifras.tabla.impuestos.titulo']}"/>
+                           </f:facet>                              
+                           <p:column headerText="#{msj['titulo.cifras.tabla.impuestos.impuesto']}" width="18%">
+                           		<h:outputText value="#{impuesto.impuestoConcepto.impuesto.descripcion}"/>
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.impuestos.concepto']}" width="17%" >
+                           		<h:outputText value="#{impuesto.impuestoConcepto.concepto.descripcion}"/>
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.impuestos.antecedente']}" width="13%" >
+                           		<h:outputText value="#{impuesto.derivaAntecedente == 1 ? 'SI' : 'NO'}"/>
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.impuestos.fecha.pago']}" width="10%">
+                               <h:outputText value="#{impuesto.fechaPago}">
+                               		<f:convertDateTime pattern="dd/MM/yyyy"/>
+                               </h:outputText>
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.impuestos.detalle']}" width="12%" >
+                           		<p:commandLink value="Detalle" style="color:blue;" action="#{cifrasManagedBean.mostrarDetalle}" 
+                           		process="@this" immediate="true" oncomplete="PF('detalleImpuestoPanelWidget').show();" 
+                           			update=":formCifras:detalleImpuestoPanel :formCifras:tablaDocumentosDetalle">
+                               		<f:setPropertyActionListener value="#{impuesto}" 
+                                        	target="#{cifrasManagedBean.impuestoSeleccionado}"/>
+								</p:commandLink>                                        	 
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.impuestos.total']}" width="15%" style="text-align:right">
+                               $<h:outputText value="#{impuesto.total}">
+                               		<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+                               </h:outputText>
+                           </p:column> 
+                           <p:column style="width:15%">
+                                <div align="center">
+                                    <p:commandButton value="#{msj['label.modificar']}" action="#{cifrasManagedBean.cargarDatosModificar}" 
+                                    	update="@form" process="@this" immediate="true" oncomplete="changeValueObservacionesVirtuales();">
+                                        <f:setPropertyActionListener value="#{impuesto}" 
+                                        	target="#{cifrasManagedBean.impuestoSeleccionado}"/>
+                                    </p:commandButton>                                     
+                                   	<p:commandButton value="#{msj['label.eliminar']}" onclick="PF('confirmarEliminarImpuestoWidget').show();"
+                                   		process="@this" immediate="true">
+                                        <f:setPropertyActionListener value="#{impuesto}" 
+                                        	target="#{cifrasManagedBean.impuestoSeleccionado}"/>
+                                    </p:commandButton>
+                                </div>
+                           </p:column>        
+                        </p:dataTable>
+                        </p:panel>
+                </p:column>                                
+           	</p:row>
+           	<p:row>
+           		<p:column colspan="4">           			
+           			<p:messages id="msgGuardarTxt1" showDetail="false" globalOnly="false" for="msgGuardar"/>
+           		</p:column>
+           	</p:row>
+           	</p:panelGrid>
+           	<p:panelGrid styleClass="noBorders"> 
+	           	<p:row>
+	           		<p:column>              			        			
+
+	           		</p:column>
+	           		<p:column> 
+	           			<p:commandButton value="#{msj['btn.actualizar']}" onclick="PF('confirmarActualizarCifraWidget').show();"
+	           				rendered="#{cifrasManagedBean.cifrasAttributeHelper.esActualizacion}"/>
+	           		</p:column>
+	           		<p:column> 
+						<p:commandButton value="#{msj['label.confirm.cancelar']}" actionListener="#{cifrasManagedBean.cancelarActualizacion}"
+	           				rendered="#{cifrasManagedBean.cifrasAttributeHelper.esActualizacion}" update="@form" process="@this" immediate="true"/>                  						
+	                </p:column>
+	           	</p:row>
+			</p:panelGrid>
+           </p:panel>                    
+    </html>
+</f:view>

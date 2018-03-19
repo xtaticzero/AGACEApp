@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{validarProcedenciaInsumoManagedBean.init}"/>
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formOrdenPorValidar" styleClass="panel-principal">
+            
+                <div align="right" style="width:836px"></div>
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+            
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+            
+                <p:panel id="pannelOrdenPorValidar" header="Consultar y Validar Procedencia de Insumo"
+                         styleClass="panel-interno">
+                    <p:ajaxStatus onstart="PF('statusDialogSeguimiento').show();"
+                                  onsuccess="PF('statusDialogSeguimiento').hide();"/>
+                    <p:dialog modal="true" widgetVar="statusDialogSeguimiento" header="#{msj['titulo.panel.espere']}"
+                              draggable="false" closable="false" resizable="false">
+                        <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                    </p:dialog>
+                    <br/>
+                    <h:outputLabel value="Insumos por Analizar." style="font-weight:bold"/>
+                    <br/>
+                    <br/>
+                    <p:dataTable id="tablaInsumos" var="propuesta" value="#{validarProcedenciaInsumoManagedBean.listaPropuesta}"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <p:column headerText="Detalle">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="Núm. de Oficio" filterBy="#{propuesta.folio}">
+                            <p:commandLink style="color:blue;" action="#{validarProcedenciaInsumoManagedBean.cargaDocumentos}"
+                                           value="#{propuesta.folio}">
+                                <f:setPropertyActionListener value="${propuesta}"
+                                                             target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="RFC del Contribuyente" filterBy="#{propuesta.fecetContribuyente.rfc}">
+                            <p:row>
+                                <h:outputText value="#{propuesta.fecetContribuyente.rfc}"/>
+                            </p:row>
+                        </p:column>
+                        <p:column headerText="Prioridad">
+                         <p:graphicImage rendered="#{propuesta.prioridad == true}" value="/resources/images/bandera.png"
+                                            style="border:0"/>
+                        </p:column>
+                        <p:column headerText="Sector" filterBy="#{propuesta.fececSector.descripcion}">
+                            <h:outputText value="#{propuesta.fececSector.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Estatus" filterBy="#{propuesta.fececEstatus.descripcion}">
+                            <h:outputText value="#{propuesta.fececEstatus.descripcion}"/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:300px;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="Nombre / Razón Social:"/>
+                                <h:outputText value="#{propuesta.fecetContribuyente.nombre}"/>
+                                <h:outputText value="Subprograma:"/>
+                                <h:outputText value="#{propuesta.fececSubprograma.descripcion}"/>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" 
+        xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        
+        <h:head>
+            <meta http-equiv="X-UA-Compatible" content="IE=8" />            
+        </h:head>
+        <h:body>
+            <h:form id="formFirmanteSuplente" styleClass="panel-principal">
+                    <p:messages id="msgExitoGuardarValidar"
+                                styleClass="msgExitoGuardarValidar" 
+                                style="width: 400px;"
+                                showDetail="false"
+                                globalOnly="true" 
+                                closable="true" />
+                    <p:panel style="border:none;">           
+                        <p:outputLabel value="Seleccione el perfil con el que desea ingresar:" /><br />
+                        <p:selectOneMenu value="#{firmanteSuplente.perfilSeleccionado}" style="width:150px;" >
+                            <f:selectItem itemValue="0" itemLabel="-- Seleccione --" />
+                            <f:selectItems value="#{firmanteSuplente.perfiles}" var="perfil" itemValue="#{perfil.id}" itemLabel="#{perfil.descripcion}" />
+                            <p:ajax event="change" listener="#{firmanteSuplente.handleChange}" process="@this" update=":formFirmanteSuplente:panelRFC :formFirmanteSuplente:msgExitoGuardarValidar @this" />
+                        </p:selectOneMenu>
+                    </p:panel>
+                    
+                    <p:panel id="panelRFC" style="border:none;">
+                        <p:outputLabel value="Seleccione el RFC del firmante:" rendered="#{firmanteSuplente.mostrarRfc}" /><br />
+                        <p:selectOneMenu value="#{firmanteSuplente.suplenteSeleccionado}" rendered="#{firmanteSuplente.mostrarRfc}" >
+                            <f:selectItem itemValue="0" itemLabel="-- Seleccione --" />
+                            <f:selectItems value="#{firmanteSuplente.suplentes}" var="suplente" itemValue="#{suplente.idFirmanteASuplir}" itemLabel="#{suplente.rfcSuplente}" />
+                            <p:ajax event="change" listener="#{firmanteSuplente.handleChangeSuplente}" process="@this" update=":formFirmanteSuplente:msgExitoGuardarValidar @this"/>
+                        </p:selectOneMenu>
+                    </p:panel>
+                    <br />
+                    <p:commandButton value="#{msj['btn.continuar']}" action="#{firmanteSuplente.firmarDocumentos}" update="msgExitoGuardarValidar" >
+                        <f:param name="suplente" value="#{firmanteSuplente.suplenteSeleccionado}" />
+                    </p:commandButton>
+            </h:form>
+        </h:body>
+    </html>
+</f:view>

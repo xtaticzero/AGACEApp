@@ -1,0 +1,2350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+    <h:panelGrid id="pnlTabs" style="width:100% !important; height:100% !important;"
+    		rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabsOficios or documentacionOrdenMB.attributeHelper.visualizarTabCompulsas}">
+    <f:facet name="header">
+        #{msj[&apos;titulo.tabla.generacion.oficio&apos;]}
+    </f:facet>
+    
+    <p:spacer width="60" height="10"/> 
+    <p:tabView id="panelTabsDocumentos" effect="fade" effectDuration="normal" 
+    	binding="#{documentacionOrdenMB.attributeHelper.tabViewOficios}">
+    	<p:ajax event="tabChange" listener="#{documentacionOrdenMB.actualizarFieldset}"/>
+    	
+    	    
+        <p:tab id="tabSegundoRequerimiento" title="#{msj['tab.segundo.requerimiento']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabSegundoRequerimiento }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.segundo.requerimiento']} *">
+                    <h:panelGrid id="panelOficioSegundoRequerimiento" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.segundo.requerimiento']} *:"/>
+                        <p:fileUpload id="fulSegundoRequerimiento"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioSegundoRequerimiento}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioSegundoRequerimiento :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');" process="@this"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoSegundoRequerimiento" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioSegundoRequerimiento"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfSegundoRequerimiento}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarSegundoRequerimiento}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosSegundoRequerimiento" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosSegundoRequerimiento"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosSegundoRequerimiento}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioSegundoRequerimiento :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoSegundoRequerimiento" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioSegundoRequerimiento"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosSegundoRequerimiento}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioSegundoRequerimiento}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfSegReq').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionSegundoRequerimiento}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>    
+                </p:tab>
+                <p:tab title="#{msj['label.oficio.imposicion.multa']}">
+                    <h:panelGrid id="panelOficioMultaSegundoRequerimiento" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.imposicion.multa']} *:    "/>
+                        <p:fileUpload id="fulOficioMultaSegundoRequerimiento"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioMulta}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioMultaSegundoRequerimiento :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoMultaSegundoRequerimiento" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioMultaSegundoRequerimiento"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfMulta}" var="oficio" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarMulta}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosMultaSegundoRequerimiento" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosMultaSegundoRequerimiento"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosMulta}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioMultaSegundoRequerimiento :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoMultaSegundoRequerimiento" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioMultaSegundoRequerimiento"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosMulta}" var="anexo" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioMulta}" ajax="true"
+                                               immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfSegReq').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionMulta}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>                
+            </p:tabView>
+            <p:spacer width="50px" height="20px"/>
+            
+            <p:fieldset id ="fltSegundoRequerimeiento" widgetVar="fltSegundoRequerimeiento" legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" 
+            			toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" 
+				update=" :formDocumentacionOrden:panelTabsDocumentos:fltSegundoRequerimeiento" />																													
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				             
+            </p:fieldset>
+        </p:tab>
+        <p:tab id="tabConclusion" title="#{msj['tab.conclusion.revision.escrito.imposibilidad.material.desahogo']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabConclusionRevision }"
+               >
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.conclusion.revision.escrito.imposibilidad.material.desahogo']} *">
+                    <h:panelGrid id="panelOficioConclusion" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.conclusion.revision.escrito.imposibilidad.material.desahogo']} *:"/>
+                        <p:fileUpload id="fulOficioConclusion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioConclusionRevision}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioConclusion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoConclusion" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioConclusion"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfConclusionRevision}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarConclusionRevision}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosConclusion" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosConclusion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosConclusionRevision}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioConclusion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoConclusion" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioConclusion"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosConclusionRevision}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioConclusionRevision}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfConclusion').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionConclusionRevision}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="#{msj['label.oficio.cancelacion.orden']} *">
+                    <h:panelGrid id="panelOficioCancelacionSegundoRequerimiento" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.cancelacion.orden']} *:"/>
+                        <p:fileUpload id="fulOficioCancelacionSegundoRequerimiento"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioCancelacionOrden}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioCancelacionSegundoRequerimiento :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoCancelacionSegundoRequerimiento" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioCancelacionSegundoRequerimiento"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfCancelacionOrden}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarCancelacionOrden}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosCancelacionSegundoRequerimiento" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosCancelacionSegundoRequerimiento"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosCancelacionOrden}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioCancelacionSegundoRequerimiento :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoCancelacionSegundoRequerimiento" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioCancelacionSegundoRequerimiento"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosCancelacionOrden}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioCancelacionOrden}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfConclusion').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionCancelacionOrden}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="#{msj['label.oficio.multa']}">
+                    <h:panelGrid id="panelOficioMultaConclusion" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.multa']} *:                                 "/>
+                        <p:fileUpload id="fulOficioMultaConclusion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioMulta}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioMultaConclusion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoMultaConclusion" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioMultaConclusion"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfMulta}" var="oficio" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarMulta}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosMultaConclusion" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosMultaConclusion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosMulta}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioMultaConclusion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoMultaConclusion" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioMultaConclusion"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosMulta}" var="anexo" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioMulta}" ajax="true"
+                                               immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfConclusion').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionMulta}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="#{msj['label.oficio.suspencion.padron.importadores.exportadores']}">
+                    <h:panelGrid id="panelOficioSuspencionConclusion" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.suspencion.padron.importadores.exportadores']} *:"/>
+                        <p:fileUpload id="fulOficioSuspencionConclusion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioBajaPadron}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioSuspencionConclusion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoSuspencionConclusion" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioSuspencionConclusion"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfBajaPadron}" var="oficio" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarBajaPadron}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosSuspencionConclusion" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosSuspencionConclusion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosBajaPadron}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioSuspencionConclusion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoSuspencionConclusion" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioSuspencionConclusion"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosBajaPadron}" var="anexo" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioBajaPadron}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfConclusion').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionBajaPadron}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+     
+        	<p:spacer width="50px" height="20px"/>
+            <p:fieldset id="fltConclusionRevision"  widgetVar="fltConclusionRevision" legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=":formDocumentacionOrden:panelTabsDocumentos:fltConclusionRevision" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>
+            </p:fieldset>
+         
+        </p:tab>
+        <p:tab id="tabCompulsas" title="Compulsa" rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabCompulsas}">
+        
+            <h:panelGrid id="panelSeleccionCompulsa" columns="2" cellpadding="10">
+                <p:selectOneRadio id="rdoCompulsas" value="#{compulsasManagedBean.tipoCompulsa}"
+                                  style="font-weight:bold;" immediate="true">
+                     <f:selectItems itemLabel="#{compulsa.nombre}" itemValue="#{compulsa.descripcion}"  var="compulsa" value="#{documentacionOrdenMB.attributeHelper.listCompulsas}"
+                      />                    
+                    <p:ajax event="change"/>
+                </p:selectOneRadio>
+                <p:commandButton id="btnConfigurarCompulsaTEST" value="Continuar" ajax="true"
+                                 action="#{compulsasManagedBean.redireccionaCompulsaSeleccion}"  immediate="true"
+                                 update=":formDocumentacionOrden:msgExitoGuardarDocs"
+                                 oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+            </h:panelGrid>
+        </p:tab>
+
+        <p:tab id="tabRequerimientoReincidencia" title="#{msj['tab.requerimiento.reincidencia']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabRequerimientoReincidencia }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.requerimiento.reincidencia']} *">
+                    <h:panelGrid id="panelOficioRequerimientoReincidencia" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.requerimiento.reincidencia']} *:"/>
+                        <p:fileUpload id="fulOficioRequerimientoReincidencia"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioRequerimientoReincidencia}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioRequerimientoReincidencia :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoRequerimientoReincidencia" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioRequerimientoReincidencia"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfRequerimientoReincidencia}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarRequerimientoReincidencia}"
+                                               ajax="true" immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosRequerimientoReincidencia" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosRequerimientoReincidencia"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosRequerimientoReincidencia}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioRequerimientoReincidencia :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoRequerimientoReincidencia" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioRequerimientoReincidencia"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosRequerimientoReincidencia}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoRequerimientoReincidencia}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfReqReincidencia').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionRequerimientoReincidencia}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="#{msj['label.oficio.imposicion.multa.reincidencia']}">
+                    <h:panelGrid id="panelOficioMultaRequerimientoReincidencia" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.imposicion.multa.reincidencia']} *:"/>
+                        <p:fileUpload id="fulOficioMultaRequerimientoReincidencia"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioMulta}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioMultaRequerimientoReincidencia :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoMultaRequerimientoReincidencia" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioMultaRequerimientoReincidencia"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfMulta}" var="oficio" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarMulta}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosMultaRequerimientoReincidencia" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosMultaRequerimientoReincidencia"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosMulta}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioMultaRequerimientoReincidencia :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoMultaRequerimientoReincidencia" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioMultaRequerimientoReincidencia"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosMulta}" var="anexo" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioMulta}" ajax="true"
+                                               immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfReqReincidencia').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionMulta}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+            <p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltRequerimientoReincidencia" widgetVar="fltRequerimientoReincidencia" legend="#{msj['fieldeset.papeles.trabajo']}" 
+	        			toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltRequerimientoReincidencia" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        
+        </p:tab>
+        <p:tab id="tabConclusionSinObservaciones" title="#{msj['tab.conclusion.sin.observaciones']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabConclusionSinObservaciones }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.conclusion.sin.observaciones']} *">
+                    <h:panelGrid id="panelOficioConclusionSinObserv" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.conclusion.sin.observaciones']} *:"/>
+                        <p:fileUpload id="fulOficioConclusionSinObserv"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioSinObservaciones}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioConclusionSinObserv :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoConclusionSinObserv" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioConclusionSinObserv"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfSinObservaciones}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarSinObservaciones}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosConclusionSinObserv" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosConclusionSinObserv"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosSinObservaciones}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioConclusionSinObserv :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoConclusionSinObserv" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioConclusionSinObserv"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosSinObservaciones}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoSinObservaciones}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfSinObserv').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionSinObservaciones}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+            <p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltConclusionSinObservaciones" widgetVar="fltConclusionSinObservaciones" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltConclusionSinObservaciones" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        </p:tab>
+        <p:tab id="tabAvisoCircunstancial" title="#{msj['tab.aviso.circunstancial']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabAvisoCircunstancial }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.aviso.circunstancial']} *">
+                    <h:panelGrid id="panelOficioAvisoCircunstancial" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.aviso.circunstancial']} *:"/>
+                        <p:fileUpload id="fulOficioAvisoCircunstancial"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioAvisoCircunstancial}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioAvisoCircunstancial :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoAvisoCircunstancial" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioAvisoCircunstancial"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfAvisoCircunstancial}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarAvisoCircunstancial}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosAvisoCircunstancial" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosAvisoCircunstancial"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosAvisoCircunstancial}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioAvisoCircunstancial :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoAvisoCircunstancial" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioAvisoCircunstancial"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosAvisoCircunstancial}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoAvisoCircunstancial}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfAvisoCircunstancial').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionAvisoCircunstancial}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+            <p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltAvisoCircunstancial" widgetVar="fltAvisoCircunstancial" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltAvisoCircunstancial" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        </p:tab>
+        <p:tab id="tabObservacionesRevisionEscritorio" title="#{msj['tab.observaciones.revision.escritorio']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabObservacionesRevisionEscritorio }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.observaciones.revision.escritorio']} *">
+                    <h:panelGrid id="panelOficioObservaciones" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.observaciones.revision.escritorio']} *:"/>
+                        <p:fileUpload id="fulOficioObservaciones"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioConObservaciones}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioObservaciones :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoObservaciones" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioObservaciones"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfConObservaciones}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarConObservaciones}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosObservaciones" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosObservaciones"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosConObservaciones}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioObservaciones :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoObservaciones" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioObservaciones"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosConObservaciones}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoConObservaciones}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfConObserv').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionConObservaciones}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+
+            <p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltObservacionesRevisionEscritorio" widgetVar="fltObservacionesRevisionEscritorio" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltObservacionesRevisionEscritorio" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+
+        </p:tab>
+        <p:tab id="tabResolucionDefinitiva" title="#{msj['tab.resolucion.definitiva']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabResolucionDefinitiva }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.resolucion.definitiva']}*">
+                    <h:panelGrid id="panelOficioResolucionDefinitiva" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.resolucion.definitiva']} *:"/>
+                        <p:fileUpload id="fulOficioResolucionDefinitiva"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioResolucionDefinitiva}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioResolucionDefinitiva :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoResolucionDefinitiva" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioResolucionDefinitiva"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfResolucionDefinitiva}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarResolucionDefinitiva}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosResolucionDefinitiva" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosResolucionDefinitiva"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosResolucionDefinitiva}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioResolucionDefinitiva :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoResolucionDefinitiva" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioResolucionDefinitiva"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosResolucionDefinitiva}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioResolucionDefinitiva}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton id="btnGuardarResolDef" value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfResolDef').show();" style="float:right;width:80px;"
+                                             ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionResolucionDefinitiva}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+        	<p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltResolucionDefinitiva" widgetVar="fltResolucionDefinitiva" 
+	        	legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltResolucionDefinitiva" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        </p:tab>
+        <p:tab id="tabPruebasDesahogo" title="#{msj['tab.pruebas.desahogo']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabPruebasDesahogo}">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.pruebas.desahogo']}*">
+                    <h:panelGrid id="panelOficioPruebasDesahogo" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.pruebas.desahogo']} *:"/>
+                        <p:fileUpload id="fulOficioPruebasDesahogo"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioPruebasDesahogo}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioPruebasDesahogo :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoPruebasDesahogo" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioPruebasDesahogo"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfPruebasDesahogo}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarPruebasDesahogo}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosPruebasDesahogo" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosPruebasDesahogo"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosPruebasDesahogo}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioPruebasDesahogo :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoPruebasDesahogo" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioPruebasDesahogo"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosPruebasDesahogo}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioPruebasDesahogo}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfPruebasDesahogo').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionPruebasDesahogo}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="#{msj['label.oficio.aviso.contribuyente']}">
+                    <h:panelGrid id="panelOficioAvisoContribuyentePruebasDesahogo" columns="2" cellpadding="5"
+                                 border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.aviso.contribuyente']} *:"/>
+                        <p:fileUpload id="fulOficioAvisoContribuyentePruebasDesahogo"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioAvisoContribuyente}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioAvisoContribuyentePruebasDesahogo :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoAvisoContribuyentePruebasDesahogo" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioAvisoContribuyentePruebasDesahogo"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfAvisoContribuyente}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarAvisoContribuyente}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosAvisoContribuyentePruebasDesahogo" columns="2" cellpadding="5"
+                                 border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosAvisoContribuyentePruebasDesahogo"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosAvisoContribuyente}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioAvisoContribuyentePruebasDesahogo :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoAvisoContribuyentePruebasDesahogo" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioAvisoContribuyentePruebasDesahogo"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosAvisoContribuyente}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioAvisoContribuyente}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfPruebasDesahogo').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionAvisoContribuyente}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+            <p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltPruebasDesahogo" widgetVar="fltPruebasDesahogo" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltPruebasDesahogo" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        </p:tab>
+        <p:tab id="tabPruebasPericiales" title="#{msj['tab.pruebas.periciales']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabPruebasPericiales }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.pruebas.periciales']}*">
+                    <h:panelGrid id="panelOficioPruebasPericiales" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.pruebas.periciales']} *:"/>
+                        <p:fileUpload id="fulOficioPruebasPericiales"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioPruebasPericiales}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioPruebasPericiales :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoPruebasPericiales" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioPruebasPericiales"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfPruebasPericiales}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarPruebasPericiales}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosPruebasPericiales" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosPruebasPericiales"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosPruebasPericiales}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioPruebasPericiales :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoPruebasPericiales" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioPruebasPericiales"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosPruebasPericiales}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioPruebasPericiales}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfPruebasPericiales').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionPruebasPericiales}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+        <!--          <p:tab title="#{msj['label.oficio.aviso.contribuyente']}">
+                    <h:panelGrid id="panelOficioAvisoContribuyentePruebasPericiales" columns="2" cellpadding="5"
+                                 border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.aviso.contribuyente']} *:"/>
+                        <p:fileUpload id="fulOficioAvisoContribuyentePruebasPericiales"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioAvisoContribuyente}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioAvisoContribuyentePruebasPericiales :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoAvisoContribuyentePruebasPericiales" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioAvisoContribuyentePruebasPericiales"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfAvisoContribuyente}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarAvisoContribuyente}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosAvisoContribuyentePruebasPericiales" columns="2" cellpadding="5"
+                                 border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosAvisoContribuyentePruebasPericiales"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosAvisoContribuyente}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioAvisoContribuyentePruebasPericiales :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoAvisoContribuyentePruebasPericiales" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioAvisoContribuyentePruebasPericiales"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosAvisoContribuyente}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioAvisoContribuyente}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfPruebasPericiales').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionAvisoContribuyente}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab> -->
+            </p:tabView>
+        
+        	<p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltPruebasPericiales" widgetVar="fltPruebasPericiales" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltPruebasPericiales" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        </p:tab>
+        <!-- Aquí comienza el cambio DOSR -->
+        <p:tab id="tab2daUnicaCartaInvitacion" title="#{msj['tab.2da.unica.carta.invitacion']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTab2aUnicaCartaInvitacion }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.2da.unica.carta.invitacion']} *:">
+                    <h:panelGrid id="panelOficio2daUnicaCartaInvitacion" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.2da.unica.carta.invitacion']}*:"/>
+                        <p:fileUpload id="fulOficio2daUnicaCartaInvitacion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficio2aCartaInvitacion}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumento2daUnicaCartaInvitacion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumento2daUnicaCartaInvitacion" cellpadding="5">
+                        <p:dataTable id="tablaDocumento2daUnicaCartaInvitacion"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOf2aCartaInv}" var="oficio" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">                                
+                                <h:outputText value="#{oficio.nombreArchivo}" title="#{oficio.nombreArchivo}" />
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiar2aCartaInvitacion}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexos2daUnicaCartaInvitacion" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexos2daUnicaCartaInvitacion"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexos2aCartaInvitacion}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumento2daUnicaCartaInvitacion :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumento2daUnicaCartaInvitacion" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumento2daUnicaCartaInvitacion"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexos2aCartaInv}" var="anexo" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">                                
+                                <h:outputText value="#{anexo.nombreArchivo}" title="#{anexo.nombreArchivo}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}" 
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpierDocumenoCartaInvitacion}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOf2aCartaInv').show();"
+                                             style="float:right;width:80px;"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacion2aCartaInvitacion}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        	
+        	<p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="flt2daUnicaCartaInvitacion" widgetVar="flt2daUnicaCartaInvitacion" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:flt2daUnicaCartaInvitacion" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        
+        </p:tab>
+        <!-- Aquí finaliza el cambio DOSR -->
+        <p:tab id="tab2daCartaInvitacionMasiva" title="#{msj['tab.2da.carta.invitacion.masiva']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTab2aCartaInvitacionMasiva }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.2da.carta.invitacion.masiva']} *">
+                    <h:panelGrid id="panelOficio2daCartaInvitacionMasiva" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.2da.carta.invitacion.masiva']}*:"/>
+                        <p:fileUpload id="fulOficio2daCartaInvitacionMasiva"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficio2aCartaInvitacionMasiva}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumento2daCartaInvitacionMasiva :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumento2daCartaInvitacionMasiva" cellpadding="5">
+                        <p:dataTable id="tablaDocumento2daCartaInvitacionMasiva"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOf2aCartaInvitacionMasiva}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiar2aCartaInvitacionMasiva}"
+                                               ajax="true" immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexos2daCartaInvitacionMasiva" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexos2daCartaInvitacionMasiva"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexos2aCartaInvitacionMasiva}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumento2daCartaInvitacionMasiva :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumento2daCartaInvitacionMasiva" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumento2daCartaInvitacionMasiva"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexos2aCartaInvitacionMasiva}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficio2daCartaInvitacionMasiva}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOf2aCartaInvMasiva').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacion2aCartaInvitacionMasiva}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+          	<p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="flt2daCartaInvitacionMasiva" widgetVar="flt2daCartaInvitacionMasiva" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:flt2daCartaInvitacionMasiva" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        
+        </p:tab>
+        <p:tab id="tabConclusionMCAUCA" title="#{msj['tab.conclusion']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabConclusionUCAMCA }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.conclusion']} *">
+                    <h:panelGrid id="panelOficioConclusionMCAUCA" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.conclusion']} *:                 "/>
+                        <p:fileUpload id="fulOficioConclusionMCAUCA"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioConclusionUCAMCA}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioConclusionMCAUCA :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoConclusionMCAUCA" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioConclusionMCAUCA"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfConclusionUCAMCA}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarConclusionUCAMCA}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosConclusionMCAUCA" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosConclusionMCAUCA"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosConclusionUCAMCA}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioConclusionMCAUCA :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoConclusionMCAUCA" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioConclusionMCAUCA"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosConclusionUCAMCA}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioConclusionUCAMCA}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfConclusionUCAMCA').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionConclusionUCAMCA}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+        	<p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltConclusionMCAUCA" widgetVar="fltConclusionMCAUCA" 
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltConclusionMCAUCA" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        
+        </p:tab>
+        <p:tab id="tabCambioMetodoUCAMCA" title="#{msj['tab.cambio.metodo']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabCambioMetodoUCAMCA }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.cambio.metodo']} *">
+                    <h:panelGrid id="panelOficioCambioMetodo" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.metodo']} *:       "/>
+                        <p:selectOneMenu id="cmbCambioMetodo"
+                                         value="#{documentacionOrdenMB.dtoHelper.fecetCambioMetodo.idMetodoNuevo}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.metodo']}" itemValue="-1"/>
+                            <f:selectItems value="#{documentacionOrdenMB.lstHelper.listaMetodosCambioMetodo}" var="lista"
+                                           itemLabel="#{lista.idMetodo} - #{lista.nombre}"
+                                           itemValue="#{lista.idMetodo}"/>
+                            <p:ajax event="change"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="#{msj['label.oficio.cambio.metodo']} *:       "/>
+                        <p:fileUpload id="fulOficioCambioMetodo"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioCambioMetodoUCAMCA}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioCambioMetodoUCAMCA :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDocumentoCambioMetodoUCAMCA" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioCambioMetodoUCAMCA"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfCambioMetodoUCAMCA}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarCambioMetodoUCAMCA}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosCambioMetodoUCAMCA" columns="2" cellpadding="5" border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosCambioMetodoUCAMCA"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosCambioMetodoUCAMCA}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioCambioMetodoUCAMCA :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoCambioMetodoUCAMCA" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioCambioMetodoUCAMCA"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosCambioMetodoUCAMCA}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioCambioMetodoUCAMCA}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfCambioMetodoUCAMCA').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionCambioMetodoUCAMCA}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        
+           	<p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltCambioMetodoUCAMCA" widgetVar="fltCambioMetodoUCAMCA"
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltCambioMetodoUCAMCA" />	
+				<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>				            
+            </p:fieldset>
+        
+        </p:tab>
+        <p:tab id="tabOficiosApremio" title="#{msj['tab.medidas.apremio']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabMedidasApremio }">
+            <p:tabView orientation="left">
+                <p:tab title="#{msj['label.oficio.medidas.apremio']} *">                	
+                	<h:outputText value="#{msj['selecMenu.medidas.apremio']} *:"/>
+                	<p:selectOneMenu id="oneMenuMedidas"
+                                         value="#{documentacionOrdenMB.attributeHelper.tipoMedidaApremio}"
+                                         style="width:410px;" >
+                       <f:selectItem itemLabel="#{msj['combo.item.selecciona.medida.apremio']}" itemValue="-1"/>
+                       <f:selectItems value="#{documentacionOrdenMB.lstHelper.listaOficiosMedidasApremio}" var="lista"
+                                      itemLabel="#{lista.nombre}"
+                                      itemValue="#{lista.idTipoOficio}"/>     
+                       
+                    <p:ajax  listener="#{documentacionOrdenMB.cerrarFieldsetMedidaApremio}"/> 
+                    </p:selectOneMenu>
+                    <h:panelGrid id="panelOficioConclusionSinObserv" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.oficio.medidas.apremio']} *:"/>
+                        <p:fileUpload id="fulOficioMedidasApremio"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioMedidasApremio}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentoOficioMedidaApremio :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelOficioMedidaApremio" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioMedidaApremio"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfMedidasApremio}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarMedidasApremio}" ajax="true"
+                                               immediate="true" update="@form"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosMedidasApremio" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                         "/>
+                        <p:fileUpload id="fulAnexosConclusionSinObservMedidaApremio"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosMedidasDeApremio}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoMedidasApremio :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelAnexosDocumentoMedidasApremio" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoMedidasApremio"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosMedidasApremio}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoMedidasApremio}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfMedidasApremio').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionMedidasApremio}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:tab>
+            </p:tabView>
+        	
+        	<p:spacer width="50px" height="20px"/>
+	        <p:fieldset id ="fltMedidaApremio" widgetVar="fltMedidaApremio"
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+						<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltMedidaApremio" />							
+						<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>						            			            
+            </p:fieldset>
+        
+        </p:tab>
+        
+        <p:tab id="tabOficioMulta" title="#{msj['tab.multa']}"
+               rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabMulta }">
+            <p:tabView orientation="left">
+                <p:tab id="tabMulta" title="#{msj['lbl.tab.oficio.multa']}">
+                	<h:panelGrid id="panelOficioMultaOrden" columns="2" cellpadding="5" border="0" width="100%">
+                   		<h:outputText value="#{msj['label.oficio.multa']} *:"/>
+                   		<p:fileUpload id="fulOficioMulta"                                                  
+                        	mode="advanced" dragDropSupport="false" multiple="false"
+                            style="width:310px;" label="#{msj['btn.examinar']}"
+                            cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                            showButtons="true" auto="true" ajax="true"
+                            partialSubmit="true"
+                            update="tablaDocumentoOficioMulta :formDocumentacionOrden:msgExitoGuardarDocs"
+                            oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"                   
+                            fileUploadListener="#{documentacionOrdenMB.cargaOficioMultaOrden}"/>
+                   	</h:panelGrid>
+					<h:panelGrid id="panelDocumentoMultaOrden" cellpadding="5">
+						<p:dataTable id="tablaDocumentoOficioMulta" var="oficio"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							value="#{documentacionOrdenMB.lstOficioHelper.listaOfMultaOrden}">
+							<p:column headerText="#{msj['column.label.archivo']}"
+								width="40%">
+								<div style="width: 450px;">#{oficio.nombreArchivo}</div>
+							</p:column>
+							<p:column headerText="#{msj['column.label.archivo']}"
+								width="40%">
+								<div align="center">
+									<h:commandButton ajax="true"
+										image="/resources/images/document.png"
+										style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+									</h:commandButton>
+								</div>
+							</p:column>
+							<p:column width="10%">
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarMultaOrden}" ajax="true"
+                                               immediate="true" update="tablaDocumentoOficioMulta ">
+                                </p:commandLink>
+                            </p:column>
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+					<h:panelGrid id="panelAnexosMultaOrden" columns="2" cellpadding="5" border="0"
+                                 width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosMulta"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosMultaOrden}" mode="advanced"
+                                      dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaAnexosDocumentoOficioMulta :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+						<h:panelGrid id="panelAnexosDocumentoMultaOrden" cellpadding="5">
+							<p:dataTable id="tablaAnexosDocumentoOficioMulta" var="anexo"
+								editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+								value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosMultaOrden}">
+								<p:column headerText="#{msj['column.label.archivo']}"
+									width="40%">
+									<div style="width: 450px;">#{anexo.nombreArchivo}</div>
+								</p:column>
+								<p:column headerText="#{msj['column.label.archivo']}"
+									width="40%">
+									<div align="center">
+										<h:commandButton ajax="true"
+											image="/resources/images/document.png"
+											style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                        target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+
+										</h:commandButton>
+									</div>
+								</p:column>
+								<p:column width="10%">
+									<p:commandLink value="#{msj['btn.eliminar']}"
+										style="color:blue;"
+										action="#{documentacionOrdenMB.eliminarAnexoOficioMultaOrden}"
+										ajax="true" immediate="true" update="@form">
+										<f:setPropertyActionListener value="#{anexo}"
+                                        	target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+									</p:commandLink>
+								</p:column>
+							</p:dataTable>
+							<h:panelGrid columns="2" style="float:right;" border="0">
+	                            <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfMulta').show();"
+	                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+	                            <p:commandButton value="#{msj['btn.limpiar']}"
+	                                             action="#{documentacionOrdenMB.limpiarDocumentacionMultaOrden}"
+	                                             style="float:right;width:80px;" ajax="true" immediate="true"
+	                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        	</h:panelGrid>
+						</h:panelGrid>
+					</p:tab>
+        	</p:tabView>
+        	
+        	<p:spacer width="50px" height="20px"/>
+	        
+	        <p:fieldset id ="fltMulta" widgetVar="fltMulta"
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+						<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltMulta" />							
+						<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>						            			            
+            </p:fieldset>
+        </p:tab>
+        
+        <p:tab title="#{msj['tab.aviso.contribuyente']}" rendered="#{documentacionOrdenMB.attributeHelper.visualizarTabAvisoContribuyente }">
+        <p:tabView orientation="left">
+                <p:tab id="tabMulta" title="#{msj['label.oficio.aviso.contribuyente']}" >
+                	<h:panelGrid id="panelOficioAvisoContribuyenteOrden" columns="2" cellpadding="5"
+                                 border="0" width="100%">
+                        <h:outputText value="#{msj['label.oficio.aviso.contribuyente']} *:"/>
+                        <p:fileUpload id="fulOficioAvisoContribuyenteOrden"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaOficioAvisoContribuyenteOrden}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+									  update="tablaDocumentoOficioAvisoContribuyenteOrden :formDocumentacionOrden:msgExitoGuardarDocs"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    
+					<h:panelGrid id="panelDocumentoAvisoContribuyenteOrden" cellpadding="5">
+                        <p:dataTable id="tablaDocumentoOficioAvisoContribuyenteOrden"
+                                     value="#{documentacionOrdenMB.lstOficioHelper.listaOfAvisoContribuyenteOrden}" var="oficio"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%">
+                                #{oficio.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="11%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.limpiarAvisoContribuyenteOrden}" ajax="true"
+                                               immediate="true" update="tablaDocumentoOficioAvisoContribuyenteOrden :formDocumentacionOrden:msgExitoGuardarDocs"></p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>                    
+                    
+                    <h:panelGrid id="panelAnexosAvisoContribuyenteOrden" columns="2" cellpadding="5"
+                                 border="0" width="100%">
+                        <h:outputText value="#{msj['label.anexos']}:                                          "/>
+                        <p:fileUpload id="fulAnexosAvisoContribuyenteOrden"
+                                      fileUploadListener="#{documentacionOrdenMB.cargaAnexosAvisoContribuyenteOrden}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:310px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="@form"
+                                      immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                    </h:panelGrid>
+                    
+                     <h:panelGrid id="panelAnexosDocumentoAvisoContribuyenteOrden" cellpadding="5">
+                        <p:dataTable id="tablaAnexosDocumentoOficioAvisoContribuyenteOrden"
+                                     value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosAvisoContribuyenteOrden}" var="anexo"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%">
+                                #{anexo.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="12%">
+                                <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                               action="#{documentacionOrdenMB.eliminarAnexoOficioAvisoContribuyenteOrden}"
+                                               ajax="true" immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{anexo}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+						<h:panelGrid columns="2" style="float:right;" border="0">
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                             onclick="PF('confirmarOfAvisoContribuyente').show();"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"/>
+                            <p:commandButton value="#{msj['btn.limpiar']}"
+                                             action="#{documentacionOrdenMB.limpiarDocumentacionAvisoContribuyenteOrden}"
+                                             style="float:right;width:80px;" ajax="true" immediate="true"
+                                             update=":formDocumentacionOrden:msgExitoGuardarDocs :formDocumentacionOrden:pnlTabs"/>
+                        </h:panelGrid>	
+                    </h:panelGrid>
+                    
+                    
+                </p:tab>
+        </p:tabView>
+
+        	<p:spacer width="50px" height="20px"/>
+	        
+	        <p:fieldset id ="fltAvisoContribuyente" widgetVar="fltAvisoContribuyente"
+	        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+						<p:ajax event="toggle" listener="#{documentacionOrdenMB.handleTogglePapelTrabajoOficio}" update=" :formDocumentacionOrden:panelTabsDocumentos:fltAvisoContribuyente" />							
+						<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoOficio.jsf"/>						            			            
+            </p:fieldset>
+
+
+        
+        </p:tab>
+        
+        
+    </p:tabView>
+                   
+    <p:messages id="messagesPapelesTrabajoOficio" showDetail="true"
+					closable="true" for="msgPapelesTrabajoOficio" />
+    <p:spacer height="20"/>
+</h:panelGrid>
+</f:view>

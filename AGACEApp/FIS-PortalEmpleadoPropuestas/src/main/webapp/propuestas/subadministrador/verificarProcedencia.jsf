@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
+xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>asignarDocElectronico</title>
+    </h:head>
+    <h:body>
+        <h:form id="formVerificar">
+            <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+            <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                      closable="false" resizable="false">
+                <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+            </p:dialog>
+                <h:panelGrid id="panelGridUn" styleClass="panel-interno">
+                    <p:panel header="#{msj['label.titulo.verificar.procedencia']}">
+                        <p:panel id="panelUn"  rendered="#{verificarProcedenciaMB.verificarProcVO.mostrarInfoProps}">
+                            <p:dataTable id="dataProp" value="#{verificarProcedenciaMB.verificarProcVO.listaPropuestas}" var="prop" emptyMessage="No se han encontrado registros."
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            paginator="true" rows="15" paginatorPosition="bottom">
+                                <f:facet name="header">
+                                    <p:outputLabel id="propTxt" value ="Propuestas por verificar"/>
+                                </f:facet>
+                                <p:column id="colId" headerText="Id de Registro" style="text-align:center;">
+                                    <p:outputLabel id="lbId" value="#{prop.idRegistro}"/>
+                                </p:column>
+                                <p:column id="colCon" headerText="RFC del Contribuyente" style="text-align:center;">
+                                    
+                                    <p:commandLink id="liCon" value="#{prop.rfcContribuyente}" actionListener="#{verificarProcedenciaMB.validarContribuyente}" update="@form">
+                                        <f:param id="paramUn" name="idRegistro" value="#{prop.idRegistro}"/>
+                                    </p:commandLink>
+                                </p:column>
+                                <p:column id="colPri" headerText="Prioridad Sugerida" style="text-align:center;">
+                                      <p:outputLabel id="liPro" value="#{prop.prioridad}"/>
+                                                    
+                                </p:column>
+                                <p:column id="colMet" headerText="Método" style="text-align:center;">
+                                    <p:outputLabel id="lbMet" value="#{prop.metodo}"/>
+                                </p:column>
+                                <p:column id="colPres" headerText="Presuntiva" style="text-align:center;">
+                                    <h:outputText id="lbPres" value="#{prop.presuntiva}">
+                                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        
+                           <h:panelGrid rendered="#{verificarProcedenciaMB.verificarProcVO.mostrarInfo}" width="100%">
+                            <h:outputLabel value="Id del Registro: #{verificarProcedenciaMB.verificarProcVO.propuestaVO.idRegistro}" style="float:right;font-weight:bold" />
+                            <h:panelGrid width="100%">
+                                <ui:include src="/propuestas/comun/contribuyente.jsf">
+                                    <ui:param name="contribuyenteIdc" value="#{verificarProcedenciaMB.verificarProcedenciaHelper.adicionalContribuyente.contribuyenteIdc}"/>
+                                    
+                                </ui:include>
+                            </h:panelGrid>
+                            <h:panelGrid width="100%">
+                                <ui:include src="/propuestas/comun/contribuyenteAnterior.jsf" width="100%">
+                                    <ui:param name="contribuyente" value="#{verificarProcedenciaMB.verificarProcedenciaHelper.adicionalContribuyente.contribuyente}"/>
+                                </ui:include>
+                            </h:panelGrid>
+                            
+                            <h:panelGrid columns="3" style="margin:auto;">
+                                  <p:commandButton id="butAceValCon" value="Aceptar" actionListener="#{verificarProcedenciaMB.aceptarActualizacion}" ajax="true" update="@form" style="float:right;padding:0px 5px;"/>
+                            </h:panelGrid>
+                        
+                        </h:panelGrid>
+                    
+                        
+                        
+                        
+                        <h:panelGrid rendered="#{verificarProcedenciaMB.verificarProcVO.mostrarContribuyentePropuesta}" width="100%">
+                            <h:outputLabel value="Id del Registro: #{verificarProcedenciaMB.verificarProcVO.propuestaVO.idRegistro}" style="float:right;font-weight:bold" />
+                            <h:panelGrid width="100%">
+                                <ui:include src="/propuestas/comun/contribuyentePropuesta.jsf">
+                                    <ui:param name="contribuyentePropuesta" value="#{verificarProcedenciaMB.verificarProcedenciaHelper.adicionalContribuyente.contribuyentePropuesta}"/>
+                                </ui:include>
+                            </h:panelGrid>
+                            <ui:include src="/propuestas/comun/datosPropuesta.jsf">
+                                <ui:param name="datoPropuesta" value="#{verificarProcedenciaMB.verificarProcedenciaHelper.adicionalContribuyente.datosPreviosPropuesta}"/>
+                            </ui:include>
+                            <ui:include src="/propuestas/comun/datosAdicionales.jsf">
+                                <ui:param name="datoAdicional" value="#{verificarProcedenciaMB.verificarProcedenciaHelper.adicionalContribuyente.datosPreviosPropuesta}"/>
+                            </ui:include>
+                        </h:panelGrid>
+                        
+                        <h:panelGrid rendered="#{verificarProcedenciaMB.verificarProcVO.mostrarHistorico}" width="100%">
+                            <ui:include src="/propuestas/comun/historiaDocOrden.jsf">
+                               <ui:param name="datoDocumento"  value="#{verificarProcedenciaMB.verificarProcedenciaHelper.adicionalContribuyente.datosPreviosPropuesta}"/>
+                            </ui:include>
+                        </h:panelGrid>
+                                                
+                        <h:panelGrid columns="4" rendered="#{verificarProcedenciaMB.verificarProcVO.mostrarContribuyentePropuesta}" style="margin:auto;">
+                            <p:commandButton value="#{msj['btn.pantalla.anterior']}" actionListener="#{verificarProcedenciaMB.regresarBandejaPropuestas}" update="@form" />
+                            <p:commandButton value="Aprobar" actionListener="#{verificarProcedenciaMB.crearMensajeAprobacionUno}" update="@form" />
+                            <p:commandButton value="#{msj['btn.retroalimentar.docto']}" actionListener="#{verificarProcedenciaMB.mostrarRechazo}" update="formVerificar:rechazoPropuesta"/>
+                            <p:commandButton value="#{msj['btn.propuestas.retroalimentar.historico.orden']}" actionListener="#{verificarProcedenciaMB.mostrarHistorico}" update="@form"/>
+                        </h:panelGrid>
+                        
+                    </p:panel>            
+                </h:panelGrid>
+            
+            <p:dialog header="Información" widgetVar="msgAmp" modal="true" resizable="false" draggable="true" closable="false">
+                <h:panelGrid id="panelGridTre" width="350">
+                    <p:outputLabel id="lbMesTxt" value="El Contribuyente se encuentra con estatus de “Amparado”; por consiguiente el registro está inhabilitado"/>
+                    <p:commandButton id="butAcep" value="Aceptar" onclick="PF('msgAmp').hide();"/>
+                </h:panelGrid>
+            </p:dialog>
+            <p:dialog header="Información" widgetVar="msgPe" modal="true" resizable="false" draggable="true" closable="false" position="300,200">
+            
+                <h:panelGrid id="panelCuat" width="350">
+                    <p:outputLabel id="lbMes" value="El Contribuyente se encuentra con estatus de “PPEE”; por consiguiente el registro está inhabilitado"/>
+                    <p:commandButton id="butAceUn" value="Aceptar" onclick="PF('msgPe').hide();" style="float:right;padding:0px 5px;"/>
+                </h:panelGrid>
+            </p:dialog>
+            <p:dialog header="Información" widgetVar="msgPeerror" modal="true" resizable="false" draggable="true" closable="false">
+            
+                <h:panelGrid id="panelCuata" width="350">
+                    <p:outputLabel id="lbError" value="Se generó un error al consultar el servicio"/>
+                    <p:commandButton id="laerrors" value="Aceptar" onclick="PF('msgPeerror').hide();" style="float:right;padding:0px 5px;"/>
+                </h:panelGrid>
+            </p:dialog>
+            
+            
+            <p:dialog header="Información" widgetVar="msgUpdateContribuyente" modal="true" resizable="false" draggable="true" closable="false">
+                <h:panelGrid id="panelCin" width="350">
+                    <p:outputLabel id="lbContribuyente" value="El sistema ha detectado modificaciones en los datos del Contribuyente en IdC.
+La información se ha actualizado correctamente.
+"/>
+                    <h:panelGrid columns="1" style="float:right;">
+                        <p:commandButton id="btnAceptarCambio" value="Aceptar" onclick="PF('msgUpdateContribuyente').hide();" style="float:right;"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+           
+            <p:dialog header="Mensaje" widgetVar="msgAprob1" modal="true" resizable="false" draggable="true" closable="false">
+                <h:panelGrid style="text-align:left" width="350">
+                    <p:outputLabel value="#{verificarProcedenciaMB.verificarProcVO.mensaje1}" />
+                    <h:panelGrid columns="2" width="100%">
+                        <p:commandButton value="Aceptar" onclick="PF('msgAprob1').hide();" actionListener="#{verificarProcedenciaMB.aprobarProcedencia}" update="@form" style="float:right;padding:0px 5px;"/>
+                        <p:commandButton value="Cancelar" onclick="PF('msgAprob1').hide();"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            <p:dialog header="Mensaje" widgetVar="msgAprob2" modal="true" resizable="false" draggable="true" closable="false">
+                <h:panelGrid style="text-align:left" width="350">
+                    <p:outputLabel value="#{verificarProcedenciaMB.verificarProcVO.mensaje2}" />
+                    <h:panelGrid columns="2" width="100%">
+                        <p:commandButton value="Aceptar" onclick="PF('msgAprob2').hide();" actionListener="#{verificarProcedenciaMB.aceptarMensaje2}" update="@form" style="float:right;padding:0px 5px;"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            
+            <p:dialog header="Mensaje" id="rech1" widgetVar="msgRech1" modal="true" resizable="false" draggable="true" closable="false">
+                <h:panelGrid style="text-align:left" width="350">
+                    <p:outputLabel value="#{verificarProcedenciaMB.verificarProcVO.mensajeRechazo1}" />
+                    <h:panelGrid columns="2" width="100%">
+                        <p:commandButton value="Aceptar" onclick="PF('msgRech1').hide();" action="#{verificarProcedenciaMB.rechazarInsumo}" update="@form" style="float:right;padding:0px 5px;" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                        <p:commandButton value="Cancelar" onclick="PF('msgRech1').hide();"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            <p:dialog header="Mensaje" widgetVar="msgRech2" modal="true" resizable="false" draggable="true" closable="false">
+                <h:panelGrid style="text-align:left" width="350">
+                    <p:outputLabel value="#{verificarProcedenciaMB.verificarProcVO.mensajeRechazo2}" />
+                    <h:panelGrid>
+                        <p:commandButton value="Aceptar" onclick="PF('msgRech2').hide();" actionListener="#{verificarProcedenciaMB.aceptarMensaje2}" update="@form"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            
+            <p:dialog header="#{msj['header.motivo.retroalimentacion.documento']}" id="rechazoPropuesta"
+			widgetVar="rechazoPropuesta" resizable="false" modal="true"
+			width="450">
+		<div align="left">
+                    <p:messages id="msgExitoRechazarInsumo" showDetail="true" globalOnly="true" closable="true" />
+                    <h:panelGrid columns="5" border="0">
+                        <h:outputText value="#{msj['label.fecha.retroalimentacion']}:" style="float:left;font-weight:bold;" />
+                        <h:outputText value="#{verificarProcedenciaMB.verificarProcVO.fechaHoy}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
+                        <p:spacer width="15" height="1" />
+        		<h:outputText value="#{msj['label.id.registro']}:" style="float:left;font-weight:bold;" />
+                        <h:outputText value="#{verificarProcedenciaMB.verificarProcVO.propuestaVO.idRegistro}" />
+                    </h:panelGrid>
+                    <h:panelGrid>
+                        <p:fileUpload id="fulExpedienteRechazo"
+                            fileUploadListener="#{verificarProcedenciaMB.cargaArchivoRechazo}"
+                            mode="advanced" dragDropSupport="false" multiple="false"
+                            style="width:350px;" label="#{msj['label.adjuntar']}"
+                            cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                            showButtons="true" auto="true" ajax="true" partialSubmit="true"
+                            update="tablaArchivoRechazo :formVerificar:msgRechazo :formVerificar:expediente" 
+                            oncomplete="ocultaMsgAgace('msgRechazo');" />
+                        <p:messages id="expediente" for="fulExpedienteRechazo"  showDetail="true" globalOnly="true" closable="true"/>
+                        <p:messages id="msgRechazo"   showDetail="true" globalOnly="true" closable="true"/>
+                        <p:dataTable id="tablaArchivoRechazo" value="#{verificarProcedenciaMB.verificarProcVO.listaRechazo}"
+                            var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+						rows="10" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({currentPage} de {totalPages})"
+						paginatorPosition="bottom">
+                            <f:facet name="header">#{msj['label.documento.retro.validar']}</f:facet>
+
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaRechazo}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.documento']}">
+                                <div style="width: 200px;">#{documento.nombreArchivo}</div>
+                            </p:column>
+                            <p:column headerText="#{msj['label.confirm.eliminar']}">
+                                <p:commandLink value="#{msj['label.confirm.eliminar']}" action="#{verificarProcedenciaMB.descartarDocumentoRechazo}"
+                                        ajax="true" immediate="true" update="tablaArchivoRechazo :formVerificar:msgRechazo">
+                        		<f:setPropertyActionListener value="#{documento}"
+                                            target="#{verificarProcedenciaMB.documentoSeleccionadoRechazo}" />
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <p:scrollPanel mode="native" style="width:380px;height:130px" border="0">
+                <h:panelGrid columns="1" style="width:100% !important;text-align: center !important;" border="0">
+                    <h:panelGrid columns="1" style="width:100% !important;text-align: left !important;" border="0">
+                        <p:outputLabel value="Observaciones:"/>
+                        <h:panelGroup style="width: 100%!important; text-align: center !important;">
+                            <p:inputTextarea id="txtObservaciones" rows="5" cols="17" 
+                            value="#{verificarProcedenciaMB.verificarProcVO.propuestaVO.observacion}" 
+                                              style="width: 350px !important;"
+                                             styleClass="max"
+                                             maxlength="250" >
+                               
+                            </p:inputTextarea>  
+                        </h:panelGroup>
+                    </h:panelGrid>                    
+                </h:panelGrid>    
+            </p:scrollPanel>
+				
+                </div>
+                <br />
+                <div align="center">
+                    <h:panelGrid columns="2">
+                            <p:commandButton value="#{msj['btn.aceptar']}" actionListener="#{verificarProcedenciaMB.validarRechazoInsumo}" update="formVerificar:rech1 :formVerificar:msgRechazo" style="float:right;padding:0px 5px;"/>
+                            <p:commandButton value="#{msj['btn.cancelar']}" onclick="PF('rechazoPropuesta').hide()"
+                                    ajax="false" partialSubmit="false" type="button" update="formVerificar:panelImpuestos"
+                                    style="width:80px;" />
+        
+                    </h:panelGrid>
+                </div>
+                <br />
+            </p:dialog>
+        </h:form>
+                <h:outputStylesheet library="css/" name="agace.css" />
+    </h:body>
+</html>

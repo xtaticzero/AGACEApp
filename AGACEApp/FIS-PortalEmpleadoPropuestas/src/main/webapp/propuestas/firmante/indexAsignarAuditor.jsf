@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <title>AGACE</title>
+            <style type="text/css">
+                .ui-selectonemenu-panel
+                {
+                    max-width:58% !important;
+                }
+              </style>
+            
+            
+        </h:head>
+        <h:body>
+            <h:form id="formPropuestas" enctype="multipart/form-data" styleClass="panel-principal" onkeypress="if (event.keyCode == 13) { return false; }">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+
+                <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true"/>
+                <p:panel id="panelOrdenes" styleClass="panel-interno" style="width:950px;" header="#{msj['label.titulo.asignacion.auditor']}"
+                         rendered="#{asignarPropuestaAuditorManagedBean.muestraPropuestas}">
+
+                    <!-- Tabla de detalle propuesta -->
+                    <h:panelGrid id="panelPropuestas" width="100%">
+                        <h:outputLabel value="#{msj['label.propuestas.por.asignar.auditor']}" style="font-weight:bold;"/>
+                        <p:separator/>
+                        <p:dataTable id= "tablaPropuestasAsignar" var="propuestas" 
+                        			 widgetVar="tablaPropuestasAsignar"
+                                     value="#{asignarPropuestaAuditorManagedBean.listaPropuestasPorAsignar}" rows="5"
+                                     editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true"
+                                     paginatorTemplate="Página: {CurrentPageReport}  {FirstPageLink} {PreviousPageLink}  
+                                     Ir a página: {PageLinks} {NextPageLink} {LastPageLink} "
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom"
+                                     rowKey="#{propuestas.propuesta.idPropuesta}"
+                                     selection="#{asignarPropuestaAuditorManagedBean.listaPropuestasAsignadas}"
+                                     filterDelay="1000">
+                            <p:column selectionMode="multiple" style="text-align:center;width:5%;"/>
+                            <p:column style="width:6%" headerText="#{msj['label.encabezado.detalle']}">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.folio']}" style="text-align:center;width:12%;">
+                                <h:outputText value="#{propuestas.propuesta.idRegistro}" />
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.insumo.metodo']}" style="text-align:center;width:10%;" filterStyle="width:90%;" filterBy="#{propuestas.metodo.abreviatura}">
+                                <h:outputText value="#{propuestas.metodo.abreviatura}" />
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.presuntiva']}" style="text-align:center;width:12%;">
+                                <h:outputText value="#{propuestas.propuesta.presuntiva}">
+                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.propuesta.prioridad']}" style="width:10%" filterStyle="width: 90%;" filterBy="#{propuestas.propuesta.prioridadSugerida}">
+                                <div align="center">
+                                	<h:outputText value="#{propuestas.propuesta.prioridadSugerida}"/>
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.subprograma']}" style="width:12%">
+                                <h:outputText value="#{propuestas.subprograma.clave}" />
+                            </p:column>
+                            <p:column headerText="#{msj['column.tipo.propuesta']}" style="width:12%">
+                                <h:outputText value="#{propuestas.tipoPropuesta.descripcion}" />
+                            </p:column>
+                            <p:column headerText="#{msj['label.inicio']}" style="text-align:center; width:10%"
+                                   filterBy="#{propuestas.propuesta.fechaInicioPeriodo}"  filterFunction="#{asignarPropuestaAuditorManagedBean.filtraFecha}" filterStyle="width: 90%;">                                       
+	                         	<h:outputText value="#{propuestas.propuesta.fechaInicioPeriodo}" >                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+	                        </p:column>
+                            <p:column headerText="#{msj['label.fin']}" style="text-align:center;width:10%"
+                                   filterBy="#{propuestas.propuesta.fechaFinPeriodo}"  filterFunction="#{asignarPropuestaAuditorManagedBean.filtraFecha}" filterStyle="width: 90%;" >                                       
+	                         	<h:outputText value="#{propuestas.propuesta.fechaFinPeriodo}" >                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+	                        </p:column>
+	                        <p:column headerText="#{msj['column.fecha.comite']}" filterBy="#{propuestas.propuesta.tipoComite}" style="width:20%" filterMatchMode="exact">
+	                        	<f:facet name="filter">
+							          <p:selectOneMenu onchange="PF('tablaPropuestasAsignar').filter()" style="width: 90%;">
+							                <f:selectItem itemLabel="--SELECCIONE--" itemValue="#{null}" noSelectionOption="true" />
+							                <f:selectItems value="#{asignarPropuestaAuditorManagedBean.estatusFechas}" var="fechaComite" itemLabel="#{fechaComite.descripcion}" itemValue="#{fechaComite}"/>
+							          </p:selectOneMenu>
+							      </f:facet>
+                                <h:outputText value="#{propuestas.propuesta.fechaInforme}" rendered="#{propuestas.propuesta.fechaInforme != null}">                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+	                            <h:outputText value="#{propuestas.propuesta.fechaPresentacion}" rendered="#{propuestas.propuesta.fechaPresentacion != null}" >                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+                            </p:column>
+                            <!-- DETALLE -->
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="#{msj['label.sector']}:"/>
+                                    <h:outputText value="#{propuestas.sector.descripcion}"/>
+                                    <h:outputText value="#{msj['column.subprograma']}"/>
+                                	<h:outputText value="#{propuestas.subprograma.clave} #{propuestas.subprograma.descripcion}"/>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </h:panelGrid>
+
+                    <p:spacer height="15px" />
+
+                    <h:panelGrid id="panelFirmantes" columns="3" style="float:right;">
+                        <h:outputText value="#{msj['column.propuesta.asignar.auditor']}"/>
+                        <p:selectOneMenu id="cmbFirmantes" value="#{asignarPropuestaAuditorManagedBean.rfcAuditorSeleccionado}" style="width:200px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.auditor']}" itemValue="-1"/>
+                            <f:selectItems value="#{asignarPropuestaAuditorManagedBean.listaAuditores}" 
+                                           var="firmante" itemLabel="#{firmante.nombreCompleto}" itemValue="#{firmante.rfc}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="#{msj['btn.asignar']}" rendered="#{not empty asignarPropuestaAuditorManagedBean.listaAuditores}" 
+                                         update="@form" action="#{asignarPropuestaAuditorManagedBean.validaSeleccionAuditor}"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                    </h:panelGrid>
+
+                    <p:spacer height="15px" />
+
+                    <h:panelGrid id="panelPropuestasAsignados" columns="1" width="100%">
+                        <h:outputLabel value="#{msj['column.propuestas.asignadas']}" style="font-weight:bold;"/>
+                        <p:separator/>
+                        <p:dataTable id="tablaPropuestasAsignadas" var="datos"
+                                     value="#{asignarPropuestaAuditorManagedBean.listaContadorPropuestas}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.auditor']}">
+                                #{datos.nombre}
+                            </p:column>
+                            <p:column headerText="#{msj['column.propuestas.asignadas']}" width="50%" style="font-align:center;">
+                                #{datos.totalInsumos}
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+
+                </p:panel>
+
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarAsignarPropuesta" modal="true" resizable="false" closable="false" position="300,200" visible="#{asignarPropuestaAuditorManagedBean.muestraDialogoAsignar}">
+                    <h:panelGrid style="text-align:left" width="350">
+                        <p:outputLabel value="#{asignarPropuestaAuditorManagedBean.mensaje1}" />
+                        <h:panelGrid columns="2">
+                            <p:commandButton id="btnAsignarInsumo" value="#{msj['label.confirm.aceptar']}" onclick="PF('confirmarAsignarPropuesta').hide();" action="#{asignarPropuestaAuditorManagedBean.asignarAuditor}" update="@form" oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                            <p:commandButton value="Cancelar" onclick="PF('confirmarAsignarPropuesta').hide();"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:dialog>
+
+                <p:dialog header="Mensaje" widgetVar="msg2" modal="true" resizable="false" closable="false" position="300,200">
+                    <h:panelGrid style="text-align:left" width="350">
+                        <p:outputLabel value="#{asignarPropuestaAuditorManagedBean.mensaje2}" />
+                        <h:panelGrid columns="2">
+                            <p:commandButton value="Aceptar" onclick="PF('msg2').hide();"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:dialog> 
+
+            </h:form>
+
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui"
+          xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core">
+        <h:head>
+          <style type="text/css">
+                .borderNone.ui-panelgrid>*>tr,
+                .borderNone.ui-panelgrid .ui-panelgrid-cell {
+                    border: none;
+                }
+          </style>
+        </h:head>
+        <h:form id="form">
+            <p:ajaxStatus onstart="PF('statusDialogAsignar').show();" onsuccess="PF('statusDialogAsignar').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogAsignar" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgReportePistaBusq" showDetail="true" globalOnly="true" closable="true" autoUpdate="true" style="width:620px;"/>
+          <p:panel id="pnlBusqueda" styleClass="panel-interno" header="Consultar pistas de auditoria / Modulo externo" 
+                        visible="#{repPistaAuditExtMB.repPistaAuditExtModel.pnlBusqueda}">
+          
+          <p:panel>
+            <p:panelGrid styleClass="borderNone">
+            <p:row style="border-width:0px; border-style:none; border:0px">
+               <p:column rowspan="3">
+                    <h:outputText value="Numero de orden:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="numOrden" value="#{repPistaAuditExtMB.repPistaAuditExtModel.numOrden}"  maxlength="15" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoNumOreden}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditExtMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column> 
+                <p:column rowspan="3">
+                    <h:outputText value="Id de registro:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="idReg" value="#{repPistaAuditExtMB.repPistaAuditExtModel.idRegistro}" maxlength="15" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoIdRegistro}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditExtMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+            </p:panel>
+            <br />
+            
+            <p:panelGrid styleClass="borderNone">
+            <p:row>
+               <p:column >
+                    <h:outputText value="RFC del contrubuyente:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="contrib"  value="#{repPistaAuditExtMB.repPistaAuditExtModel.rfcContribuyente}" maxlength="13" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoRfcContribuyente}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditExtMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <h:outputText value="RFC del representante legal:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="repLegal" value="#{repPistaAuditExtMB.repPistaAuditExtModel.rfcRepLegal}" maxlength="13" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoRfcRepLegal}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditExtMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+            <p:row>
+               <p:column >
+                    <h:outputText value="RFC del apoderado legal:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="apoLegal"  value="#{repPistaAuditExtMB.repPistaAuditExtModel.rfcApodLegal}" maxlength="13" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoRfcApodLegal}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditExtMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column>
+                <p:column>
+                    <h:outputText value="RFC del agente aduanal:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="ageAduanal" value="#{repPistaAuditExtMB.repPistaAuditExtModel.rfcAgentAduanal}" maxlength="13" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoRfcAgentAduanal}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditExtMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+            <p:row>
+               <p:column>
+                    <h:outputText value="RFC del apoderado legal del representante legal:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="apoLegalRepLegal"  value="#{repPistaAuditExtMB.repPistaAuditExtModel.rfcApodLegalRepLegal}" maxlength="13" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoRfcApodLegalRepLegal}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditExtMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+            <p:panelGrid styleClass="borderNone">
+            <p:row>
+                <p:column>
+                    <h:outputText value="Periodo:" />
+                </p:column>
+                 <p:column>
+                    <h:outputText value="Inicio:" />
+                </p:column>
+                <p:column>
+                    <p:calendar showOn="button" pattern="dd/MM/yyyy" value="#{repPistaAuditExtMB.repPistaAuditExtModel.fechaBusqInicio}"
+                    locale="es" disabledWeekends="true" mindate="#{repPistaAuditExtMB.repPistaAuditExtModel.fechaInicio}" 
+                    maxdate="#{repPistaAuditExtMB.repPistaAuditExtModel.fechaFin}" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoCanlendar}"/>
+                </p:column>
+                 <p:column>
+                    <h:outputText value="Fin:" />
+                </p:column>
+                <p:column>
+                    <p:calendar showOn="button" pattern="dd/MM/yyyy" value="#{repPistaAuditExtMB.repPistaAuditExtModel.fechaBusqFin}" 
+                    locale="es" disabledWeekends="true" mindate="#{repPistaAuditExtMB.repPistaAuditExtModel.fechaInicio}" 
+                    maxdate="#{repPistaAuditExtMB.repPistaAuditExtModel.fechaFin}" disabled="#{repPistaAuditExtMB.repPistaAuditExtModel.campoActivoCanlendar}"/>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+            <p:panelGrid styleClass="borderNone">
+            <p:row>
+                <p:column colspan="2">
+                    <p:commandButton value="Buscar"  process="@this" action="#{repPistaAuditExtMB.buscarPistaAuditoria}"
+                                        update="@form"  onclick="statusDialog.show();" onsuccess="statusDialog.hide();"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:commandButton id="btnLimpiar" value="Limpiar" action="#{repPistaAuditExtMB.cleanBusqueda}" proces="@form"
+                                    update="@form"/>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+          </p:panel>
+          <p:panel id="pnlTabla" visible="#{repPistaAuditExtMB.repPistaAuditExtModel.pnlTabla}" >
+          <p:panel style="border: 0px !important;">
+                <f:facet name="header">
+                    <h:outputText value="Pistas de auditoria modulo externo" />
+                    <p:commandButton id="idXls" icon="ui-icon-arrowthick-1-s" value="XLS" ajax="false" style="margin-left:72%;" 
+                                    onclick="PrimeFaces.monitorDownload(start, stop);">
+                        <p:fileDownload value="#{repPistaAuditExtMB.archivoExcel}"/>
+                    </p:commandButton>
+                    <p:spacer width="15" height="10"/>
+                    <p:commandButton id="idPdf" icon="ui-icon-arrowthick-1-s" value="PDF" ajax="false" 
+                                    onclick="PrimeFaces.monitorDownload(start, stop);">
+                        <p:fileDownload value="#{repPistaAuditExtMB.archivoPDF}"/>
+                    </p:commandButton>
+                </f:facet>
+            </p:panel>
+            <p:dataTable paginator="true" rows="10" scrollable="true" value="#{repPistaAuditExtMB.listRepExter}"  var="repE"
+                                 paginatorPosition="bottom" emptyMessage="No hay registros">
+                 <p:column headerText="Fecha y hora">
+                       <h:outputText value="#{repE.fechaYHora}"/>
+                 </p:column>
+                 <p:column headerText="RFC del contribuyente">
+                       <h:outputText value="#{repE.rfcContribuyente}"/>
+                 </p:column>
+                 <p:column headerText="RFC del representante legal">
+                       <h:outputText value="#{repE.rfcRepLegal}"/>
+                 </p:column>
+                 <p:column headerText="RFC del apoderado legal">
+                       <h:outputText value="#{repE.rfcApodLegal}"/>
+                 </p:column>
+                 <p:column headerText="RFC del agente aduanal">
+                       <h:outputText value="#{repE.rfcAgentAduanal}"/>
+                 </p:column>
+                 <p:column headerText="RFC del apoderado legal del representante legal">
+                       <h:outputText value="#{repE.rfcApodLegalRepLegal}"/>
+                 </p:column>
+                 <p:column headerText="IP de la maquina">
+                       <h:outputText value="#{repE.ipMaquina}"/>
+                 </p:column>
+                 <p:column headerText="Modulo al que ingreso">
+                       <h:outputText value="#{repE.modIngreso}"/>
+                 </p:column>
+                 <p:column headerText="Operacion realizada">
+                       <h:outputText value="#{repE.operRealizada}"/>
+                 </p:column>
+                 
+            </p:dataTable>
+            
+            <p:panelGrid>
+            <p:row>
+                <p:column>
+                <p:commandButton id="btnRegresar" value="Regresar" action="#{repPistaAuditExtMB.btnRegresarPanel}" 
+                                    process="@this" update="@form" />
+                </p:column>
+                </p:row>
+            </p:panelGrid>
+          </p:panel>
+          </h:form>
+    </html>
+</f:view>

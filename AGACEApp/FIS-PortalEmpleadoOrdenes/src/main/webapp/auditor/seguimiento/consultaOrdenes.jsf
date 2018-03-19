@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+        	<f:event type="preRenderView" listener="#{reimpresionDocumentosMB.init}" />
+    	</f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="panelOrdenesSeguimiento" styleClass="panel-principal">
+                <p:panel id="p1" header="Consultar y Reimprimir Documentos"
+                         styleClass="panel-interno">
+                 
+                    <p:dataTable id="tablaReimprimirDocumentos" value="#{reimpresionDocumentosMB.listaOrdenesParaReimprimir}"
+                                 var="orden" editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="10" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom">
+                        <p:column id="idHeader" headerText="ID">
+                            <h:outputText value="#{orden.idOrden}"/>
+                        </p:column>
+                        <p:column id="registroHeader" headerText="Id de Registro"
+                                  filterBy="#{tablaReimprimirDocumentos.cveRegistro}">
+                            <h:outputText value="#{orden.cveRegistro}"/>
+                        </p:column>
+                        <p:column id="ordenHeader" filterBy="#{orden.cveOrden}"
+                                  headerText="Número de Orden">
+                            <p:commandLink style="color:blue;" ajax="true"
+                                           action="consultaImpresionDocumentos"
+                                           value="#{orden.cveOrden}">
+                                <f:setPropertyActionListener value="#{orden}" target="#{reimpresionDocumentosMB.ordenSeleccionada}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column id="rfcHeader" filterBy="#{orden.rfcContribuyente}"
+                                  headerText="RFC">
+                            <h:outputText value="#{orden.rfcContribuyente}"/>
+                        </p:column>
+                        <p:column id="metodoHeader" headerText="Método">
+                            <h:outputText value="#{orden.feceaMetodo.abreviatura}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

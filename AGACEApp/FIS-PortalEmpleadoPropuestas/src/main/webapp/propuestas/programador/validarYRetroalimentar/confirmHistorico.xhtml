@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"> 
+    <p:dialog id="confirmHistorico" header="#{msj['titulo.historico.retroalimentacion']}" 
+              widgetVar="dlgConfirmHistorico" 
+              closable="false" 
+              modal="true"
+              resizable="false"
+              draggable="false" 
+              onShow="true">
+              
+                     <h:panelGrid border="0" columns="2" style="width: 700px !important">
+          
+            <h:panelGroup style="width: 50% !important">
+                <p:outputLabel value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idRegistro}"
+                               style="float:right;font-weight:bold"/>
+                <p:outputLabel value="Id de Registro: "
+                               style="float:right;font-weight:bold;"/>
+            </h:panelGroup>            
+        </h:panelGrid>
+                       
+              
+        <p:panel id="panelTablaHistorico" style="width: 700px!important;height: 500px!important;">
+        
+              <p:dataTable id="tablaPropuestaHistorialRetroalimentar" var="historicoRetroalimentar"
+                         value="#{validarRetroMB.retroalimentarLstHelper.listaHistoricoRetroalimentar}" editable="false"
+                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                         {PreviousPageLink}    Ir a página: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom" rows="5" scrollable="true" scrollWidth="87%" style="width:90.2%"
+                         rendered="#{validarRetroMB.visibleListasHistoricos}">
+                <f:facet name="header">
+                    <p:outputLabel value="Retroalimentación"/>                    
+                </f:facet>
+                <p:column headerText="Método" styleClass="someClass"
+                          style="width:40px;">
+                     <h:outputText value="#{historicoRetroalimentar.feceaMetodo.abreviatura}" />
+                </p:column>
+                <p:column headerText="#{msj['lbl.propuestas.causaProgramacion']}" styleClass="someClass"
+                          style="width:110px;">
+                     <h:outputText value="#{historicoRetroalimentar.fececCausaProgramacion.idCausaProgramacion}" />
+                      -
+                    <h:outputText value="#{historicoRetroalimentar.fececCausaProgramacion.descripcion}" />
+                 
+                </p:column>
+                <p:column headerText="#{msj['column.propuestas.por.validar.subprograma']}" styleClass="someClass"
+                          style="width:100px;">
+                     <h:outputText value="#{historicoRetroalimentar.fececSubprograma.clave}" />
+                      -
+                    <h:outputText value="#{historicoRetroalimentar.fececSubprograma.descripcion}" />
+                 
+                </p:column>
+               <p:column headerText="#{msj['column.propuestas.por.validar.sector']}" styleClass="someClass"
+                          style="width:70px;">
+               
+                    <h:outputText value="#{historicoRetroalimentar.fececSector.descripcion}" />
+                 
+                </p:column>
+                <p:column headerText="#{msj['column.propuestas.por.validar.prioridad']}" styleClass="someClass"
+                          style="width:50px; central"  >
+               
+                    <h:outputText value="#{historicoRetroalimentar.prioridadSugerida}" />
+                 
+                </p:column>
+                    <p:column headerText="#{msj['label.inicio']}" styleClass="someClass"
+                          style="width:50px;">
+                    <h:outputText value="#{historicoRetroalimentar.fechaInicioPeriodo}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                   <p:column headerText="#{msj['label.fin']}" styleClass="someClass"
+                          style="width:50px;">
+                    <h:outputText value="#{historicoRetroalimentar.fechaFinPeriodo}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                
+                  <p:column headerText="#{msj['column.propuestas.por.validar.tipo.propuesta']}" styleClass="someClass"
+                          style="width:60px; central"  >
+               
+                    <h:outputText value="#{historicoRetroalimentar.fececTipoPropuesta.descripcion}" />
+                 
+                </p:column>
+               
+               
+                  <p:column headerText="#{msj['column.propuestas.por.validar.fecha.atencion']}" styleClass="someClass"
+                          style="width:80px; central"  >
+               
+                 
+                    <h:outputText  rendered="#{validarRetroMB.retroOrigen}" value="#{historicoRetroalimentar.fechaCreacion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                 
+                </p:column>
+               
+                
+                    <p:column headerText="#{msj['column.propuestas.por.validar.impuesto.fecha']}" styleClass="someClass"
+                     style="width:60px;" >
+                     
+                  
+                     
+                    <p:commandLink  rendered="#{historicoRetroalimentar.idRetroalimentacionOrigen!=historicoRetroalimentar.idRetroalimentacion}"  value="Ver Impuestos" style="color:blue"
+                                     action="#{validarRetroMB.llamaImpuestoHistorico}"
+                                      ajax="true" update=":formValidaRetroalimentarPropuesta:panelTablaHistorico" immediate="true">
+                          
+                            
+                             <f:setPropertyActionListener value="#{historicoRetroalimentar}"
+                                                     target="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar}" />
+                        </p:commandLink>
+                </p:column>
+                
+                
+                <p:column headerText="#{msj['titulo.columna.tabla.motivo']}" style="width:90px;" styleClass="someClass">
+                    <h:outputText rendered="#{validarRetroMB.retroOrigen}"  value="#{historicoRetroalimentar.fececMotivo.descripcion}" />
+                </p:column>
+                <p:column headerText="Archivos" styleClass="someClass"
+                          style="width:40px;">
+                    <p:commandLink  rendered="#{validarRetroMB.retroOrigen}"  value="#{historicoRetroalimentar.numeroDocRetroalimentacion}" style="color:blue"
+                                   action="#{validarRetroMB.llamaDetalleRetroaliemntarHistorico}"
+                                   ajax="true" update=":formValidaRetroalimentarPropuesta:panelTablaHistorico" inmediate="true">
+                        <f:setPropertyActionListener value="#{historicoRetroalimentar}"
+                                                     target="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar}" />
+                    </p:commandLink>
+                </p:column>
+                    <p:column headerText="#{msj['label.prpuestas.validar.retro.solicitud']}" styleClass="someClass"
+                     style="width:100px;" >
+                    <p:commandLink    action="#{validarRetroMB.llamaDetalleRetroaliemntarSolicitud}"
+                                      ajax="true" update=":formValidaRetroalimentarPropuesta:panelTablaHistorico" immediate="true">
+                            <div id="documentoPropuesta" style="text-align:center;">
+                                <p:graphicImage value="/resources/images/document.png"/>
+                            </div>
+                            
+                             <f:setPropertyActionListener value="#{historicoRetroalimentar}"
+                                                     target="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar}" />
+                        </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        
+              
+            <p:dataTable id="tablaPropuestaRetroalimentar" var="historicoRetroalimentar"
+                         value="#{validarRetroMB.retroalimentarLstHelper.listaHistoricoRetroalimentar}" editable="false"
+                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                         {PreviousPageLink}    Ir a página: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom" rows="5" scrollable="true" scrollWidth="97%"
+                         rendered="#{validarRetroMB.visibleListasHistoricosOrigen}">
+                <f:facet name="header">
+                    <p:outputLabel value="Retroalimentación"/>                    
+                </f:facet>
+                <p:column headerText="#{msj['label.fecha.retroalimentacion']}" styleClass="someClass"
+                          style="width:80px;">
+                    <h:outputText value="#{historicoRetroalimentar.fechaCreacion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{msj['titulo.columna.tabla.motivo']}" styleClass="someClass">
+                    <h:outputText value="#{historicoRetroalimentar.fececMotivo.descripcion}" />
+                </p:column>
+                <p:column headerText="Archivos" styleClass="someClass"
+                          style="width:50px;">
+                    <p:commandLink value="#{historicoRetroalimentar.numeroDocRetroalimentacion}" style="color:blue"
+                                   action="#{validarRetroMB.llamaDetalleRetroaliemntarHistorico}"
+                                   ajax="true" update=":formValidaRetroalimentarPropuesta:panelTablaHistorico" inmediate="true">
+                        <f:setPropertyActionListener value="#{historicoRetroalimentar}"
+                                                     target="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar}" />
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+            
+            
+            <p:panel id="panelHistoricoImpuesto"  header="Impuesto"
+                     rendered="#{validarRetroMB.flgImpuestoHistorico}">
+            
+            
+           <p:dataTable id="retroImpuesto" var="impuesto"  
+                             value="#{validarRetroMB.retroalimentarLstHelper.listaImpuesto}"
+                             editable="false"
+                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                         {PreviousPageLink}    Ir a página: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom" rows="5" style="width:100%;"  scrollable="true" scrollWidth="97%" >
+                    <f:facet name="header">
+                        <h:outputLabel value="#{msj['lbl.propuestas.impuestos']}" style="font-weight:bold"/>
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column rowspan="2" headerText="#{msj['lbl.propuestas.impuesto']}"/>
+                             <p:column rowspan="2" headerText="#{msj['lbl.propuestas.concepto']}"/>
+                            <p:column rowspan="2" headerText="#{msj['lbl.propuestas.monto']}"/>
+                              
+                        </p:row>
+                      
+                    </p:columnGroup>
+                    <p:column>
+                        <h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}"/>
+                    </p:column>
+                     <p:column>
+                     <h:outputText id="txtConcepto"
+								value="#{impuesto.fececConcepto.descripcion}"/>
+					</p:column>
+                    
+                    <p:column>
+                        <div align="right">
+                            <h:outputText value="#{impuesto.monto}" style="text-align:right">
+                                <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                            </h:outputText>
+                        </div>
+                    </p:column>
+                     
+                    <p:columnGroup type="footer">
+                        <p:row>
+                                                    <p:column  style="text-align:left;"/>
+                        
+                            <p:column footerText="#{msj['lbl.propuestas.presuntiva']}: " style="text-align:right"/>
+                            <p:column colspan="1" style="text-align:left;">
+                                <f:facet name="footer">
+                                    <h:outputText value="#{validarRetroMB.totalMontoRetro}" >
+                                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                    </h:outputText>
+                               
+                                </f:facet>
+                            </p:column>
+                        </p:row>
+                    </p:columnGroup>
+                    
+                
+                    
+                </p:dataTable>
+                
+                
+                            
+                
+                            <h:panelGroup rendered="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar.fechaInforme!=null}" >
+                                <table border="0" cellpadding="2" cellspacing="2" >
+                                    <tr><h:outputLabel value="Fecha de informe a comite:" style="font-weight:bold"/>
+                                   <td>
+                                    <p:inputText disabled="true" value="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar.fechaInforme}" style="font-weight:bold">
+                                       <f:convertDateTime pattern="dd/MM/yy" locale="es_MX" timeZone="America/Mexico_City"/>
+                                    </p:inputText>
+                                    </td></tr>
+                                    </table>
+                            </h:panelGroup>
+                 
+                            <h:panelGroup rendered="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar.fechaPresentacion!=null}">
+                                <table border="0" cellpadding="2" cellspacing="2">
+                                    <tr><h:outputLabel value="Fecha de Presentacion:" style="font-weight:bold"/>
+                                    <td>
+                                    <p:inputText disabled="true" value="#{validarRetroMB.validarYRetroalimentarHelper.historicoRetroalimentar.fechaPresentacion}" style="font-weight:bold">
+                                      <f:convertDateTime pattern="dd/MM/yy" locale="es_MX" timeZone="America/Mexico_City"/>
+                                    </p:inputText>
+                                    </td></tr>
+                                    </table>
+                            </h:panelGroup>
+                 
+                 
+                 
+                
+                 <p:commandButton value="Regresar a Historico"
+                                 actionListener="#{validarRetroMB.visiblePanelHistorico}"
+                                 update=":formValidaRetroalimentarPropuesta:panelTablaHistorico" styleClass="ui-confirmdialog-no" style="float:right;" />
+                <p:spacer width="1" height="20"/>
+                
+                
+                
+                
+                
+                </p:panel>
+            
+
+            <p:panel id="panelDetalleDocHistoricoRechazo"  header="Historico Rechazo"
+                     rendered="#{validarRetroMB.flgDetalleHistoricoRechazo}">
+
+                <p:dataTable id="tablaDocumentosHistorico" var="documentoRechazo"
+                             value="#{validarRetroMB.retroalimentarLstHelper.lstDocHistoricoRechazo}"
+                             editable="false"
+                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                             {PreviousPageLink}    Ir a página: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                             paginatorPosition="bottom" rows="5" scrollable="true" scrollWidth="97%">
+                    <f:facet name="header">
+                        <p:outputLabel value="Documentos de Rechazo de Propuesta"/>                            
+                    </f:facet>
+                    <p:column headerText="Fecha de Carga" styleClass="someClass"
+                              style="width:80px;">
+                        <h:outputText value="#{documentoRechazo.fechaRechazo}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Nombre de Archivo" styleClass="someClass">
+                        <h:outputText value="#{documentoRechazo.nombreArchivo}" />
+                    </p:column>
+                    <p:column headerText="Archivo" styleClass="someClass"
+                              style="width:50px;">
+                        <p:commandLink process="@this" 
+                                       update=":formValidaRetroalimentarPropuesta:tablaDocumentosHistorico"
+                                       disabled="false"
+                                       immediate="true"
+                                       ajax="false">
+                            <div id="documentoPropuesta" style="text-align:center;">
+                                <p:graphicImage value="/resources/images/document.png"/>
+                            </div>
+                            <f:setPropertyActionListener value="#{documentosRechazo.nombreArchivo}" 
+                                                         target="#{validarRetroMB.validarYRetroalimentarHelper.nombreArchivoDescarga}"/>
+                            <f:setPropertyActionListener value="#{documentosRechazo.rutaArchivo}" 
+                                                         target="#{validarRetroMB.validarYRetroalimentarHelper.rutaArchivoDescarga}"/>
+                            <p:fileDownload value="#{validarRetroMB.documentoExpediente}" /> 
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+
+                <p:commandButton value="Regresar a Historico"
+                                 actionListener="#{validarRetroMB.visiblePanelHistorico}"
+                                 update=":formValidaRetroalimentarPropuesta:panelTablaHistorico" styleClass="ui-confirmdialog-no" style="float:right;" />
+                <p:spacer width="1" height="20"/>
+            </p:panel>
+           
+            <p:outputLabel value="Tabla detalle Retroalimentacion:" rendered="#{validarRetroMB.flgDetalleHistoricoRetro}"/>
+            <p:panel id="panelDetalleDocHistoricoRetro" rendered="#{validarRetroMB.flgDetalleHistoricoRetro}" >
+                <p:dataTable id="tablaDocRetroHistorico" var="archivoRetro" scrollable="true" scrollWidth="85%" style="width:88.2%"
+                             value="#{validarRetroMB.retroalimentarLstHelper.lstDocHistoricoRetroalimentar}"
+                             editable="false"
+                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                             {PreviousPageLink}    Ir a página: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                             paginatorPosition="bottom" rows="5" >
+                    <f:facet name="header">
+                        <p:outputLabel value="Documentos de Retroalimentacion de Propuesta"/>                                       
+                    </f:facet>
+                    <p:column headerText="Fecha de Carga" styleClass="someClass"
+                              style="width:80px;">
+                        <h:outputText value="#{archivoRetro.fechaCreacion}" style="width:200px;">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Nombre de Archivo" styleClass="someClass">
+                        <h:outputText value="#{archivoRetro.nombreArchivo}" />
+                    </p:column>
+                    <p:column headerText="Archivo" styleClass="someClass"
+                              style="width:50px;">
+                        <p:commandLink process="@this" 
+                                       update=":formValidaRetroalimentarPropuesta:tablaDocRetroHistorico"
+                                       disabled="false"
+                                       immediate="true"
+                                       ajax="false">
+                            <div id="documentoPropuesta" style="text-align:center;">
+                                <p:graphicImage value="/resources/images/document.png"/>
+                            </div>
+                            <f:setPropertyActionListener value="#{archivoRetro.nombreArchivo}" 
+                                                         target="#{validarRetroMB.validarYRetroalimentarHelper.nombreArchivoDescarga}"/>
+                            <f:setPropertyActionListener value="#{archivoRetro.rutaArchivo}" 
+                                                         target="#{validarRetroMB.validarYRetroalimentarHelper.rutaArchivoDescarga}"/>
+                            <p:fileDownload value="#{validarRetroMB.documentoExpediente}" /> 
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:spacer width="450px" height="5px" />
+                <p:commandButton value="Regresar a Historico"
+                                 actionListener="#{validarRetroMB.mostrarHistorico}"
+                                 update=":formValidaRetroalimentarPropuesta:panelTablaHistorico" styleClass="ui-confirmdialog-no"  />
+                <p:spacer width="1" height="20"/>
+            </p:panel>
+
+            <h:panelGrid style="width:100% !important;text-align: center !important;">
+                <h:panelGroup style="text-align: center !important; width: 100%;">            
+                    <p:commandButton value="#{msj['btn.prpuestas.validar.retro.regresar']}" onclick="PF('dlgConfirmHistorico').hide();" /> 
+                </h:panelGroup>                
+            </h:panelGrid>
+        </p:panel> 
+    </p:dialog>
+</f:view>
+
+

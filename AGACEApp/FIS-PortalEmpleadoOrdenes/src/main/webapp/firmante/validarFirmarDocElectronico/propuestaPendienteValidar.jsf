@@ -1,0 +1,394 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{contadorOrdenesValidarFirmar.propuestaSeleccionada}"/>
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formPrincipal" styleClass="panel-principal">
+                <p:dialog modal="true" widgetVar="statusDialogContribuyente" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                <p:panel id="panelContribuyente" styleClass="panel-interno"
+                         style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;width:110%;"
+                         header="#{msj['tab.seguimiento.insumo']}">
+                    
+                    <h:panelGrid border="0" columns="4">
+                        <p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}" style="font-weight:bold;"/>
+                        <p:spacer width="500" height="1"/>
+                        <h:outputLabel value="Id Registro: " style="float:left;font-weight:bold"/>
+                        <h:outputLabel value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.idRegistro}"
+                                       style="float:left;font-weight:bold"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <h:panelGrid id="panelInputContribuyente" columns="3">
+                        <h:outputLabel value="#{msj['label.rfc.contribuyente.obligatorio']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+                        <h:panelGrid id="panelBuscarContribuyente" columns="1">
+                            <p:inputText ajax="false" id="txtRFC" maxlength="15" disabled="true"
+                                         value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.rfc}"
+                                         onkeypress="if(event.keyCode==13){return false;}">
+                                
+                            </p:inputText>
+                            <p:message id="msgRFC" for="txtRFC" display="text"/>
+                        </h:panelGrid>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                                         value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.nombre}"/>
+                        <h:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.situacion.contribuyente']}:" style="font-weight:bold;"/>
+                        <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                                     value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.regimen}"/>
+                        <p:spacer width="50" height="15px"/>
+                        <p:inputText id="txtSituacionContribuyente" style="width:325px;height:auto;" disabled="true"
+                                     value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.situacion}"/>
+                        <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.actividad.preponderante']}:" style="font-weight:bold;"/>
+                        <p:inputText id="txtTipoContribuyente" style="width:325px;height:auto;" disabled="true"
+                                     value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.tipo}"/>
+                        <p:spacer width="50" height="15px"/>
+                        <p:inputText id="txtActividadPreponderante" style="width:325px;height:auto;" disabled="true"
+                                     value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.actividadPreponderante}"/>
+                        <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:"
+                                       style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/>
+                        <p:inputTextarea id="txtDomicilioFiscalContribuyente" style="width:325px;height:auto;"
+                                         disabled="true"
+                                         value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.domicilioFiscal}"/>
+                        <p:spacer width="50" height="15px"/>
+                        <p:inputText id="txtSituacionDomicilio" style="width:325px;height:auto;" disabled="true"
+                                     value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.situacionDomicilio}"/>
+                        <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                                     value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fecetContribuyente.entidad}"/>
+                        <p:spacer width="50" height="15px"/>
+                        <p:spacer width="50" height="1"/>
+                    </h:panelGrid>
+                </p:panel>
+                
+                 <p:panel id="panelInsumo" styleClass="panel-interno" style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;
+                                border-bottom-right-radius:0;border-bottom-left-radius:0;width:110%;">
+                    <p:outputLabel value="#{msj['separador.panel.datos.previos.propuesta']}" style="font-weight:bold;"/>
+                    <p:separator/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <h:panelGrid id="panelInformacionInsumo" columns="7" border="0">
+                        <h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/>
+                        <p:spacer width="30" height="1"/>
+                        <h:outputLabel value="#{msj['label.sector']}:" style="font-weight:bold;"/>
+                        <p:spacer width="30" height="1"/>
+                        <h:outputLabel value="#{msj['label.operaciones.especifica']} :" style="font-weight:bold;" rendered="#{!contadorOrdenesValidarFirmar.tipoPropuesta}"/>
+                        <h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold;" rendered="#{contadorOrdenesValidarFirmar.tipoPropuesta}"/>
+                        <p:spacer width="30" height="1"/>
+                        <h:outputLabel value="#{msj['label.encabezado.prioridad']}:" style="font-weight:bold;width:200;"/>
+                        
+                        <p:inputTextarea id="txtSubPrograma" style="width:180px;height:auto;" disabled="true" cols="15"
+                                         value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fececSubprograma.descripcion}"/>
+                        <p:spacer width="30" height="1"/>
+                        <p:inputTextarea id="txtSector" style="width:180px;height:auto;" disabled="true"
+                                         value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fececSector.descripcion}"/>
+                        
+                        <br/>
+                        <h:panelGrid id="panelPeriodoPropuesto" columns="5">
+                            <h:outputLabel value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold" rendered="#{!contadorOrdenesValidarFirmar.tipoPropuesta}"/>
+                            <h:outputLabel value="#{msj['lbl.propuestas.del']}:" style="font-weight:bold" rendered="#{contadorOrdenesValidarFirmar.tipoPropuesta}"/>
+                            <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="7" disabled="true"
+                                        value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fechaInicioPeriodo}"/>
+                            
+                            <h:outputLabel value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold;" rendered="#{!contadorOrdenesValidarFirmar.tipoPropuesta}"/>
+                            <h:outputLabel value="#{msj['lbl.propuestas.al']}:" style="font-weight:bold;" rendered="#{contadorOrdenesValidarFirmar.tipoPropuesta}"/>
+                            
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                        disabled="true"
+                                        value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.fechaFinPeriodo}"/>
+                        </h:panelGrid>
+                        <p:spacer width="10" height="1"/>
+                        <p:selectBooleanCheckbox id="prioridadInsumo" name="prioridadInsumo" ajax="true"
+                                                 disabled="true"
+                                                 value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.prioridad}"/>                       
+                    </h:panelGrid>
+                    
+                    <!-- Panel de tabla de impuestos -->
+                   <h:panelGrid columns="1" width="100%" border="0" styleClass="panel-secundario">
+                    <p:dataTable id="tablaImpuestosPropuestas" style="width:100%"
+                                var="impuestosPropuestas" value="#{contadorOrdenesValidarFirmar.listaImpuestosDescripcion}"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                        <p:column headerText="Impuesto:" styleClass="someClass" width="100px">
+                            <h:outputText id="txtFechaCargaRechazo" value="#{impuestosPropuestas.fececTipoImpuesto.descripcion}"/>
+                        </p:column>
+                        <p:column id="hdrMonto" headerText="#{msj['label.monto']} ($):">
+                            <div style="width:200px;"></div>
+                               <h:outputText  value="#{impuestosPropuestas.fecetImpuesto.monto}" >
+                         <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                         </h:outputText>
+                 </p:column>
+                        <p:column headerText="#{msj['label.periodo.del']}: " width="100px">
+                            <h:outputText id="txtFechaPeriodoInicial" value="#{impuestosPropuestas.fecetImpuesto.periodoInicial}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column> 
+                        <p:column headerText="#{msj['label.periodo.al']}: " width="100px">
+                            <h:outputText id="txtFechaPeriodofinal" value="#{impuestosPropuestas.fecetImpuesto.periodoFinal}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column> 
+                    </p:dataTable>
+                    </h:panelGrid>
+                    <p:spacer width="1" height="8px"/>
+                    
+                     <h:panelGrid columns="3" width="100%" border="0" styleClass="panel-secundario">
+                            <p:spacer width="365px" height="3px;"/>
+                            <h:outputLabel value="#{msj['label.presuntiva']}" style="font-weight:bold"/>
+                         <h:outputText  id="txtPresuntiva" value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.presuntiva}" >
+                         <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                         </h:outputText>
+                    </h:panelGrid>
+                    
+                    <p:spacer width="1" height="8px"/>
+                     <!-- Panel de tabla de expedientes -->
+                    <p:dataTable id="tablaDocumentacionExpediente" value="#{contadorOrdenesValidarFirmar.listaExpedientes}" 
+                            var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"> 
+                        <f:facet name="header">#{msj['titulo.tabla.oficio.anexos']}</f:facet>  
+                            
+                        <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+                            <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column> 
+                        <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                            <div style="width:200px;margin:auto;">#{documento.nombre}</div>
+                        </p:column>
+                        
+                        <p:column headerText="#{msj['column.documento']}">
+                            <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true"
+                                             style="float:left;padding:0px 5px;">
+                                <f:setPropertyActionListener value="#{documento}"
+                                                             target="#{contadorOrdenesValidarFirmar.documentoSeleccionado}"/>
+                                <p:fileDownload contentDisposition="attachment"
+                                                value="#{contadorOrdenesValidarFirmar.documentoSeleccionDescarga}"/>
+                            </h:commandButton>
+                        </p:column>
+                    </p:dataTable>    
+                    
+                    
+                    <p:spacer width="1" height="15px"/>
+                    <!--Tabla documento rechazo-->
+                        <p:dataTable id="tablaArchivoRechazo" value="#{contadorOrdenesValidarFirmar.listaContadorArchivosRechazosPropuestas}"
+                                     width="100%"
+                                      rendered="true"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     var="rechazosPropuesta">
+                            <f:facet name="header">
+                                #{msj[&apos;panel.seguimiento.rechazo.archivo&apos;]}
+                            </f:facet>
+                            <p:column headerText="Fecha de rechazo" width="50">
+                                <h:outputText value="#{rechazosPropuesta.fechaRechazo}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Motivo del rechazo" width="380">
+                                <p:row>
+                                    <div style="width:380px;">
+                                        #{rechazosPropuesta.descripcion}
+                                    </div>
+                                </p:row>
+                            </p:column>
+                            
+                            <p:column headerText="Archivos" width="40">
+                                <div align="center">
+                                    <p:commandLink id="cmlkContadorRechazo" value="#{rechazosPropuesta.contador}" ajax="true"
+                                                   action="#{contadorOrdenesValidarFirmar.mostrarArchivosRechazo}" immediate="true"
+                                                   style="color:#0170b7;"   onclick="PF('dlgIRechazosPropuestas').show()" 
+                                                    update=":formPrincipal:tablaDocumentosRechazosPropuestas">
+                                        <f:setPropertyActionListener value="#{rechazosPropuesta}" immediate="true"
+                                                                     target="#{contadorOrdenesValidarFirmar.documentoSeleccionadoRechazo}"/>
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    
+                    <!--Tabla documentos rechazo-->
+                    <p:spacer width="1" height="15px"/>
+             
+                     <!--Aqui van los botones-->
+                    <h:panelGrid columns="1" id="panelBotones" style="width:100%;" border="0">
+                        <p:column rowspan="1">
+                            <div align="right">                                     
+                                
+                                <p:commandButton value="#{msj['btn.regresar.anterior']}" 
+                                                 update="@form" ajax="true" style="width:80px;"
+                                 action="indexValidarFirmarOrdenes?faces-redirect=true"/>
+                                 <p:spacer width="18px" height="1px"/>
+                                <p:commandButton id="btnRechazarRechazo" value="No aprobar Rechazo"
+                                         rendered="true"
+                                         onclick="PF('confirmarRechazarRechazo').show();" styleClass="ui-confirmdialog-yes"
+                                         process="@this" style="float:right;width:83px;"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');"/>
+                               
+                                 
+                                <p:commandButton id="btnAceptarRechazo" value="Aprobar rechazo"
+                                         rendered="true"
+                                         onclick="PF('confirmarAceptarRechazo').show();" styleClass="ui-confirmdialog-yes"
+                                         process="@this" style="float:right;width:83px;"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');"/>
+                                
+                                
+                            </div>
+                        </p:column>
+                    </h:panelGrid>	
+                    
+                    
+                </p:panel>
+            
+                <!--Dialogo de confirmación para aprobar rechazo-->
+                <p:dialog header="Confirmar" widgetVar="confirmarAceptarRechazo" resizable="false" modal="true" width="410">
+                    <h:outputText value="¿Estás seguro que deseas aprobar el rechazo del registro #{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.idRegistro}?"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton id="btnConfirmarAceptarRechazo" value="Aceptar"
+                                         action="#{contadorOrdenesValidarFirmar.aceptarRechazo}" style="width:80px;"
+                                         ajax="true" update="@form" onclick="PF('confirmarAceptarRechazo').hide();" />
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton value="Cancelar" onclick="PF('confirmarAceptarRechazo').hide();" style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                
+                <!-- Aviso satisfactorio al aprobar el rechazo-->      
+                <p:dialog  widgetVar="dlgRechazoAceptadoCorrectamente" resizable="false" modal="true" width="410">
+                    <h:outputText value="El rechazo del Registro #{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.idRegistro} ha sido aprobado y notificado a las áreas correspondientes."
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton id="btRechazoAceptado" value="Aceptar" style="width:80px;" action="indexValidarFirmarOrdenes?faces-redirect=true"
+                                         ajax="true" update="@form" onclick="PF('dlgRechazoAceptadoCorrectamente').hide();" />
+                         
+                    </div>
+                    <br/>
+                </p:dialog>
+
+            <!--Dialogo de confirmación para rechazar rechazo-->    
+            <p:dialog header="Confirmar" widgetVar="confirmarRechazarRechazo" resizable="false" modal="true" width="410">
+                    <h:outputText value="¿Seguro que no deseas aprobar la solicitud de rechazo del registro #{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.idRegistro}?"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton id="btnConfirmarRechazarRechazo" value="Aceptar"
+                                         action="#{contadorOrdenesValidarFirmar.rechazarRechazo}" style="width:80px;"
+                                         ajax="true" update="@form" onclick="PF('confirmarRechazarRechazo').hide();" />
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton value="Cancelar" onclick="PF('confirmarRechazarRechazo').hide();" style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                
+                <!-- Aviso satisfactorio al rechazar el rechazo-->                
+                <p:dialog  widgetVar="dlgRechazoRechazadoCorrectamente" resizable="false" modal="true" width="410">
+                    <h:outputText value="No ha sido aprobado el rechazo del registro #{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.idRegistro}."
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton id="btnRechazoRechazado" value="Aceptar" style="width:80px;" action="indexValidarFirmarOrdenes?faces-redirect=true"
+                                         ajax="true" update="@form" onclick="PF('dlgRechazoRechazadoCorrectamente').hide();" />
+                         
+                    </div>
+                    <br/>
+                </p:dialog>
+            
+            <!-- Dialogo archivos rechazados -->
+            
+             <p:dialog widgetVar="dlgIRechazosPropuestas" id="dlgIRechazosPropuestas" resizable="false" modal="true"
+                          width="600" height="auto" header="#{msj['panel.seguimiento.rechazo.archivo']}"
+                          closable="false">
+                          
+                <h:panelGrid border="0" columns="3">
+                        <p:spacer width="400" height="1"/>
+                        <h:outputLabel value="Id Registro: " style="float:left;font-weight:bold"/>
+                        <h:outputLabel value="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia.idRegistro}"
+                                       style="float:left;font-weight:bold"/>
+                    </h:panelGrid>
+                    <p:panel id="panelDialogoHistoricoRechazo" border="1">
+                    
+                     
+                        <p:spacer height="10"/>
+                        
+                        <p:dataTable id="tablaDocumentosRechazosPropuestas" var="documentosRechazosPropuestas" widgetVar="tablaDocumentosRechazosPropuestas"
+                                     value="#{contadorOrdenesValidarFirmar.listaDocRechazoPropuesta}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" 
+                                     rendered="true">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.propuestas.rechazadas&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['label.titulo.fecha.carga']}" styleClass="someClass" width="50">
+                                <h:outputText id="txtFechaCargaRechazoPropuesta"
+                                              value="#{documentosRechazosPropuestas.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['label.nombre.archivo']}" styleClass="someClass" width="250"
+                                      style="table-layout:fixed">
+                                <div style="width:250px;">
+                                    #{documentosRechazosPropuestas.nombre}
+                                </div>
+                            </p:column>
+                            
+                             <p:column style="width:30px">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="#{documentosRechazosPropuestas.nombre}" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{documentosRechazosPropuestas}"
+                                                                 target="#{contadorOrdenesValidarFirmar.docRechazoPropuestaCargadoSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{contadorOrdenesValidarFirmar.archivoDescargaRechazoPropuesta}"/>
+                                </h:commandButton>
+                            </p:column>
+                            
+                        </p:dataTable>
+                        <br/>
+                    </p:panel>
+                    <p:spacer height="20px"/>
+                    <h:panelGroup id="pnlgrpBotonesHistoricoRetroRechazo" layout="block" style="padding:10px;">
+                        <p:commandButton id="CerrarHistoricoRetroRecazo" value="Cerrar"
+                                         rendered="true"
+                                         onclick="PF('dlgIRechazosPropuestas').hide();" styleClass="ui-confirmdialog-yes"
+                                         process="@this" style="float:right;width:83px;"
+                                         action="#{contadorOrdenesValidarFirmar.limpiaListaDocRechazoPropuesta}"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');"/>
+                    </h:panelGroup>
+                </p:dialog>
+            
+            
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

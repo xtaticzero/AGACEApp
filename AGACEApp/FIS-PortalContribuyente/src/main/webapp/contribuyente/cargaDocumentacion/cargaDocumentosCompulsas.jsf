@@ -1,0 +1,383 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{cargaDocumentosCompulsasManagedBean.init}"/>
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formCargaDocumentosCompulsas" styleClass="panel-principal" enctype="multipart/form-data">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelDocumentos" style="border-bottom-right-radius:0;border-bottom-left-radius:0;"
+                         styleClass="panel-principal" header="Carga de Documentos">
+                    <p:accordionPanel multiple="true">
+                        <p:tab title="Datos del Contribuyente Auditado">
+                            <h:panelGrid columns="2" id="panelDatosContribuyente" border="0"
+                                         styleClass="panel-secundario">
+                               <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                               <h:outputLabel value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.contribuyenteInfo.rfc}"
+                                       style="float:left;font-weight:bold"/>
+                                <h:outputLabel value="Nombre/ Razón Social:" style="font-weight:bold"/>
+                                <h:outputLabel value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.contribuyenteInfo.nombre}"
+                                       style="float:left;font-weight:bold"/>
+                                                              
+                                <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                                 <h:outputLabel value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.contribuyenteInfo.actividadPreponderante}"
+                                       style="float:left;font-weight:bold"/>
+                               
+                                
+                            </h:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>
+                    <p:separator/>
+                    
+                    <h:panelGrid border="0" columns="5">
+                        <h:outputLabel value="Número Órden: " style="float:left;font-weight:bold"/>
+                        <h:outputLabel value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.compulsaSeleccionado.orden.numeroOrden}"
+                                       style="float:left;font-weight:bold"/>
+                        <p:spacer width="400" height="1"/>
+                        <h:outputLabel value="Método:" style="float:right;font-weight:bold"/>
+                        <h:outputLabel value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.compulsaSeleccionado.orden.feceaMetodo.nombre}"
+                                       style="float:left;font-weight:bold"/>
+                                          
+                    </h:panelGrid>
+                    <p:separator/>                    
+                    <br/>
+                    <br/>
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Promoción por enviar" style="float:right;font-weight:bold"/>
+                        <p:spacer width="495" height="1"/>
+                    </h:panelGrid>
+                    <br/>
+                    <br/>
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="Adjuntar Promoción"/>
+                    </h:panelGroup>
+                    <p:fileUpload id="flUpPromo" widgetVar="flUpPromo"
+                                  fileUploadListener="#{cargaDocumentosCompulsasManagedBean.handleFileUploadPromocion}"
+                                  mode="advanced" dragDropSupport="false" multiple="false" sizeLimit="4196000"
+                                  label="Examinar"
+                                  invalidSizeMessage="#{msj['error.tamanio.archivo']}" auto="true"
+                                  update="@form"
+                                  invalidFileMessage="#{msj['error.tipo.archivo']}"
+                                  allowTypes="/(\.|\/)(pdf|docx|xlsx)$/"
+                                  oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                    
+                    <p:spacer width="1" height="25"/>
+                    <h:outputText value="#{msj['titulo.tabla.promocion']}" style="font-weight:bold;"/>
+                    <p:dataTable id="tablaPromocionCargada" var="tablaPromocionCargada"
+                                 value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.listaPromocionesCompulsaCargadas}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}">
+                        <p:column headerText="#{msj['titulo.tabla.fecha']}" styleClass="someClass">
+                            <h:outputText id="txtFechaCargaPromocion" value="#{tablaPromocionCargada.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msj['titulo.tabla.promocion.nombre.archivo']}" styleClass="someClass"
+                                  style="table-layout:fixed">
+                            <div style="width:500px;">
+                                #{tablaPromocionCargada.nombreArchivo}
+                            </div>
+                        </p:column>
+                         <p:column headerText="#{msj['titulo.tabla.promocion.tipo']}" styleClass="someClass">
+                            <h:outputText id="tipoPromocion" value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.leyenda}">
+                                
+                            </h:outputText>
+                        </p:column>
+                         <p:column headerText="#{msj['column.label.archivo']}" width="10%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{tablaPromocionCargada}"
+                                                                 target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.promocionCompulsaSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{cargaDocumentosCompulsasManagedBean.promocionCompulsaSeleccionadaDescarga}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton value="Eliminar Promoción" action="#{cargaDocumentosCompulsasManagedBean.limpiarPromocion}"
+                    rendered="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.visibleBtnEliminar}"
+                                     update="@form" style="float:right;"/>
+                    <br/>
+                    <br/>
+                    <h:panelGrid id="panelPruebasAlegatos" border="0" columns="1"
+                                 rendered="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.mostrarPruebasAlegatosCompulsa}">
+                        <h:panelGroup id="tituloPruebas" layout="block" style="padding:5px;">
+                           <h:outputText value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.leyendaDoc}"/>
+                        </h:panelGroup>
+                        <p:fileUpload id="flUpPruebas" widgetVar="flUpPruebas"
+                                      fileUploadListener="#{cargaDocumentosCompulsasManagedBean.handleFileUploadPruebasAlegatos}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" sizeLimit="4196000"
+                                      label="Examinar"
+                                      invalidSizeMessage="#{msj['error.tamanio.archivo']}"
+                                      invalidFileMessage="#{msj['error.tipo.archivo']}"
+                                      auto="true" update=":formCargaDocumentosCompulsas:msgGeneral :formCargaDocumentosCompulsas:tablaPruebasAlegatosCargada"
+                                      allowTypes="/(\.|\/)(pdf|docx|xlsx)$/"
+                                      oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                        
+                        <p:dataTable id="tablaPruebasAlegatosCargada" var="tablaPruebasAlegatosCargada"
+                                     value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.listaPruebasAlegatosCompulsaCargadas}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['titulo.tabla.promocion.fecha']}" styleClass="someClass">
+                                <h:outputText id="txtFechaCargaPruebasAlegatos"
+                                              value="#{tablaPruebasAlegatosCargada.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['titulo.tabla.promocion.nombre.archivo']}"
+                                      styleClass="someClass" style="table-layout:fixed">
+                                <div style="width:550px;">
+                                    #{tablaPruebasAlegatosCargada.nombreArchivo}
+                                </div>
+                            </p:column>
+                             <p:column headerText="#{msj['column.label.archivo']}" width="10%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{tablaPruebasAlegatosCargada}"
+                                                                 target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.pruebaCompulsaSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{cargaDocumentosCompulsasManagedBean.pruebaCompulsaSeleccionadaDescarga}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                            <p:column>
+                                <p:commandLink value="Descartar"
+                                               action="#{cargaDocumentosCompulsasManagedBean.descartarPruebaLista}" ajax="true"
+                                               update="@form" style="color:blue;" immediate="true">
+                                    <f:setPropertyActionListener value="#{tablaPruebasAlegatosCargada}"
+                                                                 target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.pruebaCompulsaSeleccionada}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <br/>
+                    
+                    <p:commandButton value="Guardar Documentos" update="@form"
+                                     action="#{cargaDocumentosCompulsasManagedBean.enviarFirma}"
+                                     style="float:right;"/>
+                    <br/>
+                    <br/>
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Documentación enviada a la autoridad" style="float:right;font-weight:bold"/>
+                        <p:spacer width="495" height="1"/>
+                    </h:panelGrid>
+                    
+                    <p:separator/>
+                    
+                    
+                    <p:fieldset legend="Documentos de solicitud" toggleable="true" toggleSpeed="500" collapsed="true">
+                    	<p:fieldset legend="Anexos a la promoción" toggleable="true" toggleSpeed="500" collapsed="true">
+                    			<p:dataTable id="tablaPromocionesOficio" var="datos"
+                                 value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.listaHistoricoPromocionesCompulsas}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"> 
+				                        <p:column headerText="#{msj['column.label.detalle']}" style="width:35px">
+				                            <p:column>
+				                                <p:rowToggler/>
+				                            </p:column>
+				                        </p:column>
+				                        <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">
+				                            #{datos.idPromocionOficio}
+				                        </p:column>
+				                        <p:column headerText="#{msj['label.fecha.envio.promocion']}" style="width:80px">
+				                            <h:outputLabel value="#{datos.fechaCarga}">
+				                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+				                            </h:outputLabel>
+				                        </p:column>
+				                        <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+				                            <div align="center">
+				                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreArchivo}"
+				                                                 ajax="true" style="padding:0px 5px;">
+				                                    <f:setPropertyActionListener value="#{datos}"
+				                                                                 target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.promocionHistoricoCompulsaSeleccionada}"/>
+				                                    <p:fileDownload contentDisposition="attachment"
+				                                                    value="#{cargaDocumentosCompulsasManagedBean.archivoDescargaHistoricoPromocionCompulsa}"/>
+				                                </h:commandButton>
+				                            </div>
+				                        </p:column>
+				                        <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+				                            #{datos.descripcionTipoPromocion}
+				                        </p:column>
+				                        <p:column headerText="#{msj['column.label.documentacion']}" style="width:80px">
+				                            <div align="center">
+				                                <p:commandLink action="#{cargaDocumentosCompulsasManagedBean.getHistoricoPruebasAlegatosPromocionCompulsa}"
+				                                               value="#{datos.contadorPruebasAlegatos}" style="color:#0170b7;"
+				                                               ajax="true" immediate="true"
+				                                                onclick="PF('dlgDocEnviada').show();" update=":formCargaDocumentosCompulsas:tablaPruebasAlegatosOficio :formCargaDocumentosCompulsas:txtIdPromocionOficio :formCargaDocumentosCompulsas:txtFechaEnvio">
+				                                    <f:setPropertyActionListener value="#{datos}"
+				                                                                 target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.promocionHistoricoCompulsaSeleccionada}"/>
+				                                </p:commandLink>
+				                            </div>
+				                        </p:column>
+				                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+				                            <div align="center">
+				                                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true"
+				                                                 style="padding:0px 5px;">
+				                                    <f:setPropertyActionListener value="#{datos}"
+				                                                                 target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.promocionHistoricoCompulsaSeleccionada}"/>
+				                                    <p:fileDownload contentDisposition="attachment"
+				                                                    value="#{cargaDocumentosCompulsasManagedBean.archivoPromocionOficioHistoricoDescargaAcuse}"/>
+				                                </h:commandButton>
+				                            </div>
+				                        </p:column>
+				                     <!--     <p:column headerText="Extemporánea" style="width:70px">
+				                            <div align="center">
+				                                <p:graphicImage value="/resources/images/#{datos.extemporanea==1?'ok':'cancel'}.png"
+				                                                style="border:0"/>
+				                            </div>
+				                        </p:column>-->
+				                        <p:rowExpansion>
+				                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+				                                         styleClass=" ui-widget-content grid">
+				                                <h:outputText value="#{msj['label.presentada.por']} "/>
+				                                <h:outputText value="#{datos.idAsociadoCarga == null ? cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.compulsaSeleccionado.orden.fecetContribuyente.nombre : datos.asociado.nombre}"/>
+				                                
+				                            </h:panelGrid>
+				                        </p:rowExpansion>
+				                    </p:dataTable>
+                    	</p:fieldset>
+                    	<p:spacer width="40" height="10"/>
+                    	<p:fieldset legend="Solicitud de prórroga enviadas a la autoridad" toggleable="true" toggleSpeed="500" collapsed="true" rendered="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.mostrarProrrogas}">
+                    			<p:dataTable id="tablaProrrogasOficio" var="datos" rendered="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.mostrarProrrogas}"
+                                 value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.listaProrrogaCompulsa}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+			                        <f:facet name="header">PRÓRROGAS</f:facet>
+			                       
+			                        <p:column headerText="#{msj['label.id.prorroga']}" style="width:35px">
+			                            #{datos.idProrrogaOficio}
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:80px">
+			                            <h:outputLabel value="#{datos.fechaCarga}">
+			                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+			                            </h:outputLabel>
+			                        </p:column>
+			                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+			                            <div align="center">
+			                                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true"
+			                                                 style="padding:0px 5px;">
+			                                    <f:setPropertyActionListener value="#{datos}"
+			                                                                 target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.prorrogaCompulsaSeleccionada}"/>
+			                                    <p:fileDownload contentDisposition="attachment"
+			                                                    value="#{cargaDocumentosCompulsasManagedBean.archivoDescargaProrrogaCompulsaAcuse}"/>
+			                                </h:commandButton>
+			                            </div>
+			                        </p:column>
+			                       
+			                        <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+			                            #{datos.descripcionEstado}
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.documento.resolucion.prorroga']}" style="width:80px">
+			                            <div align="center">
+			                               
+			                            </div>
+			                        </p:column>
+			                        
+			                    </p:dataTable>
+			                    <br/>
+			                    <p:commandButton value="Agregar Prórroga" style="float:right;" rendered="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.mostrarBtnProrrogas}"
+			                     action="#{cargaDocumentosCompulsasManagedBean.cargaProrrogaCompulsa}"></p:commandButton>
+                    	</p:fieldset>                    	
+                    </p:fieldset>
+                    
+                    
+                    <br/>
+                    <br/>
+                    
+                    <p:commandButton value="#{msj['label.boton.pantalla.anterior']}" action="#{cargaDocumentosCompulsasManagedBean.regresa}" style="float:right;width:130px;" ajax="true" immediate="true" />
+                    <br/>
+                    <br/>
+                </p:panel>
+                <p:dialog widgetVar="dlgDocEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="ID Promoción Compulsa Oficio"/>
+                                <p:inputText id="txtIdPromocionOficio" style="width:50px;" readonly="true"
+                                             value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.idPromocionCompulsaSeleccionadaHistorico}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                             value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.fechaEnvioPromocionCompulsaSeleccionadaHistorico}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaPruebasAlegatosOficio" var="docs"
+                                             value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.listaHistoricoPruebasAlegatosCompulsa}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">#{docs.idAlegatoOficio}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="#{msj['label.documento']}" style="width:35px">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.pruebaHistoricoCompulsaSeleccionada}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{cargaDocumentosCompulsasManagedBean.archivoPruebaCompulsaHistoricoDescarga}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgDocProrrogaEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="ID Prórroga Compulsa Oficio"/>
+                                <p:inputText id="txtIdProrrogaOficio" style="width:50px;" readonly="true"
+                                             value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.idProrrogaCompulsaSeleccionado}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtProrrogaFechaEnvio" style="width:80px;" readonly="true"
+                                             value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.fechaEnvioProrrogaCompulsaSeleccionada}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaProrrogaOficio" var="docs"
+                                             value="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.listaDocProrrogaCompulsa}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prorroga']}" style="width:60px">#{docs.idDocProrrogaOficio}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="#{msj['label.documento']}" style="width:35px">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{cargaDocumentosCompulsasManagedBean.cargaDoctosDTOHelper.docProrrogaCompulsaSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{cargaDocumentosCompulsasManagedBean.archivoDocProrrogaCompulsaDescarga}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

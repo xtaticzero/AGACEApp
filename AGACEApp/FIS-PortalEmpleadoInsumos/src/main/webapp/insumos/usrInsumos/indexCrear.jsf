@@ -1,0 +1,911 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html" encoding="UTF-8">
+    <html xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <style type="text/css">
+                .ui-selectonemenu-panel {
+                    max-width: 40% !important;
+                }
+            </style>
+            <f:facet name="first">
+                <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+                <title>AGACE</title>
+            </f:facet>
+        </h:head>
+        <h:body>
+            <h:form id="formContribuyente" enctype="multipart/form-data"
+                    styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogContribuyente').show();"
+                              onsuccess="PF('statusDialogContribuyente').hide();" />
+                <p:dialog modal="true" widgetVar="statusDialogContribuyente"
+                          header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+                </p:dialog>
+                <p:panel id="panelContribuyente" styleClass="panel-interno"
+                         style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;"
+                         header="#{msj['titulo.panel.registro.insumo']}">
+
+                    <h:panelGrid id= "panelGridCabecera" columns="3">
+                        <p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}"
+                                       style="font-weight:bold;" width="100"/>
+                        <p:spacer width="400" height="1" />
+                        <p:outputLabel id="txtMensajeServicios" value="#{crearInsumoManagedBean.crearInsumoDTO.mensajeServicios}"
+                                       style="font-weight:bold;" width="200"/>
+                    </h:panelGrid>
+
+                    <p:separator />
+                    <p:spacer width="60" height="5px;" />
+                    <p:spacer width="60" height="5px;" />
+                    <p:spacer width="60" height="5px;" />
+                    <h:panelGrid id="panelInputContribuyente" columns="3">
+                        <h:outputLabel
+                            value="#{msj['label.rfc.contribuyente.obligatorio']} *:"
+                            style="font-weight:bold" />
+                        <p:spacer width="50" height="1" />
+                        <h:outputLabel value="#{msj['label.nombre.razon.social']}:"
+                                       style="font-weight:bold;" />
+                        <h:panelGrid id="panelBuscarContribuyente">
+                            <p:row>
+                                <p:column>
+                                    <p:inputText ajax="false" id="txtRFC" maxlength="13"
+                                                 value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.rfc}"
+                                                 onkeypress="if (event.keyCode == 13) {
+                                                             return false;
+                                                         }" disabled="#{crearInsumoManagedBean.crearInsumoDTO.bloquearRFC}">
+                                        <f:validator validatorId="rfcValidator" />
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>&nbsp;</p:column>
+                                <p:column>
+                                    <p:commandButton value="Buscar"
+                                                     update="txtRFC msgRFC txtNombre txtRegimen txtSituacionContribuyente txtTipoContribuyente txtSituacionDomicilio txtDomicilioFiscalContribuyente txtActividadPreponderante txtEntidad txtMensajeServicios :formInsumo :formAgregados"
+                                                     action="#{crearInsumoManagedBean.buscarRfcContribuyente}"
+                                                     ajax="true" rendered="#{!crearInsumoManagedBean.crearInsumoDTO.bloquearRFC}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3">
+                                    <p:message id="msgRFC" for="txtRFC" display="text" />
+                                </p:column>
+                            </p:row>
+                        </h:panelGrid>
+                        <p:spacer width="50" height="1" />
+                        <p:inputTextarea id="txtNombre" style="width:325px;height:auto;"
+                                         disabled="true"
+                                         value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.nombre}" />
+                        <h:outputLabel value="#{msj['label.regimen']}:"
+                                       style="font-weight:bold" />
+                        <p:spacer width="50" height="1" />
+                        <h:outputLabel value="#{msj['label.situacion.contribuyente']}:"
+                                       style="font-weight:bold;" />
+                        <p:inputText id="txtRegimen" style="width:325px;height:auto;"
+                                     disabled="true"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.regimen}" />
+                        <p:spacer width="50" height="15px" />
+                        <p:inputText id="txtSituacionContribuyente"
+                                     style="width:325px;height:auto;" disabled="true"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.situacion}" />
+                        <h:outputLabel value="#{msj['label.tipo.contribuyente']}:"
+                                       style="font-weight:bold" />
+                        <p:spacer width="50" height="1" />
+                        <h:outputLabel value="#{msj['label.actividad.preponderante']}:"
+                                       style="font-weight:bold;" />
+                        <p:inputText id="txtTipoContribuyente"
+                                     style="width:325px;height:auto;" disabled="true"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.tipo}" />
+                        <p:spacer width="50" height="15px" />
+                        <p:inputText id="txtActividadPreponderante"
+                                     style="width:325px;height:auto;" disabled="true"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.actividadPreponderante}" />
+                        <h:outputLabel
+                            value="#{msj['label.domicilio.fiscal.contribuyente']}:"
+                            style="font-weight:bold" />
+                        <p:spacer width="50" height="1" />
+                        <h:outputLabel value="#{msj['label.situacion.domicilio']}:"
+                                       style="font-weight:bold;" />
+                        <p:inputTextarea id="txtDomicilioFiscalContribuyente"
+                                         style="width:325px;height:auto;" disabled="true"
+                                         value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.domicilioFiscal}" />
+                        <p:spacer width="50" height="15px" />
+                        <p:inputText id="txtSituacionDomicilio"
+                                     style="width:325px;height:auto;" disabled="true"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.situacionDomicilio}" />
+                        <h:outputLabel value="#{msj['label.entidad']}:"
+                                       style="font-weight:bold" />
+                        <p:spacer width="50" height="1" />
+                        <p:spacer width="50" height="1" />
+                        <p:inputText id="txtEntidad" style="width:325px;height:auto;"
+                                     disabled="true"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.contribuyente.entidad}" />
+                        <p:spacer width="50" height="15px" />
+                        <p:spacer width="50" height="1" />
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+
+            <h:form id="formInsumo" enctype="multipart/form-data"
+                    styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogContribuyente').show();"
+                              onsuccess="PF('statusDialogContribuyente').hide();" />
+                <p:dialog modal="true" widgetVar="statusDialogContribuyente"
+                          header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+                </p:dialog>
+                <p:messages id="msgExitoGuardarInsumo" showDetail="true"
+                            globalOnly="true" closable="true" />
+                <p:panel id="panelInsumo" styleClass="panel-interno"
+                         rendered="#{!crearInsumoManagedBean.crearInsumoDTO.bloquearPaneles}"
+                         style="border-bottom:none!important;border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;                       
+                         border-bottom-right-radius:0;border-bottom-left-radius:0;">
+                    <p:outputLabel value="#{msj['separador.panel.datos.previos.insumo']}"
+                                   style="font-weight:bold;" />
+                    <p:separator />
+                    <p:spacer width="60" height="5px;" />
+                    <p:spacer width="60" height="5px;" />
+                    <p:spacer width="60" height="5px;" />
+                    <p:panelGrid styleClass="noBorders" style="width:100%"
+                                 cellpadding="10">
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Unidad Administrativa de Atención*:"
+                                               style="font-weight:bold" />
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{msj['label.subprograma']} *:"
+                                               style="font-weight:bold" />
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel value="#{msj['label.sector']} *:"
+                                               style="font-weight:bold;" />
+                            </p:column>
+
+                            <p:column>
+                                <h:outputLabel value="#{msj['label.tipo.insumo']} *:"
+                                               style="font-weight:bold;" />
+                            </p:column>                   
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu id="cmbUnidadAdministrativa" style="width:200px;"
+                                                 value="#{crearInsumoManagedBean.crearInsumoDTO.propuesta.idArace}">
+                                    <f:selectItem itemLabel="Selecciona Unidad Administrativa"
+                                                  itemValue="-1" />
+                                    <f:selectItems
+                                        value="#{crearInsumoManagedBean.crearInsumoDTO.unidadesAdministrativas}"
+                                        var="lista" itemLabel="#{lista.nombre}"
+                                        itemValue="#{lista.idUnidadAdministrativa}"
+                                        itemDescription="#{lista.descripcion}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="cmbSubprograma"
+                                                 value="#{crearInsumoManagedBean.crearInsumoDTO.propuesta.idSubprograma}"
+                                                 style="width:170px;">
+                                    <f:selectItem
+                                        itemLabel="#{msj['combo.item.selecciona.subprograma']}"
+                                        itemValue="-1" />
+                                    <f:selectItems
+                                        value="#{crearInsumoManagedBean.crearInsumoDTO.listaSubprograma}"
+                                        var="lista" itemLabel="#{lista.clave} - #{lista.descripcion}"
+                                        itemValue="#{lista.idSubprograma}"
+                                        itemDescription="#{lista.clave} - #{lista.descripcion}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="cmbSector"
+                                                 value="#{crearInsumoManagedBean.crearInsumoDTO.propuesta.idSector}"
+                                                 style="width:140px;">
+                                    <f:selectItem itemLabel="#{msj['combo.item.selecciona.sector']}"
+                                                  itemValue="-1" />
+                                    <f:selectItems
+                                        value="#{crearInsumoManagedBean.crearInsumoDTO.listaSector}"
+                                        var="lista" itemLabel="#{lista.descripcion}"
+                                        itemValue="#{lista.idSector}"
+                                        itemDescription="#{lista.descripcion}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="cmbTipoInsumo"
+                                                 value="#{crearInsumoManagedBean.crearInsumoDTO.propuesta.idTipoInsumo}"
+                                                 style="width:160px;">
+                                    <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipo.insumo']}"
+                                                  itemValue="-1" />
+                                    <f:selectItems
+                                        value="#{crearInsumoManagedBean.crearInsumoDTO.listTipoInsumo}"
+                                        var="lista" itemLabel="#{lista.descripcion}"
+                                        itemValue="#{lista.idTipoInsumo}"
+                                        itemDescription="#{lista.descripcion}" />
+                                </p:selectOneMenu>
+                            </p:column>    
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:message id="msgUnidadAdministrativa" for="cmbUnidadAdministrativa" display="text" />
+                            </p:column>
+                            <p:column>
+                                <p:message id="msgSubprograma" for="cmbSubprograma" display="text" />
+                            </p:column>
+                            <p:column>
+                                <p:message id="msgSector" for="cmbSector" display="text" />
+                            </p:column>
+                            <p:column>
+                                <p:message id="msgTipoInsumo" for="cmbTipoInsumo" display="text" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel
+                                    value="#{msj['label.encabezado.insumos.prioridad']} :"
+                                    style="font-weight:bold" />
+                            </p:column>
+                            <p:column colspan="2">
+                                <h:outputLabel value="#{msj['label.periodo.propuesto']} *:"
+                                               style="font-weight:bold;" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu id="cmbPrioridad" style="width:170px;"
+                                                 value="#{crearInsumoManagedBean.crearInsumoDTO.propuesta.idPrioridad}">
+                                    <f:selectItem itemLabel="Selecciona una prioridad" itemValue="-1" />
+                                    <f:selectItems
+                                        value="#{crearInsumoManagedBean.crearInsumoDTO.listaFececPrioridad}"
+                                        var="lista" itemLabel="#{lista.valor}.- #{lista.descripcion}"
+                                        itemValue="#{lista.idPrioridad}"
+                                        itemDescription="#{lista.valor}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column colspan="2">
+                                <h:panelGrid id="panelPeriodoPropuesto" columns="5">
+                                    <h:outputLabel value="#{msj['lbl.propuestas.del']}:"
+                                                   style="font-weight:bold" />
+                                    <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy"
+                                                showOn="button" readonlyInput="true" size="6"
+                                                maxdate="#{crearInsumoManagedBean.crearInsumoDTO.strFechaHoy}"
+                                                disabled="false" navigator="true"
+                                                value="#{crearInsumoManagedBean.crearInsumoDTO.propuesta.fechaInicioPeriodo}" />
+                                    <p:spacer width="1" height="1" />
+                                    <h:outputLabel value="#{msj['lbl.propuestas.al']}:"
+                                                   style="font-weight:bold;" />
+                                    <p:calendar id="txtFechaFinal" locale="es" pattern="dd/MM/yyyy"
+                                                showOn="button" readonlyInput="true" size="6"
+                                                maxdate="#{crearInsumoManagedBean.crearInsumoDTO.strFechaHoy}"
+                                                disabled="false"
+                                                value="#{crearInsumoManagedBean.crearInsumoDTO.propuesta.fechaFinPeriodo}"
+                                                navigator="true" />
+                                </h:panelGrid>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:message id="msgPrioridadSugerida" for="cmbPrioridad" display="text" />
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:message id="msgFechaInicial" for="txtFechaInicial"
+                                           display="text" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <h:panelGrid columns="2" cellpadding="10" width="100%">
+                        <h:panelGrid>
+                            <h:outputLabel value="#{msj['upl.adjuntar.documento']}"
+                                           style="font-weight:bold;" />
+                            <p:fileUpload id="fulExpediente"
+                                          fileUploadListener="#{crearInsumoManagedBean.cargaArchivoExpediente}"
+                                          mode="advanced" dragDropSupport="false" multiple="false"
+                                          style="width:320px;" label="#{msj['btn.examinar']}"
+                                          cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                          showButtons="true" auto="true" ajax="true"
+                                          update="tablaDocumentacionExpediente msgExitoGuardarInsumo msgExpediente"
+                                          oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                        </h:panelGrid>
+                        <p:dataTable id="tablaDocumentacionExpediente"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.listaDocumentosExpediente}"
+                                     var="documento" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+                                      width="100">
+                                <h:outputText id="txtFechaCargaPromocion"
+                                              value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento"
+                                      headerText="#{msj['column.expediente']}">
+                                <div style="width: 200px;">#{documento.nombre}</div>
+                            </p:column>
+                            <p:column width="25">
+                                <h:commandButton ajax="true"
+                                                 image="/resources/images/document.png"
+                                                 title="#{documento.nombre}"
+                                                 style="padding:0px 2px;">
+                                    <f:setPropertyActionListener value="#{documento}"
+                                                                 target="#{crearInsumoManagedBean.crearInsumoDTO.archivoDescarga}" />
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{crearInsumoManagedBean.descargarDocumento}" />
+                                </h:commandButton>
+                            </p:column>
+                            <p:column width="50">
+                                <p:commandLink value="#{msj['btn.eliminar']}"
+                                               action="#{crearInsumoManagedBean.descartarDocumento}" ajax="true"
+                                               immediate="true" update="@form">
+                                    <f:setPropertyActionListener value="#{documento}"
+                                                                 target="#{crearInsumoManagedBean.crearInsumoDTO.docSeleccionado}" />
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <p:message id="msgExpediente" for="fulExpediente" display="text" />
+                        <p:spacer />
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" id="panelBotones" width="700"
+                                 rendered="#{!crearInsumoManagedBean.crearInsumoDTO.visualizaDetalle}">
+                        <p:column rowspan="2">
+                            <p:commandButton update="@all" value="#{msj['btn.limpiar']}"
+                                             style="float:right;" action="#{crearInsumoManagedBean.limpiar}"
+                                             ajax="true" immediate="true" process="@this">
+                                <p:resetInput target=":formContribuyente formInsumo" />
+                            </p:commandButton>
+                            <p:commandButton value="#{msj['btn.agregar']}"
+                                             style="float:right;width:80px;"
+                                             action="#{crearInsumoManagedBean.asignarInsumo}"
+                                             update="@form :formAgregados :formAgregados:lblAntecedentes :formContribuyente"
+                                             oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                        </p:column>
+                    </h:panelGrid>
+   
+                                             
+                    <div align="center" >
+                        <p:panelGrid style="width:60%" rendered="#{crearInsumoManagedBean.crearInsumoDTO.visualizaDetalle}"> 
+                            <f:facet name="header"> 
+                                <p:row> 
+                                    <p:column colspan="2"> #{msj['titulo.tabla.justificacion.insumo']}
+                                    </p:column>
+                                </p:row>
+
+                            <p:row>
+                                <p:column > 
+                                    #{msj['label.encabezado.documento']}
+                                </p:column>
+                                <p:column > 
+                                    #{msj['column.label.justificacion']}
+                                </p:column>
+                            </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column style="text-align:center;">
+                                    <p:commandLink value="#{crearInsumoManagedBean.crearInsumoDTO.numeroDeDocumentos}"
+                                                   onclick="PF('dialogJustificacionDoc').show();" ajax="true"
+                                       immediate="true" update="@form" disabled="#{crearInsumoManagedBean.crearInsumoDTO.numeroDeDocumentos eq 0}"/>
+                                    
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.justificacion']}" style="text-align:center;">
+                                    <p:commandLink value="#{msj['label.insumo.detalle.justificacion']}"
+                                       action="#{crearInsumoManagedBean.desplegarJustificacion}"
+                                        ajax="true"
+                                       immediate="true" update="@form" disabled="#{crearInsumoManagedBean.crearInsumoDTO.numeroDeDocumentos eq 0}"/>
+                                </p:column>    
+                            </p:row>        
+                        </p:panelGrid>
+                    </div>                         
+
+
+
+
+                    <p:spacer height="20px" />
+                    <div align="right">
+                        <h:panelGrid columns="2" id="panelBotonesDetalle" width="10%"
+                                     rendered="#{crearInsumoManagedBean.crearInsumoDTO.visualizaDetalle}">
+                            <p:commandButton value="#{msj['titulo.historico.retroalimentacion.regresar']}" style="float:right;width:120px;"
+                                             action="#{crearInsumoManagedBean.regresaDetalle}" update="@all" />
+
+                            <p:commandButton value="Actualizar"
+                                             action="#{crearInsumoManagedBean.actualizarInsumo}"
+                                             update=":formContribuyente:panelContribuyente :formInsumo :formAgregados :formContribuyente"
+                                             oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+
+                        </h:panelGrid>
+                    </div>
+                </p:panel>
+            </h:form>
+
+            <h:form id="formAgregados" enctype="multipart/form-data"
+                    styleClass="panel-principal">
+                <p:panel id="panelAgregados" styleClass="panel-interno"
+                         style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;">
+                    <p:panel style="border:none!important"
+                             rendered="#{!crearInsumoManagedBean.crearInsumoDTO.visualizaDetalle}"
+                             styleClass="panelInterno">
+                        <p:dataTable id="tablaInsumosRegistrados" var="insumo"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.insumosExpedienteDTO}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true" rows="10"
+                                     paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom" rowKey="#{insumo.fecetInsumo.idInsumo}"
+                                     selectionMode="multiple"
+                                     selection="#{crearInsumoManagedBean.crearInsumoDTO.insumosExpedientesSeleccionados}">
+                            <p:column>
+                                <p:selectBooleanCheckbox value="#{insumo.fecetInsumo.selected}" />
+                            </p:column>
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.registros.oficio&apos;]}
+                            </f:facet>
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column colspan="4" headerText="" />
+                                    <p:column colspan="2"
+                                              headerText="#{msj['column.periodo.propuesto']}" />
+                                    <p:column headerText="" />
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="" width="1%" />
+                                    <p:column headerText="#{msj['column.detalle']}" width="1%" />
+                                    <p:column headerText="#{msj['column.rfc']}" width="12%" />
+                                    <!--<p:column headerText="#{msj['column.nombre.razon.social']}" />
+            <p:column headerText="#{msj['column.subprograma']}" />-->
+                                    <p:column headerText="#{msj['column.sector']}" />
+                                    <p:column headerText="#{msj['label.inicio']}" width="9%" />
+                                    <p:column headerText="#{msj['label.fin']}" width="9%" />
+                                    <p:column headerText="#{msj['column.adjuntos']}" width="10%" />
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <p:rowToggler />
+                            </p:column>
+                            <p:column>
+                                <p:commandLink style="color:blue;"
+                                               action="#{crearInsumoManagedBean.visualizaDetalle}"
+                                               value="#{insumo.fecetInsumo.fecetContribuyente.rfc}" ajax="true"
+                                               partialSubmit="true" update="@all"
+                                               process=" :formInsumo :formAgregados">
+                                    <f:setPropertyActionListener value="#{insumo}"
+                                                                 target="#{crearInsumoManagedBean.crearInsumoDTO.insumoExpendiente}" />
+                                </p:commandLink>
+                            </p:column>
+                            <p:column>
+                                #{insumo.fecetInsumo.fececSector.descripcion}
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{insumo.fecetInsumo.fechaInicioPeriodo}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{insumo.fecetInsumo.fechaFinPeriodo}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <p:commandLink style="color:blue;"
+                                               action="#{crearInsumoManagedBean.visualizaAnexos}"
+                                               oncomplete="PF('dialogDocumentacionExpediente').show()"
+                                               process="@this" update=":formAgregados"
+                                               value=" #{insumo.numeroExpedientes}" ajax="true">
+                                    <f:setPropertyActionListener value="#{insumo}"
+                                                                 target="#{crearInsumoManagedBean.crearInsumoDTO.insumoExpendiente}" />
+                                </p:commandLink>	
+                            </p:column>
+                            <!-- DETALLE -->
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="#{msj['column.nombre.razon.social']}:" />
+                                    <h:outputText
+                                        value="#{insumo.fecetInsumo.fecetContribuyente.nombre}" />
+                                    <h:outputText value="#{msj['column.subprograma']}:" />
+                                    <p:outputLabel style="width:10px;height:auto;"
+                                                   value="#{insumo.fecetInsumo.fececSubprograma.clave} - #{insumo.fecetInsumo.fececSubprograma.descripcion}" />
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                        <p:spacer height="10px" />
+                        <div align="right">
+                            <h:panelGrid columns="2" id="panelBotones" width="10%"
+                                         rendered="#{crearInsumoManagedBean.crearInsumoDTO.insumosAgregados>0}">
+                                <p:commandButton value="#{msj['btn.registrar']}"
+                                                 style="float:right;width:80px;"
+                                                 onclick="PF('confirmarRegistarInsumos').show();" />
+                                <p:commandButton value="Eliminar"
+                                                 action="#{crearInsumoManagedBean.validarEliminarInsumo}"
+                                                 update=":formContribuyente:panelContribuyente :formInsumo :formAgregados"
+                                                 oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                                <!--p:commandButton value="Eliminar" onclick="PF('confirmarEliminarInsumos').show();"/-->
+                            </h:panelGrid>
+                        </div>
+                    </p:panel>
+
+                </p:panel>
+
+
+
+                <p:dialog header="#{msj['label.confirm.header']}"
+                          widgetVar="confirmarRegistarInsumos" resizable="false" modal="true"
+                          width="315" height="65">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.registra.insumos']}" />
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.no']}"
+                                     onclick="PF('confirmarRegistarInsumos').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                     style="float:right;" />
+                    <p:commandButton id="btnEnviarTodo"
+                                     value="#{msj['label.confirm.si']}"
+                                     onclick="PF('confirmarRegistarInsumos').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{crearInsumoManagedBean.registrarInsumosAgregados}"
+                                     process="@this" style="float:right;"
+                                     update=":formContribuyente:panelContribuyente :formInsumo :formAgregados"
+                                     oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                </p:dialog>
+                <p:dialog header="#{msj['label.confirm.header']}"
+                          widgetVar="confirmarValidacion" resizable="false" modal="true"
+                          width="400" visible="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText
+                            value="#{crearInsumoManagedBean.crearInsumoDTO.mensajeValidacion}"
+                            escape="false" />
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}"
+                                     onclick="PF('confirmarValidacion').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     style="float:right;" />
+                </p:dialog>
+                <p:dialog closable="false" widgetVar="dlgInsumosRegistrados"
+                          id="dlgInsumosRegistrados" resizable="false" modal="true" width="800"
+                          height="auto">
+                    <p:spacer height="20px" />
+                    <p:dataTable id="insumosRegistradosExitosamente"
+                                 var="insumosRegistrados"
+                                 value="#{crearInsumoManagedBean.crearInsumoDTO.listaInsumosRegistrados}"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                 paginator="true" rows="10"
+                                 paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                 paginatorPosition="bottom" rowKey="#{propuesta.idInsumo}"
+                                 selection="#{crearInsumoManagedBean.crearInsumoDTO.insumosSeleccionados}">
+                        <f:facet name="header">
+                            #{msj[&apos;titulo.panel.insumos.registrados&apos;]}
+                        </f:facet>
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column colspan="3" headerText="" />
+                                <p:column colspan="2"
+                                          headerText="#{msj['column.periodo.propuesto']}" />
+                            </p:row>
+                            <p:row>
+                                <p:column headerText="#{msj['label.id.registro']}" width="1%" />
+                                <p:column headerText="#{msj['column.rfc']}" width="12%" />
+                                <p:column headerText="Nombre" />
+                                <p:column headerText="#{msj['label.inicio']}" width="9%" />
+                                <p:column headerText="#{msj['label.fin']}" width="9%" />
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column>
+                            #{insumosRegistrados.idRegistro}
+                        </p:column>
+                        <p:column>
+                            #{insumosRegistrados.fecetContribuyente.rfc}
+                        </p:column>
+                        <p:column>
+                            #{insumosRegistrados.fecetContribuyente.nombre}
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{insumosRegistrados.fechaInicioPeriodo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{insumosRegistrados.fechaFinPeriodo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer height="20px" />
+                    <p:dataTable id="insumosNoRegistrados" var="insumosNoRegistrados"
+                                 value="#{crearInsumoManagedBean.crearInsumoDTO.listaInsumosNoRegistrados}"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                 paginator="true" rows="10"
+                                 paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                 paginatorPosition="bottom" rowKey="#{propuesta.idInsumo}"
+                                 selection="#{crearInsumoManagedBean.crearInsumoDTO.insumosSeleccionados}">
+                        <f:facet name="header">
+                            ADACES que no tienen Administrador registrado
+                        </f:facet>
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column colspan="3" headerText="" />
+                                <p:column colspan="2"
+                                          headerText="#{msj['column.periodo.propuesto']}" />
+                            </p:row>
+                            <p:row>
+                                <p:column headerText="ADACE" width="1%" />
+                                <p:column headerText="#{msj['column.rfc']}" width="12%" />
+                                <p:column headerText="Nombre" />
+                                <p:column headerText="#{msj['label.inicio']}" width="9%" />
+                                <p:column headerText="#{msj['label.fin']}" width="9%" />
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column>
+                            #{insumosNoRegistrados.fececUnidadAdministrativa.nombre}
+                        </p:column>
+                        <p:column>
+                            #{insumosNoRegistrados.fecetContribuyente.rfc}
+                        </p:column>
+                        <p:column>
+                            #{insumosNoRegistrados.fecetContribuyente.nombre}
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{insumosNoRegistrados.fechaInicioPeriodo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{insumosNoRegistrados.fechaFinPeriodo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                    <h:panelGroup layout="block" style="padding:10px;">
+                        <p:commandButton id="CerrarInsumosProcesados" value="Cerrar"
+                                         onclick="PF('dlgInsumosRegistrados').hide();"
+                                         styleClass="ui-confirmdialog-yes"
+                                         action="#{crearInsumoManagedBean.init}" process="@this"
+                                         style="float:right;width:83px;"
+                                         update=":formContribuyente:panelContribuyente :formInsumo formAgregados"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                    </h:panelGroup>
+                </p:dialog>
+                <p:dialog header="#{msj['label.confirm.header']}"
+                          widgetVar="confirmarEliminarInsumos" resizable="false" modal="true"
+                          width="315" height="55">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.eliminar.insumos']}" />
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.cancelar']}"
+                                     onclick="PF('confirmarEliminarInsumos').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                     style="float:right;" />
+                    <p:commandButton id="btnEliminarTodo"
+                                     value="#{msj['label.confirm.aceptar']}"
+                                     onclick="PF('confirmarEliminarInsumos').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{crearInsumoManagedBean.eliminarInsumo}" process="@this"
+                                     style="float:right;"
+                                     update=":formContribuyente:panelContribuyente :formInsumo formAgregados"
+                                     oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                </p:dialog>
+                <p:dialog header="#{msj['label.confirm.header']}"
+                          widgetVar="confirmarContinuarRegistrando" resizable="false"
+                          modal="true" width="400" visible="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText
+                            value="#{crearInsumoManagedBean.crearInsumoDTO.mensajeAntecedentes}"
+                            escape="false" id="lblAntecedentes" />
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.no']}"
+                                     onclick="PF('confirmarContinuarRegistrando').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                     style="float:right;" />
+                    <p:commandButton id="btnContinuar" value="#{msj['label.confirm.si']}"
+                                     onclick="PF('confirmarContinuarRegistrando').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{crearInsumoManagedBean.reservarInsumo}" process="@this"
+                                     style="float:right;"
+                                     update=":formContribuyente:panelContribuyente :formInsumo formAgregados"
+                                     oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                </p:dialog>
+
+                <p:dialog header="#{msj['titulo.dialogo.justificacion.insumo']}"
+                          widgetVar="dialogJustificacionCoincidencias" resizable="false"
+                          modal="true" width="600" visible="false">
+
+                    <p:messages id="msgExitoGuardarDocJus" showDetail="true"
+                            globalOnly="true" closable="true" />
+                    <h:panelGrid columns="2" >
+                        <p:outputLabel value="#{msj['column.label.justificacion']} * :" style="font-weight:bold;"/>
+                        <p:inputTextarea id="txtJustificacion" style="width:425px;height:auto;font-size:11px;" maxlength="400"
+                             value="#{crearInsumoManagedBean.crearInsumoDTO.justificacion}" inmediate="true"  >
+                            
+                        </p:inputTextarea>    
+                        <p:spacer width="10px" height="20px"/>    
+                        <p:message id="msgTxtJustificacion" for="txtJustificacion" display="text" />    
+                        <p:outputLabel value="#{msj['label.adjuntar.documento']} * :" style="font-weight:bold;"/>
+                        
+
+                        <p:fileUpload id="justificacionExpediente"
+                                fileUploadListener="#{crearInsumoManagedBean.cargaArchivoJustificacion}"
+                                mode="advanced" dragDropSupport="false" multiple="false"
+                                style="width:350px;float:right" label="#{msj['btn.examinar']}"
+                                cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                showButtons="true" auto="true" ajax="true"
+                                update="tablaDocumentacionExpedienteJustificacion msgExitoGuardarDocJus msgTxtJustificacionExpediente"
+                                oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+                        <p:spacer width="10px" height="20px"/>    
+                        <p:message id="msgTxtJustificacionExpediente" for="justificacionExpediente" display="text" />
+                        
+                    </h:panelGrid>                    
+                    <p:panelGrid columns="1" styleClass="noBorders">
+                        <p:dataTable id="tablaDocumentacionExpedienteJustificacion"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.listaDocumentosJustificacion}"
+                                         var="documentoJustificacion" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                         rows="5"
+                                         paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <f:facet name="header">
+                                    #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                                </f:facet>
+                                <p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+                                           style="width: 100px !important; border:0.1px gray solid !important; text-align:center">
+                                    <h:outputText id="txtFechaCargaJustificacion"
+                                                  value="#{documentoJustificacion.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column id="hdrNombreJustificacion"
+                                          headerText="#{msj['column.expediente']}" style="width: 200px !important; border:0.1px gray solid !important; text-align:center">
+                                    #{documentoJustificacion.nombre}
+                                </p:column>                            
+                                <p:column style="width: 50px !important; border:0.1px gray solid !important; text-align:center">
+                                    <p:commandLink value="#{msj['btn.eliminar']}"
+                                                   action="#{crearInsumoManagedBean.descartarDocumentoJustificacion}" ajax="true"
+                                                   immediate="true" update="tablaDocumentacionExpedienteJustificacion :formAgregados:msgExitoGuardarDocJus">
+                                        <f:setPropertyActionListener value="#{documentoJustificacion}"
+                                                                     target="#{crearInsumoManagedBean.crearInsumoDTO.docSeleccionadoJustificacion}" />
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panelGrid>                    
+                                
+                        <h:panelGrid columns="3" >
+                            <p:spacer width="400px" height="20px"/>
+                            
+                            <p:commandButton value="#{msj['btn.guardar']}"
+                                                 style="float:right;width:80px;"                                                                                                   
+                                                 action="#{crearInsumoManagedBean.guardarDocumentoJustificacion}" />
+                            <p:commandButton value="#{msj['label.confirm.cancelar']}"
+                                                 style="float:right;width:80px;"
+                                                 onclick="PF('dialogJustificacionCoincidencias').hide();" />                         
+                        </h:panelGrid>                                          
+                            
+                                                                
+                </p:dialog>                     
+                <!-- Inicia Dialog Anexos -->
+                <p:dialog id="dialogDocumentacionExpediente" header=""
+                          resizable="false" width="700" widgetVar="dialogDocumentacionExpediente"
+                          showEffect="clip" hideEffect="clip" closable="false" modal="true"
+                          closeOnEscape="false" draggable="true">
+                    <div align="left">
+                        <p:spacer width="40" height="1" />
+                        <br />
+                        <p:dataTable id="tablaDocumentacionExpedienteDialog"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.insumoExpendiente.fecetDocExpInsumos}"
+                                     var="documento" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+                                      width="100">
+                                <h:outputText id="txtFechaCargaPromocion"
+                                              value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento"
+                                      headerText="#{msj['column.expediente']}">
+                                <div style="width: 200px;">#{documento.nombre}</div>
+                            </p:column>
+                            <p:column width="25">
+                                <h:commandButton ajax="true"
+                                                 image="/resources/images/document.png"
+                                                 title="#{documento.nombre}"
+                                                 style="padding:0px 2px;">
+                                    <f:setPropertyActionListener value="#{documento}"
+                                                                 target="#{crearInsumoManagedBean.crearInsumoDTO.archivoDescarga}" />
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{crearInsumoManagedBean.descargarDocumento}" />
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    <br />
+                    <h:panelGrid columns="2" style="float:right;" width="2">
+                        <p:commandButton value="Cancelar" ajax="true"
+                                         onclick="PF('dialogDocumentacionExpediente').hide();" update="@this"
+                                         style="float:rigth;" />
+                    </h:panelGrid>
+                </p:dialog>
+                                
+                <p:dialog header="#{msj['titulo.dialogo.justificacion.update']}"
+                          id="dialogJustificacion" widgetVar="dialogJustificacion" resizable="false"
+                          modal="true" width="510" visible="false"  closable="false" draggable="false">               
+                
+                    <h:outputText value="#{msj['lbl.justificacion']}" />
+                    <p:inputTextarea id="txtAreaJustificacion" style="width:475px;height:auto;font-size:11px;" maxlength="400"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.justificacionDetalle}" disabled="true"/>
+                    <h:panelGrid columns="2">
+                        <p:spacer width="397px" height="20px"/>
+                        
+                        <p:commandButton value="#{msj['btn.cerrar']}" ajax="true"
+                            onclick="PF('dialogJustificacion').hide();" update="@this"
+                            style="width:80px;" />                    
+                        
+                    </h:panelGrid>
+                </p:dialog>    
+                
+                 <p:dialog header="#{msj['titulo.dialogo.documento.justificacion']}"
+                    widgetVar="dialogJustificacionDoc" resizable="false"
+                    modal="true" width="510" visible="false"  closable="false" draggable="false">            
+                        <p:dataTable id="tablaDocumentacionJustificacion"
+                                     value="#{crearInsumoManagedBean.crearInsumoDTO.listaDocumentosJustificacion}" 
+                                     var="documento"  editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                                
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width: 80px !important;text-align:center;">
+                                        <h:outputText value="#{documento.fechaCreacion}">                                            
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                        </h:outputText>
+                                </p:column>                                
+
+                                <p:column headerText="#{msj['column.expediente']}" style="width: 240px !important;text-align:center;">
+                                    <h:outputText value="#{documento.nombre}"/>
+                                </p:column>
+                                
+                                <p:column headerText="#{msj['column.documento']}" style="width: 50px !important;">
+                                    <div align="center">
+                                        <h:commandButton ajax="true"
+                                            image="/resources/images/document.png" process="@this"
+                                            title="#{documento.nombre}">
+                                                <f:setPropertyActionListener target="#{crearInsumoManagedBean.crearInsumoDTO.rutaArchivoDescargable}"
+                                                                                value="#{documento.rutaArchivo}" />
+                                                <f:setPropertyActionListener target="#{crearInsumoManagedBean.crearInsumoDTO.nombreArchivoDescargable}"
+                                                                                value="#{documento.nombre}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                                value="#{crearInsumoManagedBean.descargaArchivo}" />
+                                        </h:commandButton>                                
+                                    </div>
+                                </p:column>
+                            </p:dataTable>    
+                     
+                     <h:panelGrid columns="2">
+                        <p:spacer width="400px" height="20px"/>
+                        
+                        <p:commandButton value="#{msj['btn.cerrar']}" ajax="true"
+                            onclick="PF('dialogJustificacionDoc').hide();" update="@this"
+                            style="width:80px;" />                    
+                        
+                    </h:panelGrid>
+                     
+                     
+                 </p:dialog>                
+            </h:form>
+
+            <h:outputScript library="js/" name="agace.js" />
+
+            <h:outputStylesheet library="css/" name="agace.css" />
+        </h:body>
+    </html>
+</f:view>

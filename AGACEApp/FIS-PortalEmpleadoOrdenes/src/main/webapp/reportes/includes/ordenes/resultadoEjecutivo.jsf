@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+                
+                <h:panelGrid rendered="#{reporteOrdenesMB.reporteDTOHelper.mostrarResultados}" id="divResultadoEjecutivoId" columns="1" border="0" cellpadding="2" cellspacing="2">
+                    <h:panelGroup>
+                        <table border="0" width="750px" cellpadding="2" cellspacing="2">
+                            <tr>
+                                <td width="85%" align="left"><h:outputLabel value="#{reporteOrdenesMB.reporteDTOHelper.rangoFechasReporte}" style="font-weight:bold;font-size:12px;"/></td>
+                                <td width="15%" align="right">
+                                    <p:commandButton id="btnPdflId" value="#{msj['lbl.reporte.columna.exportar.pdf']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
+                                        <p:fileDownload value="#{reporteOrdenesMB.archivoPDF}"/>
+                                    </p:commandButton>
+                                </td>
+                            </tr>
+                        </table>
+                    </h:panelGroup>
+                    <!--
+                    <h:panelGroup>
+                        <p:dataTable id="listaResultadoGraficasId" var="res" value="#{reporteOrdenesMB.reporteDTOHelper.grafica.listaValores}" paginator="true" rows="25" paginatorPosition="bottom" 
+                                    paginatorAlwaysVisible="true" emptyMessage="#{msj['label.lista.vacia']}" 
+                                    style="width:600px;">
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column headerText="Mes"/>
+                                    <p:column headerText="Estatus"/>
+                                    <p:column headerText="Entidad"/>
+                                    <p:column headerText="Total"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column><h:outputText value="#{res.mes}"/></p:column>
+                            <p:column><h:outputText value="#{res.estatus}"/></p:column>
+                            <p:column><h:outputText value="#{res.entidad}"/></p:column>
+                            <p:column><h:outputText value="#{res.cantidad}"/></p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                    -->
+                    <h:panelGroup>
+                        <ui:repeat var="res" value="#{graficaMB.listaGraficas}" varStatus="status">
+                            <p:graphicImage value="#{graficaMB.grafica}" cache="false" />
+                                <br/>
+                        </ui:repeat>
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <table border="0" width="750px" cellpadding="2" cellspacing="2">
+                            <tr>
+                                <td width="100%" align="left">
+                                        <p:commandButton ajax="true" update=":formReportes"  value="#{msj['lbl.reporte.columna.btnregresar']}" action="#{reporteOrdenesMB.regresarFormulario}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </h:panelGroup>
+                </h:panelGrid>
+                <br/>
+                <br/>
+</ui:composition>

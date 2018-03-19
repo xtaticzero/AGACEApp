@@ -1,0 +1,1149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{documentacionFirmanteMB.cargaPromocion}"/>
+            <f:event type="preRenderView" listener="#{documentacionFirmanteMB.cargaOficiosFirmante}"/>
+            <f:event type="preRenderView" listener="#{documentacionFirmanteMB.cargaSolicitudContribuyente}"/>
+            <f:event type="preRenderView" listener="#{documentacionFirmanteMB.validaMetodo}"/>
+            <f:event type="preRenderView" listener="#{documentacionFirmanteMB.cargarColaboradores}"/>
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="documentacionFirmanteMB" styleClass="panel-principal">
+                <p:messages id="messagesOrdenes" showDetail="false" closable="true" globalOnly="true"/>
+                <p:ajaxStatus onstart="PF('statusDialogFirmaDocs').show();"
+                              onsuccess="PF('statusDialogFirmaDocs').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogFirmaDocs" header="#{msj['titulo.panel.espere']}"
+                          draggable="true" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel header="Documentaci&oacute;n de la orden" style ="width:840px" styleClass="panel-interno">
+                    <h:panelGrid columns="3" styleClass="ui-widget-content grid" cellpadding="10">
+                        <p:column>
+                            <p:outputLabel value="N&uacute;mero de orden: " style="font-weight:bold"/>
+                            <p:outputLabel value="#{firmanteSeguimientoMB.ordenSeleccionada.numeroOrden}"/>
+                            <p></p>
+                            <p:outputLabel value="Id de registro: " style="font-weight:bold"/>
+                            <p:outputLabel value="#{firmanteSeguimientoMB.ordenSeleccionada.idRegistroPropuesta}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="M&eacute;todo: " style="font-weight:bold"/>
+                            <p:outputLabel value="#{firmanteSeguimientoMB.ordenSeleccionada.feceaMetodo.nombre}"/>
+                            <p></p>
+                            <p:outputLabel value="Plazo para Concluir la Revisi&oacute;n: " style="font-weight:bold"/>
+                            <p:outputLabel value="#{firmanteSeguimientoMB.ordenSeleccionada.descripcionPlazoRestante}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="RFC Contribuyente: " style="font-weight:bold"/>
+                            <p:outputLabel value="#{firmanteSeguimientoMB.ordenSeleccionada.fecetContribuyente.rfc}"/>
+                            <p></p>
+                            <p:outputLabel value="Nombre/Razon Social : " style="font-weight:bold"/>
+                            <p:outputLabel value="#{firmanteSeguimientoMB.ordenSeleccionada.fecetContribuyente.nombre}"/>
+                        </p:column>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:accordionPanel multiple="true">
+                        <p:tab title="Apoderado Legal">
+                            <p:panelGrid styleClass="noBorders" columns="2" style="width:100%" >
+                                <p:panelGrid columns="2" id="panelDatosApoderadoLegal" styleClass="noBorders" style="width:500px;" >
+                                    <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                    <p:inputText style="width:250px;" id="txtALRFC"
+                                                 disabled="true"
+                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegal.rfc}"/>
+                                    <h:outputLabel value="Nombre/Raz&oacute;n Social:" style="font-weight:bold"/>
+                                    <p:inputTextarea style="width:250px; height:auto;"
+                                                     value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegal.nombre}"
+                                                     disabled="true"/>
+                                    <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                    <p:inputText style="width:250px;"
+                                                 disabled="true"
+                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegal.correo}"/>
+                                    <h:outputLabel value="#{msj['label.medios.contacto']}:" style="font-weight:bold"/>
+                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegal.medioContactoBoolean}"
+                                                             disabled="true"/>
+                                    <h:outputLabel value="&Oacute;rden sin Apoderado Legal:" style="font-weight:bold"/>
+                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegal.sinColaborador}" disabled="true" />
+                                </p:panelGrid>
+
+                                <p:panelGrid columns="1" id="panelDatosApoderadoDocumentos" border="0" styleClass="noBorders">
+                                    <p:spacer width="100" height="1"/>                            		
+                                    <p:commandButton value="Documentos de Apoderado Legal" onclick="PF('dlgDocApoderadoLegal').show();"
+                                                     type="button"  style="float:left;" />
+
+                                </p:panelGrid>
+                            </p:panelGrid>
+                        </p:tab>
+                        <!-- Empieza representante legal -->
+                        <p:tab title="Representante Legal">
+                            <p:panelGrid styleClass="noBorders" columns="2" style="width:100%" >
+                                <p:panelGrid columns="2" id="panelDatosRepresentanteLegal" styleClass="noBorders" style="width:500px;" >
+                                    <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                    <p:inputText style="width:250px;" id="txtRLRFC"
+                                                 disabled="true"
+                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.representanteLegal.rfc}"/>
+                                    <h:outputLabel value="Nombre/Raz&oacute;n Social:" style="font-weight:bold"/>
+                                    <p:inputTextarea style="width:250px; height:auto;"
+                                                     value="#{documentacionFirmanteMB.colaboradoresDTO.representanteLegal.nombre}"
+                                                     disabled="true"/>
+                                    <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                    <p:inputText style="width:250px;"
+                                                 disabled="true"
+                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.representanteLegal.correo}"/>
+                                    <h:outputLabel value="#{msj['label.medios.contacto']}:" style="font-weight:bold"/>
+                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.representanteLegal.medioContactoBoolean}"
+                                                             disabled="true"/>
+                                    <h:outputLabel value="&Oacute;rden sin Representante Legal:" style="font-weight:bold"/>
+                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.representanteLegal.sinColaborador}" disabled="true" />
+                                </p:panelGrid>
+
+                                <p:panelGrid columns="1" id="panelDatosRepresentanteDocumentos" border="0" styleClass="noBorders">
+                                    <p:spacer width="100" height="1"/>                            		
+                                    <p:commandButton value="Documentos de Representante Legal" onclick="PF('dlgDocRepLegal').show();"
+                                                     type="button"  style="float:left;" />
+
+                                </p:panelGrid>
+                            </p:panelGrid>
+                        </p:tab>
+                        <!-- Termina representante legal -->
+                        <p:tab title="Apoderado Legal del Representante Legal">
+                            <p:panelGrid styleClass="noBorders" columns="2" style="width:100%" >
+                                <p:panelGrid columns="2" id="panelDatosALRL" styleClass="noBorders" style="width:500px;" >
+                                    <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                    <p:inputText style="width:250px;" id="txtALRLRFC"
+                                                 disabled="true"
+                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegalRepresentanteLegal.rfc}"/>
+                                    <h:outputLabel value="Nombre/Raz&oacute;n Social:" style="font-weight:bold"/>
+                                    <p:inputTextarea style="width:250px; height:auto;"
+                                                     value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegalRepresentanteLegal.nombre}"
+                                                     disabled="true"/>
+                                    <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                    <p:inputText style="width:250px;"
+                                                 disabled="true"
+                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegalRepresentanteLegal.correo}"/>
+                                    <h:outputLabel value="#{msj['label.medios.contacto']}:" style="font-weight:bold"/>
+                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegalRepresentanteLegal.medioContactoBoolean}"
+                                                             disabled="true"/>
+                                    <h:outputLabel value="&Oacute;rden sin Apoderado L. R.L.:" style="font-weight:bold"/>
+                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.apoderadoLegalRepresentanteLegal.sinColaborador}" disabled="true" />
+                                </p:panelGrid>
+
+                                <p:panelGrid columns="1" id="panelDatosALRLDocumentos" border="0" styleClass="noBorders">
+                                    <p:spacer width="100" height="1"/>                            		
+                                    <p:commandButton value="Documentos de Apoderado Legal del Representante Legal" onclick="PF('dlgDocALRL').show();"
+                                                     type="button"  style="float:left;" />
+
+                                </p:panelGrid>
+                            </p:panelGrid>
+                        </p:tab>
+
+
+                        <!-- Empieza agente aduanal -->
+                        <p:tab title="Agente Aduanal">
+                            <p:panelGrid styleClass="noBorders" style="width:100%">
+                                <p:row>
+                                    <p:column style="width:55%">
+                                        <p:panelGrid id="panelDatosAA">
+                                            <p:row style="width:100%">
+                                                <p:column style="width:30%">
+                                                    <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                                </p:column>
+                                                <p:column style="width:70%">
+                                                    <p:inputText style="width:90%;"
+                                                                 disabled="true"
+                                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.agenteAduanal.rfc}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row style="width:100%">
+                                                <p:column style="width:30%">
+                                                    <h:outputLabel value="Nombre/Raz&oacute;n Social:" style="font-weight:bold"/>
+                                                </p:column>
+                                                <p:column style="width:70%">
+                                                    <p:inputTextarea style="width:90%; height:auto;"
+                                                                     value="#{documentacionFirmanteMB.colaboradoresDTO.agenteAduanal.nombre}"
+                                                                     disabled="true"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row style="width:100%">
+                                                <p:column style="width:30%">
+                                                    <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                                </p:column>
+                                                <p:column style="width:70%">
+                                                    <p:inputText style="width:90%;"
+                                                                 disabled="true"
+                                                                 value="#{documentacionFirmanteMB.colaboradoresDTO.agenteAduanal.correo}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row style="width:100%; border:0px !important; border-style:none !important">
+                                                <p:column style="width:30%; border:0px !important; border-style:none !important">
+                                                    <h:outputLabel value="#{msj['label.medios.contacto']}:" style="font-weight:bold"/>
+                                                </p:column>
+                                                <p:column style="width:70%; border:0px !important; border-style:none !important">
+                                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.agenteAduanal.medioContactoBoolean}"
+                                                                             disabled="true"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row style="width:100%;border:0px !important; border-style:none !important">
+                                                <p:column style="width:30%;border:0px !important; border-style:none !important">
+                                                    <h:outputLabel value="Orden sin Agente Aduanal:" style="font-weight:bold"/>
+                                                </p:column>
+                                                <p:column style="width:70%;border:0px !important; border-style:none !important">
+                                                    <p:selectBooleanCheckbox value="#{documentacionFirmanteMB.colaboradoresDTO.agenteAduanal.sinColaborador}" disabled="true" />
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>								
+                                    <p:column style="width:45%">
+                                        <div style="margin: 0px auto; height:190px; width:100%; position:relative;">
+                                            <div style="width:200px; position:absolute; bottom: 0; left:25%;">
+                                                <p:commandButton value="Documentos Agente Aduanal" update=":documentacionFirmanteMB:tablaPromocionesAgenteAduanal" onclick="PF('dlgDocPromocionAgenteAduanal').show();" action="#{documentacionFirmanteMB.cargaDocumentosAgenteAduanal}" rendered="true"/> 
+
+                                            </div>
+                                        </div>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:separator/>
+                        </p:tab>
+                    </p:accordionPanel>	
+                    <p:spacer width="40" height="10"/>	
+
+                    <div align="center">
+                        <h:outputText value="Documentaci&oacute;n de la orden" style="font-weight:bold;" />
+                    </div>
+                    <p:spacer width="40" height="10"/>
+                    <p:fieldset legend="Firmado" toggleable="true" toggleSpeed="500" collapsed="true">
+                        <p:fieldset legend="Oficios Firmados" toggleable="true" toggleSpeed="500" collapsed="true">
+                            <p:dataTable id="tablaOficiosFirmados" var="oficioFirmado"
+                                         value="#{documentacionFirmanteMB.listaOficiosFirmados}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                <p:column headerText="#{msj['column.label.detalle']}" style="width:35px">
+                                    <p:column>
+                                        <p:rowToggler/>
+                                    </p:column>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.id.oficio']}" style="width:50px">
+                                    <p:commandLink style="color:#0170b7;" action="documentacionOficio" disabled="#{!oficioFirmado.adminOficio.blnDocReq}">
+                                        <h:outputText value="#{oficioFirmado.idOficio}" style="color:blue;"/>
+                                        <f:setPropertyActionListener value="#{oficioFirmado}"
+                                                                     target="#{documentacionOficioFirmanteMB.oficioSeleccionado}"/>
+                                        <f:param name="idOficio" value="#{oficioFirmado.idOficio}"/>
+                                    </p:commandLink>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.tipo.oficio']}" style="width:150px">
+                                    #{oficioFirmado.fecetTipoOficio.nombre}
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.oficio']}" style="width:50px">
+                                    <div align="center">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{oficioFirmado.nombreArchivo}" ajax="true" update="msgOficio"
+                                                         style="padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{oficioFirmado}"
+                                                                         target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{documentacionFirmanteMB.archivoDescargaDocumentacion}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                           <!--     <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                                    <div align="center">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{oficioFirmado.nombreAcuseNyv}" ajax="true"
+                                                         style="padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{oficioFirmado}"
+                                                                         target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{documentacionFirmanteMB.archivoDescargaDocumentoAnexo}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column> -->
+                                <p:column headerText="#{msj['column.label.fecha.notificacion']}" style="width:70px">
+                                    <h:outputLabel value="#{oficioFirmado.fecetDetalleNyV.fecNotificacionContNyV}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.fecha.firma']}" style="width:70px">
+                                    <h:outputLabel value="#{oficioFirmado.fechaFirma}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.oficios.dependientes']}" style="width:60px">
+                                    <p:commandLink value=" #{oficioFirmado.totalOficiosDependientes}" ajax="false"
+                                                   action="#{documentacionFirmanteMB.getOficiosDependientesFirmados}"
+                                                   style="color:#0170b7;">
+                                        <f:setPropertyActionListener value="#{oficioFirmado}"
+                                                                     target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                    </p:commandLink>
+                                </p:column>
+                                <p:rowExpansion>
+                                    <h:panelGrid columns="2" cellpadding="4" style="width:auto;"
+                                                 styleClass=" ui-widget-content grid">
+                                        <h:outputText value="#{msj['column.label.anexos.oficio']} :"/>
+                                        <p:commandLink value="#{oficioFirmado.totalAnexosOficio}" style="color:#0170b7;"
+                                                       ajax="false" action="#{documentacionFirmanteMB.getOficiosAnexos}">
+                                            <f:setPropertyActionListener value="#{oficioFirmado}"
+                                                                         target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                        </p:commandLink>
+                                        <h:outputText value="#{msj['column.label.fecha.carga.oficio']} :"/>
+                                        <h:outputLabel value="#{oficioFirmado.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputLabel>
+                                    </h:panelGrid>
+                                </p:rowExpansion>
+                            </p:dataTable>
+                        </p:fieldset>
+                        <p:spacer width="40" height="10"/>
+                        <p:fieldset legend="Solicitudes de Contribuyente firmadas" toggleable="true" toggleSpeed="500" collapsed="true">
+
+                            <p:dataTable id="tablaSolicitudContr" var="solicitudContr" rendered="true"
+                                         value="#{documentacionFirmanteMB.listaSolicitudContribuyenteFirmadas}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.id.solicitud.contribuyente']}" style="width:40px">
+                                    #{solicitudContr.id}
+                                </p:column>
+                                <p:column headerText="Fecha Solicitud" style="width:30px">
+                                    <h:outputLabel value="#{solicitudContr.fechaCarga}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['label.descripcion.solicitud.contribuyente']}" style="width:80px">
+                                    <h:outputLabel value="#{solicitudContr.descripcion}"/>                                   
+                                </p:column>                            
+                                <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:50px">
+                                    <div align="center">
+                                        <p:commandLink action="#{documentacionFirmanteMB.getDocumentacionSolicitudContribuyente}" value="#{solicitudContr.totalDocumentosContribuyente}" style="color:#0170b7;" ajax="true" onclick="PF('dialogSolicitudContrDocContribuyente').show();" immediate="true" update=":documentacionFirmanteMB:panelDocSolicitudCont">
+                                            <f:setPropertyActionListener value="#{solicitudContr}" target="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado}"/>
+                                        </p:commandLink>
+                                    </div>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.estatus']}" style="width:80px">
+                                    <p:outputLabel value="#{solicitudContr.estatus}"/>
+                                </p:column>
+                                <p:column headerText="#{msj['consultar.tableprorrogaoficios.docresol']}" style="width:60px">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{solicitudContr.nombreResolucion}" ajax="true"
+                                                     style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{solicitudContr}"
+                                                                     target="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionFirmanteMB.descargaDocumentoSolicitudContribuyente}"/>
+                                    </h:commandButton>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.justificacion']}" style="width:80px">
+                                    <h:outputText value="#{solicitudContr.justificacion}"/>
+                                </p:column>
+                                <p:column headerText="#{msj['consultar.tableprorrogaoficios.anexosresol']}"
+                                          style="width:40px">
+                                    <p:commandLink value="#{solicitudContr.totalDocumentosRechazo}" ajax="false"
+                                                   action="#{documentacionFirmanteMB.getAnexosResolucionSolicitudContribuyente}"
+                                                   style="color:#0170b7;">
+                                        <f:setPropertyActionListener value="#{solicitudContr}"
+                                                                     target="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado}"/>
+                                    </p:commandLink>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </p:fieldset>           		                    
+                    </p:fieldset>
+                    <p:spacer width="40" height="10"/>
+                    <p:fieldset legend="Por firmar" toggleable="true" toggleSpeed="500" collapsed="true">
+                        <p:fieldset legend="Oficios por firmar" toggleable="true" toggleSpeed="500" collapsed="true">
+                            <p:remoteCommand name="seccionTablaOficiosPorFirmar" update="tablaDocumentosPorFirmar"/>			                    
+                            <h:panelGrid columns="2" layout="grid" id="panelOficioPendiente" width="100%">
+                                <p:row>
+                                    <p:dataTable id="tablaDocumentosPorFirmar"
+                                                 value="#{documentacionFirmanteMB.listaOficiosPorFirmar}"
+                                                 var="oficioPendienteFirma" rowKey="#{oficioPendienteFirma.idOficio}"
+                                                 selection="#{documentacionFirmanteMB.oficioSeleccionado}"
+                                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                                 paginatorPosition="bottom">
+                                        <p:column selectionMode="single" style="width:6px;text-align:center"/>
+                                        <p:ajax event="rowSelectRadio" 
+                                                update=":documentacionFirmanteMB:btnFirmaOficio :documentacionFirmanteMB:btnMotivoRechazoOfiico"
+                                                listener="#{documentacionFirmanteMB.validaSelectRadioOficio}"/>
+                                        <p:column headerText="#{msj['column.label.id.oficio']}" style="width:30px">
+                                            <p:commandLink id="ajax1" action="detalleOficioCompulsa.jsf" style="color:#0170b7;"
+                                                           value="#{oficioPendienteFirma.idOficio}">
+                                                <f:param name="identificador1"
+                                                         value="#{oficioPendienteFirma.rfcCompulsado}"/>
+                                                <f:param name="identificador2" value="#{oficioPendienteFirma.idOficio}"/>
+                                                <f:param name="identificador3"
+                                                         value="#{firmanteSeguimientoMB.ordenSeleccionada.idOrden}"/>
+                                                <f:param name="identificador4"
+                                                         value="#{oficioPendienteFirma.fecetTipoOficio.idTipoOficio}"/>
+                                                <f:param name="identificador5"
+                                                         value="#{oficioPendienteFirma.fecetTipoOficio.nombre}"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                        <p:column headerText="#{msj['column.label.tipo.oficio']}" style="width:60px">
+                                            #{oficioPendienteFirma.fecetTipoOficio.nombre}
+                                        </p:column>
+                                        <p:column headerText="#{msj['column.label.oficio']}" style="width:10px">
+                                            <div align="center">
+                                                <h:commandButton title="#{oficioPendienteFirma.nombreArchivo}" ajax="true" process="@this"
+                                                                 image="/resources/images/document.png"
+                                                                 style="padding:0px 5px;">
+                                                    <f:setPropertyActionListener value="#{oficioPendienteFirma}"
+                                                                                 target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                                    <p:fileDownload contentDisposition="attachment"
+                                                                    value="#{documentacionFirmanteMB.archivoDescargaDocumentacion}"/>
+                                                </h:commandButton>
+                                            </div>
+                                        </p:column>
+                                        <p:column headerText="#{msj['column.label.fecha.carga.oficio']}" style="width:50px">
+                                            <h:outputText value="#{oficioPendienteFirma.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{msj['column.label.anexos.oficio']}" style="width:35px">
+                                            <p:commandLink value="#{oficioPendienteFirma.totalAnexosOficio}"
+                                                           style="color:#0170b7;" ajax="true"
+                                                           action="#{documentacionFirmanteMB.getOficiosAnexos}">
+                                                <f:setPropertyActionListener value="#{oficioPendienteFirma}"
+                                                                             target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                        <p:column headerText="#{msj['column.label.oficios.dependientes']}" style="width:35px">
+                                            <p:commandLink value="#{oficioPendienteFirma.totalOficiosDependientes}" ajax="true"
+                                                           action="#{documentacionFirmanteMB.getOficiosDependientesPorFirmar}"
+                                                           style="color:#0170b7;">
+                                                <f:setPropertyActionListener value="#{oficioPendienteFirma}"
+                                                                             target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:row>
+                                <p:row>
+                                    <p:remoteCommand name="seccionBotonesOficioPendiente"
+                                                     update="btnFirmaOficio,btnMotivoRechazoOfiico"/>
+                                    <p:commandButton id="btnFirmaOficio" style="float: right; width: 80px; height: 30px"
+                                                     ajax="true" inmediate="true"
+                                                     disabled="#{!documentacionFirmanteMB.firmadoDocumento}" value="Firmar"
+                                                     action="#{documentacionFirmanteMB.enviarFirma}">
+                                        <p:ajax update="@form"/>
+                                    </p:commandButton>
+                                    <p>&nbsp;</p>
+                                    <p:commandButton id="btnMotivoRechazoOfiico" style="float: right;width: 80px; height: 30px"
+                                                     disabled="#{!documentacionFirmanteMB.firmadoDocumento}"
+                                                     value="#{msj['label.link.rechazar']}" ajax="true"
+                                                     onclick="PF('confirmaRechazoOficio').show()"></p:commandButton>
+                                </p:row>
+                            </h:panelGrid>	
+                        </p:fieldset>
+                        <p:spacer width="40" height="10"/>
+                        <p:fieldset legend="Solicitudes de Contribuyente por firmar" toggleable="true" toggleSpeed="500" collapsed="true">
+                            <p:remoteCommand name="seccionTablaSolicitudContrPorFirmar" update="tablaSolicitudContrPendiente"/>
+                            <h:panelGrid columns="2" layout="grid" rendered="true" width="100%">
+                                <p:row>
+                                    <p:dataTable id="tablaSolicitudContrPendiente" var="solicitudContr"
+                                                 value="#{documentacionFirmanteMB.listaSolicitudContribuyentePendientes}"
+                                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                 paginator="true" rows="5"
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                    
+                                                 {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                                 selection="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado}"
+                                                 paginatorPosition="bottom"
+                                                 rowKey="#{solicitudContr.idFlujo}">
+                                        <p:column selectionMode="single" style="width:6px;text-align:center"/>
+                                        <p:ajax event="rowSelectRadio"
+                                                update=":documentacionFirmanteMB:btnFirmaSolicitudContr :documentacionFirmanteMB:btnMotivoRechazoSolicitudContr"
+                                                listener="#{documentacionFirmanteMB.validaSeleccionRadioSolicitudContr}"/>
+                                        <p:column headerText="#{msj['label.id.solicitud.contribuyente']}" style="width:35px">
+                                            #{solicitudContr.id}
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.descripcion.solicitud.contribuyente']}" style="width:35px">
+                                            <h:outputLabel value="#{solicitudContr.descripcion}"/>                                   
+                                        </p:column>
+                                        <p:column headerText="Fecha Solicitud" style="width:30px">
+                                            <h:outputLabel value="#{solicitudContr.fechaCarga}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputLabel>
+                                        </p:column>
+
+
+
+                                        <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:45px">
+                                            <div align="center">
+                                                <p:commandLink action="#{documentacionFirmanteMB.getDocumentacionSolicitudContribuyente}" value="#{solicitudContr.totalDocumentosContribuyente}" style="color:#0170b7;" ajax="true" onclick="PF('dialogSolicitudContrDocContribuyente').show();" immediate="true" update=":documentacionFirmanteMB:panelDocSolicitudCont">
+                                                    <f:setPropertyActionListener value="#{solicitudContr}" target="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado}"/>
+                                                </p:commandLink>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.ofresol']}"
+                                                  style="width:35px">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="#{solicitudContr.nombreResolucion}" ajax="true"
+                                                             style="float:left;padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{solicitudContr}"
+                                                                             target="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{documentacionFirmanteMB.descargaDocumentoSolicitudContribuyente}"/>
+                                            </h:commandButton>
+                                        </p:column>
+
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.anexosresol']}"
+                                                  style="width:35px">
+                                            <p:commandLink value="#{solicitudContr.totalDocumentosRechazo}" ajax="true"
+                                                           inmediate="true"
+                                                           action="#{documentacionFirmanteMB.getAnexosResolucionSolicitudContribuyente}"
+                                                           style="color:#0170b7;">
+                                                <f:setPropertyActionListener value="#{solicitudContr}"
+                                                                             target="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado}"/>
+                                            </p:commandLink>
+                                        </p:column>
+
+                                        <p:column headerText="#{msj['column.label.estatus']}" style="width:40px">
+                                            <p:outputLabel value="#{solicitudContr.estatus}"/>
+                                        </p:column>
+                                        <p:column headerText="#{msj['column.label.justificacion']}" style="width:80px">
+                                            <h:outputText value="#{solicitudContr.justificacion}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:row>
+                                <p:row>
+                                    <p:remoteCommand name="seccionBotonesSolicitudContrPendiente"
+                                                     update="btnFirmaSolicitudContr,btnMotivoRechazoSolicitudContr"/>
+                                    <p:commandButton id="btnFirmaSolicitudContr" style="float: right; width: 80px; height: 30px"
+                                                     disabled="#{!documentacionFirmanteMB.firmadoProrroga}" value="Firmar"
+                                                     ajax="true" action="#{documentacionFirmanteMB.enviaFirmarSolicitudContribuyente}"></p:commandButton>
+                                    <p>&nbsp;</p>
+                                    <p:commandButton id="btnMotivoRechazoSolicitudContr"
+                                                     style="float: right; width: 80px; height: 30px"
+                                                     disabled="#{!documentacionFirmanteMB.firmadoProrroga}"
+                                                     value="#{msj['label.link.rechazar']}" ajax="true"
+                                                     oncomplete="PF('confirmaRechazoSolicitudContr').show()"></p:commandButton>
+                                </p:row>
+                            </h:panelGrid>
+                        </p:fieldset>
+                    </p:fieldset>
+                    <p:spacer width="40" height="10"/>
+                    <p:fieldset legend="Documentación del contribuyente" toggleable="true" toggleSpeed="500" collapsed="true">
+                        <p:dataTable id="tablaDocumentacionRequerida" var="promocion"
+                                     value="#{documentacionFirmanteMB.listaPromociones}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                     {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                            <p:column headerText="#{msj['column.label.detalle']}" style="width:35px">
+                                <p:column>
+                                    <p:rowToggler/>
+                                </p:column>
+                            </p:column>
+                            <p:column headerText="#{msj['label.id.promocion']}" style="width:60px">
+                                #{promocion.idPromocion}
+                            </p:column>
+                            <p:column headerText="#{msj['label.fecha.envio.promocion']}" style="width:60px">
+                                <h:outputText value="#{promocion.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['label.promocion']}" style="width:35px">
+                                <h:commandButton image="/resources/images/document.png" title="#{promocion.nombreArchivo}"
+                                                 ajax="true" style="float:left;padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{promocion}"
+                                                                 target="#{documentacionFirmanteMB.promocionSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionFirmanteMB.archivoDescargaPromocion}"/>
+                                </h:commandButton>
+                            </p:column>
+                            <p:column headerText="#{msj['label.tipo.promocion']}" style="width:60px">
+                                #{promocion.descripcionTipoPromocion}
+                            </p:column>
+                            <p:column headerText="Anexos a la promoción" style="width:65px">
+                                <div align="center">
+                                    <h:commandLink value="#{promocion.contadorPruebasAlegatos}" style="color:#0170b7;" immediate="true"
+                                                   action="#{documentacionFirmanteMB.getPruebasAlegatosPromocion}" ajax="true" update=":documentacionFirmanteMB:txtIdPromocionOrden :documentacionFirmanteMB:txtFechaEnvioOrden :documentacionFirmanteMB:tablaAlegatosAnexos">
+                                        <f:setPropertyActionListener value="#{promocion}"
+                                                                     target="#{documentacionFirmanteMB.promocionSeleccionada}"/>
+                                    </h:commandLink>
+                                </div>
+                            </p:column>
+                  <!--            <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="#{promocion.nombreAcuse}"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{promocion}"
+                                                                     target="#{documentacionFirmanteMB.promocionSeleccionada}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionFirmanteMB.archivoDescargaAcuse}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column> -->
+                            <p:column headerText="Extemporánea" style="width:70px">
+                                <div align="center">
+                                    <p:graphicImage value="/resources/images/#{promocion.extemporanea==1?'ok':'cancel'}.png"
+                                                    style="border:0"/>
+                                </div>
+                            </p:column>
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                             styleClass=" ui-widget-content grid">
+                                    <h:outputText value="#{msj['label.presentada.por']}:"/>	                                
+                                    <h:outputText value="#{promocion.idAsociadoCarga == null ? firmanteSeguimientoMB.ordenSeleccionada.fecetContribuyente.nombre : promocion.asociado.nombre}"/>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+
+                    </p:fieldset>
+
+
+
+                    <!--Oficios por firmar fin -->
+                    <!--Inicia Dialog Motivo Rechazo Oficio-->
+                    <p:dialog id="motivoRechazoOficio" header="Motivo de Rechazo Oficio" resizable="false" width="700"
+                              widgetVar="motivoRechazoOficio" showEffect="clip" hideEffect="clip" closable="false"
+                              modal="true" closeOnEscape="false" draggable="true">
+                        <p:fileUpload fileUploadListener="#{documentacionFirmanteMB.handleFileUpload}"
+                                      uploadLabel="Adjuntar Documentos" label="Examinar" mode="advanced"
+                                      invalidSizeMessage="El archivo es demasiado grande, lo máximo permitido son 4MB."
+                                      sizeLimit="4196000" dragDropSupport="false" multiple="false"
+                                      update="tablaDocRechazado,msgUploadRechazo" auto="true"/>
+                        <p:spacer width="40" height="1"/>
+                        <br/>
+                        <p:dataTable id="tablaDocRechazado" emptyMessage="No se han agregado documentos"
+                                     value="#{documentacionFirmanteMB.listaDocumentoUpLoad}" var="docRechazado"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="Nombre Archivo" style="width:30px;font-size:12px">
+                                #{docRechazado.nombreArchivo}
+                            </p:column>
+                            <p:column headerText="" style="width:30px">
+                                <p:commandLink style="float:left;padding:0px;color:#0170b7;">
+                                    <h:outputText value="Eliminar"/>
+                                    <p:ajax listener="#{documentacionFirmanteMB.eliminaDocumentoAdjunto}"
+                                            update="@this,tablaDocRechazado"/>
+                                    <f:param value="#{docRechazado.nombreArchivo}" name="paramDocumento"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <p:messages id="msgUploadRechazo" showDetail="false" autoUpdate="false" closable="true"/>
+                        <p:outputLabel value="Motivo de Rechazo:" style="float:left;font-weight:bold;"/>
+                        <p>&nbsp;</p>
+                        <p:inputTextarea id="textAreaMotivo" rows="10" cols="80"
+                                         value="#{documentacionFirmanteMB.motivoRechazo}" maxlength="400"/>
+                        <p>&nbsp;</p>
+                        <h:panelGrid columns="2" style="float:right;" width="2">
+                            <p:commandButton id="enviarRechazo" value="#{msj['btn.enviar']}" ajax="true"
+                                             icon="ui-icon-check">
+                                <p:ajax listener="#{documentacionFirmanteMB.rechazaFirmaOficio}"
+                                        update="@this,tablaDocRechazado,msgUploadRechazo"/>
+                            </p:commandButton>
+                            <p:commandButton id="cancelarRechazo" value="Cancelar" ajax="false" style="float:rigth;">
+                                <p:ajax listener="#{documentacionFirmanteMB.cancelUpLoad}"
+                                        update="@form,motivoRechazoOficio,tablaDocRechazado,textAreaMotivo"
+                                        oncomplete="PF('motivoRechazoOficio').hide();"/>
+                            </p:commandButton>
+                        </h:panelGrid>
+                    </p:dialog>
+                    <p:dialog header="Mensaje" draggable="true" widgetVar="exitoRechazoOficio" resizable="false"
+                              closable="false">
+                        <h:panelGrid columns="2" cellpadding="5">
+                            #{msj[&apos;exito.guardado&apos;]}
+                            <p:separator/>
+                            <f:facet name="footer">
+                                <center>
+                                    <p:commandButton value="Aceptar" ajax="false" action="documentacionOrden"
+                                                     oncomplete="PF('exitoRechazoOficio').hide();"/>
+                                </center>
+                            </f:facet>
+                        </h:panelGrid>
+                    </p:dialog>
+                    <!--Confirmacion de Rechazo de Oficio-->
+                    <p:dialog header="Mensaje de Confirmación" draggable="true" widgetVar="confirmaRechazoOficio"
+                              resizable="false">
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <h:outputLabel value="¿Está seguro que desea Rechazar el Oficio?"/>
+                            <f:facet name="footer">
+                                <p:commandButton value="Aceptar" ajax="false"
+                                                 action="#{documentacionFirmanteMB.validarRechazoOficio}"
+                                                 oncomplete="PF('confirmaRechazoOficio').hide();"></p:commandButton>
+                                <p:commandButton value="Cancelar" ajax="false" action="documentacionOrden"
+                                                 oncomplete="PF('confirmaRechazoOficio').hide();"/>
+                            </f:facet>
+                        </h:panelGrid>
+                    </p:dialog>
+                    <!--Fin Dialog Motivo Rechazo Oficio-->
+                    <!-- Inicia Dialog Oficio Documentos Anexos -->
+                    <p:dialog id="dialogOficioAnexos" header="Documentos Anexos de Oficio" resizable="false" width="700"
+                              widgetVar="dialogOficioAnexos" showEffect="clip" hideEffect="clip" closable="false"
+                              modal="true" closeOnEscape="false" draggable="true">
+                        <div align="left">
+                            <p:spacer width="40" height="1"/>
+
+                            <br/>
+
+                            <p:dataTable id="tablaOficioAnexo" emptyMessage="No Existen Documentos Anexos"
+                                         value="#{documentacionFirmanteMB.listOficioAnexos}" var="docOficioAnexo"
+                                         paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.anexos.oficio.dependientes.fecha.notificacion']}" style="width:30px">
+                                    <h:outputText value="#{docOficioAnexo.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Nombre documento" style="width:80px">
+                                    #{docOficioAnexo.nombreArchivo}
+                                </p:column>
+                                <p:column headerText="Documento" style="width:30px">
+                                    <h:commandButton ajax="false" image="/resources/images/document.png"
+                                                     title="#{docOficioAnexo.nombreArchivo}" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{docOficioAnexo}"
+                                                                     target="#{documentacionFirmanteMB.documentoAnexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionFirmanteMB.archivoDescargaDocumentoAnexoOficio}"/>
+                                    </h:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                        <br/>
+                        <h:panelGrid columns="2" style="float:right;" width="2">
+                            <p:commandButton value="Cancelar" ajax="true" onclick="PF('dialogOficioAnexos').hide();"
+                                             update="@this" style="float:rigth;"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                    <!--Fin Dialog  Oficio Documentos Anexos -->
+                    <!-- Inicia Dialog Alegatos Documentos Anexos -->
+                    <p:dialog id="dialogAlegatosAnexos" header="#{msj['titulo.documentos.enviados']}" resizable="false" modal="true" width="515" height="auto"
+                              widgetVar="dialogAlegatosAnexos">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="Id Promoción"/>
+                                <p:inputText id="txtIdPromocionOrden" style="width:50px;" readonly="true" value="#{documentacionFirmanteMB.idPromocionSeleccionada}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtFechaEnvioOrden" style="width:80px;" readonly="true" value="#{documentacionFirmanteMB.fechaEnvioPromocionSeleccionada}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:inputText>
+                            </h:panelGrid>         
+                            <h:panelGrid border="1" width="100%">                              
+
+                                <p:dataTable id="tablaAlegatosAnexos" emptyMessage="No Existen Documentos Anexos"
+                                             value="#{documentacionFirmanteMB.listAlegatosAnexos}" var="docAnexoAlegato"
+                                             paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">
+                                        #{docAnexoAlegato.idAlegato}
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                        #{docAnexoAlegato.nombreArchivo}
+                                    </p:column>                                
+                                    <p:column headerText="Archivo" style="width:30px">
+                                        <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                         title="#{docAnexoAlegato.nombreArchivo}" style="padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docAnexoAlegato}"
+                                                                         target="#{documentacionFirmanteMB.pruebaAlegatoSeleccionada}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{documentacionFirmanteMB.archivoDescargaPruebasAlegatos}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+
+
+                    </p:dialog>
+                    <!--Fin Dialog  Alegatos promocion Documentos Anexos -->
+                    <!-- Inicia Dialog Oficios Dependientes -->
+                    <p:dialog id="dialogOficiosDependientes" header="Oficios Dependientes " resizable="false"
+                              width="700" widgetVar="dialogOficiosDependientes" showEffect="clip" hideEffect="clip"
+                              closable="true" modal="true" closeOnEscape="true" draggable="true">
+                        <div align="left">
+                            <p:spacer width="40" height="1"/>
+
+                            <br/>
+
+                            <p:dataTable id="tablaOficiosDependientes" emptyMessage="No Existen Oficios Dependientes"
+                                         value="#{documentacionFirmanteMB.listaOficiosDependientes}" var="dependiente"
+                                         paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.anexos.oficio.dependientes.fecha.notificacion']}" style="width:30px">
+                                    <h:outputText value="#{dependiente.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Tipo de Oficio " style="width:30px">
+                                    <h:outputText value="#{dependiente.fecetTipoOficio.nombre}"/>
+                                </p:column>
+                                /
+                                <p:column headerText="Anexos Oficio" style="width:30px">
+                                    <p:commandLink value="#{dependiente.totalAnexosOficio}" style="color:#0170b7;"
+                                                   ajax="true" action="#{documentacionFirmanteMB.getOficiosAnexos}">
+                                        <f:setPropertyActionListener value="#{dependiente}"
+                                                                     target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                    </p:commandLink>
+                                </p:column>
+                                <p:column headerText="Documento " style="width:30px">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                     title="#{dependiente.nombreArchivo}" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{dependiente}"
+                                                                     target="#{documentacionFirmanteMB.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionFirmanteMB.archivoDescargaDocumentacion}"/>
+                                    </h:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:dialog>
+
+
+                    <!-- Termina bloque de Prorroga -->
+                    <h:panelGrid id="panelBotones" columns="2" width="100%">
+                        <p:column rowspan="2">
+                            <p>&nbsp;</p>
+                            <p:commandButton value="Pantalla Anterior" style="float: left; "
+                                             action="#{documentacionFirmanteMB.navegaIndex}"/>
+                            <p:commandButton value="Consulta cifras" style="float: right; "
+                                             action="../cifras/cifras.xhtml?faces-redirect=true"/>
+                        </p:column>
+                    </h:panelGrid>
+                    <!-- Inicia Dialog Prorroga -->
+                    <!-- Inicia Dialog Motivo Rechazo Prorroga -->
+
+                    <p:dialog id="motivoRechazoSolicitudContr" header="Motivo de Rechazo de la Solicitud de Contribuyente" resizable="false"
+                              width="700" widgetVar="motivoRechazoSolicitudContr" showEffect="clip" hideEffect="clip"
+                              closable="false" modal="true" closeOnEscape="false" draggable="true">
+                        <div align="left">
+                            <p:fileUpload fileUploadListener="#{documentacionFirmanteMB.handleFileUpload}"
+                                          uploadLabel="Adjuntar Documentos" label="Examinar"
+                                          invalidSizeMessage="El archivo es demasiado grande, lo máximo permitido son 4MB."
+                                          sizeLimit="4196000" mode="advanced" dragDropSupport="false" multiple="false"
+                                          update="tablaSolicitudContrRechazada,messagesSolicitudContrRechazada" auto="true"/>
+
+                            <p:spacer width="40" height="1"/>
+
+                            <br/>
+
+                            <p:dataTable id="tablaSolicitudContrRechazada" emptyMessage="No se han agregado documentos"
+                                         value="#{documentacionFirmanteMB.listaDocumentoUpLoad}" var="solicitudContrRechazada"
+                                         paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="Nombre Archivo" style="width:30px;font-size:12px">
+                                    #{solicitudContrRechazada.nombreArchivo}
+                                </p:column>
+                                <p:column headerText="" style="width:30px">
+                                    <p:commandLink style="float:left;padding:0px;color:#0170b7;">
+                                        <h:outputText value="Eliminar"/>
+                                        <p:ajax listener="#{documentacionFirmanteMB.eliminaDocumentoAdjunto}"
+                                                update="@this,tablaSolicitudContrRechazada"/>
+                                        <f:param value="#{solicitudContrRechazada.nombreArchivo}" name="paramDocumento"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:messages id="messagesSolicitudContrRechazada" autoUpdate="false" showDetail="false"
+                                        closable="true"/>
+
+                            <p:outputLabel value="Motivo de Rechazo:" style="float:left;font-weight:bold;"/><br/><br/>
+
+                            <p:inputTextarea id="textAreaRechazoSolicitudContr" rows="10" cols="80"
+                                             value="#{documentacionFirmanteMB.motivoRechazo}" maxlength="400"/>
+                        </div>
+                        <br/>
+                        <h:panelGrid columns="2" style="float:right;" width="2">
+                            <p:commandButton id="enviarRechazoSolicitudContr" value="#{msj['btn.enviar']}" ajax="true"
+                                             icon="ui-icon-check">
+                                <p:ajax listener="#{documentacionFirmanteMB.rechazarFirmadoSolicitudContribuyente}"
+                                        update="@this,tablaSolicitudContrRechazada,messagesSolicitudContrRechazada"
+                                        oncomplete="parent.seccionTablaSolicitudContrPorFirmar();"/>
+                            </p:commandButton>
+                            <p:commandButton value="Cancelar" ajax="true" style="float:rigth;">
+                                <p:ajax listener="#{documentacionFirmanteMB.cancelUpLoad}"
+                                        update="@this,tablaSolicitudContrRechazada"
+                                        oncomplete="PF('motivoRechazoSolicitudContr').hide();"/>
+                            </p:commandButton>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog header="Mensaje" draggable="true" widgetVar="exitoRechazoSolicitudContr" resizable="false"
+                              closable="false">
+                        <h:panelGrid columns="2" cellpadding="5">
+                            #{msj[&apos;label.solicitud.contr.rechazada.exitosamente&apos;]}
+                            <p:separator/>
+                            <f:facet name="footer">
+                                <center>
+                                    <p:commandButton value="Aceptar" ajax="false" action="documentacionOrden"
+                                                     oncomplete="PF('exitoRechazoSolicitudContr').hide();"/>
+                                </center>
+                            </f:facet>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog header="Mensaje de Confirmación" draggable="true" widgetVar="confirmaRechazoSolicitudContr"
+                              resizable="false">
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <h:outputLabel value="¿Esta seguro que desea Rechazar la Solicitud de Contribuyente"/>
+                            <f:facet name="footer">
+                                <p:commandButton value="Aceptar" ajax="false"
+                                                 action="#{documentacionFirmanteMB.validarRechazoSolicitudContribuyente}"
+                                                 oncomplete="PF('confirmaRechazoSolicitudContr').hide();"></p:commandButton>
+                                <p:commandButton value="Cancelar" ajax="false" action="documentacionOrden"
+                                                 oncomplete="PF('confirmaRechazoSolicitudContr').hide();"/>
+                            </f:facet>
+                        </h:panelGrid>
+                    </p:dialog>
+                    <!--Fin Dialog Motivo Rechazo Prorroga-->
+                    <!--Inicia Dialog Firma Prorroga-->
+
+
+                    <!--Fin Dialog Firma Prorroga-->
+                    <!--Inicia Dialog Documentacion del contribuyente-->
+
+                    <p:dialog widgetVar="dialogSolicitudContrDocContribuyente" header="#{msj['titulo.documentos.enviados']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelDocSolicitudCont" layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="Id"/>
+                                <p:inputText id="txtIdDocSolicitudCont" style="width:50px;" readonly="true" value="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado.id}"/>
+                                <h:outputLabel value="Fecha de Envío"/>
+                                <p:inputText id="txtFechaCargaDocSolicitudCont" style="width:80px;" readonly="true" value="#{documentacionFirmanteMB.solicitudContribuyenteVOSeleccionado.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaDocumentosDocSolicitudCont" var="docs" value="#{documentacionFirmanteMB.listaDocumentacionSolicitudContribuyente}" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.label.id.documento']}" style="width:60px">
+                                        #{docs.idDoc}
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                        #{docs.nombreArchivo}
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.documento']}" style="width:25px">
+                                        <div align="center">
+                                            <h:commandButton ajax="false" image="/resources/images/document.png"
+                                                             title="#{docs.nombreArchivo}" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}"
+                                                                             target="#{documentacionFirmanteMB.documentacionSolicitudContribuyenteSeleccionada}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{documentacionFirmanteMB.descargaArchivoContribuyente}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+
+                    <!--Termina DIalog Documnetacion del contribuyente-->
+                    <!--Inicia Dialog Anexo De Resolucion de Prorroga-->
+
+                    <!--Termina Dialog Anexo De Resolucion de Prorroga-->
+
+
+                    <p:dialog id="dlgDocRepLegal" widgetVar="dlgDocRepLegal" header="Documentos del representante legal " resizable="false"
+                              modal="true" width="600" height="auto" >
+
+                        <h:panelGrid id="pnlDocRepLegal" columns="1">
+                            <p:outputLabel value="Documentaci&oacute;n Representate Legal" style="font-weight:bold;"/>
+                            <p:separator/>
+                            <p:dataTable id="tablaDoctoRepresentanteLegal"
+                                         value="#{documentacionFirmanteMB.colaboradoresDTO.documentosRepresentante}" var="documento"
+                                         editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                <p:column headerText="#{msj['column.nombre.documento']}" style="width:80%; border:1px solid !important;">
+                                    <div style="text-align:center;">
+                                        <h:outputText id="txtNombreArchivoRL" value="#{documento.nombreArchivo}"/>
+                                    </div>
+                                </p:column>
+                                <p:column id="hdrNombreDocumento" headerText="#{msj['column.documento']}" style="width:20%; border:1px solid !important;">
+                                    <div style="text-align:center;">
+                                        <h:commandButton image="/resources/images/document.png" title="#{documento.nombreArchivo}" ajax="false">
+                                            <f:setPropertyActionListener value="${documento.nombreArchivo}" target="#{documentacionFirmanteMB.nombreArchivo}"/>
+                                            <f:setPropertyActionListener value="${documento.rutaArchivo}" target="#{documentacionFirmanteMB.rutaArchivo}"/>
+                                            <p:fileDownload contentDisposition="attachment" value="#{documentacionFirmanteMB.descargarArchivo}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+
+                        </h:panelGrid>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgAnexosRechazoSolicitudContr" header="#{msj['titulo.documentos.enviados']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelAnexosSolicitudContr" layout="block" style="padding:5px;">
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaAnexosRechazoSolicitudContr" var="docs" value="#{documentacionFirmanteMB.listaAnexosSolicitudContribuyente}" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.label.id.documento']}" style="width:60px">
+                                        #{docs.id}
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                        #{docs.nombreArchivo}
+                                    </p:column>
+                                    <p:column headerText="" style="width:25px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}" target="#{documentacionFirmanteMB.solicitudContribuyenteAnexoSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment" value="#{documentacionFirmanteMB.archivoAnexoSolicitudContribuyente}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgDocPromocionAgenteAduanal" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <p:dataTable id="tablaPromocionesAgenteAduanal" var="datos"
+                                         value="#{documentacionFirmanteMB.listaPromocionAgenteAduanal}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                         {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">                        
+                                <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">
+                                    #{datos.idPromocionAgenteAduanal}
+                                </p:column>
+                                <p:column headerText="#{msj['label.fecha.envio.promocion']}" style="width:80px">
+                                    <h:outputLabel value="#{datos.fechaCarga}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+                                    <div align="center">
+                                        <h:commandButton image="/resources/images/document.png" title="#{datos.nombreArchivo}"
+                                                         ajax="true" style="padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{datos}"
+                                                                         target="#{documentacionFirmanteMB.promocionAgenteAduanalSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{documentacionFirmanteMB.archivoDescargaPromocionAgenteAduanal}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                                <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+                                    Documentación Requerida
+                                </p:column>
+                                <p:column headerText="#{msj['label.pruebas.alegatos']}" style="width:80px">
+                                    <div align="center">
+                                        <p:commandLink action="#{documentacionFirmanteMB.getPruebasAlegatosPromocionAgenteAduanal}"
+                                                       value="#{datos.contadorPruebasAlegatos}" style="color:#0170b7;"
+                                                       ajax="true" immediate="true"
+                                                       onclick="PF('dlgAnexoAgenteAduanal').show();" update=":documentacionFirmanteMB:tablaPruebasAlegatosAgenteAduanal :documentacionFirmanteMB:txtIdPromocion :documentacionFirmanteMB:txtFechaEnvio">
+                                            <f:setPropertyActionListener value="#{datos}"
+                                                                         target="#{documentacionFirmanteMB.promocionAgenteAduanalSeleccionado}"/>
+                                        </p:commandLink>
+                                    </div>
+                                </p:column>                        
+                            </p:dataTable>
+                        </h:panelGroup>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgAnexoAgenteAduanal" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="ID Promoción"/>
+                                <p:inputText id="txtIdPromocion" style="width:50px;" readonly="true"
+                                             value="#{documentacionFirmanteMB.promocionAgenteAduanalSeleccionado.idPromocionAgenteAduanal}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                             value="#{documentacionFirmanteMB.promocionAgenteAduanalSeleccionado.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaPruebasAlegatosAgenteAduanal" var="docs"
+                                             value="#{documentacionFirmanteMB.listaAlegatoAgenteAduanal}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">#{docs.idAlegatoAgenteAduanal}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="" style="width:35px">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{documentacionFirmanteMB.alegatoAgenteAduanalSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{documentacionFirmanteMB.archivoDescargaPruebasAlegatosAgenteAduanal}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    <p:dialog id="dlgDocApoderadoLegal" widgetVar="dlgDocApoderadoLegal" header="Documentos del apoderado legal " resizable="false"
+                              modal="true" width="600" height="auto" >
+
+                        <h:panelGrid id="pnlDocApoderadoLegal" columns="1">
+                            <p:outputLabel value="Documentaci&oacute;n Apoderado Legal" style="font-weight:bold;"/>
+                            <p:separator/>
+                            <p:dataTable id="tablaDoctoApoderadoLegal"
+                                         value="#{documentacionFirmanteMB.colaboradoresDTO.documentosAL}" var="documento"
+                                         editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                <p:column headerText="#{msj['column.nombre.documento']}" style="width:80%; border:1px solid !important;">
+                                    <div style="text-align:center;">
+                                        <h:outputText id="txtNombreArchivoAL" value="#{documento.nombreArchivo}"/>
+                                    </div>
+                                </p:column>
+                                <p:column id="hdrNombreDocumentoAL" headerText="#{msj['column.documento']}" style="width:20%; border:1px solid !important;">
+                                    <div style="text-align:center;">
+                                        <h:commandButton image="/resources/images/document.png" title="#{documento.nombreArchivo}" ajax="false">
+                                            <f:setPropertyActionListener value="${documento.nombreArchivo}" target="#{documentacionFirmanteMB.nombreArchivo}"/>
+                                            <f:setPropertyActionListener value="${documento.rutaArchivo}" target="#{documentacionFirmanteMB.rutaArchivo}"/>
+                                            <p:fileDownload contentDisposition="attachment" value="#{documentacionFirmanteMB.descargarArchivo}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+
+                        </h:panelGrid>
+                    </p:dialog>
+                    <p:dialog id="dlgDocALRL" widgetVar="dlgDocALRL" header="Documentos del apoderado legal del representante legal" resizable="false"
+                              modal="true" width="600" height="auto" >
+
+                        <h:panelGrid id="pnlDocALRL" columns="1">
+                            <p:outputLabel value="Documentaci&oacute;n Apoderado Legal del Representante Legal" style="font-weight:bold;"/>
+                            <p:separator/>
+                            <p:dataTable id="tablaDoctoALRL"
+                                         value="#{documentacionFirmanteMB.colaboradoresDTO.documentosALRL}" var="documento"
+                                         editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                <p:column headerText="#{msj['column.nombre.documento']}" style="width:80%; border:1px solid !important;">
+                                    <div style="text-align:center;">
+                                        <h:outputText id="txtNombreArchivoAL" value="#{documento.nombreArchivo}"/>
+                                    </div>
+                                </p:column>
+                                <p:column id="hdrNombreDocumentoALRL" headerText="#{msj['column.documento']}" style="width:20%; border:1px solid !important;">
+                                    <div style="text-align:center;">
+                                        <h:commandButton image="/resources/images/document.png" title="#{documento.nombreArchivo}" ajax="false">
+                                            <f:setPropertyActionListener value="${documento.nombreArchivo}" target="#{documentacionFirmanteMB.nombreArchivo}"/>
+                                            <f:setPropertyActionListener value="${documento.rutaArchivo}" target="#{documentacionFirmanteMB.rutaArchivo}"/>
+                                            <p:fileDownload contentDisposition="attachment" value="#{documentacionFirmanteMB.descargarArchivo}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+
+                        </h:panelGrid>
+                    </p:dialog>
+
+                </p:panel>
+            </h:form>
+
+            <h:outputScript library="js/" name="agace.js"/>
+
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

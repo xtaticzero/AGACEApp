@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel styleClass="panel-subinterno-insumos" 
+             id="panelEstatusFiltrado"
+             rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.flgEstatusFiltrados}">
+		<f:facet name="header"> 
+            <h:outputText rendered="#{!consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE}" value="Insumos Asignados"/>
+            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and !consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Asignados" style="font-weight:bold"/>
+            <h:outputText rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Registrados"/>
+        </f:facet>
+        <p:dataTable id="tblEstatusFiltrados" value="#{consultaAdminInsumosMB.detalleEstatusFiltrado}" var="estatusEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}">
+            <f:facet name="header"> 
+	            <h:outputLabel rendered="#{!consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE}" value="Insumos Asignados" style="font-weight:bold"/>
+	            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and !consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Asignados" style="font-weight:bold"/>
+	            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Registrados" style="font-weight:bold"/>
+	        </f:facet>
+            <p:column headerText="Estatus">
+                <h:outputText value="#{estatusEntry.key.descripcion}" />
+            </p:column>
+            <p:column headerText="Total" style="text-align: right;">
+                <h:outputText value="#{estatusEntry.value}" rendered="#{estatusEntry.value eq 0}"/>
+                <p:commandLink id="consultarXEstatusOSemaforo"
+                			   value="#{estatusEntry.value}"
+                               action="#{consultaAdminInsumosMB.consultarXEstatusOSemaforo}"
+                               ajax="true" immediate="true" update="@form"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{estatusEntry.value ne 0}">
+                    <f:setPropertyActionListener value="#{estatusEntry}"
+                                                 target="#{consultaAdminInsumosMB.consultaInsumosHelper.estatusSeleccionado}" />
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="Insumos Totales" style="text-align:center;"/>
+                    <p:column style="text-align:right;" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEstatusFiltrado eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEstatusFiltrado}"/>
+                        </f:facet>                                        
+                    </p:column>                                    
+                    <p:column style="text-align:right;" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEstatusFiltrado ne 0}">
+                        <f:facet name="footer">
+                            <p:commandLink id="consultarTotalSemaforosFiltro"
+                            			   value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEstatusFiltrado}"
+                                           action="#{consultaAdminInsumosMB.consultarTotalSemaforosFiltro}"
+                                           ajax="true" immediate="true" update="@all"
+                                           style="color: blue; text-decoration: underline;">
+                            </p:commandLink>
+                        </f:facet>
+                    </p:column>
+                </p:row>
+            </p:columnGroup>
+        </p:dataTable>
+        <p:separator/>
+        <h:panelGrid columns="1" style="text-align: right ! important; width: 100%;">
+            <h:panelGroup>
+                <p:commandButton id="mostrarPanelEstatusSemaforo"
+                				 value="#{msj['btn.pantalla.anterior']}" 
+                                 ajax="false" 
+                                 immediate="true"
+                                 process="@form"
+                                 action="#{consultaAdminInsumosMB.mostrarPanelEstatusSemaforo}"
+                                 update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"/>
+            </h:panelGroup> 
+        </h:panelGrid>
+    </p:panel>
+</f:view>

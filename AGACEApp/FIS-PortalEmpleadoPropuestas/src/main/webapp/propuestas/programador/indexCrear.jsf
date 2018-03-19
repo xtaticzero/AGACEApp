@@ -1,0 +1,654 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+        <h:head>
+            <style type="text/css">
+               .ui-selectonemenu-panel
+               {
+                   max-width:58% !important;
+               }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form enctype="multipart/form-data" id="formContribuyente" styleClass="panel-principal">
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelOrdenes"
+                         style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;"
+                         styleClass="panel-interno" header="#{msj['lbl.propuestas.panel.regpropuestas.titulo']}">
+                         <table border="0" width="100%" cellpadding="2" cellspacing="2">
+                            <tr>
+                                <td width="22%" rowspan="3" valign="bottom"><h:outputLabel value="#{msj['lbl.propuestas.datosContribuyente']}" style="float:left;font-weight:bold"/></td>
+                                <td width="78%">
+                                        <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td width="70%"><h:outputLabel value="#{msj['lbl.propuestas.areaOrigenPropuesta']}:" style="float:right;font-weight:bold;"/></td>
+                                                <td width="30%">
+                                                    <h:outputLabel rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" value="#{propuestaIndividualManagedBean.propIndAttributeHelper.nombreAreaOrigen}"/>
+                                                    <h:outputLabel rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" value="#{propuestaIndividualManagedBean.propIndAttributeHelper.unidadInsumo}"/>    
+                                                </td>
+                                            </tr>
+                                        </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="78%">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="70%"><h:outputLabel rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" value="#{msj['lbl.propuestas.estatusContacto']}:" style="float:right;font-weight:bold;"/></td>
+                                            <td width="30%"><h:outputLabel rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" value="#{propuestaIndividualManagedBean.propIndAttributeHelper.estatusDeContacto}"/></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="78%">
+                                    <table border="0" width="60%" cellpadding="0" cellspacing="0" align="right">
+                                        <tr>
+                                            <td width="70%">
+                                            <h:outputLabel id="lblAmparadoId" value="#{propuestaIndividualManagedBean.propIndAttributeHelper.msjContactoAmparadoPPEE}" style="float:right;font-weight:bold"/>
+                                            <h:outputLabel id="lblMnjContactoId" value="#{propuestaIndividualManagedBean.propIndAttributeHelper.mnjestatusDeContacto}" style="float:right;font-weight:bold"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                         </table>
+                    <p:separator/>
+                     <table id="panelDatosOrden" border="0" width="100%" cellpadding="3" cellspacing="2">
+                          <tr>
+                            <td width="50%">
+                                <table border="0" cellpadding="2" cellspacing="0">
+                                    <tr>
+                                        <td><h:outputLabel value="#{msj['lbl.propuestas.rfc']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td>
+                                        <td>
+                                            <p:inputText ajax="false" id="txtRFC" maxlength="13" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.rfc}"
+                                                 onkeypress="if(event.keyCode==13){return false;}" disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo || propuestaIndividualManagedBean.propIndBooleanHelper.complementaCambioMetodo }">
+                                                <f:validator validatorId="rfcValidator"/>
+                                                <p:ajax update="@form :formInsumo :formContribuyente" event="blur" disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo || propuestaIndividualManagedBean.propIndBooleanHelper.complementaCambioMetodo }"
+                                                        listener="#{propuestaIndividualManagedBean.activarBotonBuscarRFC}" />
+                                            </p:inputText>
+                                        </td>
+                                        <td>
+                                            <p:commandButton id="btnBuscarId" rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.habilitaBotonRFC }" value="Buscar" action="#{propuestaIndividualManagedBean.buscarRfcContribuyente}" ajax="true" update="@form :formInsumo :formContribuyente" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                      
+                                        </td>
+                                    </tr>
+                                    <tr><td colspan="3"><p:message id="msgRFC" for="txtRFC" display="text"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.nombreRazonSocial']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.nombre}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.regimen']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.regimen}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.situacion}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.tipoContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.tipo}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.actividadPreponderante']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtActividad" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.actividadPreponderante}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.domicilioFiscalContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputTextarea id="txtDomFiscal" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.domicilioFiscal}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionDomicilio']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.situacionDomicilio}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true" value="#{propuestaIndividualManagedBean.propIndDTOHelper.contribuyente.entidad}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%"></td> 
+                          </tr>
+                    </table>
+                    
+                    
+                    
+                </p:panel>
+            </h:form>
+             
+            <h:form id="formInsumo" enctype="multipart/form-data">
+                <p:panel id="panelListaOrdenes" styleClass="panel-interno" style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;">
+                    <p:messages id="msgPropuestaId" showDetail="false" for="msgPropuestaId" autoUpdate="true"  globalOnly="true" closable="true" style="width:700px;"/>
+                    <h:outputLabel value="#{msj['lbl.propuestas.datosPreviosPropuesta']}" style="font-weight:bold" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}"/>
+                    <p:separator rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}"/>
+                    
+                    <h:panelGrid columns="7" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}" border="0" cellpadding="3" cellspacing="3">
+                        <h:panelGroup rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleUnidad}">
+                            <table border="0" cellpadding="2" cellspacing="2">
+                                <tr><td><h:outputLabel value="#{msj['lbl.propuestas.unidadAdministrativaAtencion']}:" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleUnidad}" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td></tr>
+                                <tr>
+                                    <td>
+                                        <p:selectOneMenu id="cmbUnidad" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idArace}" disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaCambioMetodo}" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleUnidad}" style="width:160px;">
+                                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.unidad']}" itemValue="-1"/>
+                                            <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaUnidades}" var="lista"
+                                                           itemLabel="#{lista.idArace} - #{lista.nombre}" itemValue="#{lista.idArace}"/>
+                                            <p:ajax update=":formInsumo:cmbUnidad :formInsumo:cmbMetodo :formInsumo:panelPresentancionId  :formInsumo:panelInformacionId :formInsumo:panelRevisionId :formInsumo:txtFechaPresentacion :formInsumo:txtFechaInformacion :formInsumo:cmbRevision" event="change"
+                                                    listener="#{propuestaIndividualManagedBean.reseteaMetodoSeleccionado}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr><td><p:message id="msgUnidad" for="cmbUnidad" display="text" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleUnidad}"/></td></tr>
+                            </table>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleUnidad}"><h:outputText value="&nbsp;&nbsp;&nbsp;"/></h:panelGroup>
+                        <h:panelGroup>
+                            <table border="0" cellpadding="2" cellspacing="2">
+                                <tr><td><h:outputLabel value="#{msj['lbl.propuestas.metodoRevision']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td></tr>
+                                <tr>
+                                    <td>
+                                    <p:selectOneMenu id="cmbMetodo" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idMetodo}" style="width:160px;">
+                                        <f:selectItem itemLabel="#{msj['combo.item.selecciona.metodo']}" itemValue="-1"/>
+                                        <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaMetodoRevision}" var="lista"
+                                                       itemLabel="#{lista.idMetodo} - #{lista.nombre}" itemValue="#{lista.idMetodo}"/>
+                                        <p:ajax update=":formInsumo:panelPresentancionId  :formInsumo:panelInformacionId :formInsumo:panelRevisionId :formInsumo:cmbRevision :formInsumo:cmbPropuesta :formInsumo:cmbSubprograma :formInsumo:cmbSector :formInsumo:cmbCausa :formInsumo:cmbPrioridad" event="change"
+                                                listener="#{propuestaIndividualManagedBean.reseteaRevisionMetodo}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                    </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr><td><p:message id="msgMetodo" for="cmbMetodo" display="text"/></td></tr>
+                            </table>
+                        </h:panelGroup>
+                        <h:panelGroup><h:outputText value="&nbsp;&nbsp;&nbsp;"/></h:panelGroup>
+                        <h:panelGroup>
+                        <table border="0" cellpadding="2" cellspacing="2">
+                            <tr><td><h:outputLabel value="#{msj['lbl.propuestas.causaProgramacion']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td></tr>
+                            <tr>
+                                <td>
+                                <p:selectOneMenu id="cmbCausa" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idCausaProgramacion}" style="width:160px;">
+                                    <f:selectItem itemLabel="#{msj['combo.item.selecciona.causa']}" itemValue="-1"/>
+                                    <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaCausaProgramacion}" var="lista"
+                                                   itemLabel="#{lista.idCausaProgramacion} - #{lista.descripcion}" itemValue="#{lista.idCausaProgramacion}"/>
+                                </p:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr><td><p:message id="msgCausa" for="cmbCausa" display="text"/></td></tr>
+                        </table>
+                        </h:panelGroup>
+                        <h:panelGroup><h:outputText value="&nbsp;&nbsp;&nbsp;"/></h:panelGroup>
+                        <h:panelGroup>
+                            <table border="0" cellpadding="2" cellspacing="2">
+                                <tr><td><h:outputLabel value="#{msj['lbl.propuestas.tipoPropuesta']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td></tr>
+                                <tr>
+                                    <td>
+                                    <p:selectOneMenu id="cmbPropuesta" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idTipoPropuesta}" style="width:160px;">
+                                        <f:selectItem itemLabel="#{msj['combo.item.selecciona.propuesta']}" itemValue="-1"/>
+                                        <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaTipoPropuesta}" var="lista"
+                                                       itemLabel="#{lista.idTipoPropuesta} - #{lista.descripcion}" itemValue="#{lista.idTipoPropuesta}"/>
+                                      <p:ajax event="change" ajax="true" update=":formInsumo:panelDatosActualizar" listener="#{propuestaIndividualManagedBean.handleDateSelectFechaDescripcion}" />
+                                 
+                                    </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr><td><p:message id="msgPropuesta" for="cmbPropuesta" display="text"/></td></tr>
+                            </table>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                    
+                    <h:panelGrid id="panelDatosActualizar" border="0" columns="1" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}">
+                        <h:panelGroup>
+                        <table border="0" cellpadding="2" cellspacing="2">
+                            <tr>
+                                <td><h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td><h:outputLabel value="#{msj['label.sector']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td>
+                                <td><h:outputText  value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td><h:outputLabel value="#{msj['label.prioridad']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td colspan="2"><h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:inputTextarea rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" id="txtSubPrograma" style="width:160px;height:auto;" disabled="true" cols="15"
+                                         value="#{propuestaIndividualManagedBean.propIndDTOHelper.fecetInsumo.fececSubprograma.descripcion}"/>
+                                    <p:selectOneMenu rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" id="cmbSubprograma" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idSubprograma}" style="width:160px;"  >
+                                        <f:selectItem itemLabel="#{msj['combo.item.selecciona.subprograma']}" itemValue="-1"/>
+                                        <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaSubprograma}" var="lista"
+                                                       itemLabel="#{lista.clave} - #{lista.descripcion}"
+                                                       itemValue="#{lista.idSubprograma}"/>
+                                    </p:selectOneMenu>
+                                </td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td>
+                                    <p:inputTextarea rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" id="txtSector" style="width:160px;height:auto;" disabled="true"
+                                         value="#{propuestaIndividualManagedBean.propIndDTOHelper.fecetInsumo.fececSector.descripcion}"/>
+                                    <p:selectOneMenu rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" id="cmbSector" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idSector}" style="width:120px;">
+                                        <f:selectItem itemLabel="#{msj['combo.item.selecciona.sector']}" itemValue="-1"/>
+                                        <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaSector}" var="lista" itemLabel="#{lista.descripcion}" itemValue="#{lista.idSector}"/>
+                                    </p:selectOneMenu>
+                                </td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td>
+                                    <p:selectOneMenu id="cmbPrioridad" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.prioridadSugerida}" style="width:140px;">
+                                        <f:selectItem itemLabel="#{msj['combo.item.selecciona.prioridad']}" itemValue="-1"/>
+                                        <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaPrioridad}" var="lista"
+                                                       itemLabel="#{lista.prioridad}" itemValue="#{lista.prioridad}"/>
+                                        <p:ajax update=":formInsumo:cmbUnidad :formInsumo:cmbMetodo :formInsumo:panelPresentancionId  :formInsumo:panelInformacionId :formInsumo:panelRevisionId :formInsumo:txtFechaPresentacion :formInsumo:txtFechaInformacion :formInsumo:cmbRevision" event="change" listener="#{propuestaIndividualManagedBean.mostrarTipoRevision}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>    
+                                    </p:selectOneMenu>
+                                </td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td>
+                                    <h:outputLabel id="lblpropuestoInicio" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.del']}:" style="font-weight:bold"/>
+                                    <h:outputLabel  id="lblespecificasInicio" rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold"/>
+                                    <p:calendar disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                readonlyInput="true" size="8" maxdate="#{propuestaIndividualManagedBean.propIndAttributeHelper.fechaActualPeriodo}"
+                                                value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.fechaInicioPeriodo}" navigator="true">
+                                        <p:ajax event="dateSelect" update=":formInsumo:txtFechaFinal" listener="#{propuestaIndividualManagedBean.handleDateSelectFechaFinPeriodo}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+                                    </p:calendar>
+                                </td>
+                                <td>
+                                    <h:outputLabel id="lblpropuestoFin" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.tipoPropuesta}" value="#{msj['lbl.propuestas.al']}:" style="font-weight:bold;"/>
+                                    <h:outputLabel id="lblespecificasFin" rendered="#{!propuestaIndividualManagedBean.propIndBooleanHelper.tipoPropuesta}" value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold;"/>
+                                    <p:calendar disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" id="txtFechaFinal" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="8" mindate="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.fechaInicioPeriodo}" maxdate="#{propuestaIndividualManagedBean.propIndAttributeHelper.fechaActualPeriodo}"
+                                        value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.fechaFinPeriodo}" navigator="true"/>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td><p:message id="msgSubprograma" for="cmbSubprograma" display="text"/></td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td><p:message id="msgSector" for="cmbSector" display="text"/></td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td><p:message id="msgPrioridad" for="cmbPrioridad" display="text"/></td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td colspan="2"><p:message id="msgFechaInicial" for="txtFechaInicial" display="text"/></td>
+                                <td><h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                    
+                    <h:panelGrid id="panelPresentancionId" columns="3" border="0" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}">
+                        <h:panelGrid columns="1" width="250" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleFechaPre}">
+                            <h:panelGroup>
+                                <table border="0" cellpadding="2" cellspacing="2">
+                                    <tr><td><h:outputLabel id="fechaPresentacionComiteId" value="#{propuestaIndividualManagedBean.propIndAttributeHelper.presentacionComite}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td></tr>
+                                    <tr>
+                                        <td>
+                                            <p:calendar id="txtFechaPresentacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                readonlyInput="true" size="8" mindate="#{propuestaIndividualManagedBean.propIndAttributeHelper.fechaActualPeriodo}"
+                                                value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.fechaPresentacion}" navigator="true"/>
+                                        </td>
+                                    </tr>
+                                    <tr><td><p:message id="msgFechaPresentacion" for="txtFechaPresentacion" display="text"/></td></tr>
+                                </table>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        
+                        <h:panelGrid id="panelInformacionId" columns="1" width="250" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleFechaInf}">
+                            <h:panelGroup>
+                                <table border="0" cellpadding="2" cellspacing="2">
+                                    <tr><td><h:outputLabel value="#{propuestaIndividualManagedBean.propIndAttributeHelper.informacionComite}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td></tr>
+                                    <tr>
+                                        <td>
+                                            <p:calendar id="txtFechaInformacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                    readonlyInput="true" size="8" mindate="#{propuestaIndividualManagedBean.propIndAttributeHelper.fechaActualPeriodo}" 
+                                                    value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.fechaInforme}" navigator="true"/>
+                                        </td>
+                                    </tr>
+                                    <tr><td><p:message id="msgFechaInformacion" for="txtFechaInformacion" display="text" /></td></tr>
+                                </table>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        
+                        <h:panelGrid id="panelRevisionId" border="0" columns="2" width="200" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.visibleRevision}" >
+                            <h:panelGroup>
+                            <table border="0" cellpadding="2" cellspacing="2">
+                                <tr><td><h:outputLabel value="#{msj['lbl.propuestas.tipoRevision']}:" style="font-weight:bold"/><h:outputText value=" *" style="color:red"/></td></tr>
+                                <tr>
+                                    <td>
+                                        <p:selectOneMenu id="cmbRevision" value="#{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idRevision}"
+                                             style="width:160px;">
+                                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.revision']}" itemValue="-1"/>
+                                            <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaTipoRevision}" var="lista"
+                                                           itemLabel="#{lista.idRevision} - #{lista.descripcion}"
+                                                           itemValue="#{lista.idRevision}"/>
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr><td><p:message id="msgRevision" for="cmbRevision" display="text"/></td></tr>
+                            </table>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    
+                    <p:messages id="msgExitoDescartarOficioAnexo" showDetail="false" for="msgExitoDescartarOficioAnexo" autoUpdate="true"  globalOnly="true" closable="true" style="width:520px;"/>
+                    
+                    <h:panelGrid border="0" columns="4" cellpadding="2" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}">
+                        <p:fileUpload id="fulExpediente"
+                                      fileUploadListener="#{propuestaIndividualManagedBean.cargaArchivoExpediente}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:180px;"
+                                      label="#{msj['lbl.propuestas.btnAdjuntarDocumento']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true" partialSubmit="true"
+                                      update="tablaDocumentos msgExitoDescartarOficioAnexo"
+                                      oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');"/>
+                        <h:outputText value=" *" style="color:red"/>
+                        <h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;"/>
+                        <p:dataTable id="tablaDocumentos" var="documento" style="text-align:left;width:400px;"
+                                     value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaDocumento}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{msj['lbl.propuestas.expedientesElectronicos']}" style="font-weight:bold"/>
+                            </f:facet>
+                            <p:column headerText="#{msj['lbl.propuestas.fecha']}" styleClass="someClass" style="text-align:center;width:105px;">
+                                <h:outputText id="txtFechaHora" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['lbl.propuestas.expediente']}" styleClass="someClass">
+                                <h:outputText value="#{documento.nombre}"/>
+                            </p:column>
+                            <p:column style="text-align:center;width:45px;">
+                                <p:commandLink value="#{msj['lbl.propuestas.eliminarDocumento']}"
+                                               action="#{propuestaIndividualManagedBean.descartarDocumento}" ajax="true"
+                                               immediate="true" update="@form"
+                                               oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();">
+                                    <f:setPropertyActionListener value="#{documento}"
+                                                                 target="#{propuestaIndividualManagedBean.documentoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    
+                    <h:panelGrid id="panelDocumentoInsumo" styleClass="panel-interno" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}">
+                        <h:outputLabel value="Documentos del Insumo" style="font-weight:bold" />
+                        <p:separator />
+                        <p:dataTable id="tablaDocumentacionExpediente"
+                                     value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaDocumentoInsumo}" var="documento"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom" style="width:98%;">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="40">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="EST"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}" width="200">
+                                <div style="width:200px;">
+                                    #{documento.nombre}
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.documento']}" width="30">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="Documento"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{documento}"
+                                                                     target="#{consultaInsumosAsignadosManagedBean.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{consultaInsumosAsignadosManagedBean.documentoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                    </h:panelGrid>
+                      <h:panelGrid id="panelDocumentoCambioMetodo" styleClass="panel-interno" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaCambioMetodo}">
+                        <h:outputLabel value="Documentos del Cambio de Metodo" style="font-weight:bold" />
+                        <p:separator />
+                        <p:dataTable id="tablaDocumentacionExp"
+                                     value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaDocumentoExp}" var="documento"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom" style="width:98%;">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="40">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}" width="200">
+                                <div style="width:200px;">
+                                    #{documento.nombre}
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.documento']}" width="30">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="Documento"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{documento}"
+                                                                     target="#{consultaInsumosAsignadosManagedBean.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{consultaInsumosAsignadosManagedBean.documentoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                    </h:panelGrid>
+                  
+                    
+                    <h:outputLabel value="#{msj['lbl.propuestas.datosImpuestos']}" style="font-weight:bold"  rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}" />
+                    <p:separator  rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}"/>
+                    <p:messages id="msgImpuestos" showDetail="false" for="msgImpuestos" autoUpdate="true"  globalOnly="true" closable="true" style="width:720px;"/>
+                    <h:panelGrid id="panelAcciones" width="850" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}">
+                        <p:column>
+                            <table id="panelImpuestos" border="0" cellpadding="3" cellspacing="3">
+                                <tr>
+                                    <td>
+                                        <h:outputLabel value="#{msj['lbl.propuestas.impuesto']}:" style="font-weight:bold"/>
+                                    </td>
+                                    <td>
+                                        <h:outputLabel value="#{msj['label.concepto.impuesto']}:" style="font-weight:bold"/>
+                                    </td>
+                                    <td>
+                                        <h:outputLabel value="#{msj['lbl.propuestas.monto']}:" style="font-weight:bold"/>
+                                    </td>
+                                    <td valign="middle" rowspan="3">
+                                        <p:commandButton id="btnAgregarImpuestoId" value="#{msj['lbl.propuestas.btnAgregarImpuesto']}"
+                                                 actionListener="#{propuestaIndividualManagedBean.agregarImpuesto}" disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.habilitaImpuesto}"
+                                                 update="@form " onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p:selectOneMenu id="cmbImpuesto" value="#{propuestaIndividualManagedBean.propIndDTOHelper.impuestoVO.idImpuesto}" style="width:160px;" disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.habilitaImpuesto}">
+                                        <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipoImpuesto']}" itemValue="-1"/>
+                                        <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaTipoImpuesto}"
+                                                       var="lista" itemLabel="#{lista.abreviatura} - #{lista.descripcion}"
+                                                       itemValue="#{lista.idTipoImpuesto}"/>
+                                        <p:ajax update=":formInsumo:txtMonto :formInsumo:btnAgregarImpuestoId :formInsumo:msgImpuesto :formInsumo:msgMonto :formInsumo:cmbConcepto" event="change" listener="#{propuestaIndividualManagedBean.agregarImpuestoCero}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                    </p:selectOneMenu>
+                                    </td>
+                                    <td>
+                                       <p:selectOneMenu id="cmbConcepto" value="#{propuestaIndividualManagedBean.propIndDTOHelper.impuestoVO.idConcepto}" style="width:160px;" disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.habilitaImpuesto}">
+                                          <f:selectItem itemLabel="#{msj['combo.item.selecciona.concepto']}" itemValue="-1"/>
+                                          <f:selectItems value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaConcepto}"
+                                                         var="lista" itemLabel="#{lista.idConcepto} - #{lista.descripcion}"
+                                                         itemValue="#{lista.idConcepto}"/>
+                                          <p:ajax update=":formInsumo:msgConcepto"/>
+                                       </p:selectOneMenu>
+                                    </td>
+                                    <td>
+                                        <pe:inputNumber id="txtMonto" disabled="#{propuestaIndividualManagedBean.propIndBooleanHelper.habilitaCampoMonto}" value="#{propuestaIndividualManagedBean.propIndDTOHelper.impuestoVO.monto}" decimalSeparator="." thousandSeparator="," maxValue="999999999999.99" required="false" requiredMessage="" style="width:100px" decimalPlaces="2" >
+                                        <p:ajax event="keyup" update=":formInsumo:msgMonto"/>
+                                        </pe:inputNumber>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><p:message id="msgImpuesto" for="cmbImpuesto" display="text"/></td>
+                                    <td><p:message id="msgConcepto" for="cmbConcepto" display="text"/></td>
+                                    <td><p:message id="msgMonto" for="txtMonto" display="text"/></td>
+                                    
+                                </tr>
+                            </table>
+                           
+                        </p:column>
+                    </h:panelGrid>
+                    <br/>
+                    <p:column rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}">
+                        <div align="center">
+                            <p:dataTable id="tblImpuestos" var="impuesto" value="#{propuestaIndividualManagedBean.propIndDTOHelper.listaImpuestos}"
+                                         emptyMessage="#{msj['label.lista.vacia']}" style="width:550px;">
+                                <f:facet name="header">
+                                    <h:outputLabel value="#{msj['lbl.propuestas.impuestos']}" style="font-weight:bold"/>
+                                </f:facet>
+                                <p:column headerText="#{msj['lbl.propuestas.impuesto']}">
+                                    <h:outputText value="#{impuesto.descripcion}"/>
+                                </p:column>
+                                <p:column headerText="#{msj['lbl.propuestas.concepto']}">
+                                    <h:outputText value="#{impuesto.descripcionConcepto}"/>
+                                </p:column>
+                                <p:column headerText="#{msj['lbl.propuestas.monto']}">
+                                    <h:outputText value="#{impuesto.monto}">
+                                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <p:commandLink value="#{msj['lbl.propuestas.eliminarImpuesto']}"
+                                                   action="#{propuestaIndividualManagedBean.descartarImpuesto}"
+                                                   ajax="true" immediate="true" update="@form"
+                                                   oncomplete="ocultaMsgAgace('msgImpuestos');">
+                                        <f:setPropertyActionListener value="#{impuesto}"
+                                                                     target="#{propuestaIndividualManagedBean.propIndDTOHelper.impuestoSeleccionado}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                    </p:commandLink>
+                                </p:column>
+                                <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column footerText="#{msj['lbl.propuestas.presuntiva']}: " style="text-align:right"/>
+                                        <p:column colspan="3" style="text-align:left;">
+                                            <f:facet name="footer">
+                                                <h:outputText value="#{propuestaIndividualManagedBean.totalMonto}">
+                                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                                </h:outputText>
+                                            </f:facet>
+                                        </p:column>
+                                    </p:row>
+                                </p:columnGroup>
+                            </p:dataTable>
+                        </div>
+                    </p:column>
+                    <br/>
+                    <p:column rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.mostrarFormulario}">
+                        <div align="center">
+                            <p:commandButton value="#{msj['lbl.propuestas.btnRegistrar']}"
+                                             action="#{propuestaIndividualManagedBean.registrarInsumoPropuesta}"
+                                             update=":formContribuyente @form" style="width:80px;" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                             
+                            <p:spacer width="10" height="1"/>
+                             
+                            <p:commandButton value="#{msj['lbl.propuestas.btnLimpiar']}"
+                                             action="#{propuestaIndividualManagedBean.limpiarFormulario}"
+                                             update="@form :formContribuyente :formInsumo" style="width:80px;" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                       
+                           
+                            <p:commandButton value="#{msj['btn.regresar']}"  rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaCambioMetodo}"
+                                             action="#{propuestaIndividualManagedBean.regresarInsumos}"
+                                               update="formInsumo"  />
+                            
+                            <p:spacer width="10" height="1" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}"/>
+                            
+                            <p:commandButton value="#{msj['btn.regresar']}" action="../../insumos/subadministrador/indexValidar.jsf" rendered="#{propuestaIndividualManagedBean.propIndBooleanHelper.complementaInsumo}" />
+                        </div>
+                    </p:column>
+                </p:panel>
+                
+               
+               
+                <p:dialog header="#{msj['lbl.propuestas.mensajeRegistro']}" widgetVar="mensajeRegistrar" resizable="false" modal="true" closable="false" width="410">
+                    <h:outputText value="#{msj['lbl.propuestas.confirmarRegistro']}" style="float:left;font-weight:bold;"/>
+                    <br/><br/>
+                    <div align="center">
+                        <p:commandButton id="aceptarReg" value="#{msj['lbl.propuestas.btnAceptar']}"
+                                         action="#{propuestaIndividualManagedBean.registrarPropuesta}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();PF('mensajeRegistrar').hide();"
+                                         update=":formContribuyente @form" style="width:80px;"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton id="cancelarReg" value="Cancelar" onclick="PF('mensajeRegistrar').hide();" style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                
+                <p:dialog header="#{msj['lbl.propuestas.continuarRegistro']}" widgetVar="confirmarContinuarInsumos" resizable="false" modal="true" width="470" visible="false" closable="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="La Propuesta con Id: #{propuestaIndividualManagedBean.propIndDTOHelper.propuesta.idRegistro} ha sido registrada y ser&aacute; revisada por el &aacute;rea correspondiente."  escape="false"/>
+                    </h:panelGroup>
+                    <p:commandButton id="btnContinuarInsumoPropuesta" value="#{msj['label.confirm.aceptar']}"
+                                     action="#{propuestaIndividualManagedBean.regresarInsumos}"
+                                     onclick="PF('confirmarContinuarInsumoPropuesta').hide();" />
+                </p:dialog>
+                
+                <p:dialog header="#{msj['lbl.propuestas.continuarRegistro']}" widgetVar="confirmarContinuarRegistrando" resizable="false" modal="true" width="470" visible="false" closable="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{propuestaIndividualManagedBean.propIndAttributeHelper.mensajeAntecedentes}" escape="false"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.cancelar']}" onclick="PF('confirmarContinuarRegistrando').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"/>
+                    <p:commandButton id="btnContinuar" value="#{msj['label.confirm.aceptar']}"
+                                     onclick="PF('confirmarContinuarRegistrando').hide();" styleClass="ui-confirmdialog-yes"
+                                     icon="ui-icon-check" action="#{propuestaIndividualManagedBean.guardarPropuesta}"
+                                     process="@this" style="float:right;" 
+                                     update=":formContribuyente @form" 
+                                     oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                </p:dialog>
+				
+                    <p:dialog header="#{msj['lbl.propuestas.mensajeDuplicidad']}" widgetVar="mensajeDuplicidad" resizable="false" modal="true" width="410">
+                    <h:outputText value="#{propuestaIndividualManagedBean.propIndAttributeHelper.mensajeDuplicidad}" style="float:left;font-weight:bold;"/>
+                    <br/><br/>
+                    <div align="center">
+                        <p:commandButton id="aceptarDup" value="#{msj['lbl.propuestas.btnAceptar']}" onclick="PF('mensajeDuplicidad').hide();" style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                
+                
+            </h:form>
+             <br/>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

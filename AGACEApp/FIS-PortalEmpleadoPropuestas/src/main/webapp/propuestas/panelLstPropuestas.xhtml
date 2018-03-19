@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panaelLstPropuestas" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarTlbPropuestas}"
+             styleClass="panel-subinterno-propuestas" >
+        <p:dataTable id="tablaDetallePropuestas"
+                     value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.lstPropuestasResult}" var="propuesta"
+                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"
+                     widgetVar="tablaDetallePropuestas"
+                     style="width: 100%;">
+            <p:column headerText="#{msj['column.propuestas.por.validar.folio']}" style="width:15%" filterBy="#{propuesta.idRegistro}">
+                <h:outputText value="#{propuesta.idRegistro}" />
+            </p:column>
+
+            <p:column headerText="#{msj['column.propuestas.por.validar.rfc']}" styleClass="someClass" filterBy="#{propuesta.fecetContribuyente.rfc}"
+                      style="width:15%">
+                <p:commandLink process="@this" 
+                               update=":formConsultaEjecutivaPropuestas "
+                               action="#{consultaAdminPropuestasMB.mostrarPanelDetallePropuesta}">
+                    <h:outputText value="#{propuesta.fecetContribuyente.rfc}" style="color:blue"/>
+                    <f:setPropertyActionListener value="#{propuesta}" 
+                                                 target="#{consultaAdminPropuestasMB.consultaPropuestasHelper.propuestaSeleccionada}"/>
+                </p:commandLink>
+            </p:column>
+
+            <p:column headerText="#{msj['column.propuestas.por.validar.prioridad']}" style="width:10%;" filterBy="#{propuesta.prioridadSugerida}">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetallePropuestas').filter()" style="width: 70px;">
+                        <f:selectItem itemLabel="#{msj['label.titulo.consulta.ejecutiva.filtro.todos']}" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaAdminPropuestasMB.lstPrioridadFiltro}" var="item" itemLabel="#{item.descripcion}" itemValue="#{item.descripcion}"/>
+                    </p:selectOneMenu>
+                </f:facet>           
+                <div align="center">
+                    <h:outputText value="#{propuesta.prioridadSugerida}"/>
+                </div>
+            </p:column>
+
+            <p:column headerText="#{msj['column.propuestas.por.validar.metodo']}" style="width:10%;" filterBy="#{propuesta.feceaMetodo.abreviatura}">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetallePropuestas').filter()" style="width: 70px;">
+                        <f:selectItem itemLabel="#{msj['label.titulo.consulta.ejecutiva.filtro.todos']}" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaAdminPropuestasMB.lstMetodosFiltro}" var="item" itemLabel="#{item.descripcion}" itemValue="#{item.descripcion}"/>
+                    </p:selectOneMenu>
+                </f:facet>                 
+                <div align="center">
+                    <h:outputText value="#{propuesta.feceaMetodo.abreviatura}"/>
+                </div>
+            </p:column>
+
+            <p:column headerText="#{msj['column.propuestas.por.validar.unidad.admin.atencion']}" style="width:20%" filterBy="#{propuesta.fececArace.nombre}">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetallePropuestas').filter()" style="width: 70px;">
+                        <f:selectItem itemLabel="#{msj['label.titulo.consulta.ejecutiva.filtro.todos']}" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaAdminPropuestasMB.lstUnidadAdministrativaFiltro}" var="item" itemLabel="#{item.descripcion}" itemValue="#{item.descripcion}"/>
+                    </p:selectOneMenu>
+                </f:facet>    
+                <h:outputText value="#{propuesta.fececArace.nombre}"/>
+            </p:column>
+
+            <p:column filterBy="#{propuesta.presuntiva}" filterStyle="float:center" style="width:20%;" filterFunction="#{consultaAdminPropuestasMB.filterByPresuntiva}" >
+                <f:facet name="header">  
+                    <h:outputText value="#{msj['column.propuestas.por.validar.presuntiva']}" style="float: none;"/>  
+                </f:facet>
+                <div align="right">
+                    <p:outputLabel value="#{propuesta.presuntiva}">
+                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                    </p:outputLabel>
+                </div>
+            </p:column>
+
+            <p:column headerText="#{msj['column.propuesta.estatus']}" style="width:15%;text-align: center;" filterBy="#{propuesta.estatusXGrupo.descripcion}">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetallePropuestas').filter()" style="width: 70px;">
+                        <f:selectItem itemLabel="#{msj['label.titulo.consulta.ejecutiva.filtro.todos']}" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaAdminPropuestasMB.lstEstatusFiltro}" var="item" itemLabel="#{item.descripcion}" itemValue="#{item.descripcion}"/>
+                    </p:selectOneMenu>
+                </f:facet>                
+                <p:outputLabel value="#{propuesta.estatusXGrupo.descripcion}"/>
+            </p:column>
+
+        </p:dataTable>
+        <p:spacer/>
+        <h:panelGrid columns="1" style="text-align: right ! important; width: 100%;">
+            <h:panelGroup>
+                <p:commandButton id="btnRegresarLstPropuestas"                   
+                                 value="#{msj['btn.pantalla.anterior']}"
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaAdminPropuestasMB.regresarDeLstPropuestas}"
+                                 update=":formConsultaEjecutivaPropuestas :formConsultaEjecutivaPropuestas:panaelLstPropuestas"/>
+                 <p:commandButton id="btnExportarExcelLstPropuestas"                   
+                                 			value="Exportar" ajax="false"
+                                             onclick="PrimeFaces.monitorDownload(start, stop);"
+                                             icon="ui-icon-arrowthick-1-s">
+                                    <p:fileDownload value="#{consultaAdminPropuestasMB.xlsReporte}"/>
+                                    </p:commandButton>                                 
+            </h:panelGroup> 
+        </h:panelGrid>
+    </p:panel>      
+</f:view>

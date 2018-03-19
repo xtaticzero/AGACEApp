@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script type="text/javascript">
+            </script>
+            <style type="text/css">
+               .ui-fileupload-cancel {
+                   display: none;
+               }
+			   	select:hover {
+					display: inline !important;
+				}
+            </style>
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="cargaDoctoForm" enctype="multipart/form-data">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                          resizable="false" id="statusDialog" widgetVar="statusDialog">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelReporte" styleClass="panel-interno" header="#{msj['titulo.panel.carga.documentacion.masiva']}">
+                    <p:panelGrid style="margin: 0 auto; width:95%;" styleClass="noBorders">
+                        <p:row>
+                            <p:column colspan="6">
+                                <p:messages showSummary="true" id="messages" showDetail="true" autoUpdate="true"
+                                            closable="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column rowspan="2" style="text-align:center; font-weight: bold; width:10%;">
+                            </p:column>
+                            <p:column colspan="2" style="text-align:left; font-weight: bold; width:10%;">
+                                <p:outputLabel value="#{msg['titulo.adjuntar.archivo.masiva']}"/>
+                            </p:column>
+                            <p:column style="width:80%;"/>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:fileUpload id="fileUpload" 
+                                              auto="false" 
+                                              disabled="#{cargaDoctoMasivaInsumosMB.fileHabilitado}" widgetVar="fileUpload"
+                                              oncomplete="ocultaMsgAgace('messages');"
+                                              fileUploadListener="#{cargaDoctoMasivaInsumosMB.upload}" 
+                                              mode="advanced" dragDropSupport="false" process="@form"
+                                              style="width:90%" label="#{msj['btn.examinar']}" 
+                                              styleClass="upload"
+                                              cancelLabel="Cancelar" uploadLabel="Cargar" 
+                                              multiple="true" 
+                                              update=":cargaDoctoForm">
+                                     </p:fileUpload>
+                                     
+                                     <p:commandButton id="btnGuardar" disabled="#{cargaDoctoMasivaInsumosMB.guardarHabilitado}"
+                                                     value="Guardar" update="cargaDoctoForm" process="@form"
+                                                     action="#{cargaDoctoMasivaInsumosMB.cargaDocumentos}"/>
+                                     <p:commandButton id="btnCancelar" 
+                                                     value="Limpiar" update="cargaDoctoForm" process="@form"
+                                                     action="#{cargaDoctoMasivaInsumosMB.cancelar}"/>
+                                     <p:commandButton value="Pantalla anterior" onclick="window.history.back();"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:panel rendered="#{cargaDoctoMasivaInsumosMB.panelVisible}"
+                                         style="border:none; width:90%; margin-left: auto; margin-right: auto;">                                    
+                                    <p:dataTable id="tablaDocumentoMasivo" var="cargaDocumentacionMasivaDto"
+                                                 value="#{cargaDoctoMasivaInsumosMB.cargaDocHelper.cargaDocumentacionMasivaDtoList}"
+                                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                 paginator="true" rows="10" 
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                                 {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                                 paginatorPosition="bottom">
+                                       <f:facet name="header">Documentos cargados con el Folio:&nbsp;#{cargaDoctoMasivaInsumosMB.folio}</f:facet>
+                                       <p:column style="border:0.1px gray solid !important" headerText="No.">
+                                            <h:outputText value="#{cargaDocumentacionMasivaDto.row}"/>                                                                                        
+                                        </p:column>
+                                        <p:column style="border:0.1px gray solid !important" headerText="Nombre Archivo">
+                                            <h:outputText value="#{cargaDocumentacionMasivaDto.nombreDocumento}"/>                                                                                                                                    
+                                        </p:column>
+                                    </p:dataTable>
+                                  <br></br>
+                                    <p:dataTable id="tablaDocumentoMasivoIncorrecto" var="documentoIncorrecto"
+                                                 value="#{cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosIncorrectos}"
+                                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                 paginator="true" rows="10"
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                                 {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                                 paginatorPosition="bottom">
+                                        <f:facet name="header">Documentos incorrectos</f:facet>
+                                        <p:column headerText="Nombre Archivo" style="border:0.1px gray solid !important">
+                                            <h:outputText value="#{documentoIncorrecto}"/>                                                                                                                                    
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                                <p:panel id="panelDialogResult" style="border:none;" rendered="#{cargaDoctoMasivaInsumosMB.muestraPreviaCarga}">
+				                	<p:dataTable id="tablaCargaPreviaCorrectos" var="documento"
+					                           value="#{cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosCorrectos}"
+					                           editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					                           paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+					                           {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+					                           currentPageReportTemplate="({currentPage} de {totalPages})"
+					                           paginatorPosition="bottom" rowKey="" rendered="#{not empty cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosCorrectos}">
+					                  <f:facet name="header">Archivos Correctos</f:facet>
+					                  <p:columnGroup type="header">
+					                      <p:row>
+					                          <p:column headerText="Nombre Archivo" width="200px"/>
+					                      </p:row>
+					                  </p:columnGroup>
+					                  <p:column headerText="Nombre Archivo" style="border:0.1px gray solid !important">
+					                      <h:outputText value="#{documento}"/>
+					                  </p:column>
+					              </p:dataTable>
+					              <p:spacer height="20px"/>
+					              <p:dataTable id="tablaCargaPreviaFormato" var="documento"
+					                           value="#{cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosFormato}"
+					                           editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					                           paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+					                           {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+					                           currentPageReportTemplate="({currentPage} de {totalPages})"
+					                           paginatorPosition="bottom" rowKey="" rendered="#{not empty cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosFormato}">
+					                  <f:facet name="header">Archivos con Formato Incorrecto: Solo se aceptan archivos WORD, EXCEL o PDF versi&oacute;n 2007 o superior</f:facet>
+					                  <p:columnGroup type="header">
+					                      <p:row>
+					                          <p:column headerText="Nombre Archivo" width="200px" />
+					                      </p:row>
+					                  </p:columnGroup>
+					                  <p:column headerText="Nombre Archivo" style="border:0.1px gray solid !important" >
+					                      <h:outputText value="#{documento}"/>
+					                  </p:column>
+					              </p:dataTable>
+					              <p:spacer height="20px"/>
+					              <p:dataTable id="tablaCargaPreviaTamanio" var="documento"
+					                           value="#{cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosTamanio}"
+					                           editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					                           paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+					                           {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+					                           currentPageReportTemplate="({currentPage} de {totalPages})"
+					                           paginatorPosition="bottom" rowKey="" rendered="#{not empty cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosTamanio}">
+					                  <f:facet name="header">Archivos con Tama&ntilde;o Incorrecto: Debe ser mayor a 1 KB y menor que 4 MB.</f:facet>
+					                  <p:columnGroup type="header">
+					                      <p:row>
+					                          <p:column headerText="Nombre Archivo" width="200px" style="border:0.1px gray solid !important"/>
+					                      </p:row>
+					                  </p:columnGroup>
+					                  <p:column headerText="Nombre Archivo" style="border:0.1px gray solid !important" >
+					                      <h:outputText value="#{documento}"/>
+					                  </p:column>
+					              </p:dataTable>
+					              <p:spacer height="20px"/>
+					              <p:dataTable id="tablaCargaPreviaDuplicidad" var="documento"
+					                           value="#{cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosDuplicidad}"
+					                           editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					                           paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+					                           {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+					                           currentPageReportTemplate="({currentPage} de {totalPages})"
+					                           paginatorPosition="bottom" rowKey="" rendered="#{not empty cargaDoctoMasivaInsumosMB.cargaDocHelper.documentosDuplicidad}">
+					                  <f:facet name="header">Archivos Duplicados</f:facet>
+					                  <p:columnGroup type="header">
+					                      <p:row>
+					                          <p:column headerText="Nombre Archivo" width="200px" style="border:0.1px gray solid !important"/>
+					                      </p:row>
+					                  </p:columnGroup>
+					                  <p:column headerText="Nombre Archivo" style="border:0.1px gray solid !important" >
+					                      <h:outputText value="#{documento}"/>
+					                  </p:column>
+					              </p:dataTable>
+					              <p:spacer height="20px"/>
+				              </p:panel>
+                           </p:column>
+                          </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

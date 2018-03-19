@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelLstOrdenes" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.flgMostrarTlbOrdenes}"
+             styleClass="panel-subinterno-consOrd" header="#{msj['label.consulta.info.ordenes']}">
+        <p:dataTable widgetVar="tablaDetalleOrdenes" id="tablaDetalleOrdenes" var="ordenPorValidar" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.lstOrdenesResult}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                     			currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" >
+                        <p:column headerText="Detalle" width="5%" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="Número de orden" filterBy="#{ordenPorValidar.numeroOrden}" width="13%" >
+                            <p:commandLink style="color:blue;" action="#{consultaUGOrdenesMB.redirecciona}" value="#{ordenPorValidar.numeroOrden}" rendered="#{ordenPorValidar.idEstatus ne 101}">
+                                <f:setPropertyActionListener value="${ordenPorValidar}" target="#{consultaUGOrdenesMB.consultaOrdenesHelper.ordenSeleccionada}" />
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="Id de registro" filterBy="#{ordenPorValidar.idRegistroPropuesta}" width="13%">
+                            <p:commandLink style="color:blue;" action="#{consultaUGOrdenesMB.mostrarPanelDetallePropuesta}" value="#{ordenPorValidar.idRegistroPropuesta}" ajax="true" immediate="true" update=":formConsultaEjecutivaOrdenes " >
+                                <f:setPropertyActionListener value="${ordenPorValidar.idRegistroPropuesta}" target="#{consultaUGOrdenesMB.consultaOrdenesHelper.idRegistroPropuestaSeleccionada}" />
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="RFC" filterBy="#{ordenPorValidar.fecetContribuyente.rfc}" width="13%" >
+                            <h:outputText value="#{ordenPorValidar.fecetContribuyente.rfc}"/>
+                        </p:column>
+                        <p:column headerText="Método" filterBy="#{ordenPorValidar.feceaMetodo.nombre}" width="13%" filterMatchMode="contains">
+                            <h:outputText value="#{ordenPorValidar.feceaMetodo.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Prioridad Sugerida" filterBy="#{ordenPorValidar.prioridadSugerida}" filterMatchMode="exact" width="8%">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('tablaDetalleOrdenes').filter()" >
+                                    <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                    <f:selectItems value="#{consultaUGOrdenesMB.lstPrioridadSugerida}" var="prioridadSugerida" 
+                                    itemLabel="#{prioridadSugerida}" itemValue="#{prioridadSugerida}" /> 
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <div align="center">
+                                <h:outputText value="#{ordenPorValidar.prioridadSugerida}"/>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.semaforo']}" filterBy="#{ordenPorValidar.imagenSemaforo}" filterMatchMode="exact" width="9%">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('tablaDetalleOrdenes').filter()" >
+                                    <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                    <f:selectItem itemLabel="Verde" itemValue="semaforo-verde" />
+                                    <f:selectItem itemLabel="Amarillo" itemValue="semaforo-amarillo" />
+                                    <f:selectItem itemLabel="Naranja" itemValue="semaforo-naranja" />
+                                    <f:selectItem itemLabel="Azul" itemValue="semaforo-azul" />
+                                    <f:selectItem itemLabel="Gris" itemValue="semaforo-gris" />
+                                    <f:selectItem itemLabel="Cafe" itemValue="semaforo-cafe" />
+                                    <f:selectItem itemLabel="Rojo" itemValue="semaforo-rojo" />
+                                    <f:selectItem itemLabel="Negro" itemValue="semaforo-negro" />
+                                    <f:selectItem itemLabel="Blanco" itemValue="semaforo-blanco" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <div align="center">
+                                <p:graphicImage id="imagenSemaforoOrden" value="/resources/images/#{ordenPorValidar.imagenSemaforo}-16x16.png" style="border:0"/>
+                                <p:tooltip id="toolSemaforo" for="imagenSemaforoOrden" value="#{ordenPorValidar.descripcionSemaforo}" trackMouse="true" />
+                            </div>
+                        </p:column>
+                        <p:column headerText="Cifra"  width="9%" >
+                            <h:outputText value="#{ordenPorValidar.descripcionCifras}"/>
+                        </p:column>
+                        <p:column headerText="Cantidad"  width="12%" >
+                            <h:outputText value="#{ordenPorValidar.totalCifras}" style="float:right" >
+                            	<f:convertNumber pattern="$###,###,###,###.00" locale="es_MX"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="#{msj['label.plazo.concluir.orden']} :"/>
+                                <h:outputText value="#{ordenPorValidar.descripcionPlazoRestante}"/>
+                                <h:outputText value="Estatus :"/>
+                                <h:outputText value="#{ordenPorValidar.fececEstatus.descripcion}"/>
+                                <h:outputText value="Expediente de Orden :"/>
+                                <h:commandButton ajax="true" image="/resources/images/document.png"                                 			
+                                            style="padding:0px 5px;" update="docDialog"
+											 action="#{consultaUGOrdenesMB.cargaDocumentosOrdenOficio}">   
+								<f:setPropertyActionListener value="#{ordenPorValidar}"
+                                                                 target="#{consultaUGOrdenesMB.consultaOrdenesHelper.ordenSeleccionada}"/>											 
+                                </h:commandButton>                                
+                            </h:panelGrid>
+                        </p:rowExpansion>
+        </p:dataTable>
+        <p:spacer/>
+        
+	<!--  dialogo dialogDocumentosFirmadosPdf -->
+		
+					<p:dialog id="dialogDocumentosFirmadosPdf" 
+                              header="#{msj['column.asignadas.documento']}"
+                              widgetVar="dialogDocumentosFirmadosPdf" 
+                              showEffect="clip" 
+                              modal="true" 
+                              resizable="false"
+                              hideEffect="clip"  
+                              width="510" >
+                                                
+                        <p:dataTable id="tablaDocumentacionOrdenPdf"
+							value="#{consultaUGOrdenesMB.consultaOrdenesHelper.ordenSeleccionada.docOrden}" var="documentoOrden" 
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+	                        <f:facet name="header">
+								<h:outputLabel value="#{msj['label.propuestas.doctos.orden']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+								<h:outputText id="txtFechaCargaDoctoOrden" value="#{documentoOrden.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+								</h:outputText>
+							</p:column>
+							<p:column id="hdrNombreDocumentoOrden" headerText="#{msj['column.expediente']}">
+								<div style="width: 200px;margin:auto;">#{documentoOrden.nombreArchivo}</div>
+							</p:column>
+							<p:column headerText="#{msj['label.encabezado.documento']}" >
+								<div align="center">
+					            	<h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 5px;" >
+					                	<f:setPropertyActionListener value="#{documentoOrden}" target="#{consultaUGOrdenesMB.consultaOrdenesHelper.docSeleccionadoPdf}"/>
+	                                	<p:fileDownload contentDisposition="attachment" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.archivoDescargaPdfOrden}"/>
+					            	</h:commandButton>
+				            	</div>
+				            </p:column>
+						</p:dataTable>
+                        <br/>
+                        
+                        <p:dataTable id="tablaOficiosOrdenPdf"
+                        		value="#{consultaUGOrdenesMB.consultaOrdenesHelper.ordenSeleccionada.oficiosFirmados}" var="oficioPendienteFirma" 
+                        		editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        	<f:facet name="header">
+								<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" >
+		                        <h:outputText value="#{oficioPendienteFirma.fechaFirma}">
+		                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+		                        </h:outputText>
+		                    </p:column>
+		                    <p:column headerText="#{msj['column.label.oficio']}">
+		                                    #{oficioPendienteFirma.nombreArchivo}
+		                    </p:column>
+		                    <p:column headerText="#{msj['label.encabezado.documento']}" >
+		                    	<div align="center">
+			                    	<h:commandButton title="#{oficioPendienteFirma.nombreArchivo}" ajax="true"
+			                        		image="/resources/images/document.png" style="padding:0px 5px;">
+			                        	<f:setPropertyActionListener value="#{oficioPendienteFirma}" target="#{consultaUGOrdenesMB.consultaOrdenesHelper.oficioSeleccionadoPdf}"/>
+			                            <p:fileDownload contentDisposition="attachment" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.archivoDescargaPdfOficio}"/>
+			                    	</h:commandButton>
+		                    	</div>
+		                    </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="#{msj['label.boton.cerrar']}" 
+                                         onclick="PF('dialogDocumentosOrden').hide();" 
+                                         icon="ui-icon-close" 
+                                         style="float:right" />
+                        
+                    </p:dialog>       
+        <h:panelGrid columns="1" style="text-align: left ! important; width: 100%;">
+            <h:panelGroup>
+            	<p:commandButton id="btnRegresarLstOrdenes"                   
+                                 value="#{msj['btn.pantalla.anterior']}"
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaUGOrdenesMB.regresarDeDetalleOrdenes}"
+                                 update=":formConsultaEjecutivaOrdenes "/>
+                <p:commandButton id="btnExportarExcelLstOrdenes"                   
+                                 			value="Exportar" ajax="false"
+                                             onclick="PrimeFaces.monitorDownload(start, stop);"
+                                             icon="ui-icon-arrowthick-1-s">
+                                    <p:fileDownload value="#{consultaUGOrdenesMB.xlsReporte}"/>
+                                    </p:commandButton>     
+                
+            </h:panelGroup> 
+        </h:panelGrid>
+    </p:panel>      
+</f:view>

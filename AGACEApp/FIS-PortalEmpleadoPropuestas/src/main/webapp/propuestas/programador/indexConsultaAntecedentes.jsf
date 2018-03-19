@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{antecedentesMB.init}"/>
+        </f:metadata>
+        <h:head>
+            <script type="text/javascript">
+            </script>
+        </h:head>
+        <h:body>
+            <h:form id="formAntecedentes">
+               <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelError" rendered="#{antecedentesMB.error}"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" 
+                         styleClass="panel-principal" header="ERROR">
+					<p:row>
+                           <p:column colspan="4">
+                               <p:messages showSummary="true" id="messages" showDetail="true" autoUpdate="true"
+                                           closable="true"/>
+                           </p:column>
+                    </p:row>
+				</p:panel>
+                <p:panel id="panelOrdenes" rendered="#{!antecedentesMB.error}"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" 
+                         styleClass="panel-principal" header="CONSULTAR ANTECEDENTE">
+                    <p:panelGrid style="width:100%;" styleClass="noBorders">
+                        <p:row>
+                            <p:column style="max-width:135px;">
+                                <h:outputLabel value="RFC*:" style="font-weight:bold" ajax="false"/>
+                            </p:column>
+                            <p:column style="max-width:135px;">
+                                <p:inputText id="txtRFC" name="txtRFC" maxlength="15" value="#{antecedentesMB.rfc}"
+                                             onkeypress="if(event.keyCode==13){return false;}"/>    
+                            </p:column>
+                            <p:column colspan="4" style="max-width:540px;">
+                                <h:outputLabel value="#{antecedentesMB.statusMediosContacto}"  style="font-weight:bold; max-width:50px;" ajax="false"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:message id="msjErrorRfc" for="msjErrorRfc" display="text"/>
+                            </p:column>
+                            <p:column colspan="4">
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="max-width:135px;">
+                                <h:outputLabel value="Periodo Inicial*:" style="font-weight:bold"/>
+                            </p:column>
+                            <p:column style="max-width:135px;">
+                                <p:calendar id="txtFechaInicial" value="#{antecedentesMB.periodoInicial}" locale="es" navigator="true"
+                                            yearRange="c-100:c" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="6"/>
+                            </p:column>
+                            <p:column style="max-width:135px;">
+                                <h:outputLabel value="Periodo Final*:" style="font-weight:bold"/>
+                            </p:column>
+                            <p:column style="max-width:135px;">
+                                <p:calendar id="txtFechaInicial2" value="#{antecedentesMB.periodoFinal}" locale="es" navigator="true"
+                                            yearRange="c-100:c" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="6"/>
+                            </p:column>
+                            <p:column style="max-width:135px;">
+                                <p:commandButton update="formAntecedentes" value="Ver Revisiones"
+                                                 action="#{antecedentesMB.buscarAntecedentes}" process="@form"
+                                                 oncomplete="ocultaMsgAgace('messages');"></p:commandButton>
+                            </p:column>
+                            <p:column style="max-width:135px;">
+                                <p:commandButton rendered="#{antecedentesMB.visibleExportar}" value="Exportar" ajax="false"
+                                             onclick="PrimeFaces.monitorDownload(start, stop);"
+                                             icon="ui-icon-arrowthick-1-s">
+                                    <p:fileDownload value="#{antecedentesMB.xlsReporte}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:message id="msjErrorFechaInicial" for="msjErrorFechaInicial" display="text"/>
+                            </p:column>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:message id="msjErrorFechaFinal" for="msjErrorFechaFinal" display="text"/>
+                            </p:column>
+                            <p:column colspan="2">
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panel id="panelSUIEFI" header="SUIEFI" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;">
+                        <p:dataTable currentPageReportTemplate="({currentPage} de {totalPages})" editable="false"
+                                     emptyMessage="#{antecedentesMB.muestraEmptyMsj ? msj['label.msg.no.antecedentes'] : ''}" id="tablaInsumosSeguimientoSUIEFI"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}   {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown}                                                      &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     rendered="true" value="#{antecedentesMB.revisionesSUIEFIs}" var="revision"
+                                     rowKey="#{revision.ID}" rows="10">
+                            <p:column width="9">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="RFC">
+                                #{revision.fecetContribuyente.rfc}
+                            </p:column>
+                            <p:column headerText="NÚMERO DE ORDEN/PROPUESTA" style="white-space: normal">
+                                #{revision.idRegistro}
+                            </p:column>
+                            <p:column headerText="MÉTODO">
+                                #{revision.feceaMetodo.abreviatura}
+                            </p:column>
+                            <p:column headerText="ORIGEN">
+                                #{revision.idPropuesta}
+                            </p:column>
+                            <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="PERIODO INICIAL"/>
+                                    <h:outputText value="#{revision.fechaInicioPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="PERIODO FINAL"/>
+                                    <h:outputText value="#{revision.fechaFinPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="FECHA EMISIÓN"/>
+                                    <h:outputText value="#{revision.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="ESTATUS"/>
+                                    <h:outputText value="#{revision.fececEstatus.descripcion}"/>
+                                    <h:outputText value="TIPO"/>
+                                    <h:outputText value="#{revision.informePresentacion}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:panel id="panelSICSEP" header="SICSEP" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;">
+                        <p:dataTable currentPageReportTemplate="({currentPage} de {totalPages})" editable="false"
+                                     emptyMessage="#{antecedentesMB.muestraEmptyMsj ? msj['label.msg.no.antecedentes'] : ''}" id="tablaInsumosSeguimientoSICSEP"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}   {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown}                                                      &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     rendered="true" value="#{antecedentesMB.revisionesSICSEP}" var="revision"
+                                     rowKey="#{revision.ID}" rows="10">
+                            <p:column width="9">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="RFC">
+                                #{revision.fecetContribuyente.rfc}
+                            </p:column>
+                            <p:column headerText="NÚMERO DE ORDEN/PROPUESTA" style="white-space: normal">
+                                #{revision.idRegistro}
+                            </p:column>
+                            <p:column headerText="MÉTODO">
+                                #{revision.feceaMetodo.abreviatura}
+                            </p:column>
+                            <p:column headerText="ORIGEN">
+                                #{revision.idPropuesta}
+                            </p:column>
+                            <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="PERIODO INICIAL"/>
+                                    <h:outputText value="#{revision.fechaInicioPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="PERIODO FINAL"/>
+                                    <h:outputText value="#{revision.fechaFinPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="FECHA EMISIÓN"/>
+                                    <h:outputText value="#{revision.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="ESTATUS"/>
+                                    <h:outputText value="#{revision.fececEstatus.descripcion}"/>
+                                    <h:outputText value="TIPO"/>
+                                    <h:outputText value="#{revision.informePresentacion}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:panel id="panelAgaff" header="AGAFF" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;">
+                        <p:dataTable currentPageReportTemplate="({currentPage} de {totalPages})" editable="false"
+                                     emptyMessage="#{antecedentesMB.muestraEmptyMsj ? msj['label.msg.no.antecedentes'] : ''}" id="tablaInsumosSeguimientoAGAFF"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}   {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown}                                                      &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     rendered="true" value="#{antecedentesMB.revisionesAgaff}" var="revision"
+                                     rowKey="#{revision.idPropuesta}" rows="10">
+                            <p:column width="9">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="RFC">
+                                #{revision.fecetContribuyente.rfc}
+                            </p:column>
+                            <p:column headerText="NÚMERO DE ORDEN/PROPUESTA" style="white-space: normal">
+                                #{revision.idRegistro}
+                            </p:column>
+                            <p:column headerText="MÉTODO">
+                                #{revision.feceaMetodo.abreviatura}
+                            </p:column>
+                            <p:column headerText="ORIGEN">
+                                #{revision.informePresentacion}
+                            </p:column>
+                            <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="PERIODO INICIAL"/>
+                                    <h:outputText value="#{revision.fechaInicioPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="PERIODO FINAL"/>
+                                    <h:outputText value="#{revision.fechaFinPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="FECHA EMISIÓN"/>
+                                    <h:outputText value="#{revision.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="ESTATUS"/>
+                                    <h:outputText value="#{revision.fececEstatus.descripcion}"/>
+                                    <h:outputText value="TIPO"/>
+                                    <h:outputText value="#{revision.rfcSubadministrador}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:panel id="panelAgace" header="AGACE" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;" rendered="#{antecedentesMB.visibleGridPropuestas}">
+                        <p:dataTable currentPageReportTemplate="({currentPage} de {totalPages})" editable="false"
+                                     emptyMessage="#{antecedentesMB.muestraEmptyMsj ? msj['label.msg.no.antecedentes'] : ''}" id="tablaInsumosSeguimientoAGACE"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}   {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown}                                                      &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     rendered="true" value="#{antecedentesMB.revisionesAgace}" var="revision"
+                                     rowKey="#{revision.idPropuesta}" rows="10">
+                            <p:column width="9">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="RFC">
+                                #{revision.fecetContribuyente.rfc}
+                            </p:column>
+                            <p:column headerText="NÚMERO DE PROPUESTA" style="white-space: normal">
+                                #{revision.idRegistro}
+                            </p:column>
+                            <p:column headerText="MÉTODO">
+                                #{revision.feceaMetodo.abreviatura}
+                            </p:column>
+                            <p:column headerText="ÁREA DE DESAHOGO">
+                                #{revision.fececArace.nombre}
+                            </p:column>
+                            <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="6"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="PERIODO INICIAL"/>
+                                    <h:outputText value="#{revision.fechaInicioPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="PERIODO FINAL"/>
+                                    <h:outputText value="#{revision.fechaFinPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="FECHA DE REGISTRO"/>
+                                    <h:outputText value="#{revision.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="ESTATUS"/>
+                                    <h:outputText value="#{revision.fececEstatus.descripcion}"/>
+                                    <h:outputText value="CONTRIBUCIONES"/>
+                                    <p:commandLink style="color:blue;" 
+                                                   ajax="true" action="#{antecedentesMB.buscarImpuestosPropuesta}"
+									               immediate="true" update=":formAntecedentes:pnlImpuestos">
+                                        <h:outputText value="Impuestos"/>
+                                        <f:setPropertyActionListener value="#{revision}"
+										immediate="true"
+										target="#{antecedentesMB.propuestaSelecionada}" />
+                                    </p:commandLink>
+                                    <h:outputText value="SUBPROGRAMA"/>
+                                    <h:outputText value="#{revision.fececSubprograma.descripcion}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:panel>
+                    
+                    <p:panel id="panelInsumos" header="INSUMOS" styleClass="panel-interno"
+                             style="margin: 0 auto; width:95%;" rendered="#{antecedentesMB.visibleGridInsumos}">
+                        <p:dataTable currentPageReportTemplate="({currentPage} de {totalPages})" editable="false"
+                                     emptyMessage="#{antecedentesMB.muestraEmptyMsj ? msj['label.msg.no.antecedentes'] : ''}" id="tablaInsumosAGACE"
+                                     paginator="true" paginatorPosition="bottom"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}   {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown}                                                      &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     rendered="true" value="#{antecedentesMB.revisionesInsumos}" var="revision"
+                                     rowKey="#{revision.idInsumo}" rows="10">
+                            <p:column width="9">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="RFC">
+                                #{revision.fecetContribuyente.rfc}
+                            </p:column>
+                            <p:column headerText="NÚMERO DE INSUMO" style="white-space: normal">
+                                #{revision.idRegistro}
+                            </p:column>
+                            <p:column headerText="MÉTODO">
+                               N/A
+                            </p:column>
+                            <p:column headerText="ÁREA DE CREACIÓN">
+                                #{revision.fececUnidadAdministrativa.nombre}
+                            </p:column>
+                            <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="5"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="PERIODO INICIAL"/>
+                                    <h:outputText value="#{revision.fechaInicioPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="PERIODO FINAL"/>
+                                    <h:outputText value="#{revision.fechaFinPeriodo}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="FECHA DE REGISTRO"/>
+                                    <h:outputText value="#{revision.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                    <h:outputText value="ESTATUS"/>
+                                    <h:outputText value="#{revision.fececEstatus.descripcion}"/>
+                                    <h:outputText value="SUBPROGRAMA"/>
+                                    <h:outputText value="#{revision.fececSubprograma.descripcion}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:panel>
+                    
+                </p:panel>
+                
+                <p:dialog header="#{msj['label.impuestos']}" widgetVar="dlgImpuestos" resizable="false" modal="true"
+			              width="700" closable="false">
+			              
+			       <p:panel id="pnlImpuestos">
+				      <p:dataTable id="tablaImpuestoHistorico" var="impuesto" 
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15" value="#{antecedentesMB.listaImpuestos}"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					
+					<f:facet name="header">
+                               #{msj['label.impuestos']}
+                    </f:facet>
+
+					   <p:column headerText="#{msj['label.impuesto']}" width="150">
+						  <h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}" />
+					   </p:column>
+
+					   <p:column headerText="#{msj['lbl.propuestas.concepto']}" width="150">
+						  <h:outputText value="#{impuesto.fecetImpuesto.fececConcepto.descripcion}" />
+					   </p:column>
+
+					   <p:column headerText="#{msj['label.monto']}" width="150" style="text-align:center;">
+						  <h:outputText value="#{impuesto.fecetImpuesto.monto}">
+						     <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+						  </h:outputText> 
+					   </p:column>
+					   
+					    <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column colspan="1"/>
+                                    <p:column footerText="Presuntiva: " style="text-align:right;font-weight:bold;"/>
+                                    <p:column colspan="1" style="text-align:left;">
+                                        <f:facet name="footer">
+                                            <h:outputText value="#{antecedentesMB.presuntiva}"
+                                                          style="font-weight:bold;">
+                                                <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+                            </p:columnGroup>
+					
+					</p:dataTable>
+				 </p:panel>
+				 <br/>
+				 <div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarImpuesto" value="Cerrar" onclick="PF('dlgImpuestos').hide();" style="width:80px;" ajax="true" />
+				</div>
+			              
+			    </p:dialog>
+                
+                
+                
+                <h:outputScript library="js/" name="agace.js"/>
+                <h:outputStylesheet library="css/" name="agace.css"/>
+            </h:form>
+        </h:body>
+    </html>
+</f:view>

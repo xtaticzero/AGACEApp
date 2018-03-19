@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+<h:form id="formRetroalimentacion">
+				<!-- Dialogo para archivos retroalimentacion insumos -->
+				<p:dialog widgetVar="dlgInsumosRetroalimentados"
+					id="dlgInsumosRetroalimentados" resizable="false" modal="true"
+					width="800" scrollable="true" height="320" header="#{msj['titulo.historico']}"
+					closable="false">
+					<p:spacer height="20px" />
+					<p:panel id="panelDialogoHistorico" style="width:1100px;">
+						<h:panelGrid id="idRegistroHistorico" columns="3" cellpadding="4"
+							border="0">
+							<p:spacer height="1" width="880" />
+							<h:outputText value="Id Registro:" style="font-weight:bold" />
+							<h:outputText
+								value="#{seguimientoInsumoManagedBean.segInsumosDTO.insumoSeleccionado.idRegistro}" />
+						</h:panelGrid>
+			
+						<p:dataTable id="tablaInsumosRetroalientados"
+							var="insumosRetroalimentados"
+							value="#{seguimientoInsumoManagedBean.insumosRetroalimentadosContador}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							paginator="true" rows="5"
+							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})"
+							paginatorPosition="bottom"
+							rendered="#{!seguimientoInsumoManagedBean.mostrarTablaArchivosRetro}">
+			
+							<f:facet name="header">  
+			                                #{msj['titulo.tabla.retroalimentacion.insumo']}
+			                            </f:facet>
+			
+							<p:column headerText="Detalle" width="32">
+								<p:rowToggler />
+							</p:column>
+			
+							<p:column headerText="Unidad Administrativa" width="60">
+								<h:outputText
+									value="#{insumosRetroalimentados.nombreUnidadAdministrativa}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Subprograma" width="75">
+								<h:outputText
+									value="#{insumosRetroalimentados.descripcionSubprograma}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Sector" width="60">
+								<h:outputText value="#{insumosRetroalimentados.descripcionSector}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Prioridad sugerida" width="45">
+								<div align="center">
+									<h:outputText value="#{insumosRetroalimentados.idPrioridad}" />
+								</div>
+							</p:column>
+							<p:column headerText="Inicio" width="50">
+								<div align="center">
+									<h:outputText
+										value="#{insumosRetroalimentados.fechaInicioPeriodo}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</div>
+							</p:column>
+							<p:column headerText="Fin" width="50">
+								<div align="center">
+									<h:outputText value="#{insumosRetroalimentados.fechaFinPeriodo}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</div>
+							</p:column>
+							<p:column headerText="Fecha de retroalimentaci&oacute;n de datos"
+								width="80">
+								<div align="center">
+									<h:outputText
+										value="#{insumosRetroalimentados.fechaRetroalimentacion}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</div>
+							</p:column>
+							<p:column headerText="Archivos" width="40">
+								<div align="center">
+									<p:commandLink id="cmlkMostrarRetroalimentacion"
+										value="#{insumosRetroalimentados.numeroSolicitudes}" ajax="true"
+										action="#{seguimientoInsumoManagedBean.visualizaDocRetroalimentacionAciace}"
+										immediate="true" update=":formRetroalimentacion:dialogoDocumentoRetro"
+										style="color:#0170b7;">
+										<f:setPropertyActionListener value="#{insumosRetroalimentados}"
+											immediate="true"
+											target="#{seguimientoInsumoManagedBean.retroalimentacionInsumo}" />
+									</p:commandLink>
+								</div>
+							</p:column>
+							<p:column headerText="Solicitud de Retroalimentaci&oacute;n" width="70">
+			
+								<div align="center">
+									<p:commandLink
+										action="#{seguimientoInsumoManagedBean.visualizaRetroalimentacionSubAdmin}"
+										update=":formRetroalimentacion:idHistoricoRetroalimentacion"
+										inmediate="true" width="120">
+										<h:graphicImage ajax="true"
+											value="/resources/images/document.png" />
+										<f:setPropertyActionListener value="#{insumosRetroalimentados}"
+											target="#{seguimientoInsumoManagedBean.retroalimentacionInsumo}" />
+									</p:commandLink>
+								</div>
+			
+							</p:column>
+			
+							<p:rowExpansion>
+								<h:panelGrid id="displayHistorico" columns="2" cellpadding="2"
+									style="width:600px;" styleClass=" ui-widget-content grid">
+									<h:outputText value="Observaciones" />
+									<h:outputText value="#{insumosRetroalimentados.motivoAciace}" />
+								</h:panelGrid>
+							</p:rowExpansion>
+			
+						</p:dataTable>
+						<p:spacer height="10"/>
+			            <p:dataTable id="tableArchivoRechazo" value="#{seguimientoInsumoManagedBean.segInsumosListDTO.listaContadorRechazo}"
+			                         width="100%"
+			                         rendered="#{seguimientoInsumoManagedBean.segInsumosDTO.mostrarTablaArchivosRetroRechazos}"
+			                         editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+			                         var="insumosRechazados">
+			                <f:facet name="header">
+			                    #{msj[&apos;titulo.rechazo.insumo&apos;]}
+			                </f:facet>
+			                <p:column headerText="Fecha de No Aprobaci&oacute;n" width="80">
+			                    <h:outputText value="#{insumosRechazados.fechaRechazo}">
+			                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+			                    </h:outputText>
+			                </p:column>
+			                <p:column headerText="Motivo de No Aprobaci&oacute;n" width="350">
+			                    <p:row>
+			                        <div style="width:380px;">
+			                            #{insumosRechazados.descripcion}
+			                        </div>
+			                    </p:row>
+			                </p:column>
+			                <p:column headerText="Archivos" width="40">
+			                    <p:commandLink id="cmlkMostrarRechazo" value="#{insumosRechazados.contador}" ajax="true"
+			                                   action="#{seguimientoInsumoManagedBean.mostrarArchivosRechazo}" immediate="true"
+			                                   onclick="PF('dlgDocsRechazos').show()"
+			                                   update=":formRetroalimentacion:panelDialogoDocRechazo" style="color:#0170b7;">
+			                        <f:setPropertyActionListener value="#{insumosRechazados}" immediate="true"
+			                                                     target="#{seguimientoInsumoManagedBean.segInsumosDTO.documentoSeleccionadoRechazo}"/>
+			                    </p:commandLink>
+			                </p:column>
+			            </p:dataTable>
+			
+						<br />
+						<p:dataTable id="tablaDocumentosRetro"
+							var="documentosRetroalimentacion"
+							value="#{seguimientoInsumoManagedBean.listaDocRetroInsumoCargados}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							rendered="#{seguimientoInsumoManagedBean.mostrarTablaArchivosRetro}">
+							<f:facet name="header">  
+			                                #{msj['titulo.tabla.retroalimentacion.cargada']}
+			                            </f:facet>
+							<p:column headerText="#{msj['label.titulo.fecha.carga']}"
+								styleClass="someClass">
+								<h:outputText id="txtFechaCargaPromocion4"
+									value="#{documentosRetroalimentacion.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="#{msj['label.nombre.archivo']}"
+								styleClass="someClass" style="table-layout:fixed">
+								<div style="width: 200px;">#{documentosRetroalimentacion.nombreArchivo}</div>
+							</p:column>
+							<p:column style="width:35px">
+								<h:commandButton image="/resources/images/document.png"
+									title="#{documentosRetroalimentacion.nombreArchivo}" ajax="true"
+									style="float:left;padding:0px 5px;">
+									<f:setPropertyActionListener
+										value="#{documentosRetroalimentacion}"
+										target="#{seguimientoInsumoManagedBean.docretroInsumoCargadoSeleccionado}" />
+									<p:fileDownload contentDisposition="attachment"
+										value="#{seguimientoInsumoManagedBean.archivoDescargaRetroalimentacion}" />
+								</h:commandButton>
+							</p:column>
+						</p:dataTable>
+						<br />
+					</p:panel>
+			
+					<p:spacer height="20px" />
+					<h:panelGroup id="pnlgrpBotonesHistoricoRetro" layout="block"
+						style="padding:10px;">
+						<p:commandButton id="CerrarInsumosRegistrados" value="Cerrar"
+							rendered="#{!seguimientoInsumoManagedBean.mostrarTablaArchivosRetro}"
+							onclick="PF('dlgInsumosRetroalimentados').hide();"
+							styleClass="ui-confirmdialog-yes" process="@this"
+							style="float:right;width:83px;"
+							update=":formRetroalimentacion:panelDialogoHistorico"
+							action="#{seguimientoInsumoManagedBean.limpiaMostrarArchivosRetroalimentacion}"
+							oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');" />
+						<p:commandButton id="RegresarInsumosRegistrados"
+							value="#{msj['btn.regresar']}"
+							rendered="#{seguimientoInsumoManagedBeanr.mostrarTablaArchivosRetro}"
+							styleClass="ui-confirmdialog-yes" process="@this"
+							style="float:right;width:83px;"
+							update=":formRetroalimentacion:panelDialogoHistorico :formRetroalimentacion:pnlgrpBotonesHistoricoRetro"
+							action="#{seguimientoInsumoManagedBean.limpiaMostrarArchivosRetroalimentacion}" />
+			
+					</h:panelGroup>
+				</p:dialog>
+				<p:dialog id="dialogoDocumentoRetro" header="Hist&oacute;rico"
+					widgetVar="DocumentosSolicitudRetroInsumo" resizable="false"
+					modal="true" width="700" visible="false" closable="false">
+					<p:panel id="idDocumenRetroalimentacion">
+						<h:panelGrid columns="3" cellpadding="4" border="0">
+							<p:spacer height="1" width="480" />
+							<h:outputText value="Id Registro:"
+								style="float:left;font-weight:bold;" />
+							<h:outputText
+								value="#{seguimientoInsumoManagedBean.segInsumosDTO.insumoSeleccionado.idRegistro}" />
+			
+						</h:panelGrid>
+			
+						<p:dataTable id="tablaRetroalimentacionArchivos" var="documento"
+							value="#{seguimientoInsumoManagedBean.listaDocRetroInsumo}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							paginator="true" rows="15"
+							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+			                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})"
+							paginatorPosition="bottom" filterDelay="1000">
+							<f:facet name="header">
+			                               Archivos cargados
+			                            </f:facet>
+							<p:column headerText="Fecha de carga" width="100">
+								<h:outputText value="#{documento.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Nombre del archivo" width="300">
+								<h:outputText value="#{documento.nombreArchivo}" />
+			
+							</p:column>
+							<p:column headerText="Archivos" width="100">
+								<div align="center">
+									<h:commandButton image="/resources/images/document.png"
+										title="Documento" ajax="true" style="padding:0px 5px;">
+										<f:setPropertyActionListener value="#{documento}"
+											target="#{seguimientoInsumoManagedBean.docretroInsumoCargadoSeleccionado}" />
+			
+										<p:fileDownload contentDisposition="attachment"
+											value="#{seguimientoInsumoManagedBean.archivoDescargaRetroalimentacion}" />
+									</h:commandButton>
+								</div>
+							</p:column>
+						</p:dataTable>
+						<p:spacer width="500" height="30" />
+						<p:commandButton id="cerrar" value="Cerrar"
+							onclick="PF('DocumentosSolicitudRetroInsumo').hide();"
+							style="width:80px;" ajax="true" update="tablaInsumosRetroalientados" />
+					</p:panel>
+				</p:dialog>
+			
+				<p:dialog header="Solicitud de Retroalimentaci&oacute;n del insumo"
+					widgetVar="historicoSolicitudRetroInsumo" resizable="false"
+					modal="true" width="800" visible="false" closable="false">
+					<p:panel id="idHistoricoRetroalimentacion">
+						<h:panelGrid columns="3" cellpadding="4" border="0">
+							<p:spacer height="1" width="580" />
+							<h:outputText value="Id Registro:"
+								style="float:left;font-weight:bold;" />
+							<h:outputText
+								value="#{seguimientoInsumoManagedBean.segInsumosDTO.insumoSeleccionado.idRegistro}" />
+						</h:panelGrid>
+			
+						<p:dataTable id="tablaHistoricoRetroalimentacion" var="documento"
+							value="#{seguimientoInsumoManagedBean.insumosRetroalimentadoCargado}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							paginator="true" rows="15"
+							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+			                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})"
+							paginatorPosition="bottom" filterDelay="1000">
+			
+							<f:facet name="header">
+			                               Solicitud de retroalimentci&oacute;n del insumo
+			                            </f:facet>
+							<p:column headerText="Fecha de solicitud de retroalimentaci&oacute;n"
+								width="100">
+								<div align="center">
+									<h:outputText value="#{documento.fechaCreacion}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</div>
+							</p:column>
+							<p:column headerText="Motivo de retroalimentaci&oacute;n" width="450">
+								<h:outputText value="#{documento.motivoSubadministrador}" />
+							</p:column>
+							<p:column headerText="Archivos" width="100">
+								<div align="center">
+									<p:commandLink
+										action="#{seguimientoInsumoManagedBean.visualizaDocRetroalimentacionSubAdmin}"
+										ajax="true" update=":formRetroalimentacion:idDocumenRetroalimentacion"
+										inmediate="true">
+										<div align="center">
+											<h:outputText value="#{documento.numeroSolicitudesRetro}" />
+										</div>
+									</p:commandLink>
+								</div>
+							</p:column>
+						</p:dataTable>
+						<p:spacer width="500" height="30" />
+						<p:commandButton id="cerrarSolicitud" value="Cerrar"
+							onclick="PF('historicoSolicitudRetroInsumo').hide();"
+							style="width:80px;" ajax="true" update="tablaInsumosRetroalientados" />
+			
+			
+					</p:panel>
+				</p:dialog>
+				
+				<!-- Dialogo archivos rechazo -->
+                <p:dialog widgetVar="dlgDocsRechazos" id="dlgDocsRechazos" resizable="false" modal="true" width="600"
+                          height="auto" header="#{msj['titulo.documentos.rechazo']}" closable="false">
+                    <p:panel id="panelDialogoDocRechazo">
+                    	<p:panel id="idRegistroSolicitudRetro" style="width: 100%;border:none !important">
+			        		<div style="float:right;">
+				                <h:outputText value="Id Registro:" style="font-weight:bold"/>
+				                <h:outputText value="#{seguimientoInsumoManagedBean.segInsumosDTO.insumoSeleccionado.idRegistro}" />
+			                </div>
+			            </p:panel>
+			            <p:spacer height="20px"/>
+                        <p:dataTable id="tablaDocRechazo" var="documentosRechazo"
+                                     value="#{seguimientoInsumoManagedBean.segInsumosListDTO.listaDocRechazoInsumo}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.rechazo.cargada&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['label.titulo.fecha.carga']}" styleClass="someClass" width="50">
+                                <h:outputText id="txtFechaCargaInsumoRechazo" 
+                                              value="#{documentosRechazo.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['label.nombre.archivo']}" styleClass="someClass"
+                                      style="table-layout:fixed" width="150">
+                                <div style="width:150px;">
+                                    #{documentosRechazo.nombreArchivo}
+                                </div>
+                            </p:column>
+                            <p:column style="width:40px" headerText="Archivo">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="#{documentosRechazo.nombreArchivo}" ajax="true"
+                                                 style="float:left;padding:0px 5px;width:40">
+                                    <f:setPropertyActionListener value="#{documentosRechazo}"
+                                                                 target="#{seguimientoInsumoManagedBean.segInsumosDTO.docrechazoCargadoSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{seguimientoInsumoManagedBean.archivoDescargaRechazo}"/>
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                    </p:panel>
+                    <p:spacer height="20px"/>
+                    <h:panelGroup id="pnlgrpBotonCerrarDocRechazo" layout="block" style="padding:10px;">
+                        <p:commandButton id="btnCerrarDocRechazo" value="Cerrar" onclick="PF('dlgDocsRechazos').hide();"
+                                         styleClass="ui-confirmdialog-yes" process="@this"
+                                         style="float:right;width:83px;" update=":formRetroalimentacion:panelDialogoHistorico"
+                                         action="#{seguimientoInsumoManagedBean.limpiaMostrarArchivosRetroalimentacion}"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');"/>
+                    </h:panelGroup>
+                </p:dialog>
+			</h:form>
+</f:view>

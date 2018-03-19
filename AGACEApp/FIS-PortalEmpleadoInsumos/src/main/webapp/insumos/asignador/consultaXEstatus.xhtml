@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <h:head>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>             
+        </h:head>
+        <h:body>
+            <h:form id="formConsultaXEstatusCentral" 
+                    styleClass="panel-principal-insumos" onkeypress="if (event.keyCode == 13) { return false; }">
+                <p:ajaxStatus onstart="PF('statusDialogConsultaInsumos').show();"
+                              onsuccess="PF('statusDialogConsultaInsumos').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogConsultaInsumos" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <f:metadata>
+                    <f:event type="preRenderView" listener="#{consultaAdminInsumosMB.prerenderAdministrador}" />
+                </f:metadata>
+                <p:panel id="panelConsultaAdministrativa" styleClass="panel-interno-insumos"
+                         header="Consulta por Estatus">
+                    <p:messages id="msgs" showDetail="false" globalOnly="true" closable="true"/>
+                    <ui:include src="../panelUnudadDesahogo.xhtml" />
+                    <ui:include src="../panelEstatusSemaforos.xhtml"/>
+                    <ui:include src="../panelEstatusFiltrados.xhtml"/>
+                    <ui:include src="../panelSubordinadosSemaforoAdministrador.xhtml"/>
+                    <ui:include src="../panelLstInsumos.xhtml"/>
+                    <ui:include src="../panelDetalleInsumo.xhtml"/>                                                           
+                </p:panel>
+            </h:form>
+        </h:body>
+    </html>
+</f:view>

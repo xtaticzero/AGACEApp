@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+                
+            <h:panelGrid rendered="#{reporteInsumosMB.reporteDTOHelper.mostrarFormulario}" id="divFormularioEjecutivolId" columns="2" border="0" cellpadding="4" cellspacing="4">
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.periodo']}: "/><h:outputText value=" *" style="color:red"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:outputPanel style="margin-bottom:10px">
+                               <p:selectOneRadio id="customRadioPeriodo" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.tipoFecha}" layout="custom" valueChangeListener="#{reporteInsumosMB.selectRadioTipoFecha}">
+                                    <p:ajax process="@this" update=":formReportes:fechaPeriodoInicioEjecutivoId :formReportes:fechaPeriodoFinEjecutivoId :formReportes:mesInicialId :formReportes:anioInicialId :formReportes:mesFinalId :formReportes:anioFinalId" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                    <f:selectItem itemLabel="#{msj['lbl.reporte.columna.periodo.fechas']}" itemValue="#{msj['lbl.reporte.columna.periodo.fechas']}" />
+                                    <f:selectItem itemLabel="#{msj['lbl.reporte.columna.periodo.meses']}" itemValue="#{msj['lbl.reporte.columna.periodo.meses']}" />
+                                </p:selectOneRadio>
+                                <h:panelGrid columns="3" cellpadding="2">
+                                    <h:panelGroup><p:radioButton id="opt1" for="customRadioPeriodo" itemIndex="0" /></h:panelGroup>
+                                    <h:panelGroup><h:outputLabel for="opt1" value="#{msj['lbl.reporte.columna.periodo.fechas']}" /><h:outputText value=" *" style="color:red"/></h:panelGroup>
+                                    <h:panelGroup>
+                                        <table border="0" cellpadding="2" cellspacing="2">
+                                            <tr>
+                                                <td>
+                                                    <p:calendar disabled="#{reporteInsumosMB.reporteDTOHelper.habilitarFechaPeriodos}" id="fechaPeriodoInicioEjecutivoId" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="8" 
+                                                            maxdate="#{reporteInsumosMB.reporteDTOHelper.fechaActual}" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.fechaInicioPeriodo}" navigator="true">
+                                                        <p:ajax event="dateSelect" update=":formReportes:fechaPeriodoFinEjecutivoId" listener="#{reporteInsumosMB.handleDateSelectFechaInicio}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+                                                    </p:calendar>
+                                                </td>
+                                                <td>
+                                                    <p:calendar disabled="#{reporteInsumosMB.reporteDTOHelper.habilitarFechaPeriodoFin}" id="fechaPeriodoFinEjecutivoId" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true"
+                                                        size="8" mindate="#{reporteInsumosMB.reporteDTOHelper.reportesVO.fechaInicioPeriodo}" maxdate="#{reporteInsumosMB.reporteDTOHelper.fechaMinima}"
+                                                        value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.fechaFinPeriodo}" navigator="true"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </h:panelGroup>
+                                    <h:panelGroup><p:radioButton id="opt2" for="customRadioPeriodo" itemIndex="1" /></h:panelGroup>
+                                    <h:panelGroup><h:outputLabel for="opt2" value="#{msj['lbl.reporte.columna.periodo.meses']}" /><h:outputText value=" *" style="color:red"/></h:panelGroup>
+                                    <h:panelGroup>
+                                        <table border="0" cellpadding="4" cellspacing="4">
+                                            <tr>
+                                                <td>
+                                                    <p:selectOneMenu disabled="#{reporteInsumosMB.reporteDTOHelper.habilitarMesAnio}" id="mesInicialId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.mesInicial}" >
+                                                        <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.mesInicial']}" itemValue=""/>
+                                                        <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaMesesInicial}" var="lista" itemLabel="#{lista.catalogoNombre}" itemValue="#{lista.catalogoId}"/>
+                                                    </p:selectOneMenu>
+                                                </td>
+                                                <td>
+                                                    <p:selectOneMenu disabled="#{reporteInsumosMB.reporteDTOHelper.habilitarMesAnio}" id="anioInicialId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.anioInicial}" >
+                                                        <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.anioInicial']}" itemValue=""/>
+                                                        <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaAnios}" var="lista" itemLabel="#{lista.catalogoId}" itemValue="#{lista.catalogoId}"/>
+                                                    </p:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:selectOneMenu disabled="#{reporteInsumosMB.reporteDTOHelper.habilitarMesAnio}" id="mesFinalId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.mesFinal}" >
+                                                        <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.mesFinal']}" itemValue=""/>
+                                                        <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaMesesInicial}" var="lista" itemLabel="#{lista.catalogoNombre}" itemValue="#{lista.catalogoId}"/>
+                                                    </p:selectOneMenu>
+                                                </td>
+                                                <td>
+                                                    <p:selectOneMenu disabled="#{reporteInsumosMB.reporteDTOHelper.habilitarMesAnio}" id="anioFinalId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.anioFinal}" >
+                                                        <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.anioFinal']}" itemValue=""/>
+                                                        <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaAnios}" var="lista" itemLabel="#{lista.catalogoId}" itemValue="#{lista.catalogoId}"/>
+                                                    </p:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+                            </p:outputPanel> 
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.tipo.grafica']}: "/><h:outputText value=" *" style="color:red"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneRadio id="tipoGraficaId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.tipoGrafica}" valueChangeListener="#{reporteInsumosMB.activarGrafica}" >
+                                <p:ajax update="panelEntidadGrafica panelEstatusGrafica" process="@this"  onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.tipo.grafica.barras']}" itemValue="Barras"/>
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.tipo.grafica.circular']}" itemValue="Circular" />
+                            </p:selectOneRadio>
+                        </h:panelGroup>
+                       
+                        <h:panelGroup id="panelmostrarEntidadId">
+                            <h:outputText value="#{msj['lbl.reporte.columna.entidad']}: "/>
+                            <h:outputText rendered="#{reporteInsumosMB.reporteDTOHelper.reportesVO.mostrarEntidad}" value=" *" style="color:red"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:panelGrid id="panelEntidadGrafica" columns="2" cellpadding="2" border="0">
+                                <h:panelGroup>
+                                    <p:selectBooleanCheckbox id="mostrarEntidadId" ajax="true" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.mostrarEntidad}" disabled="#{reporteInsumosMB.reporteDTOHelper.reportesVO.tipoGrafica==null or (reporteInsumosMB.reporteDTOHelper.reportesVO.mostrarEntidad==false and reporteInsumosMB.reporteDTOHelper.mostarCheckCondicion) ? true : false}">
+                                        <p:ajax update="mostrarEstatusId panelmostrarEntidadId :formReportes:entidadEjecutivoId" listener="#{reporteInsumosMB.validarCheckEntidad}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+                                    </p:selectBooleanCheckbox>
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <p:selectOneMenu disabled="#{reporteInsumosMB.reporteDTOHelper.reportesVO.activarEntidad}" id="entidadEjecutivoId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.entidad}">
+                                        <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                        <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaEntidadInsumos}" var="lista" itemLabel="#{lista.catalogoNombre}" itemValue="#{lista.catalogoNombre}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup id="panelmostrarEstatusId">
+                            <h:outputText value="#{msj['lbl.reporte.columna.estatus']}: "/>
+                            <h:outputText rendered="#{reporteInsumosMB.reporteDTOHelper.reportesVO.mostrarEstatus}" value=" *" style="color:red"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:panelGrid id="panelEstatusGrafica" columns="2" cellpadding="2" border="0">
+                                <h:panelGroup>
+                                    <p:selectBooleanCheckbox id="mostrarEstatusId" ajax="true" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.mostrarEstatus}" disabled="#{reporteInsumosMB.reporteDTOHelper.reportesVO.tipoGrafica==null or (reporteInsumosMB.reporteDTOHelper.reportesVO.mostrarEstatus==false and reporteInsumosMB.reporteDTOHelper.mostarCheckCondicion) ? true : false}">
+                                        <p:ajax update="mostrarEntidadId mostrarEntidadId panelmostrarEstatusId :formReportes:estatusEjecutivoId" listener="#{reporteInsumosMB.validarCheckEstatus}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+                                    </p:selectBooleanCheckbox>
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <p:selectOneMenu disabled="#{reporteInsumosMB.reporteDTOHelper.reportesVO.activarEstatus}" style="width:350px;" id="estatusEjecutivoId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.estatusId}">
+                                        <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                        <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaEstatusInsumos}" var="lista" itemLabel="#{lista.descripcion}" itemValue="#{lista.idEstatus}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup>
+                            <p:commandButton ajax="true" update=":formReportes"  value="#{msj['lbl.reporte.columna.btnGenerarReporte']}" action="#{reporteInsumosMB.generarReporteEjecutivo}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
+
+</ui:composition>

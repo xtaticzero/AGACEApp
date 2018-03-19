@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <p:fieldset id="fsModulo" legend="Modulos" toggleable="true" toggleSpeed="500" collapsed="true">
+            <h:panelGrid columns="2" cellpadding="5" id="gridModuloNew">
+                <p:outputLabel value="#{msj['label.catalogo.nombre.modulo']}" />
+                <p:inputText id="nomModulo" value="#{catalogManagerMB.moduloNew.nombre}" onkeypress="return validaAlfaNumericos(event);" style="text-transform: uppercase">
+                    <p:ajax event="blur" update=":formUnidadXGeneral:btnGuardarModulo"/>
+                </p:inputText>
+                <p:outputLabel value="#{msj['label.catalogo.descripcion.modulo']}" />
+                <p:inputText id="descModulo" value="#{catalogManagerMB.moduloNew.descripcion}" onkeypress="return validaAlfaNumericos(event);"/>
+                <f:facet name="footer">
+                    <p:commandButton id="btnGuardarModulo"
+                                     value="#{msj['label.catalogo.btn.guardar.modulo']}" 
+                                     action="#{catalogManagerMB.addModulo}" 
+                                     icon="ui-icon-circle-plus" 
+                                     update=":formUnidadXGeneral:gridModuloNew :formUnidadXGeneral:tblModulo"
+                                     disabled="#{!catalogManagerMB.flgBtnGuardarModulo}"/>
+                </f:facet>
+            </h:panelGrid>
+
+            <p:dataTable id="tblModulo" 
+                         var="unidad" 
+                         value="#{catalogManagerMB.lstModulos}" 
+                         editable="true" 
+                         style="margin-bottom:20px"
+                         emptyMessage="#{msj['label.lista.vacia']}" 
+                         paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom">
+                <f:facet name="header">
+                    #{msj['label.catalogo.modulo.fis.integral']}
+                </f:facet>
+
+                <p:ajax event="rowEdit" listener="#{catalogManagerMB.onRowEdit}"/>
+
+                <p:column headerText="#{msj['label.catalogo.nombre']}">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidad.nombre}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="modelInput" value="#{unidad.nombre}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="#{msj['label.catalogo.descripcion']}">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidad.descripcion}" /></f:facet>
+                        <f:facet name="input"><p:inputText value="#{unidad.descripcion}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column style="width:32px" headerText="#{msj['label.catalogo.editar']}">
+                    <p:rowEditor />
+                </p:column>
+
+                <p:column style="width:40px;text-align: center" headerText="#{msj['label.catalogo.eliminar']}">
+                    <p:commandButton icon="ui-icon-trash" title="eliminar" action="#{catalogManagerMB.onRowDelete}" update=":formUnidadXGeneral:tblModulo :formUnidadXGeneral:btnAgregarUnidades">
+                        <f:setPropertyActionListener value="#{unidad}" target="#{catalogManagerMB.moduloSeleccion}"/>
+                        <p:confirm header="#{msj['label.catalogo.confirmacion']}" message="#{msj['label.catalogo.msg.confirmacion']}" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </p:fieldset> 
+    </html>
+</f:view>

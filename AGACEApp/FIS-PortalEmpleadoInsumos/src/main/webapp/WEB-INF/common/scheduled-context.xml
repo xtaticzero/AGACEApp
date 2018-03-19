@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context-3.0.xsd
+         http://www.springframework.org/schema/tx
+         http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+         http://www.springframework.org/schema/task
+         http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<!-- BEGIN - Scheduler -->
+	<task:annotation-driven executor="myExecutor"
+		scheduler="myScheduler" />
+	<task:executor id="myExecutor" pool-size="5-25"
+		queue-capacity="1000" />
+	<task:scheduler id="myScheduler" pool-size="10" />
+	<!-- END - Scheduler -->
+
+	<!-- BEGIN - SCHEDULED COMUNES DE TAXI AEREO -->
+	<task:scheduled-tasks scheduler="myScheduler">
+
+		<!-- Validar bandeja de correos 
+		<task:scheduled ref="plazosOrdenesService"
+			method="actualizaDiasOrdenesNotificadas" cron="0 0/2 * * * ?" />-->
+                <!-- Validar bandeja de correos -->
+                <task:scheduled ref="asignarSuplenciaAFirmanteSchedulerService"
+			method="cancelaSuplenciaScheduler" cron="0 0 0 * * ?" />
+                        
+                <task:scheduled ref="asignarSuplenciaAFirmanteSchedulerService"
+			method="activaSuplenciaScheduler" cron="0 0 0 * * ?" />
+                        
+                <task:scheduled ref="asignarSuplenciaAFirmanteSchedulerService"
+			method="terminarSuplenciaScheduler" cron="0 0 0 * * ?" />
+			
+			<task:scheduled ref="plazosServiceInsumos"
+				method="enviaNotificacionesCambioSemaforo" cron="0 0 0 * * ?" />
+
+	</task:scheduled-tasks>
+	<!-- END - SCHEDULED COMUNES DE TAXI AEREO -->
+
+</beans>

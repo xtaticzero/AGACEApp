@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:fn="http://java.sun.com/jsp/jstl/functions" >    
+    <p:panel id="panaelLstInsumo" style="width:115% !important;" 
+    	rendered="#{consultaUGInsumosMB.helper.esVisiblePanelListaInsumos}">
+    	<f:facet name="header"> 
+           		<h:outputText value="Detalle del Insumo"/>
+        	</f:facet>
+        <p:messages id="messages" showDetail="true" globalOnly="true" closable="true"/>
+        <p:dataTable id="tablaDetalleInsumo"
+                     value="#{consultaUGInsumosMB.insumosDetalle}" var="insumo"
+                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"
+                     widgetVar="tablaDetalleInsumo"
+                     style="width:100% !important;font-size:small;"
+                     >           
+            <p:column headerText="Registrado Por" style="width: 6%;font-size:11px;">                
+                 <p:outputLabel value="#{insumo.registradoPor}"/>
+            </p:column>
+            <p:column headerText="#{msj['label.nombre.razon.social']}" style="width: 8%;font-size:11px;">                
+                 <p:outputLabel value="#{insumo.fecetContribuyente.nombre}"/>
+            </p:column>
+            <p:column headerText="Subprograma" style="width: 8%;font-size:11px;">                
+                 <p:outputLabel value="#{insumo.fececSubprograma.clave}"/>-
+                 <p:outputLabel value="#{insumo.fececSubprograma.descripcion}"/>
+            </p:column>
+            <p:column headerText="#{msj['column.folio']}" filterBy="#{insumo.idRegistro}" style="width: 8%;font-size:11px;" filterStyle="width: 70px;">
+             	<p:outputLabel value="#{insumo.idRegistro}"/>                
+            </p:column>
+            <p:column headerText="#{msj['column.rfc']}" filterBy="#{insumo.fecetContribuyente.rfc}" style="width: 9%;font-size:11px;" filterStyle="width: 80px;">
+                <p:commandLink id="consultarDetalleInsumo"
+                			   value="#{insumo.fecetContribuyente.rfc}"
+                               action="#{consultaUGInsumosMB.consultarDetalleInsumo}"
+                               immediate="true" process="@this"
+                               style="color:blue;" rendered="#{insumo.prioridad}"
+                               update=":form:panelPrincipal">
+                    <f:setPropertyActionListener value="#{insumo}"
+                                                 target="#{consultaUGInsumosMB.insumosSeleccionado}"/>
+                </p:commandLink>
+                <p:outputLabel value="#{insumo.fecetContribuyente.rfc}" rendered="#{!insumo.prioridad}"/>
+            </p:column>
+            <p:column headerText="Sector" style="width: 7%;font-size:11px;">
+             	<p:outputLabel value="#{insumo.fececSector.descripcion}"/>                
+            </p:column>
+            <p:column headerText="Plazo para concluir" style="text-align: center; width:8%;font-size:11px;" 
+                      filterBy="#{insumo.plazoRestante}"                      
+                      filterMatchMode="exact">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetalleInsumo').filter()" style="width: 70px;">
+                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaUGInsumosMB.lstValoresFiltroPlazos}" 
+                                       var="item" 
+                                       itemLabel="#{item.descripcion}" 
+                                       itemValue="#{item.valor}"/>
+                    </p:selectOneMenu>
+                </f:facet>
+                    <p:outputLabel value="#{insumo.descripcionPlazoRestante}" rendered="#{insumo.semaforo ne 10}"/>
+                    <p:outputLabel value="#{insumo.diasDespuesDePlazoDescripcion}" rendered="#{insumo.semaforo eq 10}"/>
+            </p:column>
+            <p:column headerText="#{msj['column.prioridad']}" 
+                      style="text-align: center; width:7%;font-size:11px;"
+                      filterBy="#{insumo.prioridadDto.valor}"
+                      filterMatchMode="exact">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetalleInsumo').filter()" >
+                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaUGInsumosMB.lstValoresFiltroPrioridad}" var="item" itemLabel="#{item.descripcion}" itemValue="#{item.valor}"/>
+                    </p:selectOneMenu>
+                </f:facet>
+                <p:outputLabel value="#{insumo.prioridadDto.valor}"/> 
+            </p:column>            
+            <p:column headerText="#{msj['column.estatus']}" filterBy="#{insumo.fececEstatus.idEstatus}" style="width:8%;font-size:11px;">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetalleInsumo').filter()" style="width: 70px;">
+                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaUGInsumosMB.lstValoresFiltroEstatus}" var="item" itemLabel="#{item.descripcion}" itemValue="#{item.valor}"/>
+                    </p:selectOneMenu>
+                </f:facet>
+                <p:outputLabel value=" #{insumo.fececEstatus.descripcion}"/>               
+            </p:column>
+            <p:column headerText="#{msj['column.unidad.admin.atencion']}" filterBy="#{insumo.fececUnidadAdministrativa.idUnidadAdministrativa}" style="width:8%;font-size:11px;">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetalleInsumo').filter()" style="width: 70px;">
+                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                        <f:selectItems value="#{consultaUGInsumosMB.lstValoresFiltroUnidadAdministrativa}" var="item" itemLabel="#{item.descripcion}" itemValue="#{item.valor}"/>
+                    </p:selectOneMenu>
+                </f:facet>
+                <p:outputLabel value="#{insumo.fececUnidadAdministrativa.nombre}"/>
+            </p:column>
+            <p:column headerText="#{msj['label.semaforos']}" filterBy="#{insumo.imagenSemaforo}" style="text-align: center; width:8%;font-size:11px;" filterMatchMode="exact">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tablaDetalleInsumo').filter()" >
+                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                        <f:selectItem itemLabel="Verde" itemValue="semaforo-verde" />
+                        <f:selectItem itemLabel="Amarillo" itemValue="semaforo-amarillo" />
+                        <f:selectItem itemLabel="Naranja" itemValue="semaforo-naranja" />
+                        <f:selectItem itemLabel="Azul" itemValue="semaforo-azul" />
+                        <f:selectItem itemLabel="Gris" itemValue="semaforo-gris" />
+                        <f:selectItem itemLabel="Cafe" itemValue="semaforo-cafe" />
+                        <f:selectItem itemLabel="Rojo" itemValue="semaforo-rojo" />
+                        <f:selectItem itemLabel="Negro" itemValue="semaforo-negro" />
+                        <f:selectItem itemLabel="Beige" itemValue="semaforo-beige" />
+                        <f:selectItem itemLabel="Morado" itemValue="semaforo-morado" />
+                        <f:selectItem itemLabel="Blanco" itemValue="semaforo-blanco" />		                                    
+                    </p:selectOneMenu>
+                </f:facet>
+                    <p:graphicImage value="/resources/images/#{insumo.imagenSemaforo}-16x16.png" style="border:0" alt="#{fn:replace(insumo.imagenSemaforo, 'semaforo-', '')}" title="#{insumo.descripcionSemaforo}"/>
+            </p:column>            
+        </p:dataTable>
+        <p:spacer/>
+        <p:panelGrid styleClass="noBorders" style="width: 100%">
+        	<p:row>
+        		<p:column>
+        			<h:commandLink value="Exportar">				        
+				        <p:dataExporter type="xls" target="tablaDetalleInsumo" fileName="insumos" />
+				    </h:commandLink>				        			
+        		</p:column>
+        		<p:column>
+			  		<p:commandButton style="float: right;" 
+			  			value="Pantalla Anterior" action="#{consultaUGInsumosMB.pantallaAnteriorDetalle}" immediate="true" process="@this"
+			  			update="panelPrincipal" rendered="#{!consultaUGInsumosMB.helper.esConsultaEmpleados}">			  			
+			  		</p:commandButton>
+			  		<p:commandButton style="float: right;" 
+			  			value="Pantalla Anterior" action="#{consultaUGInsumosMB.pantallaAnteriorDetalleEmpleado}" immediate="true" process="@this"
+			  			update="panelPrincipal" rendered="#{consultaUGInsumosMB.helper.esConsultaEmpleados}">
+			  			
+			  		</p:commandButton>
+			  	</p:column>    
+			</p:row>
+		</p:panelGrid>
+    </p:panel>          
+</f:view>

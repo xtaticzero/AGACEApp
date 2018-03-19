@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head></h:head>
+        <h:body>
+            <h:form id="form" enctype="multipart/form-data" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="messages" globalOnly="true" closable="true"/>
+                <p:panel id="panelTablaFirmantes" styleClass="panel-interno"
+                         header="#{msj['label.titulo.asignacion.suplencias']}"
+                         rendered="#{asignarSuplenciaAFirmanteManagedBean.panelTablaSuplencias}"
+                         style="font-weight:bold; text-align: center;">
+                    <!-- Tabla de detalle propuesta -->
+                    <h:panelGrid id="panelSuplencia" width="100%">
+                        <p:separator/>
+                        <p:dataTable id="tablaSuplenciasAsignadas" var="suplencia"
+                                     value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.listaSuplencias}"
+                                     rows="10" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true" paginatorTemplate="Página: {CurrentPageReport}  {FirstPageLink} {PreviousPageLink}  
+                             Ir a página: {PageLinks} {NextPageLink} {LastPageLink} "
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column headerText="#{msj['tbl.titulo.estatus']}">
+                                <h:outputText value="#{suplencia.estatusDesc}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['tbl.titulo.firmante.suplente']}">
+                                <h:outputText value="#{suplencia.nombreFirmanteSuplente}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['tbl.titulo.firmante.a.suplir']}">
+                                <h:outputText value="#{suplencia.nombreFirmanteASuplir}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['tbl.titulo.fecha.inicial.suplente']}" width="150">
+                                <h:outputText value="#{suplencia.fechaInicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['tbl.titulo.fecha.final.suplente']}">
+                                <h:outputText value="#{suplencia.fechaFin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['tbl.titulo.motivo.suplencia']}">
+                                <h:outputText value="#{suplencia.motivoSuplenciaDesc}"/>
+                            </p:column>
+                            <p:column headerText="">
+                                <p:commandLink value="#{msj['btn.suplencia.eliminar']}"
+                                            rendered="#{(suplencia.estatusDesc eq 'ACTIVA') ||(suplencia.estatusDesc eq 'REGISTRADA')}"
+                                            update="@form" actionListener="#{asignarSuplenciaAFirmanteManagedBean.eliminarSuplencia}">
+                                    <f:param name="id" value="#{suplencia.idSuplencia}"/>
+                                    <f:param name="estatus" value="#{suplencia.estatusDesc}"/>
+                                    <p:confirm header="Eliminar suplencia"
+                                               message="#{msj['msj.dos.suplencia.firmante']}"/>
+                                </p:commandLink>                                
+                            </p:column>
+                        </p:dataTable>
+                        <p:confirmDialog global="true">
+                            <p:commandButton value="Aceptar" type="button" styleClass="ui-confirmdialog-yes"
+                                             icon="ui-icon-check"/>                                                                                           
+                            <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no"
+                                             icon="ui-icon-close"/>
+                        </p:confirmDialog>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelBtnNuevaSuplencia" width="100%">
+                        <p:commandButton id="btnNuevaSuplencia" value="#{msj['btn.nueva.suplencia']}" update="@form"
+                                         ajax="false"
+                                         action="#{asignarSuplenciaAFirmanteManagedBean.cargaInformacionNuevaSuplencia}"
+                                         style="float:right;" icon="ui-icon-check"
+                                         oncomplete="ocultaMsgAgace('messages');"/>
+                    </h:panelGrid>
+                </p:panel>
+                <!--Panel de asignacion de suplencias -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ -->
+                <p:panel id="panelDatosSuplencia" styleClass="panel-interno"
+                         header="#{msj['titulo.datos.nueva.suplencia']}"
+                         rendered="#{asignarSuplenciaAFirmanteManagedBean.panelDatosSuplencias}" width="100%">
+                    <!-- grid firmante a suplir -->                                        
+                    <p:panelGrid id="panelFirmanteAsuplirPrincipal" width="100%">
+                    <p:row>
+                        <p:column rowspan="8" width="25%">
+                            <font color="red">*</font><h:outputText value="#{msj['tbl.titulo.firmante.a.suplir']}:"/></p:column>
+                        <p:column rowspan="8" width="35%">
+                            <p:selectOneMenu id="cmbMotivoFirmanteASuplir"
+                                             value="#{asignarSuplenciaAFirmanteManagedBean.seleccionFirmanteASuplir}">
+                                <p:ajax update="@form"
+                                        listener="#{asignarSuplenciaAFirmanteManagedBean.selectedFirmanteASuplir}"/>
+                                <f:selectItem itemLabel="Selecciona firmante a suplir" itemValue="0"/>
+                                <f:selectItems value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.comboFirmanteASuplir}"
+                                               var="lista" itemLabel="#{lista.nombreCompleto}" itemValue="#{lista.idEmpleado}"/>
+                            </p:selectOneMenu></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2" width="40%">
+                            <h:outputText value="#{msj['titulo.datos.firmante']}" style="text-decoration:underline;"/></p:column>
+                    </p:row>            
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="#{msj['titulo.datos.firmante.nombre']}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.firmanteASuplir.nombreCompleto}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2"> 
+                            <h:outputText value="#{msj['titulo.datos.firmante.rfc']}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.firmanteASuplir.rfc}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <font color="red">*</font><h:outputText value="#{msj['titulo.datos.firmante.motivo.suplencia']}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:selectOneMenu id="cmbMotivoSuplencia"
+                                             value="#{asignarSuplenciaAFirmanteManagedBean.seleccionMotivo}">
+                                <p:ajax update="@form"
+                                        listener="#{asignarSuplenciaAFirmanteManagedBean.selectedMotivo}"/>
+                                <f:selectItem itemLabel="Selecciona motivo" itemValue="0"/>
+                                <f:selectItems value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.listaMotivoSuplencia}"
+                                               var="lista" itemLabel="#{lista.descripcion}"
+                                               itemValue="#{lista.idMotivo}"/>
+                            </p:selectOneMenu></p:column>
+                    </p:row>
+                    <p:row>
+                            <p:column>
+                            <font color="red">*</font><h:outputText value="#{msj['tbl.titulo.fecha.inicial.suplente']}:"/></p:column>
+                            <p:column>
+                            <p:calendar id="txtFechaInicio" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="6"
+                                        mindate="#{asignarSuplenciaAFirmanteManagedBean.fechaLimiteInicial}"
+                                        value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.nuevaSuplencia.fechaInicio}"
+                                        navigator="true">
+                                        <p:ajax event="dateSelect" update="form"
+                                                    listener="#{asignarSuplenciaAFirmanteManagedBean.limpiaFechaFinal}"/>
+                                        </p:calendar>
+                                        </p:column>
+                        
+                            <p:column>
+                            <font color="red">*</font><h:outputText value="#{msj['tbl.titulo.fecha.final.suplente']}:"/></p:column>
+                            <p:column>
+                            <p:calendar id="txtFechaFin" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="6"
+                                        mindate="#{asignarSuplenciaAFirmanteManagedBean.fechaLimiteFinal}"
+                                        value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.nuevaSuplencia.fechaFin}"
+                                        navigator="true"> 
+                                            <p:ajax event="dateSelect" update="form"
+                                                    listener="#{asignarSuplenciaAFirmanteManagedBean.selectedDisponibles}"/>
+                                        </p:calendar>
+                                        </p:column>
+                         </p:row>
+                        <p:row>
+                            <p:column rowspan="6">
+                                <font color="red">*</font><h:outputText value="#{msj['tbl.titulo.firmante.suplente']}:"/></p:column>
+                            <p:column rowspan="6">
+                                <p:selectOneMenu id="cmbMotivoFirmanteSuplente"
+                                                 value="#{asignarSuplenciaAFirmanteManagedBean.seleccionFirmanteSuplente}">
+                                    <p:ajax update="@form"
+                                            listener="#{asignarSuplenciaAFirmanteManagedBean.selectedFirmanteSuplente}"/>
+                                    <f:selectItem itemLabel="Selecciona firmante suplente" itemValue="0"/>
+                                    <f:selectItems value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.combolistaFirmanteSuplente}"
+                                                   var="lista" itemLabel="#{lista.nombreCompleto}" itemValue="#{lista.idEmpleado}"/>
+                                </p:selectOneMenu></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                            <h:outputText value="#{msj['titulo.datos.firmante.suplente']}"
+                                          style="text-decoration:underline;"/>     </p:column>  
+                        </p:row>  
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="#{msj['titulo.datos.firmante.nombre']}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                            <h:outputText value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.firmanteSuplente.nombreCompleto}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="#{msj['titulo.datos.firmante.rfc']}"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplenciaAFirmanteModel.firmanteSuplente.rfc}"/></p:column>
+                        </p:row>                                            
+                         <p:row>
+                         <p:column colspan="3">
+                            <p:commandButton id="btnCancelar" value="#{msj['btn.suplencia.cancelar']}" update="@form"
+                                         style="float:right;" ajax="true"
+                                         action="#{asignarSuplenciaAFirmanteManagedBean.cancelarBtn}"
+                                         oncomplete="ocultaMsgAgace('messages');"/>
+                                         </p:column>
+                         <p:column>
+                            <p:commandButton id="btnAsignarSuplencia" value="#{msj['btn.suplencia.asignar.suplencia']}"
+                                         update="@form" style="float:left;" ajax="true" 
+                                         disabled="#{asignarSuplenciaAFirmanteManagedBean.botonAsignarHabilitado}"
+                                         action="#{asignarSuplenciaAFirmanteManagedBean.prevalidacionAsignacion}"/>
+                                         </p:column>
+                         </p:row>
+                    </p:panelGrid>                                                                  
+                    
+                    <!--Botones cancela acepta -->                    
+                    <p:panel id="panelConfirmacion" style="border-style: none !important">
+                    <p:confirmDialog id="dialogoConfirmacion"  
+                        message="El Firmante Suplente ya tiene asignada una suplencia como Firmante Suplente, en el periodo ingresado. 
+                                ¿Desea continuar con la asignaci&oacute;n?"
+                        widgetVar="dialogoConfirmacion"
+                        rendered="#{asignarSuplenciaAFirmanteManagedBean.panelConfirmacionVisible}" 
+                        visible="#{asignarSuplenciaAFirmanteManagedBean.panelConfirmacionVisible}">
+                            <p:commandButton value="Continuar" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                                onclick="PF('dialogoConfirmacion').hide();realizaCarga();"/>
+                            <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" 
+                            onclick="PF('dialogoConfirmacion').hide();cancelar();"/>
+                        </p:confirmDialog>
+                    </p:panel>
+                    <p:remoteCommand name="realizaCarga" update="form" actionListener="#{asignarSuplenciaAFirmanteManagedBean.asignarSuplencia}"/>
+                    <p:remoteCommand name="cancelar" update="form" actionListener="#{asignarSuplenciaAFirmanteManagedBean.limpiarFormulario}"/>
+                                  
+                </p:panel>
+            </h:form>             
+            <h:outputScript library="js/" name="agace.js"/>             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

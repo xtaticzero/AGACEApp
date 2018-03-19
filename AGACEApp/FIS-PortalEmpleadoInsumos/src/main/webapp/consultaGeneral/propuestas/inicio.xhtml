@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head/>
+        <h:body>            
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+            <h:form id="form" styleClass="panel-principal-insumos" onkeypress="if (event.keyCode == 13) { return false; }">
+            <p:ajaxStatus onstart="PF('statusDialogDocs').show();" onsuccess="PF('statusDialogDocs').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogDocs" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+            <p:messages id="msgNotificacion" showDetail="false" globalOnly="true" closable="true" redisplay="false"/>    
+            <p:panel id="panelPrincipalCifras" header="#{msj['label.consulta.general.consulta']}" styleClass="panel-interno-insumos" 
+            rendered="#{consultaUGPropuestasMB.helper.flgMostrarMenuPrincipal}">
+	             <p:panelGrid id="panelPrincipal" style="width:100% !important;" styleClass="noBorders">
+	             	<p:row>
+				  	<p:column>
+				  		<h:outputText value="#{msj['label.consulta.general.detalle.propuestas.select2.label']}"/>
+	            	</p:column>
+	            	<p:column>
+	            		<p:selectOneMenu id="select2" value="#{consultaUGPropuestasMB.tipoConsulta}" style="width: 250px;">           				
+	           				<p:ajax event="change" update="select btnConsultar"
+	        					listener="#{consultaUGPropuestasMB.actualizarUnidadAdministraiva}" />           				
+	           				<f:selectItem itemLabel="#{msj['label.consulta.general.menu.sinopcion']}" itemValue="0" />
+				            <f:selectItem itemLabel="#{msj['label.consulta.general.detalle.propuestas.select2.opcion1']}" itemValue="1" />
+				            <f:selectItem itemLabel="#{msj['label.consulta.general.detalle.propuestas.select2.opcion2']}" itemValue="2" />			          		          			           					           
+				  		</p:selectOneMenu> 
+				  	</p:column>
+				  	</p:row>        
+	            	<p:row>
+	            	<p:column>
+	            		<h:outputText value="#{msj['label.consulta.general.detalle.propuestas.select.label']}"/>
+	            	</p:column>
+	            	<p:column>
+	            		<p:selectOneMenu id="select" value="#{consultaUGPropuestasMB.idArace}" style="width: 250px;" 
+	            									disabled="#{!consultaUGPropuestasMB.helper.habilitarUnidadAdministrativa}">           				
+	           				<p:ajax event="change" update="btnConsultar"
+	        					listener="#{consultaUGPropuestasMB.actualizarBtnConsultar}" />
+	           				
+	           				<f:selectItem itemLabel="#{msj['label.consulta.general.menu.sinopcion']}" itemValue="0" />
+	           				<f:selectItem itemLabel="Todas" itemValue="-1" />
+				            <f:selectItems value="#{consultaUGPropuestasMB.listaUnidadesAdministrativas}"                                                  
+	                                       var="unidadAdmin" 
+	                                       itemValue="#{unidadAdmin.id}" itemLabel="#{unidadAdmin.nombre}"/>  		          		          			           					           
+				  		</p:selectOneMenu> 
+				  	</p:column>
+				  	</p:row>  			  	  
+				  	<p:row>
+				  	<p:column colspan="2" >
+				  		<p:commandButton id="btnConsultar" style="float: left;" 
+				  			value="#{msj['label.consulta.general.detalle.insumos.button.label']}" 
+				  			action="#{consultaUGPropuestasMB.consultarEstatusPropuesta}" ajax="true" immediate="true" 
+				  			disabled="#{!consultaUGPropuestasMB.helper.habilitarbtnConsultar}"
+				  			update="@form"/>
+				  	</p:column>
+				  	<p:column colspan="2" >
+				  		<p:commandButton style="float: right;" 
+				  			value="Pantalla Anterior" action="../inicioConsultaGeneral.xhtml?faces-redirect=true" ajax="true" immediate="true"/>
+				  	</p:column>
+				  	</p:row>   		   		
+	            </p:panelGrid>
+            </p:panel>                        
+            <ui:include src="consultaGeneralXestatus.xhtml"/>
+            <ui:include src="panelFirmante.xhtml"/>
+            <ui:include src="panelAuditor.xhtml" />
+			<ui:include src="pnlLstPropuestas.xhtml"/>                                
+			<ui:include src="panelDetallePropuestas.xhtml"/>
+            </h:form>         
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head/>
+        <h:body>
+            <h:form id="formDocumentacionPropuesta" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogPropuesta').show();" onsuccess="PF('statusDialogPropuesta').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogPropuesta" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="messagesDocPropuesta" autoUpdate="false" showDetail="false" closable="true"/>
+                <p:panel id="panelPropuesta" style="width:100% !important; height:100% !important;" header="#{msj['titulo.panel.detalle.propuesta']}">
+                    <p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}" style="font-weight:bold;"/>    
+                    <p:separator/>
+                    <p:spacer width="60" height="5px;"/>
+                    
+                    <h:panelGrid border="0" columns="4" width="100%">
+                        <h:outputLabel value="#{msj['label.rfc.contribuyente.obligatorio']}: " style="font-weight:bold"/>    
+                        <p:inputText ajax="false" id="txtRFC" maxlength="15" disabled="true" style="width: 200px!important;"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.rfc}"
+                                         onkeypress="if(event.keyCode==13){return false;}"/> 
+                        <h:outputLabel value="#{msj['label.nombre.razon.social']}: " style="font-weight:bold;"/>
+                        <p:inputTextarea id="txtNombre" disabled="true" style="width:250px !important;height: 40px!important"
+                                             value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.nombre}"/>
+                    
+                        <h:outputLabel value="#{msj['label.regimen']}: " style="font-weight:bold"/>
+                        <p:inputText id="txtRegimen" style="width: 200px!important;height:auto;" disabled="true"
+                                     value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.regimen}"/>
+                        <h:outputLabel value="#{msj['label.situacion.contribuyente']} " style="font-weight:bold;"/>
+                        <p:inputTextarea id="txtSituacionContribuyente" style="width: 250px !important;height: 30px!important" disabled="true"
+                                        value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.situacion}"/>
+                    
+                        <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+                        <p:inputText id="txtTipoContribuyente" style="width: 200px!important;height:auto;" disabled="true"
+                                        value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.tipo}"/>
+                        <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/>
+                        <p:inputTextarea id="txtSituacionDomicilio" style="width:250px !important;height: 30px!important" disabled="true"
+                                        value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.situacionDomicilio}"/>
+                    
+                        <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:" style="font-weight:bold"/>
+                        <p:inputTextarea id="txtDomicilioFiscalContribuyente" style="width:200px !important;height: 60px!important" disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.domicilioFiscal}"/>
+                        
+                        <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                            <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+                            <p:inputTextarea id="txtEntidad" style="width:100px !important;height:auto;" disabled="true"
+                                        value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.entidad}"/>
+                        </h:panelGrid>
+                        <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                            <h:outputLabel value="#{msj['label.actividad.preponderante']}: " style="font-weight:bold;"/>
+                            <p:inputTextarea id="txtActividadPreponderante" style="width:140px !important;height: 40px!important" disabled="true"
+                                     value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fecetContribuyente.actividadPreponderante}"/>
+                        </h:panelGrid>                    
+                    </h:panelGrid>
+                    
+                    <p:spacer width="0px" height="25px"/>
+                    <p:outputLabel value="#{msj['separador.panel.datos.previos.propuesta']}" style="font-weight:bold;"/>
+                    <p:separator/>
+                    
+                    <p:panelGrid styleClass="noBorders" style="width:100%">
+                    	<p:row>
+                    		<p:column style="width:25%;">
+								<h:outputLabel value="Unidad Administrativa de Atenci&oacute;n:" style="font-weight:bold" />
+							</p:column>
+							<p:column style="width:25%;">
+								<h:outputLabel value="#{msj['label.metodo.revision']}" style="font-weight:bold"/>
+							</p:column >
+							<p:column style="width:25%;">
+								<h:outputLabel value="#{msj['label.causa.programacion']}" style="font-weight:bold;" />
+							</p:column>
+							<p:column style="width:25%;">
+								<h:outputLabel value="#{msj['label.tipo.propuesta.firmante']}:" style="font-weight:bold;" />
+							</p:column>
+                    	</p:row>
+                    	<p:row>
+                    		<p:column style="width:25%;">
+								<p:inputTextarea id="txtUnidadAdministrativa" style="width:150px !important;height: 40px!important" disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.unidadAdministrativa.nombre}"/>
+							</p:column>
+							<p:column style="width:25%;">
+								<p:inputTextarea id="txtMetodo" style="width:150px !important;height: 40px!important" disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.feceaMetodo.nombre}"/>
+							</p:column>
+							<p:column style="width:25%;">
+								<p:inputTextarea id="txtCausaProgramacion" style="width:150px !important;height: 40px!important"  disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fececCausaProgramacion.descripcion}"/>
+							</p:column>
+							<p:column style="width:25%;">
+								<p:inputTextarea id="txtTipoPropuesta"  style="width:150px !important;height: 40px!important" disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fececTipoPropuesta.descripcion}"/>
+							</p:column>
+                    	</p:row>
+                    	<p:row>
+                    		<p:column style="width:25%;">
+								<h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold" />
+							</p:column>
+							<p:column style="width:25%;">
+								<h:outputLabel value="#{msj['label.sector']}: " style="font-weight:bold"/>
+							</p:column>
+							<p:column style="width:25%;">
+								<h:outputLabel value="#{msj['label.prioridad']}:" style="font-weight:bold;" />
+							</p:column>
+							<p:column style="width:25%;">
+								<h:outputLabel value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.tipoComite.descripcion}:" style="font-weight:bold;" />
+							</p:column>
+                    	</p:row>
+                    	<p:row>
+                    		<p:column style="width:25%;">
+								<p:inputTextarea id="txtSubPrograma" style="width:150px !important;height: 60px!important" disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fececSubprograma.descripcion}"/>
+							</p:column>
+							<p:column  style="width:25%;">
+								<p:inputTextarea id="txtSector" style="width:150px !important;height: 40px!important" disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fececSector.descripcion}"/>
+							</p:column>
+							<p:column style="width:25%;">
+								<p:inputText id="txtPrioridadSugerida" style="width:150px !important;"  disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.prioridadSugerida}"/>
+							</p:column>
+							<p:column style="width:25%;">
+								<p:calendar id="txtFechaPresentacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                readonlyInput="true" size="7" disabled="true"
+                                                value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fechaPresentacion}"
+                                                rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fechaPresentacion != null}"/>
+								<p:calendar id="txtFechaComite" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                readonlyInput="true" size="7" disabled="true"
+                                                value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fechaInforme}"
+                                                rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fechaInforme != null}"/>
+							</p:column>
+                    	</p:row>
+                    	<p:row>
+                    		<p:column style="width:25%;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idMetodo == 2}">
+								<h:outputLabel value="#{msj['label.org.tipo.revision']}:" style="font-weight:bold;"/>
+							</p:column>
+                    		<p:column colspan="3">
+                    			<h:outputLabel value="Pedimento:" style="font-weight:bold;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idTipoPropuesta == 1}" />
+                    			<h:outputLabel value="Per&iacite;odo Propuesto:" style="font-weight:bold;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idTipoPropuesta != 1}" />
+                    		</p:column>
+                    	</p:row>
+                    	<p:row>
+                    		<p:column style="width:25%;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idMetodo == 2}">
+								<p:inputText id="txtTipoRevision" style="width:150px !important;" disabled="true"
+                                         value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fececRevision.descripcion}"/>
+							</p:column>
+                    		<p:column colspan="3">
+                    			<h:panelGrid columns="5" border="0" style="width:100% !important;">
+                    				<h:outputLabel value="Fecha Primer Pedimento:" style="font-weight:bold;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idTipoPropuesta == 1}"/>
+                    				<h:outputLabel value="Inicio:" style="font-weight:bold;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idTipoPropuesta != 1}"/>
+                                    <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                readonlyInput="true" size="7" disabled="true"
+                                                value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fechaInicioPeriodo}"/>
+                                    <h:outputLabel value="Fecha &Uacute;ltimo Pedimento:" style="font-weight:bold;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idTipoPropuesta == 1}"/>
+                    				<h:outputLabel value="Fin:" style="font-weight:bold;" rendered="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.idTipoPropuesta != 1}"/>
+                                    <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                                disabled="true"
+                                                value="#{documentacionPropuestaOrdenFirmanteMB.propuestaSelAnalizar.fechaFinPeriodo}"/>
+		                        </h:panelGrid>
+                    		</p:column>
+                    	</p:row>
+                    </p:panelGrid>
+                    <p:spacer width="1" height="15px"/>
+                    <h:panelGrid columns="1" style="width:60% !important; margin: 0px auto;" border="0" styleClass="panel-secundario">
+                        <p:dataTable id="tablaDocumentacionExpediente"
+                                 value="#{documentacionPropuestaOrdenFirmanteMB.listaExpedientes}" var="documento"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <f:facet name="header">
+                            #{msj[&apos;titulo.tabla.oficio.expedientes&apos;]}
+                        </f:facet>
+                        <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width:150px;">
+                            <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                               <p:commandLink style="color:blue;" value="#{documento.nombre}" ajax="false">                                                                    
+                                     <f:setPropertyActionListener value="#{documento}"
+                                                             target="#{documentacionPropuestaOrdenFirmanteMB.fecetDocExpedienteSeleccionado}"/>
+                                     <p:fileDownload contentDisposition="attachment"
+                                                value="#{documentacionPropuestaOrdenFirmanteMB.descargaExpediente}"/>                                                             
+                               </p:commandLink>
+                            
+                        </p:column>
+                    </p:dataTable>
+                    </h:panelGrid>
+                    <p:spacer width="1" height="15px"/>
+                    <h:panelGrid columns="1" style="width:60% !important; margin: 0px auto; height:100% !important;" border="0" styleClass="panel-secundario">
+                        <p:dataTable id="tablaImpuestosPropuestas" style="border:none;" var="tablaImpuestosPropuestas"
+                                     value="#{documentacionPropuestaOrdenFirmanteMB.listaImpuestosDescripcion}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{msj['lbl.propuestas.impuestos']}" style="font-weight:bold"/>
+                            </f:facet>
+                            <p:column headerText="#{msj['label.impuesto']}" styleClass="someClass" width="100px">
+                                <h:outputText id="txtImpuesto"
+                                              value="#{tablaImpuestosPropuestas.fececTipoImpuesto.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['lbl.propuestas.concepto']}" styleClass="someClass" width="100px">
+                                <h:outputText id="txtConcepto"
+                                              value="#{tablaImpuestosPropuestas.fecetImpuesto.fececConcepto.descripcion}"/>
+                            </p:column>
+                            <p:column id="hdrMonto" headerText="Monto ($):">
+                                <div align="right">
+                                    <h:outputText value="#{tablaImpuestosPropuestas.fecetImpuesto.monto}">
+                                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                    </h:outputText>
+                                </div>
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                 	<p:column footerText="" style="text-align:right;font-weight:bold;"/>
+                                    <p:column footerText="Presuntiva: " style="text-align:right;font-weight:bold;"/>
+                                    <p:column colspan="1" style="text-align:right;">
+                                        <f:facet name="footer">
+                                            <h:outputText value="#{documentacionPropuestaOrdenFirmanteMB.sumaPresuntiva}"
+                                                          style="font-weight:bold;">
+                                                <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+                            </p:columnGroup>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <br/>
+                    <br/>
+                    <h:panelGrid columns="1" id="panelBotones" width="700">
+                            <p:commandButton value="#{msj['btn.pantalla.anterior']}" action="indexValidarFirmar" style="float:right;" ajax="true" immediate="true" />
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

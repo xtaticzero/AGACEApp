@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <p:fieldset id="fsRegla" legend="Reglas de Negocio" toggleable="true" toggleSpeed="500" collapsed="true">
+            <h:panelGrid id="gridReglaNew" columns="2" cellpadding="5">
+                <p:outputLabel value="Clave de la Regla : " />
+                <p:inputText id="nomRegla" value="#{catalogManagerMB.newRegla.clave}" onkeypress="return validaAlfaNumericos(event);" style="text-transform: uppercase">
+                    <p:ajax event="blur" update=":formUnidadXGeneral:btnGuardarRegla"/>
+                </p:inputText>
+                <p:outputLabel value="Descripcion de la Regla : " />
+                <p:inputTextarea id="descRegla" value="#{catalogManagerMB.newRegla.descripcion}" rows="5" cols="30" counter="display2" maxlength="3990" counterTemplate="{0} caracteres restantes." autoResize="false" style="width: 600px;;height:auto;font-size:11px;">
+                    <p:ajax event="blur" update=":formUnidadXGeneral:btnGuardarRegla"/>
+                </p:inputTextarea>
+                <p:spacer/>
+                <h:outputText id="display2" />
+                <f:facet name="footer">
+                    <p:commandButton id="btnGuardarRegla"
+                                     value="Guardar Regla de Negocio"
+                                     action="#{catalogManagerMB.addRegla}"
+                                     icon="ui-icon-circle-plus"
+                                     update=":formUnidadXGeneral:fsRegla :formUnidadXGeneral:fsGrupoUnidadRegla :formUnidadXGeneral:tblReglas"
+                                     disabled="#{!catalogManagerMB.flgBtnGuardarRegla}"/>
+                </f:facet>
+            </h:panelGrid>
+            <p:dataTable id="tblReglas" 
+                         var="regla" 
+                         value="#{catalogManagerMB.lstReglas}" 
+                         editable="true" 
+                         style="margin-bottom:20px"
+                         emptyMessage="#{msj['label.lista.vacia']}" 
+                         paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom">
+                <f:facet name="header">
+                    Grupos FIS Integral
+                </f:facet>
+
+                <p:ajax event="rowEdit" listener="#{catalogManagerMB.ruleOnRowEdit}"/>
+
+                <p:column headerText="#{msj['label.catalogo.nombre']}">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{regla.clave}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="modelInput" value="#{regla.clave}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="#{msj['label.catalogo.descripcion']}">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{regla.descripcion}" /></f:facet>
+                        <f:facet name="input"><p:inputText value="#{regla.descripcion}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column style="width:32px" headerText="#{msj['label.catalogo.editar']}">
+                    <p:rowEditor />
+                </p:column>
+
+                <p:column style="width:40px;text-align: center" headerText="#{msj['label.catalogo.eliminar']}">
+                    <p:commandButton icon="ui-icon-trash" title="eliminar" action="#{catalogManagerMB.ruleOnRowDelete}" update=":formUnidadXGeneral:fsRegla :formUnidadXGeneral:fsGrupoUnidadRegla">
+                        <f:setPropertyActionListener value="#{regla}" target="#{catalogManagerMB.reglaSeleccionada}"/>
+                        <p:confirm header="#{msj['label.catalogo.confirmacion']}" message="#{msj['label.catalogo.msg.confirmacion']}" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </p:fieldset>
+    </html>
+</f:view>

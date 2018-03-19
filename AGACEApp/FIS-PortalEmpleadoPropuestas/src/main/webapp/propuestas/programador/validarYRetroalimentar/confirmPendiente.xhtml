@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+
+
+
+
+         
+    <p:dialog id="confirmPendiente" header="#{msj['label.prpuestas.validar.retro.detalle.dialog.pendiente.heder']}" widgetVar="dlgConfirmPendiente" closable="false" modal="true" resizable="false">
+
+        <h:panelGrid columns="1" style="width:100% !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">
+                <p:outputLabel value="Fecha validacion:"/>
+                <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.fechaRegistro}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid >
+            <h:outputText value="#{validarRetroMB.msjConfirmacionPendiente}" />            	                
+                <ui:repeat var="propSeleccionada" value="#{validarRetroMB.retroalimentarLstHelper.listaPropuestaXValidarSeleccionada}">
+                			#{propSeleccionada.idRegistro}
+                			<br/>
+                </ui:repeat>          
+        </h:panelGrid>
+
+        <h:panelGrid style="width:100% !important;text-align: center !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">            
+                <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.aceptar']}" onclick="PF('dlgPendiente').show();PF('dlgConfirmPendiente').hide();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.cancelar']}" onclick="PF('dlgConfirmPendiente').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </h:panelGroup>  
+        </h:panelGrid>
+
+    </p:dialog>
+</f:view>

@@ -1,0 +1,346 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" 
+        xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{contadorOrdenesValidarFirmar.init}"/>
+        </f:metadata>
+        <h:head>
+            <meta http-equiv="X-UA-Compatible" content="IE=8" />
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal">
+                
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                <p:messages id="msgExitoGuardarValidadoFirmado" showDetail="false" globalOnly="true" closable="true" />
+                
+                <p:panel id="panelContadorOrdenes" header="#{msj['titulo.validar.firmar.documento.electronico']}" styleClass="panel-interno">
+                    
+		<!-- Primera parte para mostrar las ordenes por validar y por firmar -->
+                    <h:outputLabel id="idPrimerPanel"
+                                   value="#{msj['titulo.ordenes.desahogo.revisiones.pendientes.validar.firmar']}"
+                                   style="font-weight:bold;font-family: Arial,sans-serif;font-size:11px" />
+                                   
+                    <p:dataTable value="#{contadorOrdenesValidarFirmar.listaTotalOrdenesValidarFirmar}" 
+                                 var="datos"
+                                 scrollWidth="100px" 
+                                 style="border:thin;width:836;" 
+                                 id="tablaConteoOrdenes">
+                        <p:column headerText="#{msj['label.encabezado.metodo.tipo']}" style=" border-bottom:1px solid;" >
+                            <p:outputLabel value="#{msj['label.metodo.revision.electronica.art.fracc.ree']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['label.metodo.art.la.eh']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['label.metodo.cartas.masivas.mca']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['label.metodo.gabinete.org']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['label.metodo.cartas.invitacion.uca']}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.ordenes.validar']}" style="text-align: center">
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalValidarREE}" >
+                                <f:param name="metodo" value="4"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarREE}" target="#{validarOrdenesRE.totalValidar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalValidarEHO}">
+                                <f:param name="metodo" value="1"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarEHO}" target="#{validarOrdenesRE.totalValidar}" />                                
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalValidarMCA}">
+                                <f:param name="metodo" value="5"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarMCA}" target="#{validarOrdenesRE.totalValidar}" />                                
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalValidarORG}">
+                                <f:param name="metodo" value="2"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarORG}" target="#{validarOrdenesRE.totalValidar}" />
+                            </p:commandLink>
+                            <br /><br />
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalValidarUCA}">
+                                <f:param name="metodo" value="3"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarUCA}" target="#{validarOrdenesRE.totalValidar}" />
+                            </p:commandLink>
+                        </p:column>
+                    
+                        <p:column headerText="#{msj['label.encabezado.ordenes.firmar']}" style="text-align:center">
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalFirmarREE}">
+                                <f:param name="metodo" value="4"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarREE}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalFirmarEHO}">
+                                <f:param name="metodo" value="1"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarEHO}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalFirmarMCA}">
+                                <f:param name="metodo" value="5"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarMCA}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalFirmarORG}">
+                                <f:param name="metodo" value="2"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarORG}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br /><br />
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalFirmarUCA}">
+                                <f:param name="metodo" value="3"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarUCA}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+		<!-- Segunda parte tabla resumen -->
+                    <h:outputLabel id="idPanelResumen"
+                                   value="#{msj['titulo.tabla.resumen.firmante']}"
+                                   style="font-weight:bold;font-family: Arial,sans-serif;font-size:11px" />
+                                   
+                    <p:dataTable value="#{contadorOrdenesValidarFirmar.listaResumenFirmantePropuestas}" 
+                                 var="datos"
+                                 scrollWidth="100px" 
+                                 style="border:thin;width:836;" 
+                                 id="tablaResumenPropuestas">
+                        <p:column headerText="#{msj['titulo.columna.apartado']}" style=" border-bottom:1px solid;" >
+                            <p:outputLabel value="#{msj['titulo.fila.canceladas']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['titulo.fila.rechazadas']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['titulo.fila.transferidas']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['titulo.fila.retroalimenta.programacion']}"/> <br/><br/>
+                            <p:outputLabel value="#{msj['titulo.fila.revision']}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['titulo.columna.validar']}" style="text-align: center">
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalCanceladasValidar}" >
+                                <f:param name="metodo" value="4"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarREE}" target="#{validarOrdenesRE.totalValidar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalRechazadasValidar}">
+                                <f:param name="metodo" value="1"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarEHO}" target="#{validarOrdenesRE.totalValidar}" />                                
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalTransferidasValidar}">
+                                <f:param name="metodo" value="5"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarMCA}" target="#{validarOrdenesRE.totalValidar}" />                                
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{validarOrdenesRE.configuraOrdenesValidar}" value="#{datos.totalRetroalimentadasValidar}">
+                                <f:param name="metodo" value="2"/>
+                                <f:setPropertyActionListener value="${datos.totalValidarORG}" target="#{validarOrdenesRE.totalValidar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:outputLabel>#{msj['label.no.aplica']}</p:outputLabel>
+                        </p:column>
+                    
+                        <p:column headerText="#{msj['titulo.columna.no.aprobada.firmante']}" style="text-align:center">
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalCanceladasNoAprobadas}">
+                                <f:param name="metodo" value="4"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarREE}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalRechazadasNoAprobadas}">
+                                <f:param name="metodo" value="1"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarEHO}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalTransferidasNoAprobadas}">
+                                <f:param name="metodo" value="5"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarMCA}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalRetroalimentadasNoAprobadas}">
+                                <f:param name="metodo" value="2"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarORG}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br /><br />
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalRevisionNoAprobadas}">
+                                <f:param name="metodo" value="3"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarUCA}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                        </p:column>
+                        
+                        <p:column headerText="#{msj['titulo.columna.retroalimentada.emision']}" style="text-align:center">
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalCanceladasRetroalimentadas}">
+                                <f:param name="metodo" value="4"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarREE}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalRechazadasRetroalimentadas}">
+                                <f:param name="metodo" value="1"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarEHO}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalTransferidasRetroalimentadas}">
+                                <f:param name="metodo" value="5"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarMCA}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br/><br/>
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalRetroalimentadas}">
+                                <f:param name="metodo" value="2"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarORG}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                            <br /><br />
+                            <p:commandLink action="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}" value="#{datos.totalRevisionRetroalimentadas}">
+                                <f:param name="metodo" value="3"/>
+                                <f:setPropertyActionListener value="${datos.totalFirmarUCA}" target="#{firmadoCadenasOriginalesMB.totalFirmar}" />
+                            </p:commandLink>
+                        </p:column>
+                        
+                        <p:column headerText="#{msj['titulo.columna.informada']}" style="text-align:center">
+                            <p:outputLabel>#{msj['label.no.aplica']}</p:outputLabel>
+                            <br/><br/>
+                            <p:outputLabel>#{msj['label.no.aplica']}</p:outputLabel>
+                            <br/><br/>
+                            <p:outputLabel>#{msj['label.no.aplica']}</p:outputLabel>
+                            <br/><br/>
+                            <p:outputLabel>#{datos.totalRetroalimentadasInformadas}</p:outputLabel>
+                            <br /><br />
+                            <p:outputLabel>#{datos.totalRevisionInformadas}</p:outputLabel>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    
+		<!-- Grids ocultos inicialmente -->
+		
+                    <h:outputLabel id="idSegundoPanel"
+                                   value="#{msj['label.ordenes.prop.rechazadas.verificacion.procedencia']}"
+                                   style="font-weight:bold;font-family: Arial,sans-serif;font-size:11px" rendered="false" />
+                                   
+                    <p:dataTable value="#{contadorOrdenesValidarFirmar.propRechVerifProcedencia}" 
+                                  var="datosProp"
+                                  scrollWidth="100px" 
+                                  style="border:thin;width:836;" 
+                                  emptyMessage="#{msj['label.lista.vacia']}"
+                                  id="tablaOrdenesRechVerif" rendered="false">
+                        <p:column headerText="#{msj['label.ordenes.id.registro']}">
+                            <p:outputLabel value="#{datosProp.idRegistro}" />
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.rfc.contribuyente']}">
+                            <p:commandLink action="#{propuestasRechazadasVerifDoctoMB.consultaContribuyenteBD}" 
+                                    value="#{datosProp.rfcContribuyente}" >
+                                <f:setPropertyActionListener value="${datosProp.rfcContribuyente}"
+                                                         target="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.rfc}"/>
+                                <f:setPropertyActionListener value="${datosProp.idRegistro}"
+                                                         target="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.idRegistro}"/>
+                                <f:setPropertyActionListener value="${datosProp.idPropuesta}"
+                                                         target="#{propuestasRechazadasVerifDoctoMB.propRechazadasHelper.idPropuesta}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.prioridad']}">
+                            <div align="center">
+                                    <p:graphicImage rendered="#{datosProp.prioridad==1}"
+                                                    value="/resources/images/bandera.png" style="border:0"/>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.metodo']}">
+                            <p:outputLabel value="#{datosProp.metodo}" />
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.presuntiva']}">
+                             <h:outputText value="#{datosProp.presuntiva}" >
+                         <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                         </h:outputText>
+                      </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+                    
+                    <!-- Tercera parte Propuestas rechazadas pendientes de validacion -->
+                    <h:outputLabel id="idTercerPanel"
+                                   value="#{msj['label.ordenes.prop.rechazadas.pendientes.validacion']}"
+                                   style="font-weight:bold;font-family: Arial,sans-serif;font-size:11px" rendered="false" />
+                                   
+                    <p:dataTable value="#{contadorOrdenesValidarFirmar.propuestasRechazadasVerificarProcedencia}" 
+                                  var="datos"
+                                  scrollWidth="100px" 
+                                  style="border:thin;width:836;" 
+                                  emptyMessage="#{msj['label.lista.vacia']}"
+                                  id="tablaOrdenesPendValid" rendered="false">
+                        <p:column headerText="#{msj['label.ordenes.id.registro']}">
+                            <p:outputLabel value="#{datos.idRegistro}" />
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.rfc.contribuyente']}">
+                            <p:commandLink style="color:blue;"
+                                action="propuestaPendienteValidar?faces-redirect=true" value="#{datos.fecetContribuyente.rfc}" ajax="true"
+                                update="@form"> 
+                                <f:setPropertyActionListener value="${datos}" 
+                                        target="#{contadorOrdenesValidarFirmar.seleccionPopuestasRechazadasVerificarProcedencia}"/>
+                            </p:commandLink>
+                        </p:column>
+                        
+                        
+                        
+                        <p:column headerText="#{msj['label.ordenes.prioridad']}">
+                        <div align="center">
+                                    <p:graphicImage rendered="#{datos.prioridad}"
+                                                    value="/resources/images/bandera.png" style="border:0"/>
+                        </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.metodo']}">
+                            <p:outputLabel value="#{datos.feceaMetodo.nombre}" /> 
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.presuntiva']}">
+                          <h:outputText value="#{datos.presuntiva}" >
+                         <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                         </h:outputText>
+                        </p:column>
+                        
+                    </p:dataTable>
+                    <br/>
+                    
+                    <br/>
+                    <!-- Cuarta parte -->
+                    <h:outputLabel id="idCuartoPanel"
+                                   value="#{msj['label.ordenes.prop.transferidas.pendientes.validacion']}"
+                                   style="font-weight:bold;font-family: Arial,sans-serif;font-size:11px" rendered="false" />
+                    <p:dataTable value="#{contadorOrdenesValidarFirmar.propTransferPendValidacion}" 
+                                  var="datos"
+                                  scrollWidth="100px" 
+                                  style="border:thin;width:836;" 
+                                  emptyMessage="#{msj['label.lista.vacia']}"
+                                  id="tablaOrdenesTransfValid" rendered="false">
+                        <p:column headerText="#{msj['label.ordenes.id.registro']}">
+                            <p:outputLabel value="#{datos.idRegistro}" />
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.rfc.contribuyente']}">
+                            <p:commandLink action="#{propuestasTransferidasPendValidMB.consultaContribuyenteBD}" 
+                                    value="#{datos.rfcContribuyente}" >
+                                <f:setPropertyActionListener value="${datos.rfcContribuyente}"
+                                                         target="#{propuestasTransferidasPendValidMB.propTransPendValidDtoHelper.rfc}"/>
+                                <f:setPropertyActionListener value="${datos.idRegistro}"
+                                                         target="#{propuestasTransferidasPendValidMB.propTransPendValidDtoHelper.idRegistro}"/>
+                                <f:setPropertyActionListener value="${datos.idPropuesta}"
+                                                         target="#{propuestasTransferidasPendValidMB.propTransPendValidDtoHelper.idPropuesta}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.prioridad']}">
+                            <div align="center">
+                                    <p:graphicImage rendered="#{datos.prioridad==1}"
+                                                    value="/resources/images/bandera.png" style="border:0"/>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.metodo']}">
+                            <p:outputLabel value="#{datos.metodo}" />     
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.presuntiva']}">
+                            <h:outputText value="#{datos.presuntiva}" >
+                         <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                         </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.adace.a.transferir']}">
+                            <p:outputLabel value="#{datos.unidadAdmvaATransfer}" />
+                        </p:column>
+                    </p:dataTable>
+		<!-- Terminan grids ocultos iniciales -->
+                    <br/>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

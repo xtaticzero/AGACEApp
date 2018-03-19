@@ -1,0 +1,703 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+	<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+</h:head>
+<h:body>
+	<h:form enctype="multipart/form-data" id="formContribuyente"
+		styleClass="panel-principal"   >
+		<p:ajaxStatus onstart="PF('statusDialog').show();" 
+			onsuccess="PF('statusDialog').hide();"/>
+		<p:dialog modal="true" widgetVar="statusDialog"
+			header="#{msj['titulo.panel.espere']}" draggable="false"
+			closable="false" resizable="false">
+			<p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:panel id="panelOrdenes" 
+			style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;"
+			styleClass="panel-interno" header="#{msj['label.consulta.propuesta.centrarl']}">
+			<h:panelGrid border="0" columns="4">
+				<p:spacer width="10" height="1" />
+				<p:spacer width="300" height="1" />
+				<p:spacer width="300" height="1" />
+				<p:spacer width="10" height="1" />
+				<h:outputLabel value="#{msj['separador.panel.datos.contribuyente']}"
+					style="float:left;font-weight:bold" />
+				<p:spacer width="200" height="1" />
+				<h:outputLabel
+					value="Id del Registro: #{origenCentralRegionalMB.atrributeHelper.folioSeleccionado}"
+					style="float:right;font-weight:bold" />
+				<p:spacer width="10" height="1" />
+			</h:panelGrid>
+			<p:separator />
+			<h:panelGrid columns="3" id="panelDatosOrden" border="0"
+				styleClass="panel-secundario">
+				<h:outputLabel value="#{msj['lbl.propuestas.rfc']}" style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['lbl.propuestas.nombreRazonSocial']}"
+					style="font-weight:bold" />
+				<h:panelGrid id="panelBuscarContribuyente" columns="1">
+					<p:inputText ajax="false" id="txtRFC" maxlength="15"
+						disabled="true"
+						value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.rfc}">
+					</p:inputText>
+					<p:message id="msgRFC" for="txtRFC" display="text" />
+				</h:panelGrid>
+				<p:spacer width="50" height="1" />
+				<p:inputTextarea id="txtNombre" style="width:325px;height:16px;"
+					disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.nombre}" />
+				<h:outputLabel value="#{msj['lbl.propuestas.regimen']}" style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['lbl.propuestas.situacionContribuyente']}"
+					style="font-weight:bold" />
+				<p:inputText id="txtRegimen" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.regimen}" />
+				<p:spacer width="50" height="1" />
+				<p:inputText id="txtSituacion" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.situacion}" />
+				<h:outputLabel value="#{msj['label.tipo.contribuyente']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['lbl.propuestas.situacionDomicilio']}"
+					style="font-weight:bold" />
+				        
+				<p:inputText id="txtTipo" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.tipo}" />
+				<p:spacer width="50" height="1" />
+         			<p:inputText id="txtDomicilio" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.situacionDomicilio}" />
+
+                                
+                                <h:outputLabel value="#{msj['lbl.propuestas.domicilioFiscalContribuyente']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+                                <h:outputLabel value="#{msj['label.entidad']}"
+					style="font-weight:bold" />
+                                        
+                                <p:inputTextarea id="txtDomFiscal" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.domicilioFiscal}" />
+				<p:spacer width="10" height="1" />
+                        <p:inputText id="txtEntidad" style="width:325px;height:auto;border-bottom-width:20px;" disabled="true" value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.entidad}"/>
+
+                                <h:outputLabel value="#{msj['lbl.propuestas.actividadPreponderante']}"
+					style="font-weight:bold" />
+                                <p:spacer width="50" height="1" />
+                        	        
+				<p:spacer width="50" height="1" />
+                        	<p:inputTextarea id="txtActividad" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.contribuyente.actividadPreponderante}" />
+
+
+			</h:panelGrid>
+		</p:panel>
+	</h:form>
+
+	<h:form id="formInsumo"   enctype="multipart/form-data">
+		<p:panel id="panelListaOrdenes" styleClass="panel-interno" 
+			style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;">
+           <h:outputLabel value="#{msj['separador.panel.datos.previos.propuesta']}:"
+				style="font-weight:bold" rendered="true" />
+			<p:separator rendered="true" />
+			<h:panelGrid columns="8" border="0" styleClass="panel-secundario"
+				rendered="true">
+				<h:outputLabel value="#{msj['lbl.propuestas.unidadAdministrativaAtencion']}:" style="font-weight:bold; " />
+				<p:spacer width="10" height="1" />
+
+				<h:outputLabel value="#{msj['label.metodo.revision']}" style="font-weight:bold" />
+				<p:spacer width="20" height="1" />
+				<h:outputLabel value="#{msj['label.causa.programacion']}"
+					style="font-weight:bold" />
+				<p:spacer width="20" height="1" />
+				<h:outputLabel value="#{msj['label.tipo.propuesta']}" style="font-weight:bold" />
+				
+				<!--  -->
+				<p:selectOneMenu id="cmbUnidadAdministrativa" disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idArace}"
+					style="width:160px;">
+					<f:selectItem 
+                     itemLabel="#{msj['combo.item.selecciona.unidad']}" itemValue="-1"/>
+					<f:selectItems
+						value="#{origenCentralRegionalMB.listaHelper.listaUnidadAdministrativa}" var="lista"
+						itemLabel="#{lista.nombre}"
+						itemValue="#{lista.idArace}" />	
+                                       <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				<p:spacer width="20" height="1" />
+
+				<p:selectOneMenu id="cmbMetodo" disabled="#{!origenCentralRegionalMB.complementado}"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo}"
+					style="width:160px;">
+					<f:selectItem 
+                                                itemLabel="#{msj['combo.item.selecciona.metodo']}" itemValue="-1"/>
+					<f:selectItems
+						value="#{origenCentralRegionalMB.listaHelper.listaMetodoRevision}" var="lista"
+						itemLabel="#{lista.idMetodo} - #{lista.nombre}"
+						itemValue="#{lista.idMetodo}" />	
+                                       <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				   
+				<p:spacer width="20" height="1" />
+				<p:selectOneMenu id="cmbCausa" disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idCausaProgramacion}"
+					style="width:160px;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.causa']}" itemValue="-1"
+						 />
+					<f:selectItems
+						value="#{origenCentralRegionalMB.listaHelper.listaCausaProgramacion}"
+						var="lista"
+						itemLabel="#{lista.idCausaProgramacion} - #{lista.descripcion}"
+						itemValue="#{lista.idCausaProgramacion}" />
+                                        <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				<p:spacer width="20" height="1" />
+				<p:selectOneMenu id="cmbPropuesta" disabled="#{!origenCentralRegionalMB.complementado}"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idTipoPropuesta}"
+					style="width:160px;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.propuesta']}"
+						 itemValue="-1"/>
+					<f:selectItems
+						value="#{origenCentralRegionalMB.listaHelper.listaTipoPropuesta}" var="lista"
+						itemLabel="#{lista.idTipoPropuesta} - #{lista.descripcion}"
+						itemValue="#{lista.idTipoPropuesta}" />
+                <p:ajax event="change" ajax="true" update="@form" listener="#{origenCentralRegionalMB.tipoPropuesta}" />
+                </p:selectOneMenu>
+
+                                       
+                <!-- -->
+                <p:message id="msgUnidadAdministrativa" for="cmbUnidadAdministrativa" display="text" />
+				<p:spacer width="20" height="1" />
+                <p:message id="msgMetodo" for="cmbMetodo" display="text" />
+				<p:spacer width="20" height="1" />
+				<p:message id="msgCausa" for="cmbCausa" display="text" />
+				<p:spacer width="20" height="1" />
+                <p:message id="msgTipoPropuesta" for="cmbPropuesta" display="text" />
+                                
+				<!--  -->
+				<h:outputLabel value="#{msj['label.tipo.revision']}" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo==2}"
+					style="font-weight:bold" />
+				<p:spacer width="20" height="1" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo==2}"/>
+				<h:outputLabel value="#{msj['label.subprograma']}:"
+					style="font-weight:bold" />
+            	<p:spacer width="20" height="1" />
+            	<h:outputLabel value="#{msj['label.sector']}:"
+					style="font-weight:bold" />
+            	<p:spacer width="20" height="1" />
+            	<h:outputLabel value="#{msj['label.encabezado.prioridad']}:"
+					style="font-weight:bold" />
+				<p:spacer width="20" height="1" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo!=2}"/>
+				<p:spacer width="20" height="1" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo!=2}"/>
+				
+				<!--  -->
+
+				<p:selectOneMenu id="cmbRevision" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo==2}"
+                                        disabled="#{!origenCentralRegionalMB.complementado}"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idRevision}"
+					style="width:160px;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.revision']}" itemValue="-1"
+                                            	 />
+					<f:selectItems value="#{origenCentralRegionalMB.listaHelper.listaTipoRevision}"
+						var="lista" itemLabel="#{lista.idRevision} - #{lista.descripcion}"
+						itemValue="#{lista.idRevision}"/>
+						<p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				<p:spacer width="20" height="1" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo==2}"/>
+				<p:selectOneMenu id="cmbSubprograma" disabled="#{!origenCentralRegionalMB.complementado}"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idSubprograma}"
+					style="width:160px;">
+					<f:selectItem
+						itemLabel="#{msj['combo.item.selecciona.subprograma']}" itemValue="-1"
+					/>
+					<f:selectItems value="#{origenCentralRegionalMB.listaHelper.listaSubprograma}"
+						var="lista" itemLabel="#{lista.clave} - #{lista.descripcion}"
+						itemValue="#{lista.idSubprograma}" />
+                                                
+                <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+            	<p:spacer width="20" height="1" />
+				<p:selectOneMenu id="cmbSector" disabled="#{!origenCentralRegionalMB.complementado}"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idSector}"
+					style="width:160px;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.sector']}" itemValue="-1"
+						 />
+					<f:selectItems
+						value="#{origenCentralRegionalMB.listaHelper.listaSector}"
+						var="lista"
+						itemLabel="#{lista.descripcion}"
+						itemValue="#{lista.idSector}" />
+                                        <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+            	<p:spacer width="20" height="1" />
+				<p:selectOneMenu id="cmbPrioridad" disabled="true"
+					value="#{origenCentralRegionalMB.atrributeHelper.propuesta.prioridadSugerida}"
+					style="width:160px;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.prioridad']}" itemValue="-1"
+						 />
+					<f:selectItems
+						value="#{origenCentralRegionalMB.listaHelper.listPrioridad}"
+						var="lista"
+						itemLabel="#{lista.prioridad}"
+						itemValue="#{lista.prioridad}" />
+                <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				<p:spacer width="20" height="1" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo!=2}"/>
+				<p:spacer width="20" height="1" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo!=2}"/>
+				
+                 <!-- -->				
+                <p:message id="msgRevision" for="cmbRevision" display="text" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo==2}" />
+				<p:spacer width="20" height="1" rendered = "#{origenCentralRegionalMB.atrributeHelper.propuesta.idMetodo==2}"/>
+				<p:message id="msgSubprograma" for="cmbSubprograma" display="text" />
+				<p:spacer width="20" height="1" />
+				<p:message id="msgSector" for="cmbSector" display="text" />
+				<p:spacer width="20" height="1" />
+				<p:message id="msgPrioridad" for="cmbPrioridad" display="text" />
+                 <!--  last-->
+
+
+			</h:panelGrid>
+			<br />
+			<br />
+			<h:panelGrid id="panelPeriodoPropuesto" columns="7" width="100%">
+            	        
+                        <h:outputLabel  rendered="#{origenCentralRegionalMB.tipoPropuesta}" value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold" />
+                        <h:outputLabel  rendered="#{!origenCentralRegionalMB.tipoPropuesta}" value="#{msj['label.operaciones.especifica']}:" style="font-weight:bold" />
+                        <p:spacer width="50" height="1" />
+					    <h:outputLabel rendered="#{origenCentralRegionalMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.del']}:" style="font-weight:bold"/>
+                        <h:outputLabel  rendered="#{!origenCentralRegionalMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold"/>
+                    
+					<p:calendar  id="txtFechaInicial" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="#{!origenCentralRegionalMB.complementado}"
+						showOn="button" readonlyInput="true" size="6" maxdate="#{origenCentralRegionalMB.atrributeHelper.fechaActualPeriodo}" 
+						value="#{origenCentralRegionalMB.atrributeHelper.propuesta.fechaInicioPeriodo}" >
+					<p:ajax event="dateSelect" update="formInsumo:txtFechaFinal" listener="#{origenCentralRegionalMB.handleDateSelectFechaFinPeriodo}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+					</p:calendar>
+					
+					<p:spacer width="50" height="1" />
+					    <h:outputLabel rendered="#{origenCentralRegionalMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.al']}:" style="font-weight:bold"/>
+                        <h:outputLabel  rendered="#{!origenCentralRegionalMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold"/>
+                      
+					<p:calendar id="txtFechaFinal" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="#{!origenCentralRegionalMB.complementado}"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{origenCentralRegionalMB.atrributeHelper.propuesta.fechaFinPeriodo}"  maxdate="#{origenCentralRegionalMB.atrributeHelper.fechaActualPeriodo}" mindate="#{origenCentralRegionalMB.atrributeHelper.propuesta.fechaInicioPeriodo}">
+						
+
+					</p:calendar>
+					<p:spacer width="50" height="1" />
+					<p:spacer width="50" height="1" />
+					<p:message id="msgFechaInicial" for="txtFechaInicial" display="text" />
+					<p:spacer width="50" height="1" />
+					<p:spacer width="50" height="1" />
+					<p:message id="msgFechaFinal" for="txtFechaFinal" display="text" />
+			</h:panelGrid>
+
+
+
+
+
+			<h:panelGrid id="panelFechaInformeComite" columns="3"  width="70%">
+				<h:outputLabel  value="#{msj['lbl.propuestas.fechaInformacionComite']}:" style="font-weight:bold" />
+
+				<p:calendar  id="txtFechaInformeComite" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{origenCentralRegionalMB.atrributeHelper.propuesta.fechaInforme}" />
+				<p:spacer width="250" height="1" />
+			
+			</h:panelGrid>
+			
+			<h:panelGrid id="panelAcciones" width="850" rendered="true">
+				<p:column>
+					<h:panelGrid columns="7" id="panelImpuestos" border="0" rendered="#{origenCentralRegionalMB.complementado}"
+						styleClass="panel-secundario">
+						
+						<h:outputLabel value="#{msj['label.impuesto']}:" style="font-weight:bold" />
+						<p:spacer width="50" height="1" />
+						<h:outputLabel value="Concepto" style="font-weight:bold" />
+						<p:spacer width="50" height="1" />
+						
+						<h:outputLabel value="#{msj['label.monto']}:" style="font-weight:bold" />
+						<p:spacer width="50" height="1" />
+						
+					<p:spacer width="50" height="1" />
+						<p:selectOneMenu id="cmbImpuesto"
+							value="#{origenCentralRegionalMB.atrributeHelper.impuestoVO.idTipoImpuesto}"
+							style="width:160px;"  disabled="#{origenCentralRegionalMB.activarImpuesto}">
+							<f:selectItem
+								itemLabel="#{msj['combo.item.selecciona.tipoImpuesto']}" itemValue="-1"
+								 />
+							<f:selectItems
+								value="#{origenCentralRegionalMB.listaHelper.listaTipoImpuesto}" var="lista"
+								itemLabel="#{lista.abreviatura} - #{lista.descripcion}"
+								itemValue="#{lista.idTipoImpuesto}" />
+                           		<p:ajax update=":formInsumo:txtMonto  :formInsumo:panelImpuestos :formInsumo:msgImpuesto :formInsumo:msgMonto :formInsumo:cmbConcepto"  listener="#{origenCentralRegionalMB.agregarImpuestoCero}" event="change"  />
+                       	</p:selectOneMenu>
+                                        
+                       	<p:spacer width="50" height="1" />
+                        
+						<p:selectOneMenu id="cmbConcepto" disabled="#{origenCentralRegionalMB.activarImpuesto}"
+							value="#{origenCentralRegionalMB.atrributeHelper.impuestoVO.idConcepto}"
+							style="width:160px;"> 
+							<f:selectItem itemLabel="#{msj['combo.item.selecciona.prioridad']}" itemValue="-1"
+								 />
+							<f:selectItems
+								value="#{origenCentralRegionalMB.listaHelper.listConcepto}"
+								var="lista"
+								itemLabel="#{lista.descripcion}"
+								itemValue="#{lista.idConcepto}" />
+		                     <p:ajax  event="change"  />
+						</p:selectOneMenu>             
+                                        
+                        <p:spacer width="50" height="1" />
+                                        
+						<pe:inputNumber id="txtMonto" value="#{origenCentralRegionalMB.atrributeHelper.impuestoVO.monto}"  decimalSeparator="." thousandSeparator="," maxValue="999999999999.99" 
+									required="false" requiredMessage="" style="width:100px" decimalPlaces="2" disabled="#{origenCentralRegionalMB.activarImpuesto or origenCentralRegionalMB.activarMontoImpuesto}">
+                        	<p:ajax event="keyup" update=":formInsumo:msgMonto"/>
+                        </pe:inputNumber>
+						
+						<p:commandButton id="btnAgregarImpuesto"  disabled="#{!origenCentralRegionalMB.accion or origenCentralRegionalMB.activarImpuesto}" value="#{msj['boton.agregar']}"
+							actionListener="#{origenCentralRegionalMB.agregarImpuesto}" oncomplete="ocultaMsgAgace('msgImpuestoNA');"
+							update="@form" />
+						<p:spacer width="50" height="1" />
+						<p:message id="msgImpuesto" for="cmbImpuesto" display="text" />
+						<p:spacer width="50" height="1" />
+						<p:message id="msgConcepto" for="cmbConcepto" display="text" />						
+						<p:spacer width="50" height="1" />
+						<p:message id="msgMonto" for="txtMonto" display="text" />
+
+						
+						<p:spacer width="50" height="1" />
+					</h:panelGrid>
+				</p:column>
+			</h:panelGrid>
+			
+			
+						<p:messages id="msgImpuestoNA" for="btnAgregarImpuesto" showDetail="true"
+				globalOnly="true" closable="true" />
+
+			<br />
+			<br />
+			<p:column rendered="true">
+				<div align="center">
+					<p:dataTable id="tblImpuestos" var="impuesto"
+						value="#{origenCentralRegionalMB.listaHelper.listaImpuestos}"
+						emptyMessage="#{msj['label.lista.vacia']}" >
+						<f:facet name="header">
+							<h:outputLabel value="#{msj['label.impuestos']}" style="font-weight:bold" />
+						</f:facet>
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column rowspan="2" headerText="Impuesto" />
+								<p:column rowspan="2" headerText="Monto" />
+								<p:column rowspan="2" headerText="Concepto" />
+								<p:column colspan="1" headerText="" rendered="#{origenCentralRegionalMB.complementado}"/>
+							</p:row>
+							
+						</p:columnGroup>
+
+
+						
+								<p:column>
+									<h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}" />
+								</p:column>
+								<p:column style="text-align:center;">
+									<h:outputText value="#{impuesto.monto}" >
+										                                     <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+		
+									</h:outputText>
+								</p:column>
+								
+							
+								<p:column style="text-align:center;">
+									<h:outputText id="txtConcepto"
+										value="#{impuesto.fececConcepto.descripcion}">
+									
+									</h:outputText>
+								</p:column>
+							    
+								<p:column  rendered="#{origenCentralRegionalMB.complementado}">
+									<p:commandLink disabled="#{!origenCentralRegionalMB.accion}" value="#{msj['btn.eliminar']}"
+										action="#{origenCentralRegionalMB.descartarImpuesto}"
+										ajax="true" immediate="true" update="@form"
+										oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+										<f:setPropertyActionListener value="#{impuesto}"
+											target="#{origenCentralRegionalMB.atrributeHelper.impuestoSeleccionado}" />
+									</p:commandLink>
+								</p:column>
+						
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column footerText="#{msj['label.presuntiva']}" style="text-align:center;" />
+								<p:column style="text-align:center;">
+									<f:facet name="footer">
+										<h:outputText
+											value="#{origenCentralRegionalMB.totalMonto}" >
+											<f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+										</h:outputText>
+									</f:facet>
+								</p:column>
+                                 <p:column colspan="1" rendered="#{!origenCentralRegionalMB.complementado}"/>
+                                 <p:column colspan="2" rendered="#{origenCentralRegionalMB.complementado}"/>
+							</p:row>
+						</p:columnGroup>
+					</p:dataTable>
+				</div>
+			</p:column>	
+
+
+
+			<p:messages id="msgExitoDescartarOficioAnexo" showDetail="true"
+				globalOnly="true" closable="true" />
+
+			<h:panelGrid columns="2" cellpadding="10" width="100%" id="panelSubirArchivo"
+				rendered="#{origenCentralRegionalMB.complementado}">
+				<p:fileUpload id="fulExpediente"
+					fileUploadListener="#{origenCentralRegionalMB.cargaArchivoExpediente}"
+					mode="advanced" dragDropSupport="false" multiple="false"
+					style="width:350px;" label="#{msj['label.adjuntar']}"
+					cancelLabel="Cancelar todos" uploadLabel="Guardar"
+					showButtons="true" auto="true" ajax="true" partialSubmit="true"
+					update="tablaDocumentos msgExitoDescartarOficioAnexo"
+					oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');" />
+
+				<p:dataTable id="tablaDocumentos" var="documento"
+					style="text-align:left;width:300px;"
+					value="#{origenCentralRegionalMB.listaHelper.listaDocumento}" editable="false"
+					emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+					rows="15"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+					<f:facet name="header">
+						<h:outputLabel value="#{msj['label.encabezado.documento']}"
+							style="font-weight:bold" />
+					</f:facet>
+					<p:column headerText="#{msj['label.fecha.expediente']}" styleClass="someClass">
+						<h:outputText id="txtFechaHora" value="#{documento.fechaCreacion}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msj['label.nombre.expediente']}" styleClass="someClass">
+                                                <div style="width: 100px;">#{documento.nombre}</div>
+					</p:column>
+					<p:column>
+						<p:commandLink value="#{msj['label.descartar']}"
+							action="#{origenCentralRegionalMB.descartarDocumento}"
+							ajax="true" immediate="true" update="@form"
+							oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+							<f:setPropertyActionListener value="#{documento}"
+								target="#{origenCentralRegionalMB.atrributeHelper.documentoSeleccionado}" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+			<br />
+			
+			<p:column rendered="true">
+				<br/>
+				<div align="center">
+					<p:dataTable id="tablaDocumentacionExpediente"
+						value="#{origenCentralRegionalMB.listaHelper.listaDocumentosTabla}"
+						var="documento" editable="false"
+						emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+						rows="10"
+						paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({currentPage} de {totalPages})"
+						paginatorPosition="bottom">
+						<f:facet name="header">#{msj['label.expediente.electronico.informe']}</f:facet>
+
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+							width="100px">
+							<h:outputText id="txtFechaCargaPromocion"
+								value="#{documento.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+						<p:column id="hdrNombreDocumento"
+							headerText="#{msj['column.expediente']}">
+							<div style="width: 200px;">#{documento.nombre}</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.documento']}">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true"
+								style="float:left;padding:0px 5px;">
+								<f:setPropertyActionListener value="#{documento}"
+									target="#{origenCentralRegionalMB.atrributeHelper.documentoSeleccionado}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{origenCentralRegionalMB.descargaExpediente}" />
+							</h:commandButton>
+						</p:column>
+					</p:dataTable>
+				</div>
+			</p:column>
+			
+			<p:column rendered="true">
+				<br/>
+				<br/>
+				<br/>
+				<div align="right">
+                    <p:commandButton id="btnEnviarComite" value="#{msj['btn.enviar.comite']}"  disabled="#{!origenCentralRegionalMB.accion}"
+                        rendered="#{!origenCentralRegionalMB.complementado}"
+                        update="formInsumo:panelListaOrdenes formInsumo:registroCentralProp" 
+                        actionListener="#{origenCentralRegionalMB.validaFormularioRegistrar}" />
+                    
+                    <p:commandButton id="btnRegistrar" value="#{msj['btn.registrar']}"  disabled="#{!origenCentralRegionalMB.accion}"
+                        rendered="#{origenCentralRegionalMB.complementado}"
+                        update="formInsumo:panelListaOrdenes formInsumo:registroCentralProp" 
+                        actionListener="#{origenCentralRegionalMB.validaFormularioRegistrar}" />           
+                               
+                    
+     				<p:spacer width="10" height="1" />
+					<p:tooltip id="toolTipEnviarComite" for="btnEnviarComite" value="#{msj['leyenda.enviar.comite']}" />
+					<p:commandButton value="#{msj['boton.complementar']}" disabled="#{!origenCentralRegionalMB.accion}" update="@form" action="#{origenCentralRegionalMB.cambiaComplemento}" 
+					rendered="#{!origenCentralRegionalMB.complementado}" ajax="true" style="width:100px;" />
+
+					<p:spacer width="10" height="1" />
+ 
+             		<p:commandButton value="#{msj['btn.pantalla.anterior']}" action="indexOrigenCentralRegional" rendered="#{!origenCentralRegionalMB.complementado}"/>
+             		
+             		<p:commandButton value="#{msj['btn.pantalla.anterior']}"  update="@form" action="#{origenCentralRegionalMB.regresarComplemento}" 
+					rendered="#{origenCentralRegionalMB.complementado}" ajax="true"  />
+             		
+				</div>
+			</p:column>
+		</p:panel>
+
+	
+		<p:dialog
+			header="#{msj['label.mensaje.registro']}"
+			widgetVar="registroCentralProp" id="registroCentralProp" modal="true"
+			width="500" closable="false">
+
+
+			<div align="left">
+				<h:panelGrid columns="5" border="0" styleClass="panel-secundario">
+					<h:outputText value="#{msj['label.id.registro']}:"
+						style="float:left;font-weight:bold;" />
+					<h:outputText
+						value="#{origenCentralRegionalMB.atrributeHelper.propuesta.idRegistro}" />
+					<p:spacer width="15" height="1" />
+					<h:outputText value="#{msj['label.metodo']}"
+						style="float:left;font-weight:bold;" />
+					<h:outputText
+						value="#{origenCentralRegionalMB.atrributeHelper.propuesta.feceaMetodo.abreviatura}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3" border="0" styleClass="panel-secundario">
+					<p:row rendered="#{origenCentralRegionalMB.presenta}">
+					
+							<h:outputLabel value="*"
+								style="color:red" />
+							<h:outputLabel value="#{msj['label.fecha.pre.comite.reg']}"
+								style="font-weight:bold" />
+						
+						<p:spacer width="15" height="1" />
+						<p:calendar id="fechPresentacionComReg" navigator="true"
+							locale="es" pattern="dd/MM/yyyy" showOn="button"
+							readonlyInput="true" size="6" disabled="false"
+							value="#{origenCentralRegionalMB.atrributeHelper.fechaPresentacionComReg}">
+						</p:calendar>
+					</p:row>
+					<p:spacer width="15" height="1" />
+					<p:spacer width="15" height="1" />
+					<p:row rendered="#{origenCentralRegionalMB.informe}">
+						<h:outputLabel value="#{msj['label.fecha.inf.comite.reg']}"
+							style="font-weight:bold" />
+						<p:spacer width="15" height="1" />
+						<p:calendar navigator="true" id="fechInformeComReg" locale="es"
+							pattern="dd/MM/yyyy" showOn="button" readonlyInput="true"
+							size="6" disabled="false"
+							value="#{origenCentralRegionalMB.atrributeHelper.fechaInformeComReg}" />
+					</p:row>
+					<p:spacer width="15" height="1" />
+
+					<p:spacer width="15" height="1" />
+					<p:message id="msgFechInformeComReg" for="fechInformeComReg"
+						display="text" />
+					<p:message id="msgFechPresentacionComReg"
+						for="fechPresentacionComReg" display="text" />
+				</h:panelGrid>
+			</div>
+
+			<div align="center">
+
+
+				<p:commandButton value="#{msj['label.confirm.aceptar']}"
+					update="formInsumo:msgFechPresentacionComReg formInsumo:msgFechInformeComReg"
+					actionListener="#{origenCentralRegionalMB.validaRegistrar}" />
+
+
+				<p:spacer width="10" height="1" />
+
+				<p:commandButton id="cancelaRegistro" value="Cancelar"
+					 actionListener="#{origenCentralRegionalMB.limpiarFechas}" update="formInsumo:registroCentralProp"  style="width:80px;" />
+			</div>
+			<br />
+
+		</p:dialog>
+
+
+
+
+	</h:form>
+	
+	<h:form id="formRegistro" enctype="multipart/form-data" >
+	
+
+            
+
+		<p:dialog   
+		header="Confirmar" widgetVar="confirmarRegistro" resizable="false" modal="true" width="410" closable="false">
+			<h:outputText
+				value="¿Estás seguro que deseas confirmar el Registro #{origenCentralRegionalMB.atrributeHelper.propuesta.idRegistro}?"
+				style="float:left;font-weight:bold;" rendered="#{!origenCentralRegionalMB.complementado}"/>
+				
+				<h:outputText
+				value="El registro #{origenCentralRegionalMB.atrributeHelper.propuesta.idRegistro} será complementado, ¿está seguro que desea actualizarlo?"
+				style="float:left;font-weight:bold;" rendered="#{origenCentralRegionalMB.complementado}"/>
+				
+			<br />
+			<br />
+			<div align="center">
+                        
+                        
+                <p:commandButton value="#{msj['label.confirm.aceptar']}"
+					actionListener="#{origenCentralRegionalMB.registrarInsumoComite}" ajax="false"
+                                        onsuccess="PF('statusDialog').hide();PF('confirmarRegistro').close()"
+					update=":formRegistro" style="width:80px;" rendered="#{!origenCentralRegionalMB.complementado}"/>
+				
+				<p:commandButton value="#{msj['label.confirm.aceptar']}"
+					actionListener="#{origenCentralRegionalMB.registrarInsumoComplementar}" ajax="false"
+                                        onsuccess="PF('statusDialog').hide();PF('confirmarRegistro').close()"
+					update=":formRegistro" style="width:80px;" rendered="#{origenCentralRegionalMB.complementado}"/>
+                        
+				<p:spacer width="10" height="1" />
+
+				<p:commandButton value="#{msj['label.confirm.cancelar']}" ajax="false" partialSubmit="false"
+					type="button"
+					onclick="PF('confirmarRegistro').hide();"
+					style="width:80px;" />
+			</div>
+			<br />
+		</p:dialog>
+
+	</h:form>
+
+
+
+           
+	<h:outputScript library="js/" name="agace.js" />
+
+	<h:outputStylesheet library="css/" name="agace.css" />
+</h:body>
+	</html>
+</f:view>

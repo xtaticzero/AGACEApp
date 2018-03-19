@@ -1,0 +1,1383 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+<h:head></h:head>
+<h:body>
+	<h:form id="consultarReimprimirDoc" styleClass="panel-interno">
+		<p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+		<p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true" />
+
+		<h:panelGrid id="pnlConsultarDocumentosBusqueda" rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocBusqueda}">
+			<f:facet name="header">
+				<h:outputText value="#{msj['consultar.label.titulo.grl']}" />
+			</f:facet>
+		</h:panelGrid>
+
+		<h:panelGrid border="1"
+			rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocBusqueda}"
+			style="width:100%">
+			<h:panelGrid columns="8" cellspacing="20">
+				<h:outputText value="#{msj['consultar.label.rfc.contribuyente']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.representante.rfc}" />
+				<h:outputText></h:outputText>
+				<h:outputText></h:outputText>
+				<h:outputText></h:outputText>
+				<h:outputText></h:outputText>
+				<h:outputText value="#{msj['consultar.label.razon']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.representante.nombre}" />
+			</h:panelGrid>
+		</h:panelGrid>
+
+
+		<p:spacer height="30px" />
+
+		<h:panelGrid
+			rendered="#{consultarReimprimirDocumentosMB.renderTablaOrdenesGrl and consultarReimprimirDocumentosMB.visiblePnlConsultarDocBusqueda}">
+			<f:facet name="header">
+				<h:outputText value="#{msj['consultar.label.titulo']}" />
+			</f:facet>
+			<p:spacer height="10px" />
+			<p:dataTable id="tablaOrdenesGrl" var="ordenConsulta"
+				value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.listOrdenConsulta}"
+				style="display:block; text-align:center"
+				rendered="#{consultarReimprimirDocumentosMB.renderTablaOrdenesGrl and consultarReimprimirDocumentosMB.visiblePnlConsultarDocBusqueda}"
+				widgetVar="tablaOrdenesGrl" editable="false"
+				emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+				rows="15"
+				paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+	                                    {PreviousPageLink} &nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="({currentPage} de {totalPages})"
+				paginatorPosition="bottom">
+
+				<p:column headerText="#{msj['consultar.tableordengrl.metodo']}">
+					<h:outputText value="#{ordenConsulta.metodoSiglas}" />
+				</p:column>
+
+				<p:column headerText="#{msj['consultar.tableordengrl.numeroorden']}">
+					<p:commandLink id="linkDocRelacionada"
+						action="#{consultarReimprimirDocumentosMB.buscarDocRelacionada}"
+						ajax="true" proces="@this" update="@form">
+						<f:setPropertyActionListener
+							target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada}"
+							value="#{ordenConsulta}" />
+						<h:outputText value="#{ordenConsulta.numeroOrden}" />
+					</p:commandLink>
+				</p:column>
+
+				<p:column headerText="#{msj['consultar.tableordengrl.documento']}">
+					<h:commandButton ajax="true" image="/resources/images/document.png"
+						action="#{consultarReimprimirDocumentosMB.mostrarExpedienteOrden}"
+						update="dialogDocumentosFirmadosPdf">
+						<f:setPropertyActionListener
+							target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada}"
+							value="#{ordenConsulta}" />
+					</h:commandButton>
+				</p:column>
+
+				<p:column headerText="#{msj['consultar.tableordengrl.estatus']}">
+					<h:outputText value="#{ordenConsulta.estatus}" />
+				</p:column>
+
+			<!--  	<p:column
+					headerText="#{msj['consultar.tableordengrl.plazorestante']}">
+					<h:outputText value="#{ordenConsulta.plazoRestante}" />
+					<h:outputText
+						value=" #{ordenConsulta.plazoRestante==1? msj['consultar.tableordengrl.dia'] : msj['consultar.tableordengrl.dias']}"></h:outputText>
+				</p:column>-->
+			</p:dataTable>
+		</h:panelGrid>
+		<h:panelGrid border="1"
+			rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocRelacionada}"
+			style="width:100%;text-align:left;margin-left:10px" styleClass="panel-principal">
+			<h:panelGrid columns="6" cellspacing="10" style="width:100%;" styleClass="panel-principal" rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocRelacionada}">
+				<h:outputText value="#{msj['consultar.label.rfc.contribuyente']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.contribuyente.rfc}" />
+				<h:outputText value="#{msj['consultar.label.razon']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.contribuyente.nombre}" />
+				<h:outputText value="#{msj['consultar.label.estatusorden']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.estatus} " />
+				<h:outputText value="#{msj['consultar.label.idregistro']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.idRegistro}" />
+				<h:outputText value="#{msj['consultar.label.metodo']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.metodo}" />
+				<h:outputText value="#{msj['consultar.label.numeroorden']}:" />
+				<h:outputText
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.numeroOrden}" />
+				<h:outputText />
+			</h:panelGrid>
+		</h:panelGrid>
+		<p:spacer height="40px"/>
+		
+		<p:fieldset legend="Documentación enviada a la autoridad" toggleable="true" toggleSpeed="500" collapsed="true" rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocRelacionada}">
+				<p:dataTable var="promocionConsulta"
+					style="display:block; text-align:center"
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.listPromocionConsultaDTO}">
+					<f:facet name="header">
+						<div align="left">
+							<h:outputText value="#{msj['consultar.tablepromocion.titulo']}" />
+						</div>
+					</f:facet>
+					<p:column headerText="#{msj['consultar.tablepromocion.id']}">
+						<h:outputText value="#{promocionConsulta.idPromocion}" />
+					</p:column>
+					<p:column headerText="#{msj['consultar.tablepromocion.tipo']}">
+						<h:outputText value="#{promocionConsulta.tipoPromocionStr}" />
+					</p:column>
+					<p:column
+						headerText="#{msj['consultar.tablepromocion.fechaenvio']}">
+						<h:outputText value="#{promocionConsulta.fechaEnvio}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					<p:column
+						headerText="#{msj['consultar.tablepromocion.promocion']}">
+						<h:commandButton ajax="true"
+							image="/resources/images/document.png" process="@this"
+							title="#{promocionConsulta.nombreArchivo}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{promocionConsulta.rutaArchivo}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{promocionConsulta.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.descargarExpedientePromocionOrden}" />
+						</h:commandButton>
+					</p:column>					
+					<p:column headerText="#{msj['consultar.tablepromocion.anexos']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarDocPruebasAlegatos}"
+                                               value="#{promocionConsulta.documentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" immediate="true"
+                                               onclick="PF('dlgDocEnviada').show();" update=":consultarReimprimirDoc:tablaPruebasAlegatos :consultarReimprimirDoc:txtIdPromocion :consultarReimprimirDoc:txtFechaEnvio">
+                                    <f:setPropertyActionListener value="#{promocionConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.promocionConsultaSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+					
+					<p:column headerText="#{msj['consultar.tablepromocion.acuse']}">
+						<h:commandButton ajax="true"
+							image="/resources/images/document.png" process="@this"
+							title="#{promocionConsulta.nombreAcuse}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{promocionConsulta.rutaAcuse}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{promocionConsulta.nombreAcuse}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+						</h:commandButton>
+					</p:column>
+			<!--  		<p:column
+						headerText="#{msj['consultar.tablepromocion.extemporaneo']}">
+						<p:outputPanel rendered="#{promocionConsulta.extemporaneo}">
+							<h:commandButton image="/resources/images/ok.png" />
+						</p:outputPanel>
+						<p:outputPanel rendered="#{!promocionConsulta.extemporaneo}">
+							<h:commandButton image="/resources/images/cancel.png" />
+						</p:outputPanel>
+					</p:column> -->
+					<p:column
+						headerText="#{msj['consultar.tablepromocion.presentadopor']}">
+						<h:outputText value="#{promocionConsulta.presentadoPor}" />
+					</p:column>
+				</p:dataTable>
+		</p:fieldset>
+		<p:spacer width="495" height="1"/>
+		<p:fieldset legend="Documentos recibidos de la autoridad" toggleable="true" toggleSpeed="500" collapsed="true" rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocRelacionada}">
+				<p:dataTable var="oficioConsulta"
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.listOficioConsultaDTO}"
+					style="display:block; text-align:center">
+					<f:facet name="header">
+						<div align="left">
+							<h:outputText value="#{msj['consultar.tableoficio.titulo']}" />
+						</div>
+					</f:facet>
+					
+					<p:column headerText="#{msj['consultar.tableoficio.idoficio']}" style="width:80px">
+                            <p:outputPanel
+									rendered="#{!oficioConsulta.oficioConRequerimiento}">
+									<h:outputText value="#{oficioConsulta.idOficio}" />
+								</p:outputPanel>
+                            <p:outputPanel
+									rendered="#{oficioConsulta.oficioConRequerimiento}">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarProrrogaOficio}"
+                                               value="#{oficioConsulta.idOficio}"  style="color:#0170b7;"
+                                               ajax="true" immediate="true"
+                                               onclick="PF('dlgDocOficiosRequerimientos').show();" update=":consultarReimprimirDoc:tablaPromocionOficio :consultarReimprimirDoc:tablaProrrogaOficio: :consultarReimprimirDoc:cabecera ">
+                                    <f:setPropertyActionListener value="#{oficioConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado}"/>
+                                </p:commandLink>
+                            </p:outputPanel>
+                        </p:column>					
+					
+					
+					<p:column headerText="#{msj['consultar.tableoficio.tipo']}">
+						<h:outputText value="#{oficioConsulta.tipoOficio}" />
+					</p:column>
+					<p:column headerText="#{msj['consultar.tableoficio.oficio']}">
+						<h:commandButton ajax="true"
+							image="/resources/images/document.png" process="@this"
+							title="#{oficioConsulta.nombreArchivo}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{oficioConsulta.rutaArchivo}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{oficioConsulta.nombreArchivo}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficio}"
+								value="#{oficioConsulta}" />	
+								
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.descargarExpedienteOficio}" />
+						</h:commandButton>
+					</p:column>
+					
+					
+					
+					
+					
+					
+					
+					
+					<p:column headerText="#{msj['consultar.tableoficio.acuse']}">
+						<h:commandButton ajax="true"
+							image="/resources/images/document.png" process="@this"
+							title="#{oficioConsulta.nombreAcuseNyv}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{oficioConsulta.rutaAcuseNyv}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{oficioConsulta.nombreAcuseNyv}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+						</h:commandButton>
+					</p:column>
+					<p:column headerText="#{msj['consultar.tableoficio.fecnoti']}">
+						<h:outputText value="#{oficioConsulta.fechaNotificacion}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>					
+					<p:column headerText="#{msj['column.label.oficios.dependientes']}" style="width:70px">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarOficiosDependientes}"
+                                               value="#{oficioConsulta.oficiosDependientes}" style="color:#0170b7;"
+                                               update=":consultarReimprimirDoc:tablaDlgOficiosDependientes"
+                                               ajax="true"  immediate="true" onclick="PF('dlgDocDependiente').show();">
+                                    <f:setPropertyActionListener value="#{oficioConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column> 
+				</p:dataTable>
+		</p:fieldset>
+		<p:spacer width="495" height="1"/>
+		<p:fieldset legend="Solicitudes de prórroga enviadas a la autoridad" toggleable="true" toggleSpeed="500" collapsed="true" rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocRelacionada}">
+				<p:dataTable var="prorrogaOrdenConsulta"
+					value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.listProrrogaOrdenConsultaDTO}"
+					style="display:block; text-align:center">
+					<f:facet name="header">
+						<div align="left">
+							<h:outputText value="#{msj['consultar.tableprorroga.titulo']}" />
+						</div>
+					</f:facet>
+
+					<p:column
+						headerText="#{msj['consultar.tableprorroga.idprorroga']}">
+						<h:outputText value="#{prorrogaOrdenConsulta.idProrroga}" />
+					</p:column>
+					<p:column headerText="#{msj['consultar.tableprorroga.fecsol']}">
+						<h:outputText value="#{prorrogaOrdenConsulta.fechaSolicitud}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msj['consultar.tableprorroga.acuse']}">
+						<h:commandButton ajax="true"
+							image="/resources/images/document.png" process="@this"
+							title="#{prorrogaOrdenConsulta.nombreAcuse}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{prorrogaOrdenConsulta.rutaAcuse}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{prorrogaOrdenConsulta.nombreAcuse}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+						</h:commandButton>
+					</p:column>					
+					<p:column headerText="#{msj['column.label.documentacion.solicitud']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarDocProrrogaOrden}"
+                                               value="#{prorrogaOrdenConsulta.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocProrrogaEnviada').show();" update=":consultarReimprimirDoc:tablaDocsProrrogaOrden :consultarReimprimirDoc:txtIdProrroga :consultarReimprimirDoc:txtProrrogaFechaEnvio">
+                                    <f:setPropertyActionListener value="#{prorrogaOrdenConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.prorrogaOrdenConsultaSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+					<p:column headerText="#{msj['consultar.tableprorroga.docresol']}">
+						<h:commandButton ajax="true"
+							image="/resources/images/document.png" process="@this"
+							title="#{prorrogaOrdenConsulta.nombreResolucion}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{prorrogaOrdenConsulta.rutaResolucion}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{prorrogaOrdenConsulta.nombreResolucion}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+						</h:commandButton>
+					</p:column>
+					<p:column headerText="#{msj['consultar.tableprorroga.estatus']}">
+						<h:outputText value="#{prorrogaOrdenConsulta.estatus}" />
+					</p:column>
+					<p:column headerText="#{msj['consultar.tableprorroga.justificacion']}">
+						<h:outputText
+							value="#{prorrogaOrdenConsulta.flujoProrrogaOrdenConsultaDTO.motivo}" />
+					</p:column>					
+					<p:column headerText="#{msj['consultar.tableprorroga.anexo']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarDocAnexoResolProrrogaOrden}"
+                                               value="#{prorrogaOrdenConsulta.flujoProrrogaOrdenConsultaDTO.totalAnexos}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocProrrogaAnexos').show();" update=":consultarReimprimirDoc:tablaDlgProrrogaAnexos">
+                                               <f:setPropertyActionListener
+													target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.flujoProrrogaOrdenConsultaDTOSeleccionada}"
+														value="#{prorrogaOrdenConsulta.flujoProrrogaOrdenConsultaDTO}" />
+                                    <f:setPropertyActionListener value="#{prorrogaOrdenConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.prorrogaOrdenConsultaSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+				</p:dataTable>
+		</p:fieldset>
+		<p:spacer width="495" height="1"/>
+		<p:fieldset legend="Solicitudes de pruebas periciales enviadas a la autoridad" toggleable="true" toggleSpeed="500" collapsed="true" rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocRelacionada and consultarReimprimirDocumentosMB.visiblePruebasPericiales}">
+				<p:dataTable id="tablaPruebasPericiales" var="datos" rendered="#{consultarReimprimirDocumentosMB.visiblePruebasPericiales}"
+                                 value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.listaPruebasPericiales}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a p&aacute;gina: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <f:facet name="header">Pruebas Periciales</f:facet>
+                        <p:column headerText="#{msj['column.label.id.oficio']}" style="width:5%">
+                            #{datos.idPruebasPericiales}
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:5%">
+                            <h:outputLabel value="#{datos.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:5%">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreAcuse}" ajax="true"
+                                                 style="padding:0px 5px;">
+									<f:setPropertyActionListener
+										target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+										value="#{datos.rutaAcuse}" />
+									<f:setPropertyActionListener
+										target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+										value="#{datos.nombreAcuse}" />
+									<p:fileDownload contentDisposition="attachment"
+										value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.documentacion.solicitud']}" style="width:5%">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.obtenerDocPruebaPericialByIdPericial}"
+                                               value="#{datos.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" update=":consultarReimprimirDoc:dlgDocPruebasPericialesEnviada">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.pruebaPericialSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['consultar.tableprorroga.docresol']}" style="width:5%">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreResolucion}"
+                                                 ajax="true" style="padding:0px 5px;" rendered="#{datos.mostrarDocRes}">
+									<f:setPropertyActionListener
+										target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+										value="#{datos.rutaResolucion}" />
+									<f:setPropertyActionListener
+										target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+										value="#{datos.nombreResolucion}" />
+									<p:fileDownload contentDisposition="attachment"
+										value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />	                                   
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.estatus']}" style="width:5%">
+                            <h:outputLabel value="#{datos.fececEstatus.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['consultar.tableprorroga.justificacion']}" style="width:5%;">
+							<h:outputText value="#{datos.flujoPruebasPericiales.fececEstatus.descripcion}" />
+						</p:column>
+						<p:column headerText="#{msj['consultar.tableprorroga.anexo']}" style="width:5%;">
+							<p:commandLink id="linkDocAnexosResolPruebasPericiales"								
+								ajax="true" proces="@this" update="@form">
+								<h:outputText value="#{datos.flujoPruebasPericiales.totalAnexos}" />
+							</p:commandLink>
+						</p:column>
+                    </p:dataTable>
+		</p:fieldset>
+		
+		
+		<h:panelGrid id="pnlConsultarDocRelacionada"
+			rendered="#{consultarReimprimirDocumentosMB.visiblePnlConsultarDocRelacionada}"
+			cellspacing="0" styleClass="panel-principal" style="paddin:0px !important; border:none">
+			
+			<p:panel id="panelAsociarDocumentacionRelacionada"
+                        style="paddin:0px; border:none" styleClass="panel-principal">
+				
+				
+				<p:accordionPanel multiple="true" activeIndex="null">
+					<!-- Empieza representante legal -->
+					<p:tab title="Asociados del Contribuyente">
+							
+						
+						<p:dataTable id="tablaAsociados" var="asociado"
+							value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.asociados}"
+							style="display:block; text-align:center"							
+							widgetVar="tablaOrdenesGrl" editable="false"
+							emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+							rendered="true"
+							rows="15"
+							paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+				                                    {PreviousPageLink} &nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})"
+							paginatorPosition="bottom">
+							
+							<p:column headerText="Asociado">
+								<h:outputText value="#{asociado.nombreTipoAsociado}" />
+							</p:column>
+							<p:column headerText="RFC">
+								<h:outputText value="#{asociado.rfc}" />
+							</p:column>
+							<p:column headerText="Nombre">
+								<h:outputText value="#{asociado.nombre}" />
+							</p:column>
+							<p:column headerText="E-mail">
+								<h:outputText value="#{asociado.correo}" />
+							</p:column>
+							<p:column headerText="Documento sustento">
+							 <div align="center">
+								<p:commandButton value="Ver documentos" 
+                                        action="#{consultarReimprimirDocumentosMB.cargaDocumentosAsociados}" ajax="true"  immediate="true"  >
+                                      <f:setPropertyActionListener target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.asociadoSeleccionado}"
+                                                             value="#{asociado}"/>
+                                                  </p:commandButton>
+                                                  </div>
+							</p:column>
+							</p:dataTable>
+							
+                               
+                             
+						
+					</p:tab>
+					<!-- Termina representante legal -->
+					<!-- Empieza agente aduanal -->
+					<p:tab title="Agente Aduanal">
+						<p:panelGrid styleClass="noBorders" columns="2" style="width:100%" >
+							<p:panelGrid columns="2" id="panelDatosAgenteLegal" styleClass="noBorders"
+                                          style="width:500px;">
+                            <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                            <p:inputText style="width:90%;"
+												 disabled="true"
+												 value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.agenteAduanal.rfc}"/>
+							<h:outputLabel value="Nombre/Raz&oacute;n Social:" style="font-weight:bold"/>
+							<p:inputTextarea style="width:90%; height:auto;"
+												 value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.agenteAduanal.nombre}"
+												 disabled="true"/>
+							<h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+							<p:inputText style="width:90%;"
+												 disabled="true"
+												 value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.agenteAduanal.correo}"/>
+							<h:outputLabel value="#{msj['label.medios.contacto']}" style="font-weight:bold"/>
+							<p:selectBooleanCheckbox value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.agenteAduanal.medioContactoBoolean}"
+															 disabled="true"/>
+							<h:outputLabel value="&Oacute;rden sin Representante Legal:" style="font-weight:bold"/>
+							<p:selectBooleanCheckbox value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.agenteAduanal.sinColaborador}" disabled="true" />
+							
+							</p:panelGrid>
+							
+							
+							<p:panelGrid columns="1" id="panelDatosAgenteAduanalDocumentos" border="0" styleClass="noBorders">
+                             
+                            	<p:spacer width="100" height="1"/>                            		
+                        	 	<p:commandButton value="Documentos de Agente Aduanal" onclick="PF('dialogAgenteAduanal').show();"
+                                     type="button"  style="float:left;" rendered="#{!consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.agenteAduanal.sinColaborador}" />
+                             
+                             </p:panelGrid>
+						</p:panelGrid>
+						<p:separator/>
+                    </p:tab>
+				</p:accordionPanel>	
+				<br/>
+				<br/>
+				<p:spacer height="40px"/>
+				<p:commandButton value="#{msj['btn.pantalla.anterior']}"
+					style="float:right"
+					actionListener="#{consultarReimprimirDocumentosMB.mostrarPantallaConsulta}"
+					process="@this" update="@form" />
+			</p:panel>
+		</h:panelGrid>
+		
+
+		<h:panelGrid id="pnlAnexosOficios"
+			rendered="#{consultarReimprimirDocumentosMB.visiblePnlAnexosOficios}">
+			<h:panelGrid>
+				<h:panelGrid>
+					<f:facet name="header">
+						<h:outputText value="#{msj['consultar.pnl.anexosOficios.titulo']}" />
+					</f:facet>
+					<p:dataTable var="anexoOficio"
+						style="display:block; text-align:center"
+						value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado.listFecetOficioAnexo}">
+						<p:column
+							headerText="#{msj['consultar.pnl.anexosOficios.fecenvio']}">
+							<h:outputText value="#{anexoOficio.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy"/>
+							</h:outputText>
+						</p:column>
+						<p:column
+							headerText="#{msj['consultar.pnl.anexosOficios.presentadopor']}">
+							<h:outputText
+								value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado.presentadoPor}" />
+						</p:column>
+						<p:column
+							headerText="#{msj['consultar.pnl.anexosOficios.archivo']}">
+							<h:commandButton ajax="true"
+								image="/resources/images/document.png" process="@this"
+								title="#{anexoOficio.nombreArchivo}">
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+									value="#{anexoOficio.rutaArchivo}" />
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+									value="#{anexoOficio.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+							</h:commandButton>
+						</p:column>
+					</p:dataTable>
+					<p:spacer height="20px" />
+					<p:commandButton value="#{msj['btn.pantalla.anterior']}"
+						style="float:right"
+						actionListener="#{consultarReimprimirDocumentosMB.mostrarPantallaDocRelacionada}"
+						process="@this" update="@form" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</h:panelGrid>
+		
+		
+		
+		
+
+		
+		
+		<!-- Dialogo -->
+		<p:dialog id="dialogDocumentosFirmadosPdf"
+			header="#{msj['label.titulo.dialogo.doctos.orden']}"
+			widgetVar="dialogDocumentosFirmadosPdf" showEffect="clip" modal="true"
+			resizable="false" hideEffect="clip" width="510">
+			<p:dataTable id="tablaDocumentacionOrdenPdf"
+				value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.expedienteOrden}"
+				var="documentoOrden" editable="false"
+				emptyMessage="#{msj['label.lista.vacia']}" >
+				<p:column headerText="#{msj['column.fecha']}" width="100px">
+					<h:outputText id="txtFechaCargaDoctoOrden"
+						value="#{documentoOrden.fechaCreacion}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+							timeZone="America/Mexico_City" />
+					</h:outputText>
+				</p:column>
+				<p:column id="hdrNombreDocumentoOrden"
+					headerText="#{msj['column.expediente']}">
+					<div style="width: 200px; margin: auto;">#{documentoOrden.nombreArchivo}</div>
+				</p:column>
+				<p:column headerText="#{msj['label.encabezado.documento']}">
+					<div align="center">
+						<h:commandButton ajax="true" image="/resources/images/document.png"
+							style="padding:0px 5px;" title="#{documentoOrden.nombreArchivo}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{documentoOrden.rutaArchivo}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{documentoOrden.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.descargarExpedienteOrden}" />
+						</h:commandButton>
+					</div>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}"
+						style="font-weight:bold" />
+			<p:separator/>
+			<p:dataTable id="tablaOficiosOrdenPdf"
+				value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficiosFirmados}"
+				var="oficioOrden" editable="false"
+				emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+				paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="({currentPage} de {totalPages})"
+				paginatorPosition="bottom">
+				<p:column headerText="#{msj['column.fecha']}">
+					<h:outputText value="#{oficioOrden.fechaCreacion}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+							timeZone="America/Mexico_City" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="#{msj['column.oficio.expediente']}">
+	                 	#{oficioOrden.nombreArchivo}
+	                </p:column>
+				<p:column headerText="#{msj['label.encabezado.documento']}">
+					<div align="center">
+						<h:commandButton title="#{oficioOrden.nombreArchivo}" ajax="true"
+							image="/resources/images/document.png" style="padding:0px 5px;">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{oficioOrden.rutaArchivo}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{oficioOrden.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+						</h:commandButton>
+					</div>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:commandButton value="#{msj['btn.pantalla.anterior']}"
+				onclick="PF('dialogDocumentosFirmadosPdf').hide();"
+				icon="ui-icon-close" style="float:right" />
+		</p:dialog>
+		<!-- Dialogo de archivos de agente aduanal -->
+		<p:dialog id="dialogAgenteAduanal" header="Carga de Documentos" widgetVar="dialogAgenteAduanal" showEffect="clip" modal="true" resizable="false" hideEffect="clip" width="600">
+			<div style="width:100%">
+				<div style="width:50%; text-align:left; float:left;">
+					<b>N&uacute;mero de Orden: </b><h:outputText value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.numeroOrden}"/>
+				</div>
+				<div style="width:50%; float:left; text-align:right;">
+					<b>M&eacute;todo: </b> <h:outputText value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.ordenConsultaSeleccionada.metodo}"/>
+				</div>
+			</div>
+			<p:separator/>
+			<p:dataTable id="tablaAgenteAduanalRegistros"
+				value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.documentosAgente}"
+				var="documento" editable="false"
+				emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+				rows="5" paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+	                                    {PreviousPageLink} &nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="({currentPage} de {totalPages})"
+				paginatorPosition="bottom">
+				<f:facet name="header">
+					<div align="left">
+						<h:outputText value="Historial de Documentaci&oacute;n Agente Aduanal" />
+					</div>
+				</f:facet>
+				<p:column headerText="Id Promoci&oacute;n">
+					<div style="width: 200px; margin: auto;">#{documento.idPromocionAgenteAduanal}</div>
+				</p:column>
+				<p:column headerText="Fecha Env&iacute;o Promoci&oacute;n" width="100px">
+					<h:outputText value="#{documento.fechaCarga}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+							timeZone="America/Mexico_City" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Promoci&oacute;n">
+					<div align="center">
+						<h:commandButton ajax="true" image="/resources/images/document.png"
+							style="padding:0px 5px;" title="#{documento.nombreArchivo}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{documento.rutaArchivo}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{documento.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+						</h:commandButton>
+					</div>
+				</p:column>
+				<p:column headerText="Tipo de Promoci&oacute;n">
+					<div style="width: 100%; text-align:center;">#{documento.tipoPromocion}</div>
+				</p:column>
+				<p:column headerText="Documentos">
+					<div style="width: 100%; text-align:center">
+						<h:commandLink id="linkDocumentosAgente" value="#{documento.contadorPruebasAlegatos}" action="#{consultarReimprimirDocumentosMB.buscarAlegatosAgenteAduanal}" ajax="true" update="dialogAlegatosAgenteAduanal">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.documentoAgenteSeleccionado}"
+								value="#{documento}" />
+						</h:commandLink>
+					</div>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:commandButton value="#{msj['btn.pantalla.anterior']}"
+				onclick="PF('dialogAgenteAduanal').hide();"
+				icon="ui-icon-close" style="float:right" />
+		</p:dialog>
+		<!-- Documentos de alegatos de agente aduanal -->
+		<p:dialog id="dialogAlegatosAgenteAduanal" header="Documentos Enviados" widgetVar="dialogAlegatosAgenteAduanal" showEffect="clip" modal="true" resizable="false" hideEffect="clip" width="600" closable="false">
+			<div style="width:100%">
+				<div style="width:50%; text-align:left; float:left;">
+					<b>Id Promoci&oacute;n: </b><h:outputText value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.documentoAgenteSeleccionado.idPromocionAgenteAduanal}"/>
+				</div>
+				<div style="width:50%; float:left; text-align:right;">
+					<b>Fecha Env&iacute;o Promoci&oacute;n: </b> 
+					<h:outputText value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.documentoAgenteSeleccionado.fechaCarga}">
+						<f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX"
+							timeZone="America/Mexico_City" />
+					</h:outputText>
+				</div>
+			</div>
+			<p:separator/>
+			<p:dataTable id="tablaAlegatosAgenteAduanalRegistros"
+				value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.alegatos}"
+				var="documento" editable="false"
+				emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+				rows="5" paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+	                                    {PreviousPageLink} &nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="({currentPage} de {totalPages})"
+				paginatorPosition="bottom">
+				<p:column headerText="Id Documento">
+					<div style="width: 200px; margin: auto;">#{documento.idAlegatoAgenteAduanal}</div>
+				</p:column>
+				<p:column headerText="Nombre Documento">
+					<div style="width: 100%; text-align:center">
+						<h:outputText value="#{documento.nombreArchivo}"/>
+					</div>
+				</p:column>
+				<p:column headerText="Documentos">
+					<div align="center">
+						<h:commandButton ajax="true" image="/resources/images/document.png"
+							style="padding:0px 5px;" title="#{documento.nombreArchivo}">
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+								value="#{documento.rutaArchivo}" />
+							<f:setPropertyActionListener
+								target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+								value="#{documento.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarReimprimirDocumentosMB.archivoDescargable}" ajax="true"/>
+						</h:commandButton>
+					</div>
+				</p:column>
+			</p:dataTable>
+			<br />
+			<p:commandButton value="#{msj['btn.pantalla.anterior']}"
+				onclick="PF('dialogAlegatosAgenteAduanal').hide();"
+				icon="ui-icon-close" style="float:right" />
+		</p:dialog>
+		<p:dialog id="dlgDocPruebasPericialesEnviada" widgetVar="dlgDocPruebasPericialesEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false" modal="true" width="515" height="auto">
+			<div style="width: 100%">
+				<div style="width: 50%; text-align: left; float: left;">
+					<b>ID Prueba Pericial: </b>
+					<h:outputText
+						value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.pruebaPericialSeleccionada.idPruebasPericiales}" />
+				</div>
+				<div style="width: 50%; float: left; text-align: right;">
+					<b>Fecha Env&iacute;o Prueba Pericial: </b>
+					<h:outputText
+						value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.pruebaPericialSeleccionada.fechaCarga}">
+						<f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX"
+							timeZone="America/Mexico_City" />
+					</h:outputText>
+				</div>
+			</div>
+			<p:separator />
+			<p:dataTable id="tablaDocsPruebasPericiales" var="docs"
+				value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.listaDocPericiales}"
+				editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+				paginator="true" rows="5"
+				paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+				currentPageReportTemplate="({currentPage} de {totalPages})"
+				paginatorPosition="bottom">
+				<p:column headerText="#{msj['label.id.prorroga']}"
+					style="width:60px">#{docs.idDocPruebasPericiales}</p:column>
+				<p:column headerText="#{msj['label.nombre.documento']}"
+					style="width:110px">#{docs.nombreArchivo}</p:column>
+				<p:column headerText="" style="width:35px">
+					<h:commandButton image="/resources/images/document.png"
+						title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+						style="float:left;padding:0px 5px;">
+						<f:setPropertyActionListener
+							target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+							value="#{docs.rutaArchivo}" />
+						<f:setPropertyActionListener
+							target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+							value="#{docs.nombreArchivo}" />
+						<p:fileDownload contentDisposition="attachment"
+							value="#{consultarReimprimirDocumentosMB.archivoDescargable}"
+							ajax="true" />
+					</h:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:dialog>
+		
+		<p:dialog id="dlgDoc" widgetVar="dlgDoc" header="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.tituloDoc}" resizable="false"
+                          modal="true" width="600" height="auto" >
+                    
+            <h:panelGrid id="pnlDoc" columns="1">
+        		<p:outputLabel value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.tituloDoc}" style="font-weight:bold;"/>
+									<p:separator/>
+									<p:dataTable id="tablaDoc"
+											 value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.colaboradoresDTO.documentos}" var="documento"
+											 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+											 paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+											 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+										<p:column headerText="#{msj['column.nombre.documento']}" style="width:450px; border:1px solid !important;">
+											<div style="text-align:center;">
+												<h:outputText id="txtNombreArchivoRL" value="#{documento.nombreArchivo}"/>
+											</div>
+										</p:column>
+										<p:column id="hdrNombreDocumento" headerText="#{msj['column.documento']}" style="border:1px solid !important;">
+											<div style="text-align:center;">
+												<h:commandButton image="/resources/images/document.png" title="#{documento.nombreArchivo}" ajax="true">
+													<f:setPropertyActionListener value="${documento.rutaArchivo}" target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"/>
+													<f:setPropertyActionListener value="${documento.nombreArchivo}" target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"/>
+													<p:fileDownload contentDisposition="attachment" value="#{consultarReimprimirDocumentosMB.archivoDescargable}"/>
+												</h:commandButton>
+											</div>
+										</p:column>
+									</p:dataTable>
+			</h:panelGrid>
+		</p:dialog>
+		
+		<p:dialog widgetVar="dlgDocEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Promoción"/>
+                            <p:inputText id="txtIdPromocion" style="width:50px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.idPromocionSeleccionada}"/>
+                            <h:outputLabel value="Fecha de Envio Promoción"/>
+                            <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.fechaEnvioSeleccionada}"  >                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                         </p:inputText>  
+                           
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaPruebasAlegatos" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.promocionConsultaSeleccionada.listFecetAlegato}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:70px;text-align: center" >#{docs.idAlegato}</p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:250px;text-align: center">#{docs.nombreArchivo}</p:column>                                
+                                <p:column headerText="#{msj['consultar.tabledocalegato.archivo']}" style="width:70px;text-align: center">
+							<h:commandButton ajax="true"
+								image="/resources/images/document.png" process="@this"
+								title="#{docs.nombreArchivo}">
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+									value="#{docs.rutaArchivo}" />
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+									value="#{docs.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+							</h:commandButton>
+						</p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                <p:dialog widgetVar="dlgDocDependiente" header="#{msj['titulo.dlg.oficios.dependientes']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDlgOficiosDependientes" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado.listOficioDependientes}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px;text-align: center">
+                                    <h:outputLabel value="#{docs.fechaCarga}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.tipo.oficio']}" style="width:200px;text-align: center">#{docs.tipoOficio}</p:column>
+                                <p:column headerText="#{msj['label.anexos.oficio']}" style="width:35px;text-align: center">
+                                    <div align="center">
+                                        <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarAnexosOficioDependientes}"
+                                                       value="#{docs.anexos}" style="color:#0170b7;"
+                                                       ajax="true" onclick="PF('dlgAnexosOficio').show();" immediate="true"
+                                                       update=":consultarReimprimirDoc:tablaDlgAnexosOficio">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaDependeienteSeleccionado}"/>
+                                        </p:commandLink>
+                                    </div>
+                                </p:column>
+                                <p:column headerText="#{msj['consultar.pnl.oficiosdepen.doc']}" style="width:60px;text-align: center">
+							<h:commandButton ajax="true"
+								image="/resources/images/document.png" process="@this"
+								title="#{docs.nombreArchivo}">
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+									value="#{docs.rutaArchivo}" />
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+									value="#{docs.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+							</h:commandButton>
+						</p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                <p:dialog widgetVar="dlgAnexosOficio" header="#{msj['titulo.dlg.anexos.oficio']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDlgAnexosOficio" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaDependeienteSeleccionado.listFecetOficioAnexo}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px;text-align: center">
+                                    <h:outputLabel value="#{docs.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:200px;text-align: center">#{docs.nombreArchivo}</p:column>
+                                <p:column
+									headerText="#{msj['consultar.pnl.anexosoficidepen.archivo']}" style="width:50px;text-align: center">
+									<h:commandButton ajax="true"
+										image="/resources/images/document.png" process="@this" 
+										title="#{docs.nombreArchivo}">
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+											value="#{docs.rutaArchivo}" />
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+											value="#{docs.nombreArchivo}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+									</h:commandButton>
+						</p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                
+                <p:dialog widgetVar="dlgDocProrrogaEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Prórroga"/>
+                            <p:inputText id="txtIdProrroga" style="width:50px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.idProrrogaOrdenSeleccionada}"/>
+                            <h:outputLabel value="Fecha de Envio Prórroga"/>
+                            <p:inputText id="txtProrrogaFechaEnvio" style="width:80px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.fechaEnvioProrrogaOrdenSeleccionada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDocsProrrogaOrden" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.prorrogaOrdenConsultaSeleccionada.listFecetDocProrrogaOrden}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.id.prorroga']}" style="width:60px;text-align: center">#{docs.idProrrogaOrden}</p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:200px;text-align: center">#{docs.nombreArchivo}</p:column>
+                                <p:column
+									headerText="#{msj['consultar.pnl.documento']}" style="width:50px;text-align: center">
+									<h:commandButton ajax="true"
+										image="/resources/images/document.png" process="@this"
+										title="#{docs.nombreArchivo}">
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+											value="#{docs.rutaArchivo}" />
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+											value="#{docs.nombreArchivo}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{consultarReimprimirDocumentosMB.descargarExpedienteProrrogaOrden}" />
+									</h:commandButton>
+								</p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                
+                <p:dialog widgetVar="dlgDocProrrogaAnexos" header="#{msj['titulo.dlg.anexos.oficio']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDlgProrrogaAnexos" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.flujoProrrogaOrdenConsultaDTOSeleccionada.listAnexosProrrogaOrden}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px;text-align: center">
+                                    <h:outputLabel value="#{docs.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:200px;text-align: center">#{docs.nombreArchivo}</p:column>
+                                <p:column
+									headerText="#{msj['consultar.pnl.docanexosresolprororden.archivo'] }" style="width:50px;text-align: center">
+									<h:commandButton ajax="true"
+										image="/resources/images/document.png" process="@this"
+										title="#{docs.nombreArchivo}">
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+											value="#{docs.rutaArchivo}" />
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+											value="#{docs.nombreArchivo}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+									</h:commandButton>
+								</p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                														  
+                <p:dialog widgetVar="dlgDocOficiosRequerimientos"  resizable="false"
+                          modal="true" width="700" height="auto">
+				                          
+					<f:facet name="header">
+				       <h:outputText id="cabecera" value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado.tipoOficio}"/>
+				   </f:facet>                          
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaPromocionOficio" var="promocionOficioConsulta"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado.listPromocionOficioConsulta}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="2"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                         <f:facet name="header">
+							<h:outputText
+								value="#{msj['consultar.tablepromooficios.titulo']}" />
+						</f:facet>
+                        <p:column headerText="#{msj['consultar.tablepromooficios.id']}" style="width:50px;text-align: center">
+							<h:outputText
+								value="#{promocionOficioConsulta.idPromocionOficio}" />
+						</p:column>
+						<p:column headerText="#{msj['consultar.tablepromooficios.tipo']}" style="width:100px;text-align: center">
+							<h:outputText value="#{promocionOficioConsulta.tipoPromocionStr}" />
+						</p:column>
+						<p:column
+							headerText="#{msj['consultar.tablepromooficios.fecenvio']}" style="width:80px;text-align: center">
+							<h:outputText value="#{promocionOficioConsulta.fechaEnvio}">
+								<f:convertDateTime pattern="dd/MM/yyyy"/>
+							</h:outputText>
+						</p:column>
+						<p:column
+							headerText="#{msj['consultar.tablepromooficios.promocion']}" style="width:80px;text-align: center">
+							<h:commandButton ajax="true"
+								image="/resources/images/document.png" process="@this"
+								title="#{promocionOficioConsulta.nombreArchivo}">
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+									value="#{promocionOficioConsulta.rutaArchivo}" />
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+									value="#{promocionOficioConsulta.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarReimprimirDocumentosMB.descargarExpedientePromocionficio}" />
+							</h:commandButton>
+						</p:column>
+						<p:column headerText="#{msj['consultar.tablepromooficios.docContr']}" style="width:100px;text-align: center">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarDocPruebasAlegatosOficio}"
+                                               value="#{promocionOficioConsulta.documentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocPruebasOficioAlegatos').show();" update=":consultarReimprimirDoc:tablaDlgAlegatoOficio :consultarReimprimirDoc:txtIdPromocionOficio :consultarReimprimirDoc:txtFechaEnvioOficio">                                               
+                                    <f:setPropertyActionListener value="#{promocionOficioConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.promocionOficioConsultaSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+						<p:column headerText="#{msj['consultar.tablepromooficios.acuse']}" style="width:80px;text-align: center">
+							<h:commandButton ajax="true"
+								image="/resources/images/document.png" process="@this"
+								title="#{promocionOficioConsulta.nombreAcuse}">
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+									value="#{promocionOficioConsulta.rutaAcuse}" />
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+									value="#{promocionOficioConsulta.nombreAcuse}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+							</h:commandButton>
+						</p:column>
+				<!--  		<p:column
+							headerText="#{msj['consultar.tablepromooficios.extemporaneo']}">
+							<p:outputPanel rendered="#{promocionOficioConsulta.extemporaneo}">
+								<h:commandButton image="/resources/images/ok.png" />
+							</p:outputPanel>
+							<p:outputPanel
+								rendered="#{!promocionOficioConsulta.extemporaneo}">
+								<h:commandButton image="/resources/images/cancel.png" />
+							</p:outputPanel>
+						</p:column> -->
+						<p:column
+							headerText="#{msj['consultar.tablepromooficios.presentadopor']}" style="width:200px;text-align: center">
+							<h:outputText value="#{promocionOficioConsulta.presentadoPor}" />
+						</p:column>
+                      </p:dataTable>
+                            
+                            <p:spacer height="20px" />
+                            
+                            
+                            
+                            <p:dataTable id="tablaProrrogaOficio" var="prorrogaOficioConsulta"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.oficioConsultaSeleccionado.listProrrogaOficioConsulta}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="2"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom"> 
+                                         
+                            
+						<f:facet name="header">
+							<h:outputText
+								value="#{msj['consultar.tableprorrogaoficios.titulo']}" />
+						</f:facet>
+						<p:column headerText="#{msj['consultar.tableprorrogaoficios.id']}" style="width:70px;text-align: center">
+							<h:outputText value="#{prorrogaOficioConsulta.idProrroga}" />
+						</p:column>
+
+						<p:column
+							headerText="#{msj['consultar.tableprorrogaoficios.fecsol']}" style="width:90px;text-align: center">
+							<h:outputText value="#{prorrogaOficioConsulta.fechaSolicitud}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column
+							headerText="#{msj['consultar.tableprorrogaoficios.acuse'] }" style="width:80px;text-align: center">
+							<h:commandButton ajax="true"
+								image="/resources/images/document.png" process="@this"
+								title="#{prorrogaOficioConsulta.nombreAcuse}">
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+									value="#{prorrogaOficioConsulta.rutaAcuse}" />
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+									value="#{prorrogaOficioConsulta.nombreAcuse}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarReimprimirDocumentosMB.descargarExpedientePromocionOrden}" />
+							</h:commandButton>
+						</p:column>
+												<p:column headerText="#{msj['consultar.tableprorrogaoficios.doccontr']}" style="width:100px;text-align: center">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarDocProrrogaOficio}"
+                                               value="#{prorrogaOficioConsulta.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocProrrogaOficio').show();" update=":consultarReimprimirDoc:tablaDlgProrrogaOficio :consultarReimprimirDoc:txtIdProrrogaOficio :consultarReimprimirDoc:txtProrrogaFechaEnvioOficio">                                               
+                                    <f:setPropertyActionListener value="#{prorrogaOficioConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.prorrogaOficioConsultaSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+						<p:column
+							headerText="#{msj['consultar.tableprorrogaoficios.docresol']}" style="width:80px;text-align: center">
+							<h:commandButton ajax="true"
+								image="/resources/images/document.png" process="@this"
+								title="#{prorrogaOficioConsulta.nombreResolucion}">
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+									value="#{prorrogaOficioConsulta.rutaResolucion}" />
+								<f:setPropertyActionListener
+									target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+									value="#{prorrogaOficioConsulta.nombreResolucion}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+							</h:commandButton>
+						</p:column>
+
+						<p:column
+							headerText="#{msj['consultar.tableprorrogaoficios.estatus']}" style="width:100px;text-align: center">
+							<h:outputText value="#{prorrogaOficioConsulta.estatus}" />
+						</p:column>
+						<p:column
+							headerText="#{msj['consultar.tableprorrogaoficios.justificacion'] }" style="width:200px;text-align: center">
+							<h:outputText
+								value="#{prorrogaOficioConsulta.flujoProrrogaOficioConsultaDTO.motivo}" />
+						</p:column>
+						
+						<p:column headerText="#{msj['consultar.tableprorrogaoficios.anexosresol'] }" style="width:80px;text-align: center">
+                            <div align="center">
+                                <p:commandLink action="#{consultarReimprimirDocumentosMB.buscarDocAnexoResolProrrogaOficio}"
+                                               value="#{prorrogaOficioConsulta.flujoProrrogaOficioConsultaDTO.totalAnexos}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocProrrogaOficioAnexos').show();" update=":consultarReimprimirDoc:tablaDlgProrrogaOficioAnexos">
+                                               <f:setPropertyActionListener
+													target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.flujoProrrogaOficioConsultaDTOSeleccionada}"
+														value="#{prorrogaOficioConsulta.flujoProrrogaOficioConsultaDTO}" />
+                                    <f:setPropertyActionListener value="#{prorrogaOficioConsulta}"
+                                                                 target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.prorrogaOficioConsultaSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+					</p:dataTable>
+                            
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                
+                <p:dialog widgetVar="dlgDocPruebasOficioAlegatos" header="#{msj['consultar.pnl.docpruebasoficalegatos.titulo']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                    <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Promoción"/>
+                            <p:inputText id="txtIdPromocionOficio" style="width:50px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.idPromocionOficioSeleccionada}"/>
+                            <h:outputLabel value="Fecha de Envio Promoción"/>
+                            <p:inputText id="txtFechaEnvioOficio" style="width:80px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.fechaEnvioOficioSeleccionada}"  >                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                         </p:inputText>  
+                           
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDlgAlegatoOficio" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.promocionOficioConsultaSeleccionada.listFecetAlegatoOficio}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                    <h:outputLabel value="#{docs.fechaCarga}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                               <p:column
+									headerText="#{msj['consultar.tablealegatooficio.archivo']}">
+									<h:commandButton ajax="true"
+										image="/resources/images/document.png" process="@this"
+										title="#{docs.nombreArchivo}">
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+											value="#{docs.rutaArchivo}" />
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+											value="#{docs.nombreArchivo}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+									</h:commandButton>
+								</p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                
+                <p:dialog widgetVar="dlgDocProrrogaOficio" header="Documentación Contribuyente" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        
+                         <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Prórroga"/>
+                            <p:inputText id="txtIdProrrogaOficio" style="width:50px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.idProrrogaOficioSeleccionada}"/>
+                            <h:outputLabel value="Fecha de Envio Prórroga"/>
+                            <p:inputText id="txtProrrogaFechaEnvioOficio" style="width:80px;" readonly="true"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.fechaEnvioProrrogaOficioSeleccionada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDlgProrrogaOficio" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.prorrogaOficioConsultaSeleccionada.listFecetDocProrrogaOficio}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                    <h:outputLabel value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.prorrogaOficioConsultaSeleccionada.fechaSolicitud}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                               <p:column
+									headerText="#{msj['consultar.pnl.documento']}">
+									<h:commandButton ajax="true"
+										image="/resources/images/document.png" process="@this"
+										title="#{docs.nombreArchivo}">
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+											value="#{docs.rutaArchivo}" />
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+											value="#{docs.nombreArchivo}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{consultarReimprimirDocumentosMB.descargarExpedienteProrrogaOficio}" />
+									</h:commandButton>
+						</p:column>
+                            </p:dataTable>
+                            </h:panelGrid>
+                        
+                    </h:panelGroup>
+                </p:dialog>
+                
+                <p:dialog widgetVar="dlgDocProrrogaOficioAnexos" header="#{msj['consultar.pnl.docanexosresolprorofic.titulo'] }" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDlgProrrogaOficioAnexos" var="docs"
+                                         value="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.flujoProrrogaOficioConsultaDTOSeleccionada.listAnexosProrrogaOficios}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                    <h:outputLabel value="#{docs.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                <p:column
+									headerText="#{msj['consultar.pnl.docanexosresolprorofic.archivo'] }">
+									<h:commandButton ajax="true"
+										image="/resources/images/document.png" process="@this"
+										title="#{docs.nombreArchivo}">
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.rutaArchivo}"
+											value="#{docs.rutaArchivo}" />
+										<f:setPropertyActionListener
+											target="#{consultarReimprimirDocumentosMB.reimprimirDocumentosDTOHelper.nombreArchivo}"
+											value="#{docs.nombreArchivo}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{consultarReimprimirDocumentosMB.archivoDescargable}" />
+									</h:commandButton>
+								</p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                
+                
+                
+	</h:form>
+	<h:outputScript library="js/" name="agace.js"/>
+   	<h:outputStylesheet library="css/" name="agace.css"/>
+</h:body>
+</html>
+</f:view>

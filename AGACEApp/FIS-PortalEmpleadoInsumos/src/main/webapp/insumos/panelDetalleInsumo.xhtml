@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelDetalleInsumo" 
+             styleClass="panel-subinterno-insumos" 
+             header="#{msj['titulo.panel.detalle.insumo']}" 
+             rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.flgMostrarDetalleInsumo}">
+        <h:panelGrid id="panelCabeceraContribuyente" columns="3" border="0">
+            <p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}" style="font-weight:bold;"/>
+            <p:spacer width="470" height="10"/>
+            <p:outputLabel value="Id Registro: #{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.idRegistro}" style="font-weight:bold;"/>
+        </h:panelGrid>
+        <p:separator/>
+        <p:spacer width="60" height="5px;"/>
+        <p:spacer width="60" height="5px;"/>
+        <p:spacer width="60" height="5px;"/>
+        <h:panelGrid id="panelInputContribuyente" columns="3">
+            <h:outputLabel value="#{msj['label.rfc.contribuyente']}"
+                           style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <h:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+            <h:panelGrid id="panelBuscarContribuyente" columns="1">
+                <p:inputText id="txtRFC" maxlength="15" disabled="true"
+                             value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.rfc}"
+                             />                                
+            </h:panelGrid>
+            <p:spacer width="50" height="1"/>
+            <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                             value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.nombre}"/>
+            <h:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <h:outputLabel value="#{msj['label.situacion.contribuyente']}:" style="font-weight:bold;"/>
+            <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.regimen}"/>
+            <p:spacer width="50" height="15px"/>
+            <p:inputText id="txtSituacionContribuyente" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.situacion}"/>
+            <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+
+            <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/> 
+            <p:inputText id="txtTipoContribuyente" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.tipo}"/>
+            <p:spacer width="50" height="15px"/>
+
+            <p:inputText id="txtSituacionDomicilio" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.situacionDomicilio}"/> 
+            <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:"
+                           style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <h:outputLabel value="#{msj['label.actividad.preponderante']}:" style="font-weight:bold;"/> 
+            <p:inputTextarea id="txtDomicilioFiscalContribuyente" style="width:325px;height:auto;"
+                             disabled="true"
+                             value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.domicilioFiscal}"/>
+            <p:spacer width="50" height="15px"/>
+            <p:inputText id="txtActividadPreponderante" style="width:325px;height:auto;" disabled="true" 
+                         value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.actividadPreponderante}"/> 
+            <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <p:spacer width="50" height="1"/>
+            <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fecetContribuyente.entidad}"/>
+            <p:spacer width="50" height="15px"/>
+            <p:spacer width="50" height="1"/>
+        </h:panelGrid>
+        <p:spacer width="0px" height="25px"/>
+        <p:outputLabel value="#{msj['separador.panel.datos.previos.insumo']}" style="font-weight:bold;"/>
+        <p:separator/>
+        <p:spacer width="60" height="5px;"/>
+        <p:spacer width="60" height="5px;"/>
+        <p:spacer width="60" height="5px;"/>
+        <p:panelGrid id="panelInformacionInsumo" styleClass="noBorders" style="width:100%">
+            <p:row>
+                <p:column>
+                    <h:outputLabel value="#{msj['label.unidad.administrativa']}"
+                                   style="font-weight:bold" />
+                </p:column>
+                <p:column>
+                    <h:outputLabel value="#{msj['label.subprograma']}"
+                                   style="font-weight:bold" />
+                </p:column>
+                <p:column>
+                    <h:outputLabel value="#{msj['label.sector']}"
+                                   style="font-weight:bold;" />
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputTextarea id="txtUnidadAdministrativa" style="width:180px;height:auto;" disabled="true" cols="15"
+                                     value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fececUnidadAdministrativa.nombre}"/>
+                </p:column>
+                <p:column>
+                    <p:inputTextarea id="txtSubPrograma" style="width:180px;height:auto;" disabled="true" cols="15"
+                                     value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fececSubprograma.descripcion}"/>
+                </p:column>
+                <p:column>
+                    <p:inputTextarea id="txtSector" style="width:180px;height:auto;" disabled="true"
+                                     value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fececSector.descripcion}"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <h:outputLabel value="#{msj['label.encabezado.insumos.prioridad']}:" style="font-weight:bold"/>
+                </p:column>
+                <p:column colspan="2">
+                    <h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold;"/>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column>
+                    <p:inputText id="prioridadInsumo" value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.prioridadDto.valor}"
+                                 disabled="true"/>
+                </p:column>
+                <p:column colspan="2">
+                    <h:panelGrid id="panelPeriodoPropuesto" columns="5">
+                        <h:outputLabel value="#{msj['label.inicio']}:" style="font-weight:bold"/>
+                        <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                    readonlyInput="true" size="7" disabled="true"
+                                    value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fechaInicioPeriodo}"/>
+                        <p:spacer width="1" height="1"/>
+                        <h:outputLabel value="#{msj['label.fin']}:" style="font-weight:bold;"/>
+                        <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                    disabled="true"
+                                    value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.fechaFinPeriodo}"/>
+                    </h:panelGrid>
+                </p:column>
+            </p:row>
+        </p:panelGrid>
+        <p:dataTable id="tablaDocumentacionExpediente"
+                     value="#{consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.listaDocumentos}"
+                     var="doc" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                     paginator="true" rows="10"
+                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+            <f:facet name="header">
+                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+            </f:facet>
+            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="30%">
+                <h:outputText id="txtFechaCargaPromocion" value="#{doc.fechaCreacion}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                </h:outputText>
+            </p:column>
+            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                <div style="width: 200px;">
+                    <p:outputLabel value="#{doc.nombre}"/>
+                </div>
+            </p:column>
+            <p:column headerText="#{msj['column.documento']}" width="10%">
+                <div align="center">
+                    <p:commandButton image="/resources/images/document.png" 
+                                     title="Documento" 
+                                     ajax="false" 
+                                     immediate="true" 
+                                     process="@form" 
+                                     update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"
+                                     oncomplete="ocultaMsgAgace('msgs');"
+                                     style="padding:0px 5px;"
+                                     disabled="#{doc.nombre eq null}">
+                        <f:setPropertyActionListener value="#{doc.nombre}"
+                                                     target="#{consultaAdminInsumosMB.nombreArchivoDescarga}"/>
+                        <f:setPropertyActionListener value="#{doc.rutaArchivo}"
+                                                     target="#{consultaAdminInsumosMB.rutaArchivoDescarga}"/>
+                        <p:fileDownload value="#{consultaAdminInsumosMB.descargaDocumento}"/>
+                    </p:commandButton>
+                </div>
+            </p:column>
+        </p:dataTable>
+        <h:panelGrid style="width: 100%; text-align: right;">
+            <p:column colspan="3">
+                <div align="right">
+                    <p:commandButton id="regresarPantallaLstInsumos"
+                    				 value="#{msj['btn.pantalla.anterior']}" 
+                                     ajax="false" 
+                                     immediate="true"
+                                     action="#{consultaAdminInsumosMB.regresarPantallaLstInsumos}"
+                                     update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"/>
+                     <p:commandButton id="btnHistoricoRetroalimentacion"
+                                 value="#{msj['btn.propuestas.retroalimentar.historico']}"
+                                 action="#{consultaAdminInsumosMB.consultaHistoricoInsumo}"
+                                 update=":formConsultaXEstatusCentral:panelDialogoHistorico"
+                                 disabled="#{!((consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.noRetroalimentaciones ne 0) || consultaAdminInsumosMB.consultaInsumosHelper.insumosSeleccionado.noRechazos ne 0)}"/>
+                </div>
+            </p:column>
+        </h:panelGrid>
+    </p:panel>    
+    <ui:include src="dialogHistorico.xhtml" />    
+</f:view>

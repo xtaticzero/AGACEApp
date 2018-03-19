@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <p:dialog id="dlgAddUnidades"
+                  widgetVar="dlgAddUnidades" 
+                  header="#{msj['label.catalogo.relacionar.unidades.admin']}" 
+                  modal="true"
+                  minimizable="false" 
+                  maximizable="false" 
+                  resizable="false" 
+                  closable="false"
+                  draggable="false"
+                  width="600px">
+            <p:panel id="pnlAsociarUnidades">
+                <h:panelGrid columns="1">
+                    <h:panelGroup>
+                        <p:outputLabel value="#{msj['label.catalogo.modulo']}" style="font-weight: bold"/>
+                        <p:selectOneMenu id="selectModulo" value="#{catalogManagerMB.moduloSelecion}">
+                            <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue="0" />
+                            <f:selectItems value="#{catalogManagerMB.lstModulos}" var="modulo" itemLabel="#{modulo.nombre}" itemValue="#{modulo.idModulo}"/>
+                            <p:ajax event="change" listener="#{catalogManagerMB.cargarUnidadesDeModulo}" update=":formUnidadXGeneral:pnlAsociarUnidades :formUnidadXGeneral:pickListUnidadModulo"/> 
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+                    <p:pickList id="pickListUnidadModulo" 
+                                value="#{catalogManagerMB.lstUnidadesAdminDualModel}" 
+                                var="unid"
+                                itemValue="#{unid}"
+                                showCheckbox="true"
+                                converter="unidadAdminPickListConverter">
+                        <f:facet name="sourceCaption">#{msj['label.catalogo.pick.list.x.asignar']}</f:facet>
+                        <f:facet name="targetCaption">#{msj['label.catalogo.pick.list.asignadas']}</f:facet>
+                        <p:ajax event="transfer" listener="#{catalogManagerMB.onTransfer}" update=":formUnidadXGeneral:pnlAsociarUnidades" />
+                        <p:column>
+                            <p:outputLabel value="#{unid.idArace}" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{unid.nombre}" />
+                        </p:column>
+                    </p:pickList>
+                    <h:panelGroup>
+                        <p:commandButton id="idCancelarRelacion" value="#{msj['label.confirm.cancelar']}" 
+                                         onclick="PF('dlgAddUnidades').hide()" 
+                                         style="margin-top:5px"/>
+                        <p:commandButton id="idGuardarRelacion" 
+                                         value="#{msj['btn.guardar']}" 
+                                         actionListener="#{catalogManagerMB.guardarRelacion}" 
+                                         update=":formUnidadXGeneral:fsUnidadXModulo" 
+                                         onsuccess="PF('dlgAddUnidades').hide()" 
+                                         style="margin-top:5px"
+                                         disabled="#{!catalogManagerMB.flgBtnGuardatRelacion}"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+            </p:panel>
+        </p:dialog>
+        <p:dialog id="dlgDetalleUnidades"
+                  widgetVar="dlgDetalleUnidades" 
+                  header="Detalle Unidades Administrativas por Grupo" 
+                  modal="true"
+                  minimizable="false" 
+                  maximizable="false" 
+                  resizable="false" 
+                  closable="true"
+                  draggable="false"
+                  width="600px">
+            <p:panel id="pnlDetalleUnidades">
+                <p:dataTable id="tblDetalleUnidades" 
+                             var="detUnidades" 
+                             value="#{catalogManagerMB.grupoUnidadesXReglaSeleccionado.lstUnidadesAdministrativas}" 
+                             editable="true" 
+                             style="margin-bottom:20px"
+                             emptyMessage="#{msj['label.lista.vacia']}" 
+                             paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                             paginatorPosition="bottom">
+
+                    <f:facet name="header">
+                        Detalle de Unidades Administrativas Por Grupo
+                    </f:facet>
+
+                    <p:column headerText="Central" style="text-align: center; width: 60px;">
+                        <p:selectBooleanCheckbox value="#{detUnidades.central.value}" disabled="true"/>                        
+                    </p:column>
+
+                    <p:column headerText="Nombre Unidad Administrativa">
+                        <h:outputText value="#{detUnidades.nombre}" />
+                    </p:column>
+
+                    <p:column headerText="Sede Unidad Administrativa">
+                        <h:outputText value="#{detUnidades.sede}" />
+                    </p:column>
+
+                </p:dataTable>
+            </p:panel>
+        </p:dialog>
+        <p:dialog id="dlgAddUnidadesAGrupo"
+                  widgetVar="dlgAddUnidadesAGrupo" 
+                  header="#{msj['label.catalogo.relacion.unidades.grupo']}" 
+                  modal="true"
+                  minimizable="false" 
+                  maximizable="false" 
+                  resizable="false" 
+                  closable="false"
+                  draggable="false"
+                  width="600px">
+            <p:panel id="pnlAsociarUnidadesAGrupo">
+                <h:panelGrid>
+                    <h:panelGroup>
+                        <h:panelGrid columns="2" style="border: none; width: 400px" border="0" cellspacing="4" cellpadding="4">
+                            <p:outputLabel value="#{msj['label.catalogo.grupo']}" style="font-weight: bold"/>
+                            <p:selectOneMenu id="selectGrupo" value="#{catalogManagerMB.idGrupoSeleccionado}" style="width: 200px;">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue="-1"/>
+                                <f:selectItems value="#{catalogManagerMB.lstGrupos}" var="grupo" itemLabel="#{grupo.nombre}" itemValue="#{grupo.idGrupo}"/>
+                                <p:ajax event="change" listener="#{catalogManagerMB.cargarUnidadesDeGrupo}" update=":formUnidadXGeneral:pickListGrupoUnidadRegla :formUnidadXGeneral:idGuardarRelacionGrupo"/> 
+                            </p:selectOneMenu>
+                            <p:outputLabel value="#{msj['label.catalogo.regla']}" style="font-weight: bold"/>
+                            <p:selectOneMenu id="selectRegla" value="#{catalogManagerMB.idReglaSeleccionada}" style="width: 200px;">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue="-1"/>
+                                <f:selectItems value="#{catalogManagerMB.lstReglas}" var="regla" itemLabel="#{regla.clave}" itemValue="#{regla.idRegla}"/>
+                                <p:ajax event="change" listener="#{catalogManagerMB.cargarUnidadesDeGrupo}" update=":formUnidadXGeneral:pickListGrupoUnidadRegla :formUnidadXGeneral:idGuardarRelacionGrupo"/> 
+                            </p:selectOneMenu> 
+                        </h:panelGrid>
+
+                        <p:pickList id="pickListGrupoUnidadRegla" 
+                                    value="#{catalogManagerMB.lstUnidadesAdminXGrupoDualModel}" 
+                                    var="unid"
+                                    itemValue="#{unid}"
+                                    showCheckbox="true"
+                                    converter="unidadAdminPickListConverter">
+                            <f:facet name="sourceCaption">#{msj['label.catalogo.pick.list.x.asignar']}</f:facet>
+                            <f:facet name="targetCaption">#{msj['label.catalogo.pick.list.asignadas']}</f:facet>
+                            <p:column>
+                                <p:outputLabel value="#{unid.idArace}" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{unid.nombre}" />
+                            </p:column>
+                        </p:pickList>
+
+                        <p:commandButton id="idCancelarRelacionGrupo" value="#{msj['label.confirm.cancelar']}" 
+                                         onclick="PF('dlgAddUnidadesAGrupo').hide()" 
+                                         style="margin-top:5px"/>                        
+                        
+                        <p:commandButton id="idGuardarRelacionGrupo" 
+                                         value="#{msj['btn.guardar']}"                                          
+                                         update=":formUnidadXGeneral:fsGrupoUnidadRegla" 
+                                         onsuccess="PF('dlgAddUnidadesAGrupo').hide()" 
+                                         style="margin-top:5px"
+                                         disabled="#{!catalogManagerMB.flgBtnGuardatRelacionGrupo}"
+                                         actionListener="#{catalogManagerMB.guardarRelacionGrupo}"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+            </p:panel>
+        </p:dialog>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" closable="false">
+            <h:panelGrid style="text-align: center;width: 100%" columns="1">
+                <h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.si']}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="#{msj['label.confirm.no']}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </h:panelGroup>
+            </h:panelGrid>
+        </p:confirmDialog>
+    </html>
+</f:view>

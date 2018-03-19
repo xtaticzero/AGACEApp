@@ -1,0 +1,1108 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formValidarInsumo" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelOrdenes" header="Consultar y Validar Procedencia de Insumo"
+                         styleClass="panel-principal"
+                         rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarPanelOrdenes}">
+                    <br/>
+                    <h:outputLabel value="Insumos por Analizar." style="font-weight:bold"/>
+                    <br/>
+                    <br/>
+                    <p:dataTable id="tablaInsumosFiltro" widgetVar="tablaInsumoFiltro"  var="insumo" 
+                                 value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaInsumo}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a p&aacute;gina: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" filterDelay="1000">
+                        <p:column headerText="Detalle" width="32">
+                            <p:rowToggler/>
+                        </p:column>
+                        <p:column headerText="#{msj['column.folio']}" filterBy="#{insumo.idRegistro}" width="100">
+                            #{insumo.idRegistro}
+                        </p:column>
+                        <p:column headerText="RFC del Contribuyente" filterBy="#{insumo.fecetContribuyente.rfc}" width="100">
+                            <p:commandLink style="color:blue;"
+                                           action="#{validarProcedenciaInsumoManagedBean.cargaDocumentos}"
+                                           value="#{insumo.fecetContribuyente.rfc}" ajax="true" update="@form">
+                                <f:setPropertyActionListener value="${insumo}"
+                                                             target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="Prioridad Sugerida" width="40">
+                            <div align="center">
+                            	<h:outputText value="#{insumo.valorPrioridad}"/>
+                        	</div>
+                        </p:column>
+                        <p:column headerText="Plazo para concluir" width="40">
+                                    <div align="center">
+                                    	<h:outputText value="#{insumo.descripcionPlazoRestante}" rendered="#{insumo.semaforo != 10}"/>
+                                    	<h:outputText value="#{insumo.diasDespuesDePlazoDescripcion}" rendered="#{insumo.semaforo == 10}"/>
+                                    </div>
+                                </p:column>
+                                <p:column headerText="Sem&aacute;foro" filterBy="#{insumo.imagenSemaforo}" width="10%" filterMatchMode="exact">
+                                    <f:facet name="filter">
+		                                <p:selectOneMenu onchange="PF('tablaInsumoFiltro').filter()" >
+		                                    <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+		                                    <f:selectItem itemLabel="Verde" itemValue="semaforo-verde" />
+		                                    <f:selectItem itemLabel="Amarillo" itemValue="semaforo-amarillo" />
+		                                    <f:selectItem itemLabel="Naranja" itemValue="semaforo-naranja" />
+		                                    <f:selectItem itemLabel="Azul" itemValue="semaforo-azul" />
+		                                    <f:selectItem itemLabel="Gris" itemValue="semaforo-gris" />
+		                                    <f:selectItem itemLabel="Cafe" itemValue="semaforo-cafe" />
+		                                    <f:selectItem itemLabel="Rojo" itemValue="semaforo-rojo" />
+		                                    <f:selectItem itemLabel="Negro" itemValue="semaforo-negro" />
+		                                    <f:selectItem itemLabel="Beige" itemValue="semaforo-beige" />
+		                                    <f:selectItem itemLabel="Morado" itemValue="semaforo-morado" />
+		                                    <f:selectItem itemLabel="Blanco" itemValue="semaforo-blanco" />		                                    
+		                                </p:selectOneMenu>
+		                            </f:facet>
+		                            <div align="center">
+		                                <p:graphicImage value="/resources/images/#{insumo.imagenSemaforo}-16x16.png" style="border:0" title="#{insumo.descripcionSemaforo}"/>
+		                            </div>
+                                </p:column>
+                        <p:column headerText="Estatus" filterBy="#{insumo.fececEstatus.descripcion}" filterMatchMode="exact" width="100">
+                            <f:facet name="filter">
+				                <p:selectOneMenu onchange="PF('tablaInsumoFiltro').filter()" style="width: 100px">
+				                    <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true" />
+				                    <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaEstatusInsumo}" />
+				                </p:selectOneMenu>
+            				</f:facet>
+                            <h:outputText value="#{insumo.fececEstatus.descripcion}"/>
+                        </p:column>
+                                                
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="6" style="width:600px;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="Nombre / Razón Social:"/>
+                                <h:outputText value="#{insumo.fecetContribuyente.nombre}"/>
+                                <h:outputText value="Subprograma:"/>
+                                <h:outputText value="#{insumo.fececSubprograma.descripcion}"/>
+                                <h:outputText value="Sector:"/>
+                                <h:outputText value="#{insumo.fececSector.descripcion}"/>          
+                       
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </p:panel>
+                <p:panel id="panelContribuyente"
+                         style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;"
+                         styleClass="panel-principal" header="Detalle del Insumo"
+                         rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarPanelInsumo}">
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Datos del Contribuyente." style="float:right;font-weight:bold"/>
+                        <p:spacer width="500" height="1"/>
+                        <h:outputLabel value="Id Registro: " style="float:left;font-weight:bold"/>
+                        <h:outputLabel value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}"
+                                       style="float:left;font-weight:bold"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="3" id="panelDatosContribuyente" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Nombre/ Razón Social:" style="font-weight:bold"/>
+                        <p:inputText id="txtRfc" style="width:150px;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.rfc}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.nombre}"/>
+                        <p:message id="msgRFC" for="txtRfc" display="text"/> 
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value=" " style="font-weight:bold"/>
+                        
+                        <h:outputLabel value="Régimen:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Situación del Contribuyente:" style="font-weight:bold"/>
+                        <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.regimen}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.situacion}"/>
+                        <h:outputLabel value="Tipo de Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                        <p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.tipo}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtActividad" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.actividadPreponderante}"/>
+                        <h:outputLabel value="Domicilio Fiscal del Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Situación del Domicilio:" style="font-weight:bold"/>
+                        <p:inputTextarea id="txtDomFiscal" style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.domicilioFiscal}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.situacionDomicilio}"/>
+                                     
+                        <h:outputLabel value="Entidad:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fecetContribuyente.entidad}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                    </h:panelGrid>
+                </p:panel>
+                <p:panel id="panelDatosInsumo" styleClass="panel-principal"
+                         rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarPanelInsumo}"
+                         style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;">
+                    <br/>
+                    <h:outputLabel value="Datos Previos del Insumo." style="font-weight:bold"
+                                   rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}"/>
+                    <h:outputLabel value="Datos Previos de la Propuesta." style="font-weight:bold"
+                                   rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}"/>
+                    <p:separator/>
+                    <h:panelGrid columns="4" id="panelDatosInsumos" styleClass="panel-interno">
+                        <h:outputLabel value="#{msj['column.unidad.admin.atencion']}:" style="font-weight:bold"/>
+                        <h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/>
+                        <h:outputLabel value="#{msj['label.sector']}:" style="font-weight:bold"/>
+                        <h:outputLabel value="#{msj['label.tipo.insumo']}:" style="font-weight:bold"/> 
+                        
+                        <p:inputTextarea id="txtNombreUnidadAdministrativa" style="width:150px;height:auto;" disabled="true" cols="15"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fececUnidadAdministrativa.nombre}"/>                                                
+                        <p:inputTextarea id="txtSubPrograma" style="width:200px;height:70px;" disabled="true" cols="15"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fececSubprograma.descripcion}"/>
+                        <p:inputTextarea id="txtSector" style="width:150px;height:auto;" disabled="true"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fececSector.descripcion}"/>
+                        <p:inputTextarea id="txtTipoInsumo" style="width:150px;height:auto;" disabled="true"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fececTipoInsumo.descripcion}"/>
+                        
+                        
+                        <h:outputLabel value="#{msj['column.asignadas.prioridad']}:" style="font-weight:bold"/>                        
+                        <h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold"/>
+                        <p:spacer height="0"/>
+                        <p:spacer height="0"/>
+                        <p:inputText id="txtPrioridadSugerida" style="width:150px;height:auto;" disabled="true"
+                            value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.valorPrioridad}.- #{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.descripcionPrioridad} "/>                        
+                        <h:panelGrid id="panelPeriodoPropuesto" columns="5">
+                            <h:outputLabel value="#{msj['label.inicio']}:" style="font-weight:bold"/>
+                            <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="7" disabled="true"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fechaInicioPeriodo}"/>
+                            <h:outputLabel value="#{msj['label.fin']}:" style="font-weight:bold;"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                        disabled="true"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.fechaFinPeriodo}"/>
+                        </h:panelGrid>
+                        
+                    </h:panelGrid>
+                    <br></br>
+                    <h:panelGrid id="panelDatosPropuestaLabel" columns="4" styleClass="panel-interno" 
+                                 rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}">
+                                 <h:outputLabel value="Unidad Administrativa de Atención:" 
+                                       rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad}"
+                                       style="font-weight:bold;" />
+                        <h:outputLabel value="Método de Revisión:" style="font-weight:bold;text-align:left"/>
+                        <h:outputLabel value="Causa de Programación:" style="font-weight:bold"/>
+                        <h:outputLabel value="Tipo de Propuesta:" style="font-weight:bold"/>
+                                 
+                                 </h:panelGrid>
+                    <h:panelGrid id="panelDatosPropuesta" columns="4" styleClass="panel-interno"
+                                 rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}">
+                        
+                        <p:selectOneMenu id="cmbUnidad"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.idAraceSeleccionada}"
+                                         rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.unidad']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaUnidades}" var="lista"
+                                           itemLabel="#{lista.idUnidadAdministrativa} - #{lista.nombre}" itemValue="#{lista.idUnidadAdministrativa}"/>
+                            <p:ajax update="@form" event="change"
+                                    listener="#{validarProcedenciaInsumoManagedBean.reseteaMetodoSeleccionado}"/>
+                        </p:selectOneMenu>
+                        <p:selectOneMenu id="cmbMetodo"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.idMetodoSeleccionado}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.metodo']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaMetodoRevision}"
+                                           var="lista" itemLabel="#{lista.idMetodo} - #{lista.nombre}"
+                                           itemValue="#{lista.idMetodo}"/>
+                            <p:ajax update="@form" event="change"
+                                    listener="#{validarProcedenciaInsumoManagedBean.validaMetodoRevisionFechas}"/>
+                        </p:selectOneMenu>
+                        <p:selectOneMenu id="cmbCausa"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuesta.idCausaProgramacion}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.causa']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaCausaProgramacion}"
+                                           var="lista" itemLabel="#{lista.idCausaProgramacion} - #{lista.descripcion}"
+                                           itemValue="#{lista.idCausaProgramacion}"/>
+                        </p:selectOneMenu>
+                        <p:selectOneMenu id="cmbPropuesta"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuesta.idTipoPropuesta}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.propuesta']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaTipoPropuesta}" var="lista"
+                                           itemLabel="#{lista.idTipoPropuesta} - #{lista.descripcion}"
+                                           itemValue="#{lista.idTipoPropuesta}"/>
+                        </p:selectOneMenu>
+                        <p:message id="msgUnidad" for="cmbUnidad" display="text"
+                                   rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad}"/>
+                        <p:message id="msgMetodo" for="cmbMetodo" display="text"/>
+                        <p:message id="msgCausa" for="cmbCausa" display="text"/>
+                        <p:message id="msgPropuesta" for="cmbPropuesta" display="text"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDatosPropuesta2" columns="3" width="55%"
+                                 rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}">
+                        <h:panelGrid columns="1" width="200"
+                                     rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}">
+                            <h:outputLabel value="Fecha de Presentación a Comité#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.fechaRegional}"
+                                           style="font-weight:bold"/>
+                            <p:calendar id="txtFechaPresentacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="6"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuesta.fechaPresentacion}"/>
+                            <p:message id="msgFechaPresentacion" for="txtFechaPresentacion" display="text"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="200"
+                                     rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}">
+                            <h:outputLabel value="Fecha de Información a Comité#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.fechaRegional}"
+                                           style="font-weight:bold"/>
+                            <p:calendar id="txtFechaInformacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="6"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuesta.fechaInforme}"/>
+                            <p:message id="msgFechaInformacion" for="txtFechaInformacion" display="text"/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" width="200"
+                                     rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision}">
+                            <h:outputLabel value="Tipo de Revisión:" style="font-weight:bold"/>
+                            <p:selectOneMenu id="cmbRevision"
+                                             value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuesta.idRevision}"
+                                             style="width:175px;">
+                                <f:selectItem itemLabel="#{msj['combo.item.selecciona.revision']}" itemValue="-1"/>
+                                <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaTipoRevision}"
+                                               var="lista" itemLabel="#{lista.idRevision} - #{lista.descripcion}"
+                                               itemValue="#{lista.idRevision}"/>
+                            </p:selectOneMenu>
+                            <p:message id="msgRevision" for="cmbRevision" display="text"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    <p:messages id="msgExitoDescartarOficioAnexo" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid id="panelDocumentos" styleClass="panel-interno">
+                        <p:dataTable id="tablaDocumentacionExpediente"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaDocumentoInsumo}" var="documento"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="10"
+                                     paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom" style="width:98%;">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="40">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}" width="200">
+                                <div style="width:200px;">
+                                    #{documento.nombre}
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.documento']}" width="30">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="Documento"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{documento}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{validarProcedenciaInsumoManagedBean.documentoSeleccionDescarga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                    </h:panelGrid>
+                    <h:outputLabel value="Datos de Impuestos." style="font-weight:bold"
+                                   rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}"/>
+                    <p:separator rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}"/>
+                    <h:panelGrid columns="7" styleClass="panel-interno"
+                                 rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}">
+                        <h:outputLabel value="Impuesto:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Monto:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Periodo:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:selectOneMenu id="cmbImpuesto"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.idImpuesto}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipoImpuesto']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaTipoImpuesto}" var="lista"
+                                           itemLabel="#{lista.abreviatura} - #{lista.descripcion}"
+                                           itemValue="#{lista.idTipoImpuesto}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtMontoImpuesto"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.monto}"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:panelGrid id="panelPeriodoImpuesto" columns="5">
+                            <h:outputLabel value="Del:" style="font-weight:bold"/>
+                            <p:calendar id="txtPeriodo" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="6" disabled="false"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.fechaInicial}"/>
+                            <p:spacer width="1" height="1"/>
+                            <h:outputLabel value="Al:" style="font-weight:bold;"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="6"
+                                        disabled="false"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.fechaFin}"/>
+                        </h:panelGrid>
+                        <p:commandButton value="Agregar"
+                                         actionListener="#{validarProcedenciaInsumoManagedBean.agregarImpuesto}"
+                                         update="@form"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:message id="msgImpuesto" for="cmbImpuesto" display="text"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:message id="msgMonto" for="txtMontoImpuesto" display="text"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:message id="msgPeriodo" for="txtPeriodo" display="text"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelTablaImpuestos" styleClass="panel-interno"
+                                 rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}">
+                        <p:column>
+                            <div align="center">
+                                <p:dataTable id="tblImpuestos" var="impuesto"
+                                             value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaImpuestos}"
+                                             emptyMessage="#{msj['label.lista.vacia']}" style="width:500px;">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Impuestos" style="font-weight:bold"/>
+                                    </f:facet>
+                                    <p:columnGroup type="header">
+                                        <p:row>
+                                            <p:column rowspan="2" headerText="Impuesto"/>
+                                            <p:column rowspan="2" headerText="Monto"/>
+                                            <p:column colspan="2" headerText="Periodo"/>
+                                            <p:column rowspan="2" headerText=""/>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column headerText="Del"/>
+                                            <p:column headerText="Al"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <p:column>
+                                        <h:outputText value="#{impuesto.descripcion}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{impuesto.monto}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText id="txtFechaInicio" value="#{impuesto.fechaInicial}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText id="txtFechaFin" value="#{impuesto.fechaFin}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandLink value="#{msj['label.descartar']}"
+                                                       action="#{validarProcedenciaInsumoManagedBean.descartarImpuesto}"
+                                                       ajax="true" immediate="true" update="@form"
+                                                       oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+                                            <f:setPropertyActionListener value="#{impuesto}"
+                                                                         target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoSeleccionado}"/>
+                                        </p:commandLink>
+                                    </p:column>
+                                    <p:columnGroup type="footer">
+                                        <p:row>
+                                            <p:column footerText="Presuntiva: " style="text-align:right"/>
+                                            <p:column colspan="4" style="text-align:left;">
+                                                <f:facet name="footer">
+                                                    <h:outputText value="#{validarProcedenciaInsumoManagedBean.totalMonto}">
+                                                        <f:convertNumber type="currency" currencySymbol="$"/>
+                                                    </h:outputText>
+                                                </f:facet>
+                                            </p:column>
+                                        </p:row>
+                                    </p:columnGroup>
+                                </p:dataTable>
+                            </div>
+                        </p:column>
+                        <br/>
+                        <p:column>
+                            <div align="right">
+                                <p:commandButton value="Registrar"
+                                                 action="#{validarProcedenciaInsumoManagedBean.registrarInsumoPropuesta}"
+                                                 update="@form" style="width:80px;"/>
+                                 
+                                <p:spacer width="10" height="1"/>
+                                 
+                                <p:commandButton value="Limpiar"
+                                                 action="#{validarProcedenciaInsumoManagedBean.limpiarFormulario}"
+                                                 update="@form" style="width:80px;"/>
+                                 
+                                <p:spacer width="10" height="1"/>
+                                 
+                                <p:commandButton value="#{msj['btn.regresar']}" action="#{validarProcedenciaInsumoManagedBean.inicializarVariables}"
+                                                 update="@form"/>
+                            </div>
+                        </p:column>
+                    </h:panelGrid>
+                    <div align="center" >
+                        <p:panelGrid style="width:60%" > 
+                            <f:facet name="header"> 
+                                <p:row> 
+                                    <p:column colspan="2"> #{msj['titulo.tabla.justificacion.insumo']}
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column > 
+                                        #{msj['label.encabezado.documento']}
+                                    </p:column>
+                                    <p:column > 
+                                        #{msj['column.label.justificacion']}
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column style="text-align:center;">
+                                    <p:commandLink value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.numeroDeDocumentos}"
+                                                   onclick="PF('dialogJustificacionDoc').show();" ajax="true"
+                                                   immediate="true"  disabled="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.numeroDeDocumentos eq 0}"/>                                    
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.justificacion']}" style="text-align:center;">
+                                    <p:commandLink value="#{msj['label.insumo.detalle.justificacion']}"
+                                       onclick="PF('dialogJustificacion').show();" ajax="true"                                       
+                                       immediate="true" disabled="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.numeroDeDocumentos eq 0}"/>
+                                </p:column>    
+                            </p:row>        
+                        </p:panelGrid>                         
+                    </div>                             
+                                                 
+                    <h:panelGrid id="panelAcciones" style="text-align:right" styleClass="panel-interno"
+                                 rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarOpcionesPropuesta}">
+                        <br/>
+                        <p:column>
+                            
+                            <p:commandButton value="#{msj['btn.pantalla.anterior']}" style="width:105px;"
+                                             action="#{validarProcedenciaInsumoManagedBean.inicializarVariables}" update="@form"/>
+                            <p:spacer width="10" height="1"/>
+                            <p:commandButton value="#{msj['btn.propuestas.retroalimentar.historico']}" style="width:180px;"
+                                             action="#{validarProcedenciaInsumoManagedBean.mostrarHistoricoRetroalimentacion}"
+                                              onclick="PF('dlgInsumosRetroalimentados').show()" 
+                                              update=":formValidarInsumo:tablaInsumosRetroalientados :formValidarInsumo:pnlgrpBotonesHistoricoRetro :formValidarInsumo:idRegistroHistorico"/> 
+                            <p:spacer width="10" height="1" rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarBotonProgramacion}"/>
+                            <p:commandButton value="#{msj['btn.no.aprobar']}" style="width:80px;"  action="#{validarProcedenciaInsumoManagedBean.limpiaListas}"
+                                            onclick="PF('rechazoInsumo').show();" update="tablaDocsRechazo"
+                                            rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarBotonProgramacion}"/>
+                            <p:spacer width="10" height="1" rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarBotonProgramacion}"/>
+                            <p:commandButton value="#{msj['btn.retroalimentar']}" style="width:100px;" update="tablaRetroalimentaciones"
+                                             onclick="PF('retroalimentacionInsumo').show();" action="#{validarProcedenciaInsumoManagedBean.limpiaListas}"
+                                             rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarBotonProgramacion}"/>
+                            <p:spacer width="10" height="1"/>
+                            <p:commandButton value="#{msj['btn.complementar.insumo']}" style="width:150px;"
+                                             onclick="PF('confirmarRegistrar').show();" rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarBotonProgramacion}"/>
+                            <p:commandButton value="#{msj['btn.programacion']}"
+                                             action="#{validarProcedenciaInsumoManagedBean.activarComplementarInsumo}" rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarBotonProgramacion}"
+                                             update="@form"/>
+                        </p:column>
+                    </h:panelGrid>
+                </p:panel>
+                
+                <p:dialog header="#{msj['lbl.motivo.rechazo.insumo']}" id="rechazoInsumo" widgetVar="rechazoInsumo"
+                          resizable="false" modal="true" width="500" closable="false">
+                    <div align="left">
+                        <p:messages id="msgExitoRechazarInsumo" showDetail="true" globalOnly="true" closable="true"/>
+                         
+                        <h:panelGrid columns="5" border="0" styleClass="panel-secundario">
+                            <h:outputText value="#{msj['titulo.label.fecha.no.aprobacion']}:" style="float:left;font-weight:bold;"/>
+                            <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.fechaActual}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                            <h:outputText value=" " style="float:left;font-weight:bold;"/>
+                            <h:outputText value="Id Registro:" style="float:left;font-weight:bold;"/>
+                            <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}"/>
+                        </h:panelGrid>
+                         
+                        <br/>
+                         
+                        <h:panelGrid columns="2">
+                            <h:outputText value="#{msj['upl.adjuntar.documento']} " 
+                                style="float:left;font-weight:bold;width:160px;"/>
+                            
+                            <p:fileUpload id="fulExpediente"
+                                      fileUploadListener="#{validarProcedenciaInsumoManagedBean.cargaArchivoRechazo}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true" partialSubmit="true"
+                                      update="msgExitoRechazarInsumo tablaDocsRechazo"
+                                      oncomplete="ocultaMsgAgace('msgExitoRechazarInsumo');"/>
+                        </h:panelGrid>
+                        
+                        <br/><br/>
+                        <p:dataTable id="tablaDocsRechazo" var="documentacionRechazo" value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaDocRechazoInsumo}"
+                            editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                        <p:column headerText="#{msj['label.titulo.fecha.carga']}" width="50" styleClass="someClass">
+                            <h:outputText id="txtFechaCargaPromocion2" value="#{documentacionRechazo.fechaCreacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msj['label.nombre.archivo']}" styleClass="someClass" width="150" style="table-layout:fixed">
+                            <div style="width:150px;">#{documentacionRechazo.nombreArchivo}</div>
+                        </p:column>
+                        
+                        <p:column width="40">
+                                <p:commandLink value="#{msj['label.descartar']}" action="#{validarProcedenciaInsumoManagedBean.descartarDocumentoRechazo}" 
+                                        ajax="true" immediate="true" update="tablaDocsRechazo">
+                                    <f:setPropertyActionListener value="#{documentacionRechazo}" target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.docrechazoInsumoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>                            
+                    </p:dataTable>
+                        <div style="height:10px;"/>
+                        
+                        <p:outputLabel value="#{msj['titulo.motivo.no.aprobacion']} " style="float:left;font-weight:bold;"/><br/><br/>
+                         
+                        <p:inputTextarea id="txaMotivoRechazo"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.motivoRechazo}" rows="10" 
+                                         cols="75" maxlength="400"/>
+                         
+                        <p:message id="msgMotivoRechazo" for="txaMotivoRechazo" display="text"/>
+                         
+                        <br/>
+                    </div>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton value="#{msj['btn.aceptar']}" icon="ui-icon-check"
+                                         action="#{validarProcedenciaInsumoManagedBean.validarRechazoInsumo}"
+                                         update="msgExitoRechazarInsumo msgMotivoRechazo" style="width:80px;"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" onclick="PF('rechazoInsumo').hide();" style="width:80px;" update="@form" ajax="true" 
+                                icon="ui-icon-close" action="#{validarProcedenciaInsumoManagedBean.reseteaRechazo}"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarValidacion" resizable="false"
+                          modal="true" width="400" visible="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{validarProcedenciaInsumoManagedBean.mensajeValidacion}" escape="false"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('confirmarValidacion').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;"/>
+                </p:dialog>
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarAceptarInsumo" resizable="false"
+                          modal="true" width="400" visible="false" closable="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{validarProcedenciaInsumoManagedBean.mensajeValidacion}" escape="false"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('confirmarValidacion').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;" action="#{validarProcedenciaInsumoManagedBean.inicializarVariables}" update="@form"/>
+                </p:dialog>
+                <p:dialog header="Confirmar" widgetVar="confirmarRechazo" resizable="false" modal="true" width="410">
+                    <h:outputText value="¿Est&aacute;s seguro que no deseas aprobar el Insumo #{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}?"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton id="aceptarRec" value="#{msj['label.confirm.aceptar']}"
+                                         action="#{validarProcedenciaInsumoManagedBean.rechazarInsumo}"
+                                         onsuccess="PF('confirmarRechazo').hide();" update="@form" style="width:80px;"
+                                         oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" onclick="PF('confirmarRechazo').hide();" 
+                            style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                <p:dialog header="#{msj['lbl.retro.insumo']}" widgetVar="retroalimentacionInsumo" id="retroalimentacionInsumo" resizable="false"
+                          modal="true" width="500" closable="false">
+                    <div align="left">
+                        <p:messages id="msgExitoRetroalimentarInsumo" showDetail="true" globalOnly="true"
+                                    closable="true"/>
+                         
+                        <h:panelGrid columns="5" border="0" styleClass="panel-secundario">
+                            <h:outputText value="#{msj['titulo.label.fecha.solicitud']}:" style="float:left;font-weight:bold;"/>
+                            <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.fechaActual}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                            <h:outputText value=" " style="float:left;font-weight:bold;"/>
+                            <h:outputText value="Id Registro: " style="float:left;font-weight:bold;"/>
+                            <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}"/>
+                        </h:panelGrid>
+                         
+                        <br/>
+                         
+                        <h:panelGrid columns="2" border="0">
+                            <h:outputText value="#{msj['upl.adjuntar.documento']} " style="float:left;font-weight:bold;width:160px;"/>
+                            
+                            <p:fileUpload fileUploadListener="#{validarProcedenciaInsumoManagedBean.cargaArchivoRetroalimentar}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:300px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true" partialSubmit="true"
+                                      update="msgExitoRetroalimentarInsumo tablaRetroalimentaciones"
+                                      oncomplete="ocultaMsgAgace('msgExitoRetroalimentarInsumo');"/>
+                        </h:panelGrid>
+                        <br/><br/>
+                        <p:dataTable id="tablaRetroalimentaciones" var="tablaRetroalimentaciones" value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaDocRetroInsumo}"
+                            editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                        <p:column headerText="#{msj['label.titulo.fecha.carga']}" width="50" 
+                                    styleClass="someClass">
+                            <h:outputText id="txtFechaCargaPromocion3" value="#{tablaRetroalimentaciones.fechaCreacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msj['label.nombre.archivo']}" styleClass="someClass" width="150" 
+                                    style="table-layout:fixed">
+                            <div style="width:150px;">#{tablaRetroalimentaciones.nombreArchivo}</div>
+                        </p:column>
+                        
+                        <p:column width="40">
+                                <p:commandLink value="#{msj['label.descartar']}" action="#{validarProcedenciaInsumoManagedBean.descartarDocumentoRetro}" 
+                                        ajax="true" immediate="true" update="tablaRetroalimentaciones">
+                                    <f:setPropertyActionListener value="#{tablaRetroalimentaciones}" target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.docretroInsumoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>                            
+                    </p:dataTable>
+                    <br/><br/>
+                         
+                        <p:outputLabel value="#{msj['titulo.columna.tabla.motivo']}*:" style="float:left;font-weight:bold;"/><br/><br/>
+                         
+                        <p:inputTextarea id="txaMotivoRetroalimentar"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.motivoRetroalimentacion}"
+                                         rows="10" cols="75" maxlength="400"/>
+                         
+                        <p:message id="msgMotivoRetroalimentar" for="txaMotivoRetroalimentar" display="text"/>
+                         
+                        <br/>
+                    </div>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" update="@form" ajax="true" 
+                                         onclick="PF('retroalimentacionInsumo').hide();" action="#{validarProcedenciaInsumoManagedBean.reseteaRetroalimentacion}"
+                                         icon="ui-icon-close" style="float:right;"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton value="#{msj['label.confirm.aceptar']}" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         action="#{validarProcedenciaInsumoManagedBean.validarRetroalimentarInsumo}"
+                                         update="msgExitoRetroalimentarInsumo msgMotivoRetroalimentar"
+                                         style="width:80px;float:right;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                <!-- Dialogo para archivos retroalimentacion insumos -->
+                 <p:dialog widgetVar="dlgInsumosRetroalimentados" id="dlgInsumosRetroalimentados" resizable="false"
+                          modal="true" width="800" scrolleable="true" height="320" header="#{msj['titulo.historico']}" closable="false" > 
+                    <p:spacer height="20px"/>
+                    
+                    <p:panel id="panelDialogoHistorico" style="width:1100px">
+                        <h:panelGrid id="idRegistroHistorico" columns="3" cellpadding="4" border="0">
+                                <p:spacer height="1" width="880"/>
+                                <h:outputText value="Id Registro:" style="font-weight:bold"/>
+                                <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}"/>
+                            </h:panelGrid>
+                        
+                        <p:dataTable id="tablaInsumosRetroalientados" var="insumosRetroalimentados" value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumosRetroalimentadosContador}"
+                            editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                            paginator="true" rows="15" paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+                                {PreviousPageLink} &nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                            currentPageReportTemplate="({currentPage} de {totalPages})"
+                            paginatorPosition="bottom" rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarTablaArchivosRetro}">
+                            
+                            <f:facet name="header">  
+                                #{msj['titulo.tabla.retroalimentacion.insumo']}
+                            </f:facet>
+                        	
+                        	<p:column headerText="Detalle" width="32">
+                            	<p:rowToggler/>
+                        	</p:column>    
+                            
+                            <p:column headerText="Unidad Administrativa" width="60">
+                                <h:outputText value="#{insumosRetroalimentados.nombreUnidadAdministrativa}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Subprograma" width="75">
+                                <h:outputText value="#{insumosRetroalimentados.descripcionSubprograma}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Sector" width="60">
+                                <h:outputText value="#{insumosRetroalimentados.descripcionSector}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Prioridad sugerida" width="45">
+                                <div align="center">
+                                	<h:outputText value="#{insumosRetroalimentados.idPrioridad}"/>
+                                </div>
+                            </p:column>
+                            <p:column headerText="Inicio" width="50">
+	                        	<div align="center">
+	                                <h:outputText value="#{insumosRetroalimentados.fechaInicioPeriodo}">
+	                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+	                                </h:outputText>
+	                           </div>
+                            </p:column>
+                            <p:column headerText="Fin" width="50">
+	                            <div align="center">
+	                                <h:outputText value="#{insumosRetroalimentados.fechaFinPeriodo}">
+	                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+	                                </h:outputText>
+	                            </div>
+                            </p:column>
+                            <p:column headerText="Fecha de retroalimentación de datos" width="80">
+	                            <div align="center">
+	                                <h:outputText value="#{insumosRetroalimentados.fechaRetroalimentacion}">
+	                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+	                                </h:outputText>
+	                           </div>
+                            </p:column>
+                            <p:column headerText="Archivos" width="40">
+                            	<div align="center">
+	                                <p:commandLink id="cmlkMostrarRetroalimentacion" value="#{insumosRetroalimentados.numeroSolicitudes}" ajax="true" action="#{validarProcedenciaInsumoManagedBean.visualizaDocRetroalimentacionAciace}" 
+	                                        immediate="true" 
+	                                        update=":formValidarInsumo:dialogoDocumentoRetro" style="color:#0170b7;" >
+	                                    <f:setPropertyActionListener value="#{insumosRetroalimentados}" immediate="true"
+	                                                                 target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.retroalimentacionInsumo}" />
+	                                </p:commandLink>
+	                           </div>
+                            </p:column>
+                           <p:column headerText="Solicitud de Retroalimentación" width="70">
+                            
+                            <div align="center">
+                            	<p:commandLink action="#{validarProcedenciaInsumoManagedBean.visualizaRetroalimentacionSubAdmin}" update=":formValidarInsumo:idHistoricoRetroalimentacion" inmediate="true" width="120">
+                            		<h:graphicImage ajax="true" value="/resources/images/document.png" />
+             						<f:setPropertyActionListener value="#{insumosRetroalimentados}"
+                                                             target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.retroalimentacionInsumo}" />          			
+								</p:commandLink>                            
+                            </div>
+                            
+                            </p:column>
+                        
+                        <p:rowExpansion>
+                            <h:panelGrid id="displayHistorico" columns="2" cellpadding="2" style="width:600px;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="Observaciones" />
+                                <h:outputText value="#{insumosRetroalimentados.motivoAciace}" />
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                        
+                        </p:dataTable>
+                        
+                        
+                        <br/>
+                        <p:dataTable id="tablaDocumentosRetro" var="documentosRetroalimentacion" value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaDocRetroInsumoCargados}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarTablaArchivosRetro}">
+                            <f:facet name="header">  
+                                #{msj['titulo.tabla.retroalimentacion.cargada']}
+                            </f:facet>
+                            <p:column headerText="#{msj['label.titulo.fecha.carga']}" styleClass="someClass">
+                                <h:outputText id="txtFechaCargaPromocion4" value="#{documentosRetroalimentacion.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['label.nombre.archivo']}" styleClass="someClass" style="table-layout:fixed">
+                                <div style="width:200px;">#{documentosRetroalimentacion.nombreArchivo}</div>
+                            </p:column> 
+                            <p:column style="width:35px">
+                            <h:commandButton image="/resources/images/document.png"
+                                             title="#{documentosRetroalimentacion.nombreArchivo}" ajax="true"
+                                             style="float:left;padding:0px 5px;">
+                                <f:setPropertyActionListener value="#{documentosRetroalimentacion}"
+                                                             target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.docretroInsumoCargadoSeleccionado}"/>
+                                <p:fileDownload contentDisposition="attachment"
+                                                value="#{validarProcedenciaInsumoManagedBean.archivoDescargaRetroalimentacion}"/>
+                            </h:commandButton>
+                        </p:column>
+                            
+                            
+                            
+                            
+                        </p:dataTable>
+                        <br/>
+                    </p:panel>
+                    
+                     <p:spacer height="20px"/>
+                    <h:panelGroup id="pnlgrpBotonesHistoricoRetro" layout="block" style="padding:10px;">
+                        <p:commandButton id="CerrarInsumosRegistrados" value="Cerrar" 
+                                         rendered="#{!validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarTablaArchivosRetro}"
+                                         onclick="PF('dlgInsumosRetroalimentados').hide();" styleClass="ui-confirmdialog-yes"
+                                         process="@this" style="float:right;width:83px;" update=":formValidarInsumo:panelDialogoHistorico"
+                                         action="#{validarProcedenciaInsumoManagedBean.limpiaMostrarArchivosRetroalimentacion}"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardarInsumo');"/>
+                        <p:commandButton id="RegresarInsumosRegistrados" value="#{msj['btn.regresar']}" 
+                                         rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mostrarTablaArchivosRetro}"
+                                         styleClass="ui-confirmdialog-yes"
+                                         process="@this" style="float:right;width:83px;" update=":formValidarInsumo:panelDialogoHistorico :formValidarInsumo:pnlgrpBotonesHistoricoRetro"
+                                         action="#{validarProcedenciaInsumoManagedBean.limpiaMostrarArchivosRetroalimentacion}"/>
+                                         
+                   </h:panelGroup>
+                </p:dialog>
+                
+                <p:dialog header="Confirmar" widgetVar="confirmarRetroalimentacion" resizable="false" modal="true"
+                          width="410">
+                    <h:outputText value="¿Est&aacute;s seguro que desea enviar el Insumo #{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro} para su retroalimentación?"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton id="aceptarRet" value="Aceptar" ajax="true"
+                                         action="#{validarProcedenciaInsumoManagedBean.retroalimentarInsumo}"
+                                         onsuccess="PF('confirmarRetroalimentacion').hide();" update="@form"
+                                         style="width:80px;" oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton value="Cancelar" 
+                                        onclick="PF('confirmarRetroalimentacion').hide();"
+                                        style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                <p:dialog header="Confirmar" widgetVar="confirmarRegistrar" resizable="false" modal="true" width="410">
+                    <h:outputText value="¿Est&aacute;s seguro que desea aceptar el Insumo #{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}?"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton id="aceptarReg" value="Aceptar"
+                                         action="#{validarProcedenciaInsumoManagedBean.validarRFC}" style="width:80px;"
+                                         ajax="false"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton value="Cancelar" onclick="PF('confirmarRegistrar').hide();" style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                <p:dialog header="Aviso" widgetVar="confirmarEstatus" resizable="false" modal="true" width="410">
+                    <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.estatusContacto}"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton value="Aceptar" action="indexValidar" onsuccess="PF('confirmarEstatus').hide();"
+                                         style="width:80px;"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                <p:dialog header="Mensaje de Registro" widgetVar="mensajeRegistrar" resizable="false" modal="true"
+                          width="410">
+                    <h:outputText value="¿Est&aacute;s seguro que desea registrar la propuesta?"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="right">
+                        <p:commandButton id="aceptarRegistrar" value="Aceptar" ajax="true" update="@form"
+                                         action="#{validarProcedenciaInsumoManagedBean.registrarPropuesta}"
+                                         onsuccess="PF('mensajeRegistrar').hide();" style="width:80px;"
+                                         oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton id="cancelarReg" value="Cancelar" onclick="PF('mensajeRegistrar').hide();"
+                                         style="width:80px;" ajax="true"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarContinuarRegistrando" resizable="false"
+                          modal="true" width="400" visible="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mensajeAntecedentes}" escape="false"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.cancelar']}" onclick="PF('confirmarContinuarRegistrando').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"/>
+                    <p:commandButton id="btnContinuar" value="#{msj['label.confirm.aceptar']}"
+                                     onclick="PF('confirmarContinuarRegistrando').hide();" styleClass="ui-confirmdialog-yes"
+                                     icon="ui-icon-check" action="#{validarProcedenciaInsumoManagedBean.guardarPropuesta}"
+                                     process="@this" style="float:right;" 
+                                     update="@form" 
+                                     oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');"/>
+                </p:dialog>
+                
+                <p:dialog header="Solicitud de Retroalimentación del insumo" widgetVar="historicoSolicitudRetroInsumo" resizable="false"
+                          modal="true" width="800" visible="false" closable="false">
+                	<p:panel id="idHistoricoRetroalimentacion">
+                        <h:panelGrid  columns="3" cellpadding="4" border="0">
+                                <p:spacer height="1" width="580"/>
+                          <h:outputText value="Id Registro:" style="float:left;font-weight:bold;"/>
+                          <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}"/>
+						</h:panelGrid>                          
+                          
+						<p:dataTable id="tablaHistoricoRetroalimentacion" var="documento"
+                                 value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumosRetroalimentadoCargado}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a p&aacute;gina: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" filterDelay="1000">
+                                 
+                            <f:facet name="header">
+                               Solicitud de retroalimentción del insumo
+                            </f:facet>     
+                            <p:column headerText="Fecha de solicitud de retroalimentación" width="100">
+		                      	<div align="center">
+			                      	<h:outputText value="#{documento.fechaCreacion}">    
+			                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+			                        </h:outputText>
+			                   </div>
+	                        </p:column>
+                            <p:column headerText="Motivo de retroalimentación" width="450">
+		                      	<h:outputText value="#{documento.motivoSubadministrador}"/>
+	                        </p:column>     
+                            <p:column headerText="Archivos" width="100">
+		                      	<div align="center">
+			                      	<p:commandLink action="#{validarProcedenciaInsumoManagedBean.visualizaDocRetroalimentacionSubAdmin}" ajax="true" update =":formValidarInsumo:idDocumenRetroalimentacion" inmediate="true">
+			                      		<div align="center">
+			                      			<h:outputText value="#{documento.numeroSolicitudesRetro}"/>
+			                      		</div>
+			                      	</p:commandLink>
+			                    </div>
+	                        </p:column>                                      
+                        </p:dataTable>						        
+                        <p:spacer width="500" height="30"/>
+						<p:commandButton id="cerrarSolicitud" value="Cerrar" onclick="PF('historicoSolicitudRetroInsumo').hide();"
+                                         style="width:80px;" ajax="true" update="tablaInsumosRetroalientados"/>
+                        
+                        
+                	</p:panel>      
+                </p:dialog>
+                
+                <p:dialog id="dialogoDocumentoRetro"   header="Histórico" widgetVar="DocumentosSolicitudRetroInsumo" resizable="false"
+                          modal="true" width="700" visible="false" closable="false">
+					<p:panel id="idDocumenRetroalimentacion">
+                        <h:panelGrid  columns="3" cellpadding="4" border="0">
+                                <p:spacer height="1" width="480"/>
+                          <h:outputText value="Id Registro:" style="float:left;font-weight:bold;"/>
+                          <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.insumoSeleccionado.idRegistro}"/>
+
+						</h:panelGrid>
+
+						<p:dataTable id="tablaRetroalimentacionArchivos"   var="documento"
+                                 value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaDocRetroInsumo}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a p&aacute;gina: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" filterDelay="1000">
+	                        <f:facet name="header">
+                               Archivos cargados
+                            </f:facet>
+	                        <p:column headerText="Fecha de carga" width="100">
+		                      	<h:outputText value="#{documento.fechaCreacion}">    
+		                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+		                        </h:outputText>
+	                        </p:column>
+	                    	<p:column headerText="Nombre del archivo" width="300">
+	                            <h:outputText value="#{documento.nombreArchivo}"/>
+	                            
+	                        </p:column>
+	                        <p:column headerText="Archivos" width="100">
+	                        	<div align="center">
+		                            <h:commandButton image="/resources/images/document.png" title="Documento"
+		                                                    ajax="true" style="padding:0px 5px;">
+		                                       <f:setPropertyActionListener value="#{documento}"
+		                                                                    target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.docretroInsumoCargadoSeleccionado}"/>
+		                                                                    
+		                                       <p:fileDownload contentDisposition="attachment"
+		                                                       value="#{validarProcedenciaInsumoManagedBean.archivoDescargaRetroalimentacion}"/>
+		                            </h:commandButton>
+								</div>
+
+
+
+
+	                            
+	                        </p:column>
+	                        
+						</p:dataTable>
+
+							<p:spacer width="500" height="30"/>
+							<p:commandButton id="cerrar" value="Cerrar" onclick="PF('DocumentosSolicitudRetroInsumo').hide();"
+                                         style="width:80px;" ajax="true" update="tablaInsumosRetroalientados"/>
+					</p:panel>
+                </p:dialog>
+                                            
+                <p:dialog header="#{msj['titulo.dialogo.documento.justificacion']}"
+                    widgetVar="dialogJustificacionDoc" resizable="false"
+                    modal="true" width="510" visible="false"  closable="false" draggable="false">            
+                        <p:dataTable id="tablaDocumentacionJustificacion"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaDocumentosJustificacion}" 
+                                     var="documento"  editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                                
+                                <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width: 80px !important;text-align:center;">
+                                        <h:outputText value="#{documento.fechaCreacion}">                                            
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                        </h:outputText>
+                                </p:column>                                
+
+                                <p:column headerText="#{msj['column.expediente']}" style="width: 240px !important;text-align:center;">
+                                    <h:outputText value="#{documento.nombre}"/>
+                                </p:column>
+                                
+                                <p:column headerText="#{msj['column.documento']}" style="width: 50px !important;">
+                                    <div align="center">
+                                        <h:commandButton ajax="true"
+                                            image="/resources/images/document.png" process="@this"
+                                            title="#{documento.nombre}">
+                                                <f:setPropertyActionListener target="#{validarProcedenciaInsumoManagedBean.rutaArchivoDescargable}"
+                                                                                value="#{documento.rutaArchivo}" />
+                                                <f:setPropertyActionListener target="#{validarProcedenciaInsumoManagedBean.nombreArchivoDescargable}"
+                                                                                value="#{documento.nombre}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                                value="#{validarProcedenciaInsumoManagedBean.descargaArchivo}" />
+                                        </h:commandButton>                                
+                                    </div>
+                                </p:column>
+                            </p:dataTable>    
+                     
+                     <h:panelGrid columns="2">
+                        <p:spacer width="400px" height="20px"/>
+                        
+                        <p:commandButton value="#{msj['btn.cerrar']}" ajax="true"
+                            onclick="PF('dialogJustificacionDoc').hide();" update="@this"
+                            style="width:80px;" />                    
+                        
+                    </h:panelGrid>
+                     
+                     
+                 </p:dialog>
+                            
+                <p:dialog header="#{msj['titulo.dialogo.justificacion.update']}"
+                          id="dialogJustificacion" widgetVar="dialogJustificacion" resizable="false"
+                          modal="true" width="510" visible="false"  closable="false" draggable="false">                               
+                    <h:outputText value="#{msj['lbl.justificacion']}" />
+                    <p:inputTextarea id="txtAreaJustificacion" style="width:475px;height:auto;font-size:11px;" maxlength="400"
+                                     value="#{validarProcedenciaInsumoManagedBean.justificacionDetalle}" disabled="true"/>
+                    <h:panelGrid columns="2">
+                        <p:spacer width="397px" height="20px"/>
+                        
+                        <p:commandButton value="#{msj['btn.cerrar']}" ajax="true"
+                            onclick="PF('dialogJustificacion').hide();" update="@this"
+                            style="width:80px;" />                    
+                        
+                    </h:panelGrid>
+                </p:dialog>                            
+                                            
+                
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

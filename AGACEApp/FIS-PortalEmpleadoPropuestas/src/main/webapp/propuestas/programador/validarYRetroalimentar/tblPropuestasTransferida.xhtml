@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:fieldset legend="#{msj['titulo.fielset.propuesta.tranferida']}" style="margin-bottom:20px" toggleable="true" toggleSpeed="500" collapsed="true">
+        <p:ajax event="toggle" listener="#{validarRetroMB.transferirToggle}" update="propuetastransferidaTbl msgs" />
+        <h:panelGrid columns="2" cellpadding="5">
+            <p:dataTable id="propuetastransferidaTbl" var="propTransferida" value="#{validarRetroMB.retroalimentarLstHelper.listaPropuestasTransferidas}" 
+                         rowKey="#{propPV.idPropuesta}"
+                         emptyMessage="#{msj['label.lista.vacia']}" 
+                         paginator="true"
+                         rows="5"
+                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}  {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom">
+                
+                
+                <p:column headerText="#{msj['column.propuestas.por.validar.folio']}" style="width:15%">
+                    <h:outputText value="#{propTransferida.idRegistro}" />
+                </p:column>
+                <p:column headerText="#{msj['column.propuestas.por.validar.rfc']}" styleClass="someClass"
+                          style="width:15%">
+
+                    <p:commandLink action="#{validarRetroMB.verDetalleTransferida}" process="@this" update=":formValidaRetroalimentarPropuesta ">
+                        <h:outputText value="#{propTransferida.fecetContribuyente.rfc}" style="color:blue"/>
+                        <f:setPropertyActionListener value="#{propTransferida}" 
+                                                     target="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida}"/>
+                    </p:commandLink>
+                    
+                </p:column>
+                <p:column headerText="#{msj['column.propuestas.por.validar.prioridad']}" style="width:10%;">
+                    <div align="center">
+                        <p:graphicImage rendered="#{propTransferida.prioridad}" value="/resources/images/bandera.png"
+                                        style="border:0;"/>
+                    </div>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.metodo']}" style="width:10%;">
+                    <div align="center">
+                        <h:outputText value="#{propTransferida.feceaMetodo.abreviatura}"/>
+                    </div>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.subprograma']}" style="width:15%;text-align: center;">
+                    <h:outputText value="#{propTransferida.fececSubprograma.clave}: #{propTransferida.fececSubprograma.descripcion}"/>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.unidad.admin.atencion']}" style="width:20%">
+                    <h:outputText value="#{propTransferida.fececArace.nombre}"/>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.presuntiva']}" style="width:20%">
+                    <div align="right">
+                        <h:outputText value="#{propTransferida.presuntiva}">
+                            <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                        </h:outputText>
+                    </div>
+                </p:column>                
+            </p:dataTable>
+        </h:panelGrid>
+    </p:fieldset>
+</f:view>
+
+

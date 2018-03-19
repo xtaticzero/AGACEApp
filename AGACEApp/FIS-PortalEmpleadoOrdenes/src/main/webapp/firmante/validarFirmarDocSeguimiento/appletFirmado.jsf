@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="firmaElectronicaForm">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" id="statusDialog" widgetVar="statusDialog"
+                          header="#{msj['titulo.panel.espere']}" draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="appletMessage" showDetail="false" closable="true" globalOnly="true"/>
+                <div id="msg" />
+                <p:panel id="contentApplet" header="#{msj['titulo.panel.firmado.ordenes']}">
+                    <!--Inicia gadget Firma-->
+                    <div id="firmado-widget-container"></div>
+                    <!--termina gadget Firma-->
+                    <input type="hidden" id="cadena" value="#{documentacionFirmanteMB.cadena}"/>  
+                    <input type="hidden" id="rfc" value="#{documentacionFirmanteMB.rfcLogueado}"/>
+                    <input type="hidden" id="rfc_test" value="CAMG7409221T5"/>
+                </p:panel>
+                <h:panelGrid columns="2" style="float:right">
+                    <p:column style="float:left">
+                        <p:commandButton value="Regresar" id="regresarDocumento" ajax="false" update="@form"
+                                         action="documentacionOrden"/>
+                    </p:column>
+                    <p:column style="float:right">
+                        <p:commandButton value="Continuar" id="firmarDocumento" style="display:none" 
+                                         ajax="true"   
+                                         rendered="#{documentacionFirmanteMB.renderBtnFirmaOficio}"
+                                         action="#{documentacionFirmanteMB.firmarOficioOrden}"
+                                         update="@this,appletMessage">                                         
+                        </p:commandButton>
+                        <p:commandButton value="Continuar" id="firmaProrroga" style="display:none" ajax="true"
+                                         update="@this" rendered="#{documentacionFirmanteMB.renderBtnFirmaProrroga}"
+                                         action="#{documentacionFirmanteMB.firmarProrroga}"/>
+                    </p:column>
+                </h:panelGrid>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>             
+            <h:outputScript library="js/" name="m2.firmado.sat.uat.js"/>                          
+            <h:outputStylesheet library="css/" name="agace.css"/>
+             <script type="text/javascript">
+            console.log('Carga firma ...');
+            var finalizo = false;
+              cargaWidget();    
+            function firma(){
+               if(finalizo){   
+                var documento = document.getElementById('firmaElectronicaForm:firmarDocumento');
+                var prorroga =  document.getElementById('firmaElectronicaForm:firmaProrroga');
+                 if (documento != null) {
+                      document.getElementById('firmaElectronicaForm:firmarDocumento').style.display = "block";
+                 } else if (prorroga != null) {
+                      document.getElementById('firmaElectronicaForm:firmaProrroga').style.display = "block";
+                 } 
+               }
+            }          
+            </script>
+        </h:body>
+    </html>
+</f:view>

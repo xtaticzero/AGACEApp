@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+	<html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+<h:head>
+  <script type="text/javascript">
+  function metodo(e) {
+   var key = window.Event ? e.which : e.keyCode;
+   if (key == 13)
+    return false;
+   else
+    return true;
+  }
+ </script>
+</h:head>
+<h:body>
+	<h:form enctype="multipart/form-data;charset=UTF-8" id="formContribuyentes"
+		styleClass="panel-principal">
+		<f:metadata>
+        	<f:event type="preRenderView" listener="#{cargaDocumentoElectronicoMB.cargaGenerarRevision}" />
+    	</f:metadata>
+		<p:ajaxStatus onstart="PF('statusDialog').show();" 
+			onsuccess="PF('statusDialog').hide();"/>
+		<p:dialog modal="true" widgetVar="statusDialog"
+			header="#{msj['titulo.panel.espere']}" draggable="false"
+			closable="false" resizable="false">
+			<p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+		</p:dialog>
+		
+		 <p:panel header="#{msj['label.generar.revision']}">
+           <p:outputLabel value="#{msj['separador.panel.datos.previos.adjuntar']}" style="font-weight:bold;"/>
+           <p:spacer width="460" height="1"/>
+           <p:outputLabel value="Fecha de carga: " style="font-weight:bold;"/>
+           <h:outputText id="fechaCargaDocOrden" value="#{currentDate}">
+               <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+           </h:outputText>
+           <p:separator/>
+           <br/>
+           <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true" />
+           <p:spacer width="10" height="1"/>
+           <h:outputText value="Adjuntar Documento (EHO./GABINETE./UCA./REE./MCA.):"/>
+           <h:outputText value="*" style="color:red;"/>        
+              <h:panelGrid id="adj" columns="2" cellpadding="10">
+                    <p:fileUpload id="fileUpload" fileUploadListener="#{cargaDocumentoElectronicoMB.upload}"
+                                  mode="advanced" required="true"
+                                  dragDropSupport="false" multiple="false" style="width:330px;"
+                                  label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                  showButtons="true" auto="true" ajax="true" partialSubmit="true"
+                                  update=":formContribuyentes msgExitoGuardar tablaArchivosCargados"/>
+                    
+                    <p:dataTable id="tablaArchivosCargados" var="ordenesArchivoCargado" style="width:100%"
+                            	 editable="false" emptyMessage="#{msj['label.lista.vacia']}" value="#{cargaDocumentoElectronicoMB.ordenesArchivoCargado}">
+                       <f:facet name="header">
+                          <p:outputLabel value="Expediente Electr&oacute;nico"/>
+                       </f:facet>
+                           <p:column headerText="Fecha de carga" styleClass="someClass" style="width:100px;">
+                              <h:outputText id="txtFechaCargaArchivo" value="#{ordenesArchivoCargado.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                              </h:outputText>
+                           </p:column>
+                           <p:column headerText="Documento Orden" style="width:180px;margin:auto">
+                              <p:commandLink value="#{ordenesArchivoCargado.nombreArchivo}" style="color:blue;" ajax="false" update=":formContribuyentes @form">
+                                   <f:setPropertyActionListener value="#{ordenesArchivoCargado}"    
+                                                                target="#{cargaDocumentoElectronicoMB.docOrdenSeleccionado}" />                             
+                                   <p:fileDownload value="#{cargaDocumentoElectronicoMB.documentoDescarga}" />
+                              </p:commandLink>
+                           </p:column>
+                           <p:column id="idEliminar" style="width:70px;" styleClass="someClass">
+                              <p:commandLink style="color:blue;margin:auto;" value="#{msj['label.confirm.eliminar']}"
+                                             action="#{cargaDocumentoElectronicoMB.eliminaArchivo}" 
+                                             ajax="true" immediate="true" update="tablaArchivosCargados :formContribuyentes:msgExitoGuardar">
+                              </p:commandLink>
+                           </p:column>
+                    </p:dataTable> 
+              </h:panelGrid>
+              <br/>
+              <h:panelGrid rendered="#{cargaDocumentoElectronicoMB.permiteOficio}">
+               <p:selectOneMenu style="width:200px;" value="#{cargaDocumentoElectronicoMB.tipoOficioSeleccionado}" 
+                                 rendered="#{cargaDocumentoElectronicoMB.muestraOficio}">
+                                <p:ajax event="change" update="@this" />
+                 <f:selectItem itemLabel="Seleccione el oficio" itemValue="-1" />
+                 <f:selectItems value="#{cargaDocumentoElectronicoMB.oficios}" 
+                                var="listaOficios" itemLabel="#{listaOficios.idTipoOficio} - #{listaOficios.nombre}" itemValue="#{listaOficios.idTipoOficio}"/>
+               </p:selectOneMenu>
+               <br/>
+               <br/>
+               <h:panelGrid id="adjOficio" columns="2" cellpadding="10" rendered="#{cargaDocumentoElectronicoMB.muestraOficio}">
+                    <p:fileUpload id="fileUploadOficio" fileUploadListener="#{cargaDocumentoElectronicoMB.uploadOficio}"
+                                  mode="advanced" required="true"
+                                  dragDropSupport="false" multiple="false" style="width:330px;"
+                                  label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                  showButtons="true" auto="true" ajax="true" partialSubmit="true"
+                                  update="msgExitoGuardar tablaOficiosCargados"/>
+                    
+                    <p:dataTable id="tablaOficiosCargados" var="oficioCargado" style="width:100%"
+                            	 editable="false" emptyMessage="#{msj['label.lista.vacia']}" value="#{cargaDocumentoElectronicoMB.oficiosArchivoCargado}">
+                       <f:facet name="header">
+                          <p:outputLabel value="Oficio"/>
+                       </f:facet>
+                           <p:column headerText="Fecha de carga" styleClass="someClass" style="width:100px;">
+                              <h:outputText id="txtFechaCargaArchivo" value="#{oficioCargado.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                              </h:outputText>
+                           </p:column>
+                           <p:column headerText="Documento" style="width:180px;margin:auto">
+                             <p:commandLink value="#{oficioCargado.nombreArchivo}" style="color:blue;" ajax="false" update=":formContribuyentes @form">
+                                   <f:setPropertyActionListener value="#{oficioCargado}"    
+                                                                target="#{cargaDocumentoElectronicoMB.docOficioSeleccionado}" />                             
+                                   <p:fileDownload value="#{cargaDocumentoElectronicoMB.oficioDescarga}" />
+                              </p:commandLink>
+                           </p:column>
+                           <p:column id="idEliminar" style="width:70px;" styleClass="someClass">
+                              <p:commandLink style="color:blue;margin:auto;" value="#{msj['label.confirm.eliminar']}"
+                                             action="#{cargaDocumentoElectronicoMB.descartarOficio}" 
+                                             ajax="true" immediate="true" update="tablaOficiosCargados :formContribuyentes:msgExitoGuardar">
+                                 <f:setPropertyActionListener value="#{oficioCargado}" target="#{cargaDocumentoElectronicoMB.oficioSeleccionado}"/>            
+                              </p:commandLink>
+                           </p:column>
+                    </p:dataTable> 
+              </h:panelGrid>
+              </h:panelGrid>
+               <br/>
+               <br/>
+               <p:accordionPanel id="pacordAgente" rendered="#{cargaDocumentoElectronicoMB.muestraAgenteAduanal}">
+                  <p:tab title="Agregar Agente Aduanal">
+                  <h:panelGrid columns="3">
+                  <h:outputLabel value="#{msj['label.docElect.rfcAgAduanal']}" style="font-weight:bold" />
+                  <p:inputText id="txtRfcAgAduanal" style="width:150px;height:auto;" value="#{cargaDocumentoElectronicoMB.agenteAduanalVO.rfc}"
+                               maxlength="13" onkeyup="return metodo(event, this);" process="@this" update="@this"/>
+                  <p:commandButton value="Buscar" action="#{cargaDocumentoElectronicoMB.validaRfc}" 
+                                                  disabled="#{cargaDocumentoElectronicoMB.agenteAduanalVO.deshabilitarBotonBusquedaColaborador}"
+                                                  update=":formContribuyentes:msjeConfirmarMediosContacto :formContribuyentes:msgExitoGuardar pacordAgente">
+                     <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.tipoColaborador}"
+                                                                 value="AA"/>
+                  </p:commandButton>
+                    
+                 
+                     
+                  
+                  
+                  <h:outputLabel value="#{msj['label.docElect.nombreAgAduanal']}" style="font-weight:bold" />  
+                  <p:inputText id="txtNombreAgAduanal" style="width:150px;height:auto;"
+                               value="#{cargaDocumentoElectronicoMB.agenteAduanalVO.nombre}" 
+                               disabled="#{cargaDocumentoElectronicoMB.agenteAduanalVO.deshabilitarCampos}"/>
+                  <p:commandButton value="Guardar Agente Aduanal" actionListener="#{cargaDocumentoElectronicoMB.guardarColaborador}"
+                                   update=":formContribuyentes:msgExitoGuardar" ajax="false">
+                     <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.tipoColaborador}" value="AA"/>
+                  </p:commandButton>
+                               
+                  <h:outputLabel value="#{msj['label.docElect.emailAgAduanal']}" style="font-weight:bold" />
+                  <p:inputText id="txtEmailAgAduanal" style="width:150px;height:auto;"
+                               value="#{cargaDocumentoElectronicoMB.agenteAduanalVO.correo}"
+                               disabled="#{cargaDocumentoElectronicoMB.agenteAduanalVO.deshabilitarCorreo}" /> 
+                  </h:panelGrid>
+                  <h:panelGrid columns="2">
+                    <h:outputText value="Medios de Contacto:"/>
+                    <p:selectBooleanCheckbox  value="#{cargaDocumentoElectronicoMB.agenteAduanalVO.medioContactoBoolean}"
+                                              disabled="true"/>
+<!--                     <h:outputText value="Orden sin Agente Aduanal:"/> -->
+<!--                     <p:selectBooleanCheckbox value="#{cargaDocumentoElectronicoMB.agenteAduanalVO.sinColaborador}"> -->
+<!--                          </p:selectBooleanCheckbox> -->
+                  </h:panelGrid>   
+                  </p:tab>
+               </p:accordionPanel>
+               <br/>
+               <br/>
+               <h:panelGrid columns="3" style="margin:auto;">
+                  <p:commandButton action="#{cargaDocumentoElectronicoMB.validaAceptarAdjuntar}" value="#{msj['btn.revision']}" 
+                                   ajax="true" immediate="true" process="@this" update="@form">
+                          <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.estatus1}" 
+                                                       value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                          <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.estatus2}" 
+                                                       value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                          <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.accion}" 
+                                                       value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>                                   
+                  </p:commandButton>
+                  <p:commandButton value="#{msj['label.confirm.cancelar']}" action="#{cargaDocumentoElectronicoMB.cancelarRevision}" ajax="true" immediate="true" >
+                     <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.estatus1}" 
+                                                  value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                     <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.estatus2}" 
+                                                  value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                     <f:setPropertyActionListener target="#{cargaDocumentoElectronicoMB.accion}" 
+                                                  value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/> 
+                  </p:commandButton>
+                  <p:commandButton value="#{msj['btn.limpiar']}" actionListener="#{cargaDocumentoElectronicoMB.limpiar}" ajax="false"
+                                   update="@form"/>
+               </h:panelGrid>
+         </p:panel>
+         
+         <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarMediosContacto" resizable="false"
+                          modal="true" width="400" height="80">
+            <h:panelGroup layout="block" style="padding:5px;" id="msjeConfirmarMediosContacto">
+               <h:outputText value="No se encuentran Medios de Contacto. ¿Desea capturar el E-mail del Agente Aduanal?"/>
+            </h:panelGroup>
+            <p:commandButton value="#{msj['btn.no']}" onclick="PF('confirmarMediosContacto').hide();"
+                             styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                             actionListener="#{cargaDocumentoElectronicoMB.deshabilitaEmailColaborador}"
+                             style="float:right;" update="@form" ajax="false" />
+            <p:commandButton value="#{msj['btn.si']}" onclick="PF('confirmarMediosContacto').hide();"
+                             styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                             actionListener="#{cargaDocumentoElectronicoMB.habilitaEmailColaborador}" update="@form" ajax="false"
+                             style="float:right;"/>
+         </p:dialog>
+         
+         <p:dialog widgetVar="noIdc" resizable="false" modal="true" width="400" height="80">
+             <h:panelGroup layout="block" style="padding:5px;" id="msjeNoIdc">
+               <h:outputText value="No se encuentra información del RFC ingresado."/>
+             </h:panelGroup>
+              <p:commandButton value="Aceptar" onclick="PF('noIdc').hide();"
+                             styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                             style="float:right;" update="pacordAgente"/>
+         </p:dialog>
+         
+         <p:dialog widgetVar="aceptarAdjunar" showEffect="clip" hideEffect="clip" height="100">
+            <br/>
+            <h:outputText value="#{msj['label.esta.seguro.desea.enviar.informacion']}" />
+            <br/>
+            <br/>
+            <br/>
+            <p:commandButton value="#{msj['btn.aceptar']}" action="#{cargaDocumentoElectronicoMB.registrarEstatusPropuesta}" 
+                             ajax="true" immediate="true" update="@form"/>
+            <p:spacer width="10" height="1" />
+            <p:commandButton value="#{msj['btn.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" 
+                             onclick="aceptarAdjuntar.hide();"/>
+         </p:dialog>
+         
+    </h:form>
+    
+	<h:outputScript library="js/" name="agace.js" />
+	<h:outputStylesheet library="css/" name="agace.css" />
+        
+</h:body>
+	</html>
+</f:view>

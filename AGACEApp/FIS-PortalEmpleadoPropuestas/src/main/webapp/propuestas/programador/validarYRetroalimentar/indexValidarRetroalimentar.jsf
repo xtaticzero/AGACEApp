@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <h:head>
+            <meta http-equiv="X-UA-Compatible" content="IE=8"/>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+            
+                
+   			<style type="text/css">
+               .ui-selectonemenu-panel
+               {
+                   max-width:58% !important;
+               }
+            </style>
+
+            <script>
+                $('textarea.max').keyup(function () {
+                    var $textarea = $(this);
+                    var max = 250;
+                    if ($textarea.val().length > max) {
+                        $textarea.val($textarea.val().substr(0, max));
+                    }
+                });
+                  function recargaPagina() {
+                	  location.reload();
+                  }
+            </script>
+        </h:head>
+        <h:body>
+            <h:form id="formValidaRetroalimentarPropuesta" 
+                    style="width: 850.0px;" enctype="multipart/form-data">
+                <p:ajaxStatus onstart="PF('statusDialogValRetroPropuesta').show();"
+                              onsuccess="PF('statusDialogValRetroPropuesta').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogValRetroPropuesta" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgs" showDetail="false" globalOnly="true" sticky="false" closable="true"/>
+
+
+                <p:panel id="panelListasPropuestas" styleClass="panel-interno"
+                         header="#{msj['titulo.panel.validacion.retroalimentacion.propuesta']}" rendered="#{validarRetroMB.flgPanelListas}">
+
+                    <ui:include src="tblPropuestasXValidar.xhtml" />
+                    <ui:include src="tblPropuestasRetroalimentar.xhtml" />
+                    <ui:include src="tblPropuestasPendientes.xhtml" />
+                    <ui:include src="tblCambioMetodoOrden.xhtml" />
+
+                </p:panel>
+                <p:panel id="panelDetallePropuesta" 
+                         style="width: 900px" 
+                         header="Detalle Propuesta"
+                         rendered="#{validarRetroMB.flgPanelDetalle}">
+                    <h:panelGrid id="panelDetallePropuestaXValidar" rendered="#{validarRetroMB.flgDetalleXValidar}">
+                        <ui:include src="detallePropuestaXValidar.xhtml"
+                                    rendered="#{validarRetroMB.flgDetalleXValidar}"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="panelDetallePropuestaTransferida"
+                                 rendered="#{validarRetroMB.flgDetalleTransferida}">
+                        <ui:include src="detallePropuestaTransferida.xhtml"/>
+                    </h:panelGrid>
+                </p:panel>
+
+                
+                <ui:include src="confirmAprobar.xhtml"/>
+                <ui:include src="confirmRechazo.xhtml"/>
+                <ui:include src="confirmRechazarPropuestaXValidar.xhtml"/>
+                <ui:include src="confirmPendiente.xhtml"/>
+                <ui:include src="confirmPendientePropuestaXValidar.xhtml"/>
+                <ui:include src="confirmHistorico.xhtml"/>
+                <ui:include src="confirmRetroalimentar.xhtml"/>
+                <ui:include src="confirmRetroalimentacionDetalle.xhtml"/>
+                
+            </h:form>
+        </h:body>
+    </html>
+</f:view>

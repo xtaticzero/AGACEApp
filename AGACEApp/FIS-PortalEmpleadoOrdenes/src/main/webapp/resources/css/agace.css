@@ -1,0 +1,71 @@
+/** SelectCheckbox Menu **/
+
+.titulo-label {
+    font-weight:bold;
+    font-size:small;
+}
+
+.panel-principal{
+    width: 810.0px;
+}
+
+.panel-interno{
+    width: 800.0px;
+    text-align: left;
+}
+
+.panel-subinterno{
+    width: 780.0px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.panel-principal-consulta{
+    width: 1010.0px;
+}
+
+.panel-interno-consulta{
+    width: 1000.0px;
+    text-align: left;
+}
+
+.panel-subinterno-consulta{
+    width: 980.0px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.noBorders tr, .noBorders td {
+    /*background: none !important;*/
+    border: none !important;
+}
+
+.alineacion-texto-numero{
+    text-align: right;
+}
+
+.textoRojo {
+     color: RED;
+}
+
+.textoAzul {
+     color: #0070BB;
+}
+
+.fileupload-content .ui-progressbar {
+    width: 50px;
+    height: 20px;
+}
+
+/** tabs **/
+.ui-tabs.ui-tabs-left > .ui-tabs-nav {
+    width: 25%;
+    background-image: none;
+    float: left;
+    height: 300px;
+    padding-top: 1px;
+}
+/** panels **/
+.ui-tabs.ui-tabs-left > .ui-tabs-panels {
+   width: 75%;
+}

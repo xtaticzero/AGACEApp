@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+        	<h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>           	
+       	</h:head>
+        <h:body>            
+            <h:form id="form">
+            <p:ajaxStatus onstart="PF('statusDialogDocs').show();" onsuccess="PF('statusDialogDocs').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogDocs" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+            <p:panel id="panelPrincipal" style="border:none !important" styleClass="panel-principal-insumos">
+            <p:panel id="panelOpciones" header="#{msj['label.consulta.general.consulta']}" 
+            	rendered="#{consultaUGInsumosMB.helper.esVisiblePanelOpciones}"  styleClass="panel-interno">
+            	<p:selectOneRadio id="radio1" layout="custom" value="#{consultaUGInsumosMB.tipoConsulta}">
+            		<p:ajax event="valueChange" process="@this" listener="#{consultaUGInsumosMB.valueChange}" 
+            			update="select select1 select2 btnConsultar"/>
+		            <f:selectItem itemLabel="#{msj['label.consulta.general.detalle.insumos.radio.opcion1']}" itemValue="1" />			            			           
+		            <f:selectItem itemLabel="#{msj['label.consulta.general.detalle.insumos.radio.opcion2']}" itemValue="2" />			            			           
+		        </p:selectOneRadio>
+            <p:panelGrid id="tablaOpciones" style="width:100% !important;" styleClass="noBorders">
+            	<p:row>
+            	<p:column colspan="4">
+	            	 <p:panelGrid id="panelRadioButton">
+	            	 	<p:row>
+		            	<p:column style="width:16px !important;">            		
+		            		<p:radioButton id="opt1" for="radio1" itemIndex="0"/>		            					            		
+		            	</p:column>    
+		            	<p:column style="width:316px !important;">	
+		            		<h:outputLabel for="opt1" value="#{msj['label.consulta.general.detalle.insumos.radio.opcion1']}"/>		            						 				          	
+					  	</p:column>
+					  	<p:column style="width:16px !important;">				  		
+					  		<p:radioButton id="opt2" for="radio1" itemIndex="1"/>
+					  	</p:column>    
+		            	<p:column style="width:329px !important;">
+					  		<h:outputLabel for="opt2" value="#{msj['label.consulta.general.detalle.insumos.radio.opcion2']}"/>	            						 				          	
+					  	</p:column>		            	
+					  	</p:row>
+					</p:panelGrid>
+				</p:column>				
+				</p:row>
+				<p:row>
+				<p:column>
+            		<h:outputText value="#{msj['label.consulta.general.detalle.insumos.select.label']}"/>					 	
+			  	</p:column>
+			  	<p:column>	
+			  		<p:selectOneMenu id="select" value="#{consultaUGInsumosMB.unidadRegistro}" style="width: 250px;"
+			  			disabled="#{!consultaUGInsumosMB.helper.unidadRegistroHabilitado}">
+           				<p:ajax event="valueChange" process="@this" listener="#{consultaUGInsumosMB.cambiarUnidadRegistro}" 
+            				update="select2"/>
+           				<f:selectItem itemLabel="#{msj['label.consulta.general.menu.sinopcion']}" itemValue="0" />
+           				<f:selectItem itemLabel="#{msj['label.consulta.general.detalle.select.todas']}" itemValue="-1" />
+			            <f:selectItems value="#{consultaUGInsumosMB.listaUnidadesRegistro}"                                                  
+                                       var="unidadAdmin" 
+                                       itemValue="#{unidadAdmin.id}" itemLabel="#{unidadAdmin.nombre}"/>       		          		          			           					           
+			  		</p:selectOneMenu>      				 	
+			  	</p:column>
+			  	<p:column>	
+			  		<h:outputText value="#{msj['label.consulta.general.detalle.insumos.select3.label']}"/>				 	
+			  	</p:column>
+			  	<p:column>
+			  		<p:selectOneMenu id="select1" value="#{consultaUGInsumosMB.unidadAdmonRegistro}" style="width: 250px;"			  			
+			  			disabled="#{!consultaUGInsumosMB.helper.unidadAdmonHabilitado}">
+           				<p:ajax event="valueChange" process="@this" listener="#{consultaUGInsumosMB.cambiarUnidadAdmonRegistro}" 
+            				update="btnConsultar"/>
+           				<f:selectItem itemLabel="#{msj['label.consulta.general.menu.sinopcion']}" itemValue="0" />
+           				<f:selectItem itemLabel="#{msj['label.consulta.general.detalle.select.todas']}" itemValue="-1" />
+			            <f:selectItems value="#{consultaUGInsumosMB.listaUnidadesAdministrativas}"                                                  
+                                       var="unidadAdmin" 
+                                       itemValue="#{unidadAdmin.id}" itemLabel="#{unidadAdmin.nombre}"/>            		          		          			           					           
+			  		</p:selectOneMenu>      						 	
+			  	</p:column>			  	
+			  	</p:row> 
+			  	<p:row>
+			  	<p:column>	
+			  		<h:outputText value="#{msj['label.consulta.general.detalle.insumos.select2.label']}"/>				 	
+			  	</p:column>
+			  	<p:column>
+			  		<p:selectOneMenu id="select2" value="#{consultaUGInsumosMB.unidadAdmonRegistro}" style="width: 250px;"
+			  			disabled="#{!consultaUGInsumosMB.helper.unidadAdmonRegistroHabilitado}">
+           				<p:ajax event="valueChange" process="@this" listener="#{consultaUGInsumosMB.cambiarUnidadAdmonRegistro}" 
+            				update="btnConsultar"/>
+           				<f:selectItem itemLabel="#{msj['label.consulta.general.menu.sinopcion']}" itemValue="0" />
+           				<f:selectItem itemLabel="#{msj['label.consulta.general.detalle.select.todas']}" itemValue="-1" />
+			            <f:selectItems value="#{consultaUGInsumosMB.listaUnidadesAdministrativas}"                                                  
+                                       var="unidadAdmin" 
+                                       itemValue="#{unidadAdmin.id}" itemLabel="#{unidadAdmin.nombre}"/>                         		          		          			           					          
+			  		</p:selectOneMenu>      						 	
+			  	</p:column>	
+			  	<p:column>
+			  	</p:column>
+			  	<p:column>	
+			  	</p:column>	
+			  	</p:row>       
+			  	<p:row>
+			  	<p:column colspan="2" >
+			  		<p:commandButton style="float: left;" 
+			  			value="#{msj['label.consulta.general.detalle.insumos.button.label']}" 
+			  			action="#{consultaUGInsumosMB.obtenerResumen}"
+			  			disabled="#{!consultaUGInsumosMB.helper.botonConsultarHabilitado}" id="btnConsultar" 
+			  			update="panelPrincipal"/>
+			  	</p:column>
+			  	<p:column colspan="2" >
+			  		<p:commandButton style="float: right;" 
+			  			value="Pantalla Anterior" action="../inicioConsultaGeneral.xhtml?faces-redirect=true" ajax="true" immediate="true"/>
+			  	</p:column>
+			  	</p:row>   		
+            </p:panelGrid>
+            </p:panel>                 
+            	<ui:include src="panelEstatusSemaforos.xhtml"/>
+            	<ui:include src="panelLstInsumos.xhtml"/>
+            	<ui:include src="panelDetalleInsumo.xhtml"/>
+            	<ui:include src="panelSubordinadosSemaforoCentral.xhtml"/>
+            	<ui:include src="panelSubordinadosSemaforoAdministrador.xhtml"/>                
+            </p:panel>  
+            </h:form>         
+        </h:body>
+    </html>
+</f:view>

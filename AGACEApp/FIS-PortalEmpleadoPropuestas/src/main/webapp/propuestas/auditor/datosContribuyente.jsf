@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+   
+   
+                     <!-- Panel de Datos Actualizados del Contribuyente (Solo se habilita si existen cambios en los datos del Contribuyente) -->
+                     <p:outputLabel value="#{msj['separador.panel.datos.cont.actualizados']}" style="font-weight:bold;"
+                                    rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.existenCambios}"/>
+                     <p:separator rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.existenCambios}"/>
+                     <p:spacer width="20" height="5px;"/>
+                     <p:panel id="panelDatosContrAct" rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.existenCambios}">
+                        <h:outputLabel value="#{msj['label.rfc.contribuyente.asignadas']}: "
+                                       style="font-weight:bold"/>               
+                        <br/>
+                        <br/>
+                        <p:inputText ajax="false" id="txtRFC2" maxlength="15" disabled="true" style="width:222px;height:auto;"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.rfc}"/>
+                        <br/>   
+                        <h:outputLabel value="#{msj['label.regimen']}: " style="font-weight:bold"/>
+                        <p:spacer width="300px" height="20px"/>             
+                        <h:outputLabel value="#{msj['label.nombre.razon.social']}: " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputText id="txtRegimen2" style="width:222px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.regimen}"/>
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtNombre2" style="width:300px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.nombre}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="230px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.situacion.contribuyente']} " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                         <p:inputText id="txtTipoContribuyente2" style="width:222px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.tipo}"/> 
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtSituacionContribuyente2" style="width:300px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.situacion}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="170px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.actividad.preponderante']}: " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputTextarea id="txtDomicilioFiscalContribuyente2" rows="4" cols="35" disabled="true"
+                                                 value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.domicilioFiscal}"/>
+                        <p:spacer width="115px" height="20px"/>
+                        <p:inputTextarea id="txtActividadPreponderante2" rows="4" cols="35" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.actividadPreponderante}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+                        <p:spacer width="305px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputText id="txtEntidad2" style="width:222px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.entidad}"/>
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtSituacionDomicilio2" style="width:300px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.situacionDomicilio}"/>
+                    </p:panel>
+                    <br/> 
+                    
+                    <p:outputLabel value="#{msj['separador.panel.datos.cont.anterior']}" style="font-weight:bold;"
+                                   rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.existenCambios}"/>
+                    <p:separator rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraDetalle1}"/>
+                    <p:spacer width="60" height="5px;"/>
+                     <p:panel id="panelDatosCont2" rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.existenCambios}">
+                        <h:outputLabel value="#{msj['label.rfc.contribuyente.asignadas']}: "
+                                       style="font-weight:bold"/>               
+                        <br/>
+                        <br/>
+                        <p:inputText ajax="false" id="txtRFC" maxlength="15" disabled="true" style="width:222px;height:auto;"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.rfc}"/>
+                        <br/>   
+                        <h:outputLabel value="#{msj['label.regimen']}: " style="font-weight:bold"/>
+                        <p:spacer width="300px" height="20px"/>             
+                        <h:outputLabel value="#{msj['label.nombre.razon.social']}: " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputText id="txtRegimen" style="width:222px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.regimen}"/>
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtNombre" style="width:300px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.nombre}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="230px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.situacion.contribuyente']} " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                         <p:inputText id="txtTipoContribuyente" style="width:222px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.tipo}"/> 
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtSituacionContribuyente" style="width:300px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.situacion}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="170px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.actividad.preponderante']}: " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputTextarea id="txtDomicilioFiscalContribuyente" rows="4" cols="35" disabled="true"
+                                                 value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.domicilioFiscal}"/>
+                        <p:spacer width="115px" height="20px"/>
+                        <p:inputTextarea id="txtActividadPreponderante" rows="4" cols="35" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.actividadPreponderante}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+                        <p:spacer width="305px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputText id="txtEntidad" style="width:222px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.entidad}"/>
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtSituacionDomicilio" style="width:300px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyente.situacionDomicilio}"/>                     
+                    </p:panel>
+                    
+                    <br/>
+                    <br/>
+                    <h:panelGrid>
+                       <p:commandButton value="#{msj['label.confirm.aceptar']}" 
+                                        action="#{consultarPropuestasAsignadasManagedBean.muestraDetallePropuesta}"
+                                        update=":formPropuestas @form" />
+                    </h:panelGrid>
+
+</ui:composition>

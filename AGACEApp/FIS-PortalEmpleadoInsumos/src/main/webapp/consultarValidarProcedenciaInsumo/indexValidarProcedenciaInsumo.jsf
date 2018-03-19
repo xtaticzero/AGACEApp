@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+        	<f:event type="preRenderView" listener="#{ordenesValidarMB.init}" />
+    	</f:metadata>
+        <h:head>
+        </h:head>
+        <h:body>
+            <h:form id="formOrdenPorValidar" styleClass="panel-principal">
+                <div align="right" style="width:836px"></div>
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardarSeg" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="pannelOrdenPorValidar" header="�rdenes por Validar Seguimiento"  styleClass="panel-interno">
+                    <p:ajaxStatus onstart="PF('statusDialogSeguimiento').show();" onsuccess="PF('statusDialogSeguimiento').hide();"/>
+                    <p:dialog modal="true" widgetVar="statusDialogSeguimiento" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                              resizable="false">
+                        <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                    </p:dialog>
+                    
+                    <p:dataTable id="tablaOrdenPorValidarSeguimiento" var="ordenPorValidar" value="#{ordenesValidarMB.listaPorValidarSeguimiento}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="15" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom">
+                        <p:column headerText="Detalle" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="Número de Orden" filterBy="#{ordenPorValidar.cveOrden}" >
+                            #{ordenPorValidar.cveOrden}
+                        </p:column>
+                        <p:column headerText="ID de Registro" filterBy="#{ordenPorValidar.cveRegistro}" >
+                            <p:row>
+                                <h:outputText value="#{ordenPorValidar.cveRegistro}"/>
+                            </p:row>
+                        </p:column>
+                        <p:column headerText="RFC" filterBy="#{ordenPorValidar.rfcContribuyente}" >
+                            <h:outputText value="#{ordenPorValidar.rfcContribuyente}"/>
+                        </p:column>
+                        <!--<p:column headerText="Método" filterBy="#{ordenPorValidar.feceaMetodo.abreviatura}" >
+                            <h:outputText value="#{ordenPorValidar.feceaMetodo.nombre}"/>
+                        </p:column>-->
+                        <p:column headerText="Fecha de Carga" filterBy="#{ordenPorValidar.fechaCarga}" >
+                            <h:outputText value="#{ordenPorValidar.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Orden">
+                            <h:commandButton ajax="true" image="/resources/images/document.png"
+                            				 title="#{ordenPorValidar.numeroOrden}.pdf"
+                                             style="float:left;padding:0px 5px;">
+                                <f:setPropertyActionListener value="#{ordenPorValidar}"
+                                                             target="#{documentacionOrdenMB.dtoHelper.ordenSeleccionDescarga}"/>
+                                <p:fileDownload contentDisposition="attachment"
+                                                value="#{documentacionOrdenMB.archivoSeleccionDescarga}"/>
+                            </h:commandButton>
+                        </p:column>
+                        <p:column headerText="Plazo para concluir" >
+                            <h:outputText value="#{ordenPorValidar.plazoConcluirRevision}"/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:300px;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="RFC del Contribuyente :"/>
+                                <h:outputText value="#{ordenPorValidar.rfcContribuyente}"/>
+                                <h:outputText value="Nombre del Contribuyente :"/>
+                                <h:outputText value="#{ordenPorValidar.nombreContribuyente}"/>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                     
+                 
+                     
+                    <p:dialog id="modalDialog" header="Rechazar Orden" widgetVar="rechazarOrden" showEffect="clip"
+                              hideEffect="clip" modal="true" style="font-weight:bold">
+                        <div align="center">
+                            <h:outputText value="¿Estas seguro que desea rechazar la orden #{ordenPorValidar.cveOrden}?"/>
+                        </div>
+                        <br/>
+                        <div align="center">
+                            <p:commandButton id="aceptar9" value="Aceptar" onclick="rechazarOrden.close()"/>&nbsp; 
+                            <p:commandButton value="Cancelar" onclick="rechazarOrden.close()"/>
+                        </div>
+                    </p:dialog>
+                     
+                    <p:dialog id="aceptarDialog" header="Validar Orden" widgetVar="aceptarOrden" showEffect="clip"
+                              hideEffect="clip" modal="true" style="font-weight:bold">
+                        <div align="center">
+                            <h:outputText value="¿Estas seguro que desea enviar la información seleccionada #{ordenPorValidar.cveOrden} al área correspondiente?"/>
+                        </div>
+                        <br/>
+                        <div align="center">
+                            <p:commandButton value="Aceptar" onclick="aceptarOrden.close()"/>&nbsp; 
+                            <p:commandButton value="Cancelar" onclick="aceptarOrden.close()"/>
+                        </div>
+                    </p:dialog>
+                     
+                    <p:dialog id="Dialogo" header="Órdenes por validar" widgetVar="dlg12a" showEffect="clip"
+                              hideEffect="clip" modal="true" width="450">
+                        <div align="center">
+                            <h:outputText value="¿Deseas validar todas las órdenes?"/>
+                        </div>
+                        <br/>
+                        <div align="center">
+                            <p:commandButton id="aceptar1" value="Aceptar" onclick="dlg12a.close();"/>&nbsp; 
+                            <p:commandButton value="Cancelar" onclick="dlg12a.close()"/>
+                        </div>
+                    </p:dialog>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

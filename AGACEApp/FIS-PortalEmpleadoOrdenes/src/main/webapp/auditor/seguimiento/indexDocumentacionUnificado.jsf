@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+        	<f:event type="preRenderView" listener="#{ordenesValidarMB.init}" />
+    	</f:metadata>
+        <h:head>
+        </h:head>
+        <h:body>
+            <h:form id="formtest">
+                <!--p:growl id="growl" showDetail="true" sticky="false" autoUpdate="true" /-->
+                <p:messages id="growl" showDetail="true" autoUpdate="true" closable="true" /> 
+                
+                    <p:panel id="panelTest" header="Growl" rendered="#{documentacionOrdenMB.attributeHelper.mostrarDocumentosSeguimiento}">
+                            <h:panelGrid columns="2">
+                                    <h:outputText value="Your Name: *" /> 
+                                    <p:inputText value="#{documentacionOrdenMB.nombreAuditor}" required="true" label="Name"/>
+                                    <p:commandButton value="Oculta" action="#{documentacionOrdenMB.mostrarPanelOrdenes}" update="@all" ajax="true" />
+                            </h:panelGrid>
+                        
+                    </p:panel>
+                    
+                    
+            
+                    <p:commandButton value="Save" action="#{documentacionOrdenMB.mostrarError}" update="growl" immediate="true" />
+                    <p:commandButton value="Regresar" action="#{documentacionOrdenMB.mostrarPanelDocumentacion}" update="@form" ajax="true" />
+        
+                    <p:commandButton value="Validar Acuse" actionListener="#{documentacionOrdenMB.mostrarMensaje}" />
+                    
+            </h:form>
+            
+            
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

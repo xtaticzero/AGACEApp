@@ -1,0 +1,1052 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+	<title>AGACE</title>
+	<style type="text/css">
+.ui-datatable .ui-column-filter {
+	width: 40px;
+}
+</style>
+<script type="text/javascript">
+  var esEnviado = false;
+  
+  function recargaPagina() {
+	  location.reload();
+  }
+  
+  function checkSubmit() {
+	  if (!esEnviado) {
+		  esEnviado = true;
+		  return true;
+	  } else {
+		  return false;
+	  }
+  }
+ </script>
+</h:head>
+<h:body>
+	<h:form id="formPropuestas" enctype="multipart/form-data;charset=UTF-8"
+		styleClass="panel-principal" onkeypress="if (event.keyCode == 13) {
+                                                 return false;
+                                             }">
+		<f:metadata>
+		    <f:event type="preRenderView"
+				listener="#{consultarPropuestasAsignadasManagedBean.cargaDatos}" />
+		</f:metadata>
+		<p:ajaxStatus onstart="PF('statusDialog').show();"
+			onsuccess="PF('statusDialog').hide();" />
+		<p:dialog modal="true" widgetVar="statusDialog"
+			header="#{msj['titulo.panel.espere']}" draggable="false"
+			closable="false" resizable="false">
+			<p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true"
+			closable="true" redisplay="false"/>
+
+		<p:panel id="panelPropuestas" styleClass="panel-interno" 
+			header="Propuestas #{consultarPropuestasAsignadasManagedBean.cpaStringHelper.encabezadoPropuestas}"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraPropuestas}"
+			>
+
+			<!-- Grid de Propuestas  -->
+			<div style="width: 750px; overflow-x: scroll;">
+			<h:panelGrid id="panelPropuestasAnalizar" width="100%"
+				rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraPropuestas}">
+				<ui:include src="/propuestas/auditor/panelPropuestasAsignadas.jsf"></ui:include>
+			</h:panelGrid>
+			</div>
+		</p:panel>
+	</h:form>
+
+	<!-- Detalle de la Propuesta-->
+	<h:form id="formPropuesta" enctype="multipart/form-data;charset=UTF-8"
+		styleClass="panel-principal" >
+		<p:dialog modal="true" widgetVar="statusDialog"
+			header="#{msj['titulo.panel.espere']}" draggable="false"
+			closable="false" resizable="false">
+			<p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+		</p:dialog>
+
+		<p:panel id="panelPropuesta" styleClass="panel-interno"
+			header="#{msj['titulo.panel.detalle.propuesta.asignada']}"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraDetalleContribuyente}">
+			<p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}"
+				style="font-weight:bold;" />
+			<p:separator />
+			<p:spacer width="60" height="5px;" />
+
+			<ui:include src="/propuestas/auditor/datosPropuesta.jsf" />
+
+			<p:fieldset id="tolgateAcciones" widgetVar="tolgateAcciones" legend="Historial de acciones de la propuesta"
+				toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle"
+					listener="#{consultarPropuestasAsignadasManagedBean.handleToggleAcciones}"
+					update="tablaHistorialAcciones" />
+
+
+				<p:dataTable id="tablaHistorialAcciones" var="accion"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaHistoricoAccion}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="5"
+					paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+
+					<f:facet name="header">#{msj['label.titulo.historial.acciones']}</f:facet>
+
+					<p:column headerText="#{msj['column.fecha.hora.carga.documento']}">
+						<div align="center">
+							<h:outputText value="#{accion.fechaHora}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.observaciones.asignada']}">
+						<div align="center">
+							<h:outputText value="#{accion.observaciones}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.causa.historial']}">
+						<div align="center">
+							<h:outputText value="#{accion.fececMotivo.descripcion}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.accion.historial']}">
+						<div align="center">
+							<h:outputText
+								value="#{accion.fececAccionesFuncionario.descripcion}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.usuario.accion.historial']}">
+						<h:outputText
+							value="#{accion.empleadoDto.nombreCompleto} (  #{accion.descripcionTipoEmpleado} )" />
+
+					</p:column>
+
+					<p:column headerText="#{msj['label.documento']}">
+						<div align="center">
+							<p:commandLink value="#{accion.numeroDocumentos}" ajax="true"
+								action="#{consultarPropuestasAsignadasManagedBean.obtenerDocumentosHistoricoAccion}"
+								immediate="true"
+								update=":formPropuesta:pnlDocumentoHistoricoAccion"
+								style="color:#0170b7;"
+								rendered="#{accion.numeroDocumentos != -1}">
+								<f:setPropertyActionListener value="#{accion}" immediate="true"
+									target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.historicoAccion}" />
+							</p:commandLink>
+
+							<h:outputText value="N/A"
+								rendered="#{accion.numeroDocumentos == -1}" />
+
+						</div>
+
+					</p:column>
+
+				</p:dataTable>
+
+			</p:fieldset>
+			<br />
+			<br />
+			<p:fieldset id="tolgateRetro" widgetVar="tolgateRetro" legend="#{msj['btn.historico.retroalimentacion']}"
+				toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle"
+					listener="#{consultarPropuestasAsignadasManagedBean.handleToggleRetrolimentacion}"
+					update="tablaHistoricoRetroalimentacion" />
+
+				<p:panel id="pnlHistoricoRetro" header="#{msj['titulo.historico']}" >
+					<h:panelGrid columns="2" width="100%">
+						<p:spacer width="530" height="1" />
+						<h:outputText
+							value="#{msj['label.registro']}: #{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.idRegistro}"
+							style="font-weight:bold;" />
+					</h:panelGrid>
+
+
+					<p:dataTable id="tablaHistoricoRetroalimentacion"
+						var="retroalimentacion"
+						value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaHistoricoRetroalimentar}"
+						editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+						paginator="true" rows="5"
+						paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({currentPage} de {totalPages})" 
+						paginatorPosition="bottom">
+
+						<f:facet name="header">#{msj['label.titulo.historial.retroalimentacion']}</f:facet>
+
+						<p:column headerText="Detalle" width="32">
+							<p:rowToggler />
+						</p:column>
+
+
+						<p:column
+							headerText="#{msj['column.propuestas.por.validar.prioridad']}"
+							width="40">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.prioridadSugerida}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.inicio']}" width="50">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.fechaInicioPeriodo}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.fin']}" width="50">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.fechaFinPeriodo}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.asignadas.tipo.propuesta']}"
+							width="70">
+							<div align="center">
+								<h:outputText
+									value="#{retroalimentacion.fececTipoPropuesta.descripcion}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column
+							headerText="#{msj['column.propuestas.por.validar.fecha.atencion']}"
+							width="80">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column
+							headerText="#{msj['label.impuesto.historial.retroalimentacion']}"
+							width="70">
+
+							<div align="center">
+								<p:commandLink value="#{msj['label.titulo.ver.impuesto']}"
+									ajax="true"
+									action="#{consultarPropuestasAsignadasManagedBean.obtenerImpuestosRetro}"
+									immediate="true" update=":formPropuesta:pnlImpuestoHistorico"
+									style="color:#0170b7;">
+									<f:setPropertyActionListener value="#{retroalimentacion}"
+										immediate="true"
+										target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+								</p:commandLink>
+							</div>
+
+						</p:column>
+
+
+						<p:column 
+							width="55">
+							
+							  <f:facet name="header">
+                                 <h:outputText id="idNotaInformativa" value="#{msj['label.historico.nota.informativa']}" title="#{msj['toltip.nota.informativa']}"/>
+                              </f:facet>
+							
+							<div align="center">
+								<p:commandLink
+									value="#{retroalimentacion.numeroDocRetroalimentacion}"
+									ajax="true"
+									action="#{consultarPropuestasAsignadasManagedBean.obtenerDocumentosRetroalimentados}"
+									immediate="true" update=":formPropuesta:pnlDocumentoHistorcio"
+									style="color:#0170b7;">
+									<f:setPropertyActionListener value="#{retroalimentacion}"
+										immediate="true"
+										target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+								</p:commandLink>
+							</div>
+
+						</p:column>
+						
+						<p:tooltip id="toolTipNotaInf" for="idNotaInformativa" value="#{msj['toltip.nota.informativa']}" />
+			
+						<p:column
+							headerText="#{msj['label.prpuestas.validar.retro.solicitud']}"
+							width="80">
+							<div align="center">
+								<p:commandLink
+									action="#{consultarPropuestasAsignadasManagedBean.obtenerSolictudRetroalimentacion}"
+									update=":formPropuesta:idHistoricoRetroalimentacion"
+									inmediate="true" width="120">
+									<h:graphicImage ajax="true"
+										value="/resources/images/document.png" />
+									<f:setPropertyActionListener value="#{retroalimentacion}"
+										target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+								</p:commandLink>
+
+							</div>
+						</p:column>
+
+						<p:rowExpansion>
+							<h:panelGrid id="displayHistorico" columns="2" cellpadding="10"
+								style="width:600px;" styleClass=" ui-widget-content grid">
+								<h:outputText value="#{msj['label.metodo']}"/>
+								<h:outputText value="#{retroalimentacion.feceaMetodo.abreviatura}" />
+								<h:outputText value="#{msj['label.causa.programacion']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececCausaProgramacion.descripcion}" />
+								<h:outputText
+									value="#{msj['column.origen.central.subprograma']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececSubprograma.clave} - #{retroalimentacion.fececSubprograma.descripcion}" />
+								<h:outputText
+									value="#{msj['column.propuestas.por.validar.sector']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececSector.descripcion}" />
+								<h:outputText
+									value="#{msj['label.seguimiento.motivo.retroalimentacion']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececMotivo.descripcion}" />
+							</h:panelGrid>
+						</p:rowExpansion>
+
+					</p:dataTable>
+				</p:panel>
+
+			</p:fieldset>
+			<br />
+			<br />
+			<p:fieldset id="tolgateOrden" widgetVar="tolgateOrden" legend="Historial de documento orden" toggleable="true"
+				toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle"
+					listener="#{consultarPropuestasAsignadasManagedBean.handleToggleExpedienteOrden}"
+					update=":formPropuesta:tablaHistoricoOrden :formPropuesta:tablaHistoricoOrdenOficio " />
+				<p:dataTable id="tablaHistoricoOrden" var="documento"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaHistorialOrden}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="5"
+					paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+
+					<f:facet name="header">#{msj['label.propuestas.doctos.orden']}</f:facet>
+
+					<p:column headerText="#{msj['column.fechaHora.orden']}"
+						styleClass="someClass" style="width:80px;">
+						<div align="center">
+							<h:outputText value="#{documento.fechaHora}" style="width:80px;">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es_MX"
+									timeZone="America/Mexico_City" />
+							</h:outputText>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['column.asignadas.expediente']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{documento.nombreArchivo}" />
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						style="width:50px;">
+						<div align="center">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true" style="padding:0px 5px;">
+								<f:setPropertyActionListener value="#{documento.rutaArchivo}"
+									target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.rutaArchivo}" />
+								<f:setPropertyActionListener value="#{documento.nombreArchivo}"
+									target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarPropuestasAsignadasManagedBean.descargarArchivo}" />
+							</h:commandButton>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.usuario.accion.historial']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{documento.descripcionEmpleado}" />
+						</div>
+					</p:column>
+
+
+
+				</p:dataTable>
+				<br />
+				<br />
+
+				<p:dataTable id="tablaHistoricoOrdenOficio"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaHistorialOficio}"
+					var="oficio" editable="false"
+					emptyMessage="#{msj['label.lista.vacia']}" rows="5"
+					paginator="true"
+					paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+					<f:facet name="header">
+						<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}"
+							style="font-weight:bold" />
+					</f:facet>
+					<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+						style="width:80px;">
+						<div align="center">
+							<h:outputText value="#{oficio.fechaHora}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es_MX"
+									timeZone="America/Mexico_City" />
+							</h:outputText>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['column.label.oficio']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{oficio.nombreArchivo}" />
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						style="width:50px;">
+						<div align="center">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true" style="padding:0px 5px;">
+								<f:setPropertyActionListener value="#{oficio.rutaArchivo}"
+									target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.rutaArchivo}" />
+								<f:setPropertyActionListener value="#{oficio.nombreArchivo}"
+									target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarPropuestasAsignadasManagedBean.descargarArchivo}" />
+							</h:commandButton>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.usuario.accion.historial']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{oficio.descripcionEmpleado}" />
+						</div>
+					</p:column>
+				</p:dataTable>
+
+			</p:fieldset>
+
+			<!-- Botones de accion -->
+
+			<h:panelGroup
+				rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraBotonesAccion}">
+				<p:commandButton value="#{msj['btn.cancelar.propuesta']}"
+					update=":formPropuesta @form"
+					oncomplete="ocultaMsgAgace('msgExitoGuardar');"
+					action="#{consultarPropuestasAsignadasManagedBean.llamaAnalizarCancelacionPropuesta}" />
+
+				<p:commandButton value="#{msj['btn.rechazar']}"
+					update=":formPropuesta @form"
+					oncomplete="ocultaMsgAgace('msgExitoGuardar');"
+					action="#{consultarPropuestasAsignadasManagedBean.llamaAnalizarRechazoPropuesta}" />
+
+				<p:commandButton value="#{msj['btn.transferir']}"
+					update="@form :formPropuesta"
+					oncomplete="ocultaMsgAgace('msgExitoGuardar');"
+					action="#{consultarPropuestasAsignadasManagedBean.llamaAnalizarTransferirPropuesta}" />
+
+				<p:commandButton value="#{msj['btn.retroalimentar']}"
+					update="@form :formPropuesta"
+					action="#{consultarPropuestasAsignadasManagedBean.llamaAnalizarRetroalimentarPropuesta}" />
+				<p:spacer width="250px" height="30px" />
+				<p:commandButton value="#{msj['btn.actualizar.orden']}"
+					update="@form :formPropuesta"
+					oncomplete="ocultaMsgAgace('msgExitoGuardar');"
+					action="#{consultarPropuestasAsignadasManagedBean.llamaActualizarOrden}"
+					disabled="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraActualizaOrden}" />
+				<p:commandButton value="#{msj['btn.revision']}"
+					update="@form :formPropuesta:msgAdicional"
+					oncomplete="ocultaMsgAgace('msgAdicional');"
+					action="#{consultarPropuestasAsignadasManagedBean.generarRevision}">
+					<f:setPropertyActionListener
+						target="#{cargaDocumentoElectronicoMB.propuestaSeleccionada}"
+						value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar}" />
+					<f:setPropertyActionListener
+						target="#{cargaDocumentoElectronicoMB.estatus1}"
+						value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}" />
+					<f:setPropertyActionListener
+						target="#{cargaDocumentoElectronicoMB.estatus2}"
+						value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}" />
+					<f:setPropertyActionListener
+						target="#{cargaDocumentoElectronicoMB.accion}"
+						value="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}" />
+				    <f:setPropertyActionListener
+						target="#{cargaDocumentoElectronicoMB.empleado}"
+						value="#{consultarPropuestasAsignadasManagedBean.empleadoLogueado}" />
+				</p:commandButton>
+
+			</h:panelGroup>
+			<br />
+			<br />
+			<p:commandButton value="#{msj['btn.pantalla.anterior']}"
+				style="width:120px;" 
+				action="#{consultarPropuestasAsignadasManagedBean.listadoPropuestas}"
+				rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.vieneConsultaPropOrd}"
+				update=":formPropuestas :formPropuesta" />
+			<p:commandButton value="#{msj['btn.pantalla.anterior']}"
+				style="width:120px;"
+				rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.vieneConsultaPropOrd}"
+				action="#{consultarPropuestasAsignadasManagedBean.redireccionaRegreso}"
+			    ajax="true" proces="@this" update="@form"/>				    
+			<p:spacer width="535px" height="5px" />
+			<p:commandButton value="#{msj['btn.asignar.consulta']}"
+				style="width:120px;" update=":formPropuesta @form"
+				oncomplete="ocultaMsgAgace('msgAdicional');"
+				actionListener="#{consultarPropuestasAsignadasManagedBean.cargaAsignarConsulta}"
+				rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraBotonesAccion}" />
+
+		</p:panel>
+
+		<!-- Panel de Comparacion de Datos del Contribuyente -->
+		<p:panel id="panelDifDatos" styleClass="panel-interno" header="Información"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraContribuyenteAnterior}">
+
+			<ui:include src="/propuestas/auditor/datosContribuyente.jsf" />
+		</p:panel>
+
+		<!-- Formulario Cancelar Propuestas -->
+		<p:panel id="panelCancelarPropuesta" header="Cancelar Propuesta"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraFormularioCancelar}">
+
+			<ui:include src="/propuestas/auditor/formularioCancelar.jsf" />
+		</p:panel>
+
+		<!-- Formulario Rechazo Propuestas-->
+		<p:panel id="panelRechazoPropuesta"
+			header="#{msj['header.panel.rechazo.propuesta']}"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraFormularioRechazo}">
+
+			<ui:include src="/propuestas/auditor/formularioRechazo.jsf" />
+
+		</p:panel>
+
+
+		<!-- Formulario Transferir Propuesta-->
+		<p:panel id="panelTransferirPropuesta" header="Transferir Propuesta"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraFormularioTransferir}">
+
+			<ui:include src="/propuestas/auditor/formularioTranferencia.jsf" />
+
+		</p:panel>
+
+		<!-- Panel Retroalimentar Propuesta-->
+		<p:panel id="panelRetroalimentarPropuestas"
+			header="Propuesta a Retroalimentar"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraFormularioRetroalimentar}">
+
+			<ui:include src="/propuestas/auditor/formularioRetroalimentar.jsf" />
+
+		</p:panel>
+
+		<!-- Formulario Actualizar Orden -->
+		<p:panel id="panelUpdateOrden" header="Actualizar orden"
+			rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.mostrarInfoComplementaria}">
+
+			<ui:include src="/propuestas/auditor/formularioActualizarOrden.jsf" />
+
+		</p:panel>
+		
+		<!-- Dialogo de Confirmacion Propuestas Rechazadas-->
+		<p:dialog header="Confirmación" widgetVar="confirmaOperacionRechazo"
+			id="dlgconfirmaOperacionRechazo" resizable="false" modal="true"
+			width="420" height="auto" closable="false">
+			<h:panelGrid id="panelAvisoConfirmacionRechazo" columns="1">
+				<h:outputText
+					value="¿Estás seguro de rechazar el Registro #{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelRegistro}?"
+					style="font-weight:bold;" />
+			</h:panelGrid>
+			<p:spacer height="20px;" />
+			<p:commandButton value="#{msj['label.confirm.cancelar']}"
+				onclick="confirmaOperacionRechazo.hide();"
+				styleClass="ui-confirmdialog-no" style="float:right;" update="@form" disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"/>
+			<p:commandButton id="btnAceptarRechazo"
+				value="#{msj['label.confirm.aceptar']}"
+				onclick="confirmaOperacionRechazo.hide();return checkSubmit();"
+				disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"
+				styleClass="ui-confirmdialog-yes"
+				action="#{consultarPropuestasAsignadasManagedBean.rechazarPropuesta}"
+				update=":formPropuestas" style="float:right;" ajax="false"
+				oncomplete="ocultaMsgAgace('msgExitoGuardar');" partialSubmit="true"
+				onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"
+				process="@this" />
+		</p:dialog>
+		<!-- Dialogo de COnfirmación de Propuestas Transferidas-->
+		<p:dialog header="Confirmación"
+			widgetVar="confirmaOperacionTransferir"
+			id="dlgConfirmaOperacionTransferir" resizable="false" modal="true"
+			width="420" height="auto" closable="false">
+			<h:panelGrid id="panelAvisoConfirmacionTransferencia" columns="1">
+				<h:outputText
+					value="¿Estás seguro que deseas transferir el Registro #{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelRegistro}?"
+					style="font-weight:bold;" />
+			</h:panelGrid>
+			<p:spacer height="20px;" />
+			<p:commandButton value="#{msj['label.confirm.cancelar']}"
+				onclick="confirmaOperacionTransferir.hide();"
+				styleClass="ui-confirmdialog-no" style="float:right;" update="@form" disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"/>
+			<p:commandButton id="btnAceptarTransferencia"
+				value="#{msj['label.confirm.aceptar']}"
+				onclick="confirmaOperacionTransferir.hide();return checkSubmit();"
+		        disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"
+				styleClass="ui-confirmdialog-yes"
+				action="#{consultarPropuestasAsignadasManagedBean.transferirPropuesta}"
+				update=":formPropuestas @form" style="float:right;" ajax="false"
+				oncomplete="ocultaMsgAgace('msgExitoGuardar');" partialSubmit="true"
+				onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"
+				process="@this" />
+		</p:dialog>
+		<!-- Dialogo de COnfirmación de Propuestas a Retroalimentar-->
+		<p:dialog header="Confirmación"
+			widgetVar="confirmaOperacionRetroalimentacion"
+			id="dlgConfirmaOperacionRetroalimentacion" resizable="false"
+			modal="true" width="420" closable="false" height="auto">
+			<h:panelGrid id="panelAvisoConfirmacionRetroalimentacion" columns="1">
+				<h:outputText
+					value="¿Estás seguro que deseas enviar el Registro #{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelRegistro}, para su retroalimentación?"
+					style="font-weight:bold;" />
+			</h:panelGrid>
+			<p:spacer height="20px;" />
+			<p:commandButton value="#{msj['label.confirm.cancelar']}"
+				onclick="confirmaOperacionRetroalimentacion.hide();"
+				styleClass="ui-confirmdialog-no" style="float:right;" update="@form" disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"/>
+			<p:commandButton id="btnAvisoRetroalimentacion"
+				value="#{msj['label.confirm.aceptar']}"
+				onclick="confirmaOperacionRetroalimentacion.hide();return checkSubmit();"
+			    disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"
+				styleClass="ui-confirmdialog-yes"
+				action="#{consultarPropuestasAsignadasManagedBean.retroalimentarPropuesta}"
+				update=":formPropuestas" style="float:right;" ajax="false"
+				oncomplete="ocultaMsgAgace('msgExitoGuardar');" partialSubmit="true"
+				onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"
+				process="@this" />
+		</p:dialog>
+
+		<!--  Dialogo de Confirmación de Propuesta Cancelada -->
+		<p:dialog header="Confirmación"
+			widgetVar="confirmaOperacionCancelacion"
+			id="dlgConfirmaciaOperacionCancelar" resizable="false" modal="true"
+			width="420" closable="false" height="auto">
+			<h:panelGrid id="panelAvisoConfirmacionCancelacion" columns="1">
+				<h:outputText
+					value="¿Estás seguro de Cancelar el Registro #{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelRegistro} ?"
+					style="font-weight:bold;" />
+			</h:panelGrid>
+			<p:spacer height="20px;" />
+			<p:commandButton value="#{msj['btn.no.cancelar.propuesta']}"
+				onclick="confirmaOperacionCancelacion.hide();"
+				styleClass="ui-confirmdialog-no" style="float:right;" update="@form" disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"/>
+			<p:commandButton id="btnAvisoCancelacion"
+				value="#{msj['btn.aceptar.cancelacion.propuesta']}"
+				onclick="confirmaOperacionCancelacion.hide();return checkSubmit();"
+			    disabled="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.deshabilitaBtnFormulario}"
+				styleClass="ui-confirmdialog-yes"
+				action="#{consultarPropuestasAsignadasManagedBean.cancelarPropuesta}"
+				update=":formPropuestas" style="float:right;" ajax="true"
+				oncomplete="ocultaMsgAgace('msgExitoGuardar');" partialSubmit="true"
+				onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"
+				process="@this" />
+		</p:dialog>
+
+		<!-- Dialogo Aviso Actualizacion de Datos del Contribuyente -->
+		<p:dialog header="Información" widgetVar="contribuyenteActualizado"
+			id="dlgUpdateContribuyente" resizable="false" modal="true"
+			width="420" closable="false" height="auto">
+			<h:panelGrid columns="1" id="panelAvisoUpdateContribuyente">
+				<h:outputText
+					value="El sistema ha detectado modificaciones en los datos del Contribuyente en IdC.
+                                           La información se ha actualizado correctamente." />
+			</h:panelGrid>
+			<p:spacer height="20px;" />
+			<p:commandButton value="#{msj['label.confirm.aceptar']}"
+				onclick="contribuyenteActualizado.hide();"
+				styleClass="ui-confirmdialog-yes" update="@form"
+				style="float:right;" />
+
+		</p:dialog>
+
+		<!-- Dialogo de Confirmacion de Actualizacion del Documento Orden-->
+		<p:dialog header="Confirmación"
+			widgetVar="confirmaOperacionUpdateDocOrden"
+			id="dlgConfirmaOperacionUpdateDocOrden" resizable="false"
+			modal="true" width="420" closable="false" height="auto">
+			<h:panelGrid id="panelAvisoConfrimacionUpdateDocOrden" columns="1">
+				<h:outputText value="#{msj['mensaje.confirmar.actualizar.orden']}"
+					style="font-weight:bold;" />
+			</h:panelGrid>
+			<p:spacer height="20px;" />
+			<p:commandButton value="#{msj['label.confirm.cancelar']}"
+				onclick="confirmaOperacionUpdateDocOrden.hide();"
+				styleClass="ui-confirmdialog-no" style="float:right;" update="@form" />
+			<p:commandButton id="btnAvisoUpdateDocOrden"
+				value="#{msj['label.confirm.aceptar']}"
+				onclick="confirmaOperacionUpdateDocOrden.hide();return checkSubmit();"
+				styleClass="ui-confirmdialog-yes"
+				action="#{consultarPropuestasAsignadasManagedBean.actualizarOrden}"
+				update=":formPropuestas @form" style="float:right;" ajax="true"
+				oncomplete="ocultaMsgAgace('msgExitoGuardar');" partialSubmit="true"
+				 />
+		</p:dialog>
+
+		<p:dialog
+			header="#{msj['label.titulo.historico.retroalimentaciones']}"
+			widgetVar="dlgHistoricoRetroalimentacion" resizable="false"
+			modal="true" closable="false" width="700">
+
+
+			<p:panel id="idHistoricoRetroalimentacion">
+				<h:panelGrid columns="2" width="100%">
+					<p:spacer width="500" height="1" />
+					<h:outputText
+						value="#{msj['label.registro']}: #{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.idRegistro}"
+						style="font-weight:bold;" />
+				</h:panelGrid>
+
+				<p:dataTable id="tablaRetroalimentacionArchivos" var="solicitud"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaSolicitudRetroalimentacion}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.titulo.retroalimentacion']}
+                            </f:facet>
+					<p:column headerText="#{msj['titulo.label.fecha.solicitud']}"
+						width="90">
+						<div align="center">
+							<h:outputText value="#{solicitud.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.motivo.retro.asiganda']}"
+						width="380">
+						<h:outputText value="#{solicitud.fececMotivo.descripcion}" />
+
+					</p:column>
+					<p:column headerText="Archivos" width="50">
+						<div align="center">
+							<p:commandLink value="#{solicitud.numeroDocRetroalimentacion}"
+								ajax="true"
+								action="#{consultarPropuestasAsignadasManagedBean.obtenerDocumentosRetroalimentacion}"
+								immediate="true" update=":formPropuesta:pnlDocumentoHistorcio"
+								style="color:#0170b7;">
+								<f:setPropertyActionListener value="#{solicitud}"
+									immediate="true"
+									target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+							</p:commandLink>
+						</div>
+					</p:column>
+				</p:dataTable>
+
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarSolicitud" value="Cerrar"
+						onclick="PF('dlgHistoricoRetroalimentacion').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+
+			</p:panel>
+
+
+		</p:dialog>
+
+		<p:dialog header="#{msj['titulo.historico']}"
+			widgetVar="dlgHistoricoDocumentacionRetro" resizable="false"
+			modal="true" width="700" closable="false">
+
+			<p:panel id="pnlDocumentoHistorcio">
+				<p:dataTable id="tablaDocumentacionArchivos" var="documento"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaDocumentos}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.titulo.archivos.cargados']}
+                            </f:facet>
+
+					<p:column headerText="#{msj['label.titulo.fecha.carga']}"
+						width="90">
+						<div align="center">
+							<h:outputText value="#{documento.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.nombre.archivo.historico']}"
+						width="400">
+						<div align="center">
+							<h:outputText value="#{documento.nombreArchivo}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						width="90">
+						<h:commandButton image="/resources/images/document.png"
+							title="Documento" ajax="true" style="padding:0px 5px;">
+							<f:setPropertyActionListener value="#{documento.rutaArchivo}"
+								target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.rutaArchivo}" />
+							<f:setPropertyActionListener value="#{documento.nombreArchivo}"
+								target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarPropuestasAsignadasManagedBean.descargarArchivo}" />
+						</h:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarDocumento" value="Cerrar"
+						onclick="PF('dlgHistoricoDocumentacionRetro').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+
+
+
+			</p:panel>
+		</p:dialog>
+
+
+
+		<p:dialog header="#{msj['titulo.historico']}"
+			widgetVar="dlgHistoricoDocumentacionAccion" resizable="false"
+			modal="true" width="700" closable="false">
+
+			<p:panel id="pnlDocumentoHistoricoAccion">
+				<p:dataTable id="tablaDocumentacionArchivosAccion" var="documento"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaDocumentosExpediente}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.titulo.archivos.cargados']}
+                            </f:facet>
+
+					<p:column headerText="#{msj['label.titulo.fecha.carga']}"
+						width="90">
+						<div align="center">
+							<h:outputText value="#{documento.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.nombre.archivo.historico']}"
+						width="400">
+						<div align="center">
+							<h:outputText value="#{documento.nombre}" />
+
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						width="90">
+						<h:commandButton image="/resources/images/document.png"
+							title="Documento" ajax="true" style="padding:0px 5px;">
+							<f:setPropertyActionListener value="#{documento.rutaArchivo}"
+								target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.rutaArchivo}" />
+							<f:setPropertyActionListener value="#{documento.nombre}"
+								target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarPropuestasAsignadasManagedBean.descargarArchivo}" />
+						</h:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarDocumentoAccion" value="Cerrar"
+						onclick="PF('dlgHistoricoDocumentacionAccion').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+
+
+
+			</p:panel>
+		</p:dialog>
+
+		<p:dialog header="#{msj['label.impuestos']}"
+			widgetVar="dlgHistoricoImpuestosRetro" resizable="false" modal="true"
+			width="700" closable="false">
+
+			<p:panel id="pnlImpuestoHistorico">
+				<p:dataTable id="tablaImpuestoHistorico" var="impuesto"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaImpuestos}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.impuestos']}
+                            </f:facet>
+
+					<p:column headerText="#{msj['label.impuesto']}" width="150">
+						<h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}" />
+					</p:column>
+
+					<p:column headerText="#{msj['lbl.propuestas.concepto']}"
+						width="150">
+						<h:outputText value="#{impuesto.fececConcepto.descripcion}" />
+					</p:column>
+
+					<p:column headerText="#{msj['label.monto']}" width="150" style="text-align:center;">
+						<h:outputText value="#{impuesto.monto}">
+						   <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+						</h:outputText>   
+					</p:column>
+
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="1" />
+							<p:column footerText="#{msj['label.presuntiva']}"
+								style="text-align:center; font-weight: bold;" />
+							<p:column style="text-align:center;">
+								<f:facet name="footer">
+									<h:outputText
+										value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.presuntiva}">
+										<f:convertNumber currencySymbol="$" currencyCode="MXN"
+											type="currency" locale="es_MX" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+                <br/>
+                <h:outputLabel value="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelFechaComite}" style="font-weight:bold"/>
+                <br/>
+                <p.spacer width="20px" height="20px"/>
+                <p:calendar id="txtFechaInformeComite2" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                            value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaInforme}"
+                            rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaInforme!=null}"/>
+                <p:calendar id="txtFechaPresentacionComite2" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                            value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaPresentacion}"
+                            rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaPresentacion!=null}"/>
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarImpuesto" value="Cerrar"
+						onclick="PF('dlgHistoricoImpuestosRetro').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+			</p:panel>
+		</p:dialog>
+
+		<p:dialog header="#{msj['label.asignar.consulta']}"
+			id="asignarConsulta" widgetVar="dlgAsignarConsulta" resizable="false"
+			modal="true" width="600" closable="false">
+
+
+			<h:outputText value="#{msj['label.detalle.asinar.consulta']}" />
+			<h:panelGrid id="pnlAsigConculta">
+				<p:messages id="msgAsociado" showDetail="true" globalOnly="true"
+					closable="true" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="3">
+				<h:outputText value="#{msj['label.jefe.departamento']}" />
+
+
+				<p:spacer width="80" height="40" />
+
+
+				<p:selectOneMenu id="cmbJefeDepartamento"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.idEmpleadoJefeDepartamento}"
+					style="width:250px">
+
+					<f:selectItem itemLabel="#{msj['cmb.seleccion.jefe.departamento']}"
+						itemValue="" noSelectionOption="true" />
+					<f:selectItems
+						value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaJefeDepartamento}"
+						var="jefeDepartamento" itemLabel="#{jefeDepartamento.nombre}"
+						itemValue="#{jefeDepartamento.idEmpleado}" />
+				</p:selectOneMenu>
+
+
+				<h:outputText value="#{msj['label.enlace']}" />
+				<p:spacer width="80" height="1" />
+				<p:selectOneMenu id="cmbEnlace" style="width:250px;"
+					value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.idEmpleadoEnlace}">
+					<f:selectItem itemLabel="#{msj['cmb.seleccion.enlace']}" />
+					<f:selectItems
+						value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaEnlace}"
+						var="enlace" itemLabel="#{enlace.nombre}"
+						itemValue="#{enlace.idEmpleado}" />
+
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<p:spacer width="1" height="20" />
+
+
+			<h:panelGrid columns="4">
+				<p:spacer width="200" height="1" />
+				<p:commandButton id="btnAsignarConsulta"
+					value="#{msj['label.asignar.consulta']}" style="width:110px;"
+					ajax="true"
+					action="#{consultarPropuestasAsignadasManagedBean.asignarConsulta}"
+					update="formPropuesta:pnlAsigConculta @form" />
+				<p:spacer width="20" height="1" />
+				<p:commandButton id="btncancelarAsignarConsulta" value="Cancelar"
+					onclick="PF('dlgAsignarConsulta').hide();" style="width:80px;"
+					ajax="true" />
+
+			</h:panelGrid>
+
+			<p:spacer width="1" height="20" />
+		</p:dialog>
+
+		<p:dialog header="#{msj['label.confirm.header']}"
+			widgetVar="confirmarMediosContacto" resizable="false" modal="true"
+			width="400" height="80">
+			<h:panelGroup layout="block" style="padding:5px;"
+				id="msjeConfirmarMediosContacto">
+				<h:outputText
+					value="No se encuentran Medios de Contacto. ¿Desea capturar el E-mail del Agente Aduanal?" />
+			</h:panelGroup>
+			<p:commandButton value="#{msj['btn.no']}"
+				onclick="PF('confirmarMediosContacto').hide();"
+				action="#{consultarPropuestasAsignadasManagedBean.deshabilitaEmailColaborador}"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+				style="float:right;" update="@form" immediate="true" />
+			<p:commandButton value="#{msj['btn.si']}"
+				onclick="PF('confirmarMediosContacto').hide();"
+				action="#{consultarPropuestasAsignadasManagedBean.habilitaEmailColaborador}"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+				style="float:right;" update="@form" immediate="true" />
+		</p:dialog>
+
+		<p:dialog widgetVar="noIdc" resizable="false" modal="true" width="400"
+			height="80">
+			<h:panelGroup layout="block" style="padding:5px;" id="msjeNoIdc">
+				<h:outputText value="La información solicitada no existe en IDC." />
+			</h:panelGroup>
+			<p:commandButton value="Aceptar" onclick="PF('noIdc').hide();"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+				style="float:right;" update="@form" />
+		</p:dialog>
+
+	</h:form>
+
+	<h:outputScript library="js/" name="agace.js" />
+
+	<h:outputStylesheet library="css/" name="agace.css" />
+</h:body>
+</html>

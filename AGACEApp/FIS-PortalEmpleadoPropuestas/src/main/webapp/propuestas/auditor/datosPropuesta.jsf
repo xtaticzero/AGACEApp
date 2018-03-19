@@ -1,0 +1,294 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+   
+   <!-- Panel de detalle para propuestas-->
+                     <p:panel id="panelDatosCont1" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraDetalle1}">
+                        <h:outputLabel value="#{msj['label.rfc.contribuyente.asignadas']}: "
+                                       style="font-weight:bold"/>               
+                        <br/>
+                        <br/>
+                        <p:inputText ajax="false" id="txtRFC3" maxlength="15" disabled="true" style="width:222px;height:auto;"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.rfc != null ?
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.rfc : 
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.rfc}"/>
+                        <br/>   
+                        <h:outputLabel value="#{msj['label.regimen']}: " style="font-weight:bold"/>
+                        <p:spacer width="300px" height="20px"/>             
+                        <h:outputLabel value="#{msj['label.nombre.razon.social']}: " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputText id="txtRegimen3" style="width:222px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.regimen != null ?
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.regimen :
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.regimen}"/>
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtNombre3" style="width:300px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.nombre != null ?
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.nombre :
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.nombre}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="230px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.situacion.contribuyente']} " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                         <p:inputText id="txtTipoContribuyente3" style="width:222px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.tipo != null ?
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.tipo : 
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.tipo}"/> 
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtSituacionContribuyente3" style="width:300px;height:auto;" disabled="true"
+                                     value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.situacion != null ?
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.situacion :
+                                              consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.situacion}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="170px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.actividad.preponderante']}: " style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputTextarea id="txtDomicilioFiscalContribuyente3" rows="4" cols="35" disabled="true"
+                                                 value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.domicilioFiscal != null ?
+                                                          consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.domicilioFiscal :
+                                                          consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.domicilioFiscal}"/>
+                        <p:spacer width="170px" height="20px"/>
+                        <p:inputTextarea id="txtActividadPreponderante3" rows="4" cols="35" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.actividadPreponderante != null ?
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.actividadPreponderante :
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.actividadPreponderante}"/>
+                        <br/>
+                        <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+                        <p:spacer width="305px" height="20px"/>
+                        <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:inputText id="txtEntidad3" style="width:222px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.entidad != null ?
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.entidad :
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.entidad}"/>
+                        <p:spacer width="120px" height="20px"/>
+                        <p:inputText id="txtSituacionDomicilio3" style="width:300px;height:auto;" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.situacionDomicilio != null ?
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.contribuyenteIdc.contribuyenteIdc.situacionDomicilio :
+                                                      consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fecetContribuyente.situacionDomicilio}"/>                     
+                    </p:panel>
+
+                    <br/>
+                    <!-- Datos previos de la propuesta-->
+                    <p:spacer width="0px"/>
+                    <p:outputLabel value="#{msj['separador.datos.previos.propuesta.asignada']}" style="font-weight:bold;"/>
+                    <p:separator/>
+                    <p:panel id="panelPreviosCont1" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraPrevios1}">
+                       <h:outputLabel value="#{msj['label.unidad.administrativa']} :" style="font-weight:bold;text-align: center;"/>
+                       <p:spacer width="25px" height="20px" />
+                       <h:outputLabel value="#{msj['label.metodo.revision']} " style="font-weight:bold"/>
+                       <p:spacer width="80px" height="20px" />
+                       <h:outputLabel value="#{msj['label.causa.programacion']}" style="font-weight:bold"/>
+                       <p:spacer width="50px" height="20px" />
+                       <h:outputLabel value="#{msj['label.tipo.propuesta']}" style="font-weight:bold"/>
+                       <br/>
+                       <p:inputTextarea value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fececArace.nombre}" id="txtUnidadAdmin" rows="3" cols="20" disabled="true"/>
+                       <p:spacer width="105px" height="20px" />
+                       <p:inputTextarea id="txtMetodo" rows="3" cols="20" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.feceaMetodo.abreviatura}"/>
+                       <p:spacer width="80px" height="20px" />
+                       <p:inputTextarea id="txtCausaProgramacion" rows="3" cols="20"  disabled="true" autoResize="false"
+                                                 value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fececCausaProgramacion.descripcion}"/>
+                       <p:spacer width="55px" height="20px" />
+                       <p:inputTextarea id="txtTipoPropuesta" rows="3" cols="20" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fececTipoPropuesta.descripcion}"/>
+                       <br/>
+                       <br/>
+                       
+                       <h:outputLabel value="#{msj['label.subprograma']}: " style="font-weight:bold"/>
+                       <p:spacer width="100px" height="20px"/>
+                       <h:outputLabel value="Sector: " style="font-weight:bold"/>
+                       <p:spacer width="155px" height="20px"/>
+                       <h:outputLabel value="#{msj['label.encabezado.prioridad']}:" style="font-weight:bold"/>
+                       <p:spacer width="75px" height="20px"/>
+                       <h:outputLabel value="#{msj['label.tipo.revision']}" style="font-weight:bold" rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.idRevision!=null}" />
+                       <br/>
+                       <p:inputTextarea id="txtSubPrograma" rows="6" cols="20" style="height:auto;" disabled="true" autoResize="false"
+                                                 value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fececSubprograma.descripcion}"/>
+                       <p:spacer width="50px" height="20px"/>
+                       <p:inputTextarea id="txtSector" rows="6" cols="20" style="height:auto;" disabled="true" autoResize="false"
+                                                 value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fececSector.descripcion}"/>
+                       <p:spacer width="70px" height="20px"/>
+                       <p:inputTextarea id="prioridadInsumo" rows="6" cols="20" name="prioridadInsumo" ajax="true" disabled="true" 
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.prioridadSugerida}" />
+                       <p:spacer width="70px" height="20px"/>
+                       <p:inputTextarea id="txtRevision" rows="3" cols="20" disabled="true"
+                                             value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fececRevision.descripcion}"
+                                             rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.idRevision!=null}"/>
+                       <br/>
+                       <br/>
+                       <h:outputLabel  rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.tipoPropuesta}" value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold" />
+                       <h:outputLabel  rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.tipoPropuesta}" value="#{msj['label.operaciones.especificas']}:" style="font-weight:bold" />
+                       <br/>
+                       <h:panelGrid columns="2">
+                          <h:panelGrid>
+                             <h:outputLabel  rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.tipoPropuesta}"  value="#{msj['lbl.periodo.propuesto.inicial']}:" style="font-weight:bold"/>
+                             <h:outputLabel  rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold"/>
+                             <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                                         value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaInicioPeriodo}"/>
+                          </h:panelGrid>
+                          <h:panelGrid>
+                             <h:outputLabel rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.tipoPropuesta}"  value="#{msj['lbl.periodo.propuesto.final']}:" style="font-weight:bold"/>
+                             <h:outputLabel  rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.tipoPropuesta}"  value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold"/>
+                             <p:calendar id="txtFechaFinal" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                                         value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaFinPeriodo}"/>
+                          </h:panelGrid> 
+                       </h:panelGrid>
+                       <br/>
+                       <p:spacer widht="5px" height="5px"/>
+                       <h:outputLabel value="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelFechaComite}" style="font-weight:bold"/>
+                       <br/>
+                       <p.spacer width="20px" height="20px"/>
+                       <p:calendar id="txtFechaInformeComite" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                                   value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaInforme}"
+                                   rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaInforme!=null}"/>
+                       <p:calendar id="txtFechaPresentacionComite" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                                   value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaPresentacion}"
+                                   rendered="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar.fechaPresentacion!=null}"/>                                        
+                    </p:panel>
+                    <br/>
+                    <br/>  
+                    
+                    <!-- Expedientes de la propuesta -->
+                    
+                    <h:panelGrid columns="1" width="75%" border="0" styleClass="panel-secundario" style="margin:auto;">
+                        <p:dataTable id="tablaDocumentacionExpediente"
+                                     value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaExpedientes}" var="documento"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                     paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})" 
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj[&apos;label.expediente.electronico&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="30%">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                                <p:commandLink style="color:blue;" ajax="false" update=":formPropuestas @form">
+                                    #{documento.nombre}
+                                    <f:setPropertyActionListener value="#{documento.nombre}"
+                                                                 target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.nombreArchivo}"/>
+                                    <f:setPropertyActionListener value="#{documento.rutaArchivo}"
+                                                                 target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.rutaArchivo}"/>
+                                    <p:fileDownload contentDisposition="attachment" value="#{consultarPropuestasAsignadasManagedBean.descargarArchivo}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <br/>
+                    <br/>
+                    <!-- Tabla de Impuestos de la Propuesta-->
+                     <h:panelGrid columns="1" width="75%" border="0" styleClass="panel-secundario" style="margin:auto;">
+                        <p:dataTable id="tablaImpuestosPropuestas" style="border:none;" var="tablaImpuestosPropuestas"
+                                     value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaImpuestosDescripcion}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <f:facet name="header">
+                                Impuestos
+                            </f:facet>
+                            <p:column headerText="#{msj['label.impuesto']}" styleClass="someClass" width="100px" style="margin:auto;">
+                                <h:outputText id="txtDescImpuesto"
+                                              value="#{tablaImpuestosPropuestas.fececTipoImpuesto.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.concepto.impuesto']}">
+                                <h:outputText value="#{tablaImpuestosPropuestas.fecetImpuesto.fececConcepto.descripcion}" />
+                            </p:column>
+                            <p:column id="hdrMonto" headerText="Monto ($):">
+                                <div style="width:100px;">
+                                    <h:outputText value="#{tablaImpuestosPropuestas.fecetImpuesto.monto}">
+                                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                    </h:outputText>
+                                </div>
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column colspan="1"/>
+                                    <p:column footerText="Presuntiva: " style="text-align:right;font-weight:bold;"/>
+                                    <p:column colspan="1" style="text-align:left;">
+                                        <f:facet name="footer">
+                                            <h:outputText value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.sumaPresuntiva}"
+                                                          style="font-weight:bold;">
+                                                <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+                            </p:columnGroup>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    
+                    
+                    <!--  Papeles de trabajo -->
+                    <br/>
+                    <p:outputLabel value="#{msj['titulo.panel.papeles.trabajo']}" style="font-weight:bold;"/>
+                    <p:spacer width="50px" height="20px"/>
+                    <p:outputLabel value="#{msj['label.fecha.carga.documento']}" style="font-weight:bold;"/>
+                    <h:outputText id="fechaCargaDocOrden" value="#{currentDate}" style="font-weight:bold;">
+                       <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+                    </h:outputText>
+                    <p:separator/>
+                    <p:messages id="msgAdicional" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid columns="3">
+                       <h:panelGrid columns="1" rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraBotonesAccion}">
+                           <p:fileUpload id="flUpLoadPapeles" widgetVar="flUpPapel" style="width:180px;"
+                                         fileUploadListener="#{consultarPropuestasAsignadasManagedBean.handleFileUploadPapelesTrabajo}"
+                                         mode="advanced" dragDropSupport="false" multiple="false" 
+                                         label="#{msj['label.examinar.documento']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                         update="tablaPapelesTrabajo :formPropuesta:btnPapelTrabajo :formPropuesta:flUpLoadPapeles :formPropuesta:msgAdicional" showButtons="true" auto="true" 
+                                         ajax="true" oncomplete="ocultaMsgAgace('msgAdicional');"/>
+                       </h:panelGrid>
+                       <h:panelGrid columns="1" width="80%" border="0" styleClass="panel-secundario" style="margin:auto;">
+                       <p:column>
+                          <p:dataTable id="tablaPapelesTrabajo" style="border:none;" value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaPapelesTrabajo}"
+                                       editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" var="papeles"
+                                       paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                                       currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                             <f:facet name="header">
+                                   #{msj['titulo.panel.papeles.trabajo']}
+                             </f:facet>           
+                             <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="30%">
+                                <h:outputText id="txtFechaCPapel" value="#{papeles.papelesTrabajo.fechaCreacion}">
+                                   <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                                </h:outputText>
+                             </p:column>
+                             <p:column headerText="#{msj['column.nombre.documento.trabajo']}" width="40%">
+                                <h:outputText id="nombrePapel" value="#{papeles.papelesTrabajo.nombreArchivo}" />
+                             </p:column>
+                             <p:column headerText="Archivo" width="15%" >
+                                <div align="center">
+	                                <h:commandButton image="/resources/images/document.png" title="Documento"
+			                                                    ajax="true" style="padding:0px 5px;" >
+			                                       <f:setPropertyActionListener value="#{papeles}"
+                                                                                target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.docPapelSeleccionado}" />
+			                        			   <f:setPropertyActionListener value="#{papeles.papelesTrabajo.rutaArchivo}"
+			                                                                    target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.rutaArchivo}"/>
+			                                       <f:setPropertyActionListener value="#{papeles.papelesTrabajo.nombreArchivo}"
+			                                                                    target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.nombreArchivo}"/>                             
+			                                       <p:fileDownload contentDisposition="attachment"
+			                                                       value="#{consultarPropuestasAsignadasManagedBean.descargarArchivo}"/>
+			                        </h:commandButton>
+	                            </div>                              
+                             </p:column>
+                             <p:column width="20%" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraDesabilitaPapel}">
+                                <p:commandLink value="#{msj['column.eliminar.asignada']}"  style="color:blue;" ajax="true" update="tablaPapelesTrabajo :formPropuesta:btnPapelTrabajo" rendered="#{papeles.isEliminar}" action="#{consultarPropuestasAsignadasManagedBean.eliminarPapelTrabajo}">
+                                   <f:setPropertyActionListener value="#{papeles}" immediate="true"
+	                                 target="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.papelesTrabajo}" />                                   
+                                </p:commandLink>
+                             </p:column>
+                          </p:dataTable>
+                          </p:column>
+                       </h:panelGrid>
+                       
+                       <h:panelGrid id="btnPapelTrabajo"  rendered="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraBotonesAccion}">
+                          <p:commandButton    value="#{msj['btn.papeles.trabajo']}" action="#{consultarPropuestasAsignadasManagedBean.registrarPapelTrabajo}"    update=":formPropuesta " style="width:80px;" disabled="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraDesabilitaPapel}" />
+                       </h:panelGrid>
+                    </h:panelGrid>      
+</ui:composition>

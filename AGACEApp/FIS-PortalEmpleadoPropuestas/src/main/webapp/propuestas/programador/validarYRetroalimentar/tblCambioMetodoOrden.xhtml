@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:fieldset id="propuestaCambioMetodo" widgetVar="propuestaCambioMetodo" legend="#{msj['titulo.fielset.cambio.metodo']}" style="margin-bottom:20px" toggleable="true" toggleSpeed="500" collapsed="true">
+        <p:ajax event="toggle" listener="#{validarRetroMB.cambioMetodoToggle}" update="cambioMetodoTbl msgs" />
+        <h:panelGrid columns="2" cellpadding="5">
+            <p:dataTable id="cambioMetodoTbl" var="propPV" value="#{validarRetroMB.retroalimentarLstHelper.listaCambioMetodo}" 
+                         rowKey="#{propPV.idPropuesta}"
+                         emptyMessage="#{msj['label.lista.vacia']}" 
+                         paginator="true"
+                         rows="5"
+                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}  {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom">
+              
+                <p:column headerText="#{msj['column.propuestas.por.validar.folio']}" styleClass="someClass"
+                          style="width:15%">
+
+                    <p:commandLink action="#{validarRetroMB.verDetalleCambioMetodo}" process="@this" update=":formValidaRetroalimentarPropuesta " ajax="false">
+                        <h:outputText value="#{propPV.idRegistro}" style="color:blue"/>
+                        <f:setPropertyActionListener value="#{propPV}" 
+                                                     target="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada}"/>
+                    </p:commandLink>
+                  </p:column>
+  <p:column headerText="#{msj['column.propuestas.por.validar.rfc']}" style="width:15%">
+                    <h:outputText value="#{propPV.fecetContribuyente.rfc}" />
+                </p:column>
+                <p:column headerText="#{msj['consultar.label.numeroorden']}" styleClass="someClass"
+                          style="width:15%">
+                  <h:outputText value="#{propPV.agaceOrden.numeroOrden}" style="color:blue"/>
+                
+                    </p:column>
+                    
+                <p:column headerText="#{msj['column.propuestas.por.validar.metodo']}" style="width:15%">
+                    <h:outputText value="#{propPV.feceaMetodo.nombre}" />
+                </p:column>
+                </p:dataTable>
+        </h:panelGrid>
+    </p:fieldset>            
+</f:view>

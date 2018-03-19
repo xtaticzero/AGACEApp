@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>asignarDocElectronico</title>
+    </h:head>
+    <h:body>
+        <h:form>
+
+            <h:panelGrid styleClass="panel-interno">
+                <p:panel header="Asignar a Subadministrador Documento Electrónico Para Verificación" rendered="#{asignarDocMB.mostrarPanelPrincipal}">
+                    <p:messages id="msgAsignar" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid>
+                        <p:dataTable value="#{asignarDocMB.listaProps}" var="doc" emptyMessage="No se han encontrado registros."
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            paginator="true" rows="15" paginatorPosition="bottom" >
+                            <f:facet name="header">
+                                <p:outputLabel value="Propuestas por asignar"/>
+                            </f:facet>
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column style="white-space:normal;text-align:center;" width="5%"/>
+                                    <p:column style="white-space:normal;text-align:center;" headerText="Id de Registro"/>
+                                    <p:column style="white-space:normal;text-align:center;" headerText="Método"/>
+                                    <p:column style="white-space:normal;text-align:center;" headerText="Presuntiva"/>
+                                    <p:column style="white-space:normal;text-align:center;" headerText="Prioridad Sugerida"/>
+                                    <p:column style="white-space:normal;text-align:center;" headerText="Subprograma"/>
+                                    <p:column style="white-space:normal;text-align:center;" headerText="Expediente"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column style="text-align:center;">
+                                <p:selectBooleanCheckbox value="#{doc.seleccionado}"/>
+                            </p:column>
+                            <p:column style="text-align:center;">
+                                <p:outputLabel value="#{doc.idRegistro}"/>
+                            </p:column>
+                            <p:column style="text-align:center;">
+                                <p:outputLabel value="#{doc.metodo}"/>
+                            </p:column>
+                            <p:column style="text-align:right;">
+                                <h:outputText value="#{doc.presuntiva}">
+                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                </h:outputText>
+                                <!--p:outputLabel value="#{doc.presuntiva}" /-->
+                            </p:column>
+                            <p:column style="text-align:center;">
+                                <p:outputLabel value="#{doc.prioridad}"/>
+                         
+                            </p:column>
+                            <p:column style="text-align:center;">
+                                <p:outputLabel value="#{doc.subprograma}"/>
+                            </p:column>
+                            
+                      <p:column style="text-align:center;">
+                            <h:commandButton ajax="true" 
+                                             image="/resources/images/document.png"
+                                             style="padding:0px 5px;" 
+                                             action="#{asignarDocMB.cargaDocumentosOrden}" >
+                                <f:setPropertyActionListener value="#{doc}" target="#{asignarDocMB.expediente}"/>
+                            </h:commandButton>
+                        </p:column>
+                      
+                            
+                        </p:dataTable>
+                        <h:panelGrid columns="3">
+                            <p:outputLabel value="Subadministrador"/>
+                            <p:selectOneMenu value="#{asignarDocMB.subSeleccionado.idSubAdmin}">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="0"/>
+                                <f:selectItems value="#{asignarDocMB.listaSubAdmin}" var="sub" itemLabel="#{sub.nombre}" itemValue="#{sub.idSubAdmin}"/>
+                            </p:selectOneMenu>
+                            <p:commandButton value="Asignar"  actionListener="#{asignarDocMB.validaCampos}" update="@form"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                    
+                    <h:panelGrid  width="500">
+                        <p:dataTable value="#{asignarDocMB.listaSubAdmin}" var="sub">
+                            <f:facet name="header">
+                                <p:outputLabel value="Propuestas asignadas"/>
+                            </f:facet>
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column headerText="Subadministrador"/>
+                                    <p:column style="white-space:normal;text-align:center;" headerText="Propuestas asignadas" width="30%"/>
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column>
+                                <p:outputLabel value="#{sub.nombre}"/>
+                            </p:column>
+                            <p:column style="text-align:right;">
+                                <p:outputLabel value="#{sub.propAsignadas}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                </p:panel>
+                
+            </h:panelGrid>
+            
+            
+            <p:dialog header="Mensaje" widgetVar="msg1" modal="true" resizable="false" draggable="true" closable="false" position="center center">
+                <h:panelGrid style="text-align:left" width="350">
+                    <p:outputLabel value="#{asignarDocMB.mensaje1}" />
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="Aceptar" onclick="PF('msg1').hide();" action="#{asignarDocMB.asignarPropuesta}" update="@form"/>
+                        <p:commandButton value="Cancelar" onclick="PF('msg1').hide();"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            
+            <p:dialog header="Mensaje" widgetVar="msg2" modal="true" resizable="false" draggable="true" closable="false" position="center center">
+                <h:panelGrid style="text-align:left" width="350">
+                    <p:outputLabel value="#{asignarDocMB.mensaje2}" />
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="Aceptar" onclick="PF('msg2').hide();"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            
+            <p:dialog header="Mensaje" widgetVar="mensajeRol" modal="true" resizable="false" draggable="false" closable="false" position="center center">
+                <h:panelGrid style="text-align:left" width="350">
+                    <p:outputLabel value="No puede ingresar a esta sección" />
+                    <h:panelGrid columns="2">
+                        <p:commandButton value="Aceptar" onclick="PF('mensajeRol').hide();" action="/menu/login.xhtml?faces-redirect=true"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            
+            
+            	<!-- dialogo para mostrar el documento de la orden y el oficio de preliquidacion -->
+	                <p:dialog id="dialogDocumentosOrden" 
+                              header="#{msj['label.titulo.dialogo.doctos.orden']}"
+                              widgetVar="dialogDocumentosOrden" 
+                              showEffect="clip" 
+                              modal="true" 
+                              resizable="false"
+                              hideEffect="clip"  
+                              width="510" >
+                                                
+                        <p:dataTable id="tablaDocumentacionOrden"
+							value="#{asignarDocMB.listaDocumentosOrden}"
+							var="documentoOrden" editable="false"
+							emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+	                        <f:facet name="header">
+								<h:outputLabel value="#{msj['label.propuestas.doctos.orden']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+								<h:outputText id="txtFechaCargaDoctoOrden"
+									value="#{documentoOrden.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+								</h:outputText>
+							</p:column>
+							<p:column id="hdrNombreDocumentoOrden"
+								headerText="#{msj['column.label.nombre.documento']}">
+								<div style="width: 200px;margin:auto;">#{documentoOrden.nombreArchivo}</div>
+							</p:column>
+							<p:column style="text-align:center;" headerText="#{msj['column.descargar']}" >
+				            	<h:commandButton ajax="true" 
+				                                 image="/resources/images/document.png"
+				                                 style="padding:0px 5px;" >
+				                	<f:setPropertyActionListener value="#{documentoOrden}" target="#{validarOrdenesRE.docSeleccionado}"/>
+				                    <p:fileDownload contentDisposition="attachment" value="#{validarOrdenesRE.archivoSeleccionDescarga}"/>
+				            	</h:commandButton>
+				            </p:column>
+						</p:dataTable>
+                        <br/>
+                        
+                        <p:dataTable id="tablaOficiosOrden"
+                        		value="#{asignarDocMB.oficiosPendientesDeFirmar}" var="oficioPendienteFirma" 
+                        		editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        	<f:facet name="header">
+								<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" >
+		                        <h:outputText value="#{oficioPendienteFirma.fechaCreacion}">
+		                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+		                        </h:outputText>
+		                    </p:column>
+		                    <p:column headerText="#{msj['column.label.oficio.nombre']}">
+		                                    #{oficioPendienteFirma.nombreArchivo}
+		                    </p:column>
+		                    <p:column style="text-align:center;" headerText="#{msj['column.descargar']}" >
+		                    	<h:commandButton title="#{oficioPendienteFirma.nombreArchivo}" ajax="true"
+		                        		image="/resources/images/document.png" style="padding:0px 5px;">
+		                        	<f:setPropertyActionListener value="#{oficioPendienteFirma}" target="#{validarOrdenesRE.oficioSeleccionado}"/>
+		                            <p:fileDownload contentDisposition="attachment" value="#{validarOrdenesRE.archivoDescargaDocumentacion}"/>
+		                    	</h:commandButton>
+		                    </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="#{msj['label.boton.cerrar']}" 
+                                         onclick="PF('dialogDocumentosOrden').hide();" 
+                                         icon="ui-icon-close" 
+                                         style="float:right" />
+                        
+                    </p:dialog>
+    
+            
+            
+            
+            
+            
+        </h:form>
+        <h:outputStylesheet library="css/" name="agace.css" />
+    </h:body>
+</html>

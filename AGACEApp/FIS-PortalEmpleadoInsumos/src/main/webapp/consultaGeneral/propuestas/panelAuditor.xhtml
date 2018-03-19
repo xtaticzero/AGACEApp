@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+        
+        <p:panel id="panelXSubordinadoAuditor" styleClass="panel-subinterno-insumos"
+                 header="#{msj['label.titulo.consulta.ejecutiva.propuestas.asignadas']}"
+                 rendered="#{consultaUGPropuestasMB.helper.flgMostrarPanelAuditor}">
+           <p:dataTable emptyMessage="#{msj['label.lista.vacia']}" value="#{consultaUGPropuestasMB.detalleEmpleado}"
+                        var="entryEmpleadoAuditor">
+              <f:facet name="header">
+                 <h:outputLabel value="#{msj['label.titulo.consulta.general.propuestas.asignadas']}" style="font-weight:bold"/>
+              </f:facet>
+              
+            <p:column style="font-size:70%;" headerText="#{msj['label.titulo.consulta.general.propuestas.auditores']}" rendered="#{!consultaUGPropuestasMB.consultaPropuestasBO.programacion}">
+                <h:outputText value="#{entryEmpleadoAuditor.key.nombreCompleto}" />
+            </p:column>  
+              
+            <p:column style="font-size:70%;" headerText="#{msj['label.titulo.consulta.general.propuestas.subadministradores']}" rendered="#{consultaUGPropuestasMB.consultaPropuestasBO.programacion}">
+                <h:outputText value="#{entryEmpleadoAuditor.key.nombreCompleto}" />
+            </p:column>
+            
+            <p:column style="text-align: right;font-size:70%;" headerText="Total">
+                <h:outputText value="#{entryEmpleadoAuditor.value}" rendered="#{entryEmpleadoAuditor.value eq 0}"/>
+               
+               <p:commandLink id="consultarXEmpleadoSeleccionado"
+	                		  value="#{entryEmpleadoAuditor.value}"
+	                          action="#{consultaUGPropuestasMB.consultaXAuditorSeleccionado}"
+	                          ajax="true" 
+	                          immediate="true" 
+	                          update="@form"
+	                          process="@form"
+	                          style="color: blue; text-decoration: underline;"
+	                          rendered="#{entryEmpleadoAuditor.value ne 0}">
+	                          
+	                <f:setPropertyActionListener value="#{entryEmpleadoAuditor.key}" 
+	                                             target="#{consultaUGPropuestasMB.helper.auditoeSeleccionado}"/> 
+	                              
+	           </p:commandLink>
+            </p:column>
+            
+            <p:columnGroup type="footer">
+               <p:row>
+                  <p:column style="text-align: center;font-size:70%;" footerText="Propuestas Totales" />
+                  <p:column style="text-align: right;font-size:70%;" rendered="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEmpleados eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEmpleados}" />
+                        </f:facet>                                        
+                    </p:column>
+                    <p:column style="text-align: right;font-size:70%;" rendered="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEmpleados ne 0}">
+	                        <f:facet name="footer">
+	                   <p:commandLink id="consultarTotalGeneralFirmante"
+	                            	  value="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEmpleados}"
+	                                  action="#{consultaUGPropuestasMB.consultaTotalPropuestasXEmpleado}"
+	                                  ajax="true" immediate="true" update="@form"
+	                                  style="color: blue; text-decoration: underline;">
+	                   </p:commandLink>
+	                        </f:facet>
+	                </p:column>                       
+               </p:row>
+            </p:columnGroup>
+           
+           </p:dataTable>
+           <p:panelGrid columns="1" style="text-align: right ! important; width: 100%;">       
+           <h:panelGroup>
+           <p:commandButton value="#{msj['btn.pantalla.anterior']}"  
+                              ajax="true" 
+                              immediate="true"
+                              update="@form"
+                              action="#{consultaUGPropuestasMB.regresaPanelFirmante}"
+                              style="float: right;"/>
+        </h:panelGroup>
+        </p:panelGrid>
+        </p:panel>
+                
+</f:view>

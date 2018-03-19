@@ -1,0 +1,1489 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:p="http://primefaces.org/ui">
+
+        <h:head></h:head>
+        <h:body>
+            <h:form id="detalleOrdenDocUnif" styleClass="panel-principal">
+
+                <p:ajaxStatus onstart="PF('statusDialog').show();"
+                              onsuccess="PF('statusDialog').hide();" />
+                <p:dialog modal="true" widgetVar="statusDialog"
+                          header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+                </p:dialog>
+                <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true"
+                            closable="true" />
+                <p:panel id="panelDocumentacionOrden" header="Documentación de la orden" styleClass="panel-interno" style="width:100% !important; height:100% !important;">
+
+                    <div align="center"  >
+                        <h:panelGrid rendered="true" >
+                            <h:panelGrid columns="6" cellspacing="13">
+                                <h:outputText value="#{msj['consultar.label.numeroorden']}:" style="font-weight:bold;"/>
+                                <h:outputText
+                                    value="#{detalleOrdenUnificadoMB.ordenConsultaSeleccionada.numeroOrden}" />
+                                <h:outputText value="#{msj['consultar.label.metodo']}:" style="font-weight:bold;"/>
+                                <h:outputText
+                                    value="#{detalleOrdenUnificadoMB.ordenConsultaSeleccionada.metodo}" />
+                                <h:outputText value="#{msj['consultar.label.rfc.contribuyente']}:" style="font-weight:bold;"/>
+                                <h:outputText
+                                    value="#{detalleOrdenUnificadoMB.helper.contribuyente.rfc}" />				
+                                <h:outputText value="#{msj['consultar.label.idregistro']}:" style="font-weight:bold;"/>
+                                <h:outputText
+                                    value="#{detalleOrdenUnificadoMB.ordenConsultaSeleccionada.idRegistro}" />						
+                                <h:outputText value="#{msj['label.plazo.concluir.orden']}:" style="font-weight:bold;"/>
+                                <h:outputText value="#{detalleOrdenUnificadoMB.ordenConsultaSeleccionada.descripcionPlazoRestante}"  />
+                                <h:outputText value="#{msj['consultar.label.razon']}:" style="font-weight:bold;"/>
+                                <h:outputText value="#{detalleOrdenUnificadoMB.helper.contribuyente.nombre}" />
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                    </div>
+
+                    <f:facet name="header">
+                        <h:outputText value="#{msj['consultar.tabledocrelacionada.titulo']}" />
+                    </f:facet>
+
+                    <h:panelGrid styleClass="panel-interno" style="width:100% !important; height:100% !important;">
+                        <p:accordionPanel id="pnlConsultarDocRelacionada" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlDocRequerida}">
+                            <p:tab title="#{msj['consultar.tablepromocion.titulo']}">
+
+                                <p:dataTable var="promocionConsulta" style="display:block; text-align:center" 
+                                             value="#{detalleOrdenUnificadoMB.ordenConsultaSeleccionada.listPromocionConsultaDTO}"
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <f:facet name="header">
+                                        <div align="left">
+                                            <h:outputText value="#{msj['consultar.tablepromocion.titulo']}" />
+                                        </div>
+                                    </f:facet>
+
+                                    <p:column headerText="#{msj['consultar.tablepromocion.id']}">
+                                        <h:outputText value="#{promocionConsulta.idPromocion}" />
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['consultar.tablepromocion.tipo']}">
+                                        <h:outputText value="#{promocionConsulta.tipoPromocionStr}" />
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['consultar.tablepromocion.fechaenvio']}">
+                                        <h:outputText value="#{promocionConsulta.fechaEnvio}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['consultar.tablepromocion.promocion']}">
+                                        <h:commandButton ajax="true"
+                                                         image="/resources/images/document.png" process="@this"
+                                                         title="#{promocionConsulta.nombreArchivo}">
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                value="#{promocionConsulta.rutaArchivo}" />
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                value="#{promocionConsulta.nombreArchivo}" />
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{detalleOrdenUnificadoMB.archivoPromocionOrden}" />
+                                        </h:commandButton>
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tablepromocion.doccontri']}">
+                                        <p:commandLink id="linkDocPruebasAlegatos"
+                                                       action="#{detalleOrdenUnificadoMB.buscarDocPruebasAlegatos}"
+                                                       ajax="true" update=":detalleOrdenDocUnif:pnlDocPruebaAlegatos">
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.helper.promocionConsultaSeleccionada}"
+                                                value="#{promocionConsulta}" />
+                                            <h:outputText
+                                                value="#{promocionConsulta.documentosContribuyente}" />
+                                        </p:commandLink>
+
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['consultar.tablepromocion.extemporaneo']}">
+                                        <p:outputPanel rendered="#{promocionConsulta.extemporaneo}">
+                                            <h:commandButton image="/resources/images/ok.png" />
+                                        </p:outputPanel>
+                                        <p:outputPanel rendered="#{!promocionConsulta.extemporaneo}">
+                                            <h:commandButton image="/resources/images/cancel.png" />
+                                        </p:outputPanel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tablepromocion.presentadopor']}">
+                                        <h:outputText value="#{promocionConsulta.presentadoPor}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:accordionPanel>
+                        <!--************************* TABLA DE OFICIO **********************************-->
+                        <p:accordionPanel id="pnlOficios" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlOficios}">
+                            <p:tab title="#{msj['consultar.tableoficio.titulo']}">
+
+                                <p:spacer height="30px" />					
+                                <p:dataTable var="oficioConsulta"
+                                             value="#{detalleOrdenUnificadoMB.ordenConsultaSeleccionada.listOficioConsultaDTO}" style="display:block; text-align:center" editable="false" 
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <f:facet name="header">
+                                        <div align="left">
+                                            <h:outputText value="#{msj['consultar.tableoficio.titulo']}" />
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="#{msj['consultar.tableoficio.idoficio']}">
+                                        <p:outputPanel >
+                                            <p:commandLink id="linkOficiosDeRequerimientos"
+                                                           action="#{detalleOrdenUnificadoMB.redireccionaOficio}"
+                                                           ajax="true" proces="@this" update="@form">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado}"
+                                                    value="#{oficioConsulta}" />
+                                                <h:outputText value="#{oficioConsulta.idOficio}" />
+                                            </p:commandLink>
+                                        </p:outputPanel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tableoficio.tipo']}">
+                                        <h:outputText value="#{oficioConsulta.tipoOficio}" />
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tableoficio.oficio']}">
+                                        <h:commandButton ajax="true"
+                                                         image="/resources/images/document.png" process="@this"
+                                                         title="#{oficioConsulta.nombreArchivo}">
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado}"
+                                                value="#{oficioConsulta}" />								
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                value="#{oficioConsulta.rutaArchivo}" />
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                value="#{oficioConsulta.nombreArchivo}" />
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{detalleOrdenUnificadoMB.archivoOficio}" />
+                                        </h:commandButton>
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tableoficio.fecnoti']}">
+                                        <h:outputText value="#{oficioConsulta.fechaNotificacion}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.anexos.oficio']}">
+                                        <p:commandLink id="linkAnexosOficios"
+                                                       action="#{detalleOrdenUnificadoMB.buscarAnexosOficios}"
+                                                       ajax="true" proces="@this" update="@form">
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado}"
+                                                value="#{oficioConsulta}" />
+                                            <h:outputText value="#{oficioConsulta.anexos}" />
+                                        </p:commandLink>
+
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tableoficio.feccarga']}">
+                                        <h:outputText value="#{oficioConsulta.fechaCarga}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tableoficio.fecfirma']}">
+                                        <h:outputText value="#{oficioConsulta.fechaFirma}" >
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="#{msj['consultar.tableoficio.oficdepen']}">
+                                        <p:commandLink id="linkOficiosDependientes"
+                                                       action="#{detalleOrdenUnificadoMB.buscarOficiosDependientes}"
+                                                       style="color:#0170b7;" ajax="true" onclick="PF('dlgOficiosDependientes').show();" immediate="true" 
+                                                       update=":detalleOrdenDocUnif:pnlOficiosDependientes">
+                                            <f:setPropertyActionListener
+                                                target="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado}"
+                                                value="#{oficioConsulta}" />
+                                            <h:outputText value="#{oficioConsulta.oficiosDependientes}" />
+                                        </p:commandLink>
+
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:accordionPanel>
+
+                        <!-- Inicio de bloque de Historicos de Oficios Rechazados -->
+                        <p:accordionPanel id="panelDatosHistorico" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlOficiosHist}">
+                            <p:tab title="#{msj['titulo.tabla.historico.oficio.rechazo']}">
+
+                                <p:dataTable id="tablaHistoricoOficiosRechazados" var="documentacion" value="#{detalleOrdenUnificadoMB.helper.listaOficiosRechazados}" 
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" 
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" 
+                                             currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <f:facet name="header">
+                                        #{msj[&apos;titulo.tabla.historico.oficio.rechazo&apos;]}
+                                    </f:facet>
+                                    <p:column headerText="#{msj['column.label.id.oficio']}">
+                                        #{documentacion.idOficio}
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.tipo.oficio']}" >
+                                        #{documentacion.fecetTipoOficio.nombre}
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.oficio']}" >
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png" title="#{documentacion.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.ofRechazadoSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoDescargaOfRechazado}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.fecha.rechazo']}" >
+                                        <h:outputLabel value="#{documentacion.fecetRechazoOficio.fechaRechazo}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.fecha.carga.oficio']}" >
+                                        <h:outputLabel value="#{documentacion.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.anexos.oficio']}" >
+                                        <div align="center">
+                                            <p:commandLink action="#{detalleOrdenUnificadoMB.getAnexosOficioRechazo}" value="#{documentacion.totalAnexosOficio}" 
+                                                           style="color:#0170b7;" ajax="true" onclick="PF('dlgAnexosOficioRechazo').show();" immediate="true" 
+                                                           update=":detalleOrdenDocUnif:panelAnexosOficioRechazo">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                            </p:commandLink>
+                                        </div>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.oficios.dependientes']}" >
+                                        <div align="center">
+                                            <p:commandLink action="#{detalleOrdenUnificadoMB.getOficiosDependientesEstatusOficioRechazado}" value="#{documentacion.totalOficiosDependientes}" style="color:#0170b7;" ajax="true" onclick="PF('dlgOficiosDependientes').show();" immediate="true" update=":detalleOrdenDocUnif:tablaDlgOficiosDependientes">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                            </p:commandLink>
+                                        </div>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.motivo.rechazo']}" >
+                                        <h:outputText value="#{documentacion.fecetRechazoOficio.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.documentos.rechazo.archivo']}">
+                                        <p:commandLink action="#{detalleOrdenUnificadoMB.getAnexosRechazoOficio}" value="#{documentacion.totalAnexosRechazo}" style="color:#0170b7;" ajax="true" onclick="PF('dlgAnexosRechazoOficio').show();" immediate="true" update=":detalleOrdenDocUnif:tablaDlgAnexosRechazoOficio">
+                                            <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                        </p:commandLink>                            
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:accordionPanel>					
+
+                        <!--************************* TABLA DE SOLICITUDES DE COTRIBUYENTE *******************************************-->
+                        <p:accordionPanel id="panelDatosSolicitudContr" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlSolContrib}" >                    
+                            <p:tab title="#{msj[&apos;consultar.pnl.documentacion.solicitud.contrib.titulo&apos;]}">					
+                                <p:dataTable id="tablaSolicitudContr" var="documentacion" value="#{detalleOrdenUnificadoMB.solHelper.listaSolicitudContribuyenteConcentradoHistorico}" 
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <f:facet name="header">
+                                        #{msj[&apos;consultar.pnl.documentacion.solicitud.contrib.titulo&apos;]}
+                                    </f:facet>
+                                    <p:column headerText="#{msj['label.id.solicitud.contribuyente']}" style="width:10%">
+                                        #{documentacion.id}
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:10%">
+                                        <h:outputLabel value="#{documentacion.fechaCarga}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.descripcion.solicitud.contribuyente']}" style="width:15%">
+                                        <h:outputLabel value="#{documentacion.descripcion}"/>                                   
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:15%">
+                                        <div align="center">
+                                            <p:commandLink action="#{detalleOrdenUnificadoMB.getDocumentacionSolicitudContribuyente}" value="#{documentacion.totalDocumentosContribuyente}" style="color:#0170b7;" ajax="true" 
+                                                           onclick="PF('dlgDocSolicitudContr').show();" immediate="true" update=":detalleOrdenDocUnif:panelDocSolicitudCont">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteVOSeleccionada}"/>
+                                            </p:commandLink>
+                                        </div>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.estatus']}" style="width:10%">
+                                        <p:outputLabel value="#{documentacion.estatus}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.documentos.resolucion.solicitudes']}" style="width:110px">
+                                        <div align="center">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{documentacion.nombreResolucion}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{documentacion.prorrogaOrden.rutaResolucion}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{documentacion.prorrogaOrden.nombreResolucion}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoResolucionProrrogaOrden}" />
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column> 
+
+                                    <p:column headerText="#{msj['column.label.justificacion']}" style="width:15%">
+                                        <h:outputText value="#{documentacion.justificacion}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.anexos.resolucion.solicitudes']}" style="width:15%">
+                                        <div align="center">																																								
+                                            <p:commandLink action="#{detalleOrdenUnificadoMB.getAnexosSolicitudContribuyente}" value="#{documentacion.totalDocumentosRechazo}" style="color:#0170b7;" ajax="true" onclick="PF('dlgAnexosSolicitudContr').show();" immediate="true" update=":detalleOrdenDocUnif:panelGrpAnexosSolicitudContr">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteVOSeleccionada}"/>
+                                            </p:commandLink>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:accordionPanel>                    
+                        <!--************************* TABLA DE SOLICITUDES DE COTRIBUYENTE HISTORCICO**********************************--> 
+                        <p:accordionPanel id="panelDatosHistoricoSolicitudContr" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlSolContribHist}" styleClass="panel-interno" style="width:95% !important; height:95% !important;">                    
+                            <p:tab title="#{msj[&apos;titulo.tabla.historico.solicitudes.contribuyente&apos;]}">					
+                                <p:dataTable id="tablaHistoricoSolicitudContr" var="documentacion" value="#{detalleOrdenUnificadoMB.solHelper.listaSolicitudContribuyenteConcentradoHistorico}" 
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <f:facet name="header">
+                                        #{msj[&apos;titulo.tabla.historico.solicitudes.contribuyente&apos;]}
+                                    </f:facet>
+                                    <p:column headerText="#{msj['label.id.solicitud.contribuyente']}" style="width:10%">
+                                        <h:outputLabel value="#{documentacion.id}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:10%">
+                                        <h:outputLabel value="#{documentacion.fechaCarga}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.descripcion.solicitud.contribuyente']}" style="width:15%">
+                                        <h:outputLabel value="#{documentacion.descripcion}"/>                                   
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:15%">
+                                        <div align="center">
+                                            <p:commandLink action="#{detalleOrdenUnificadoMB.getDocumentacionSolicitudContribuyente}" value="#{documentacion.totalDocumentosContribuyente}" style="color:#0170b7;" ajax="true" 
+                                                           onclick="PF('dlgDocSolicitudContr').show();" immediate="true" update=":detalleOrdenDocUnif:panelDocSolicitudCont">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteVOSeleccionada}"/>
+                                            </p:commandLink>
+                                        </div>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.estatus']}" style="width:10%">
+                                        <p:outputLabel value="#{documentacion.estatus}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.documentos.resolucion.solicitudes']}" style="width:10%">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png"  ajax="true" immediate="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteVOSeleccionada}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargaResolucionSolicitudContribuyente}"/>
+                                            </h:commandButton>
+
+                                        </div>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.justificacion']}" style="width:15%">
+                                        <h:outputText value="#{documentacion.justificacion}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.anexos.resolucion.solicitudes']}" style="width:15%">
+                                        <div align="center">																																								
+                                            <p:commandLink action="#{detalleOrdenUnificadoMB.getAnexosSolicitudContribuyente}" value="#{documentacion.totalDocumentosRechazo}" style="color:#0170b7;" ajax="true" onclick="PF('dlgAnexosSolicitudContr').show();" immediate="true" update=":detalleOrdenDocUnif:panelGrpAnexosSolicitudContr">
+                                                <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteVOSeleccionada}"/>
+                                            </p:commandLink>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:accordionPanel>
+
+                        <p:dialog widgetVar="dlgDocSolicitudContr" header="#{msj['titulo.documentos.enviados']}" resizable="false" modal="true" width="515" height="auto">
+                            <h:panelGroup id="panelDocSolicitudCont" layout="block" style="padding:5px;">
+                                <h:panelGrid columns="4" width="100%">
+                                    <h:outputLabel value="#{msj['label.id.prorroga']}"/>
+                                    <p:inputText id="txtIdDocSolicitudCont" style="width:50px;" readonly="true" value="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteVOSeleccionada.id}"/>
+                                    <h:outputLabel value="Fecha de Envio Promoción"/>
+                                    <p:inputText id="txtFechaCargaDocSolicitudCont" style="width:80px;" readonly="true" value="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteVOSeleccionada.fechaCarga}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:inputText>
+                                </h:panelGrid>
+                                <h:panelGrid border="1" width="100%">
+                                    <p:dataTable id="tablaDocumentosDocSolicitudCont" var="docs" value="#{detalleOrdenUnificadoMB.solHelper.listaSolicitudContribuyenteDocVO}" editable="false" 
+                                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                        <p:column headerText="#{msj['column.label.id.documento']}" style="width:60px">
+                                            #{docs.idDoc}
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                            #{docs.nombreArchivo}
+                                        </p:column>
+                                        <p:column headerText="" style="width:25px">
+                                            <div align="center">
+                                                <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                    <f:setPropertyActionListener value="#{docs}" target="#{detalleOrdenUnificadoMB.solHelper.documentacionSolicitudContribuyenteSeleccionado}"/>
+                                                    <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoProrrogaOrden}"/>
+                                                </h:commandButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </p:dialog>
+
+                        <!-- Empieza representante legal -->										
+                        <p:accordionPanel multiple="true" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlRepreLegal}">
+                            <p:spacer height="20px" />
+
+                            <p:tab title="Representante Legal">								
+                                <p:panelGrid styleClass="noBorders" columns="2" style="width:100%" >
+                                    <p:panelGrid columns="2" id="panelDatosAgenteLegal" styleClass="noBorders" style="width:500px;" >
+                                        <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                        <p:inputText style="width:250px;" id="txtRLRFC"
+                                                     disabled="true"
+                                                     value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.rfc}"/>
+                                        <h:outputLabel value="Nombre/Raz&oacute;n Social:" style="font-weight:bold"/>
+                                        <p:inputTextarea style="width:250px;"
+                                                         value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.nombre}"
+                                                         disabled="true"/>
+                                        <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                        <p:inputText style="width:250px;"
+                                                     disabled="true"
+                                                     value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.correo}"/>
+                                        <h:outputLabel value="#{msj['label.medios.contacto']}:" style="font-weight:bold"/>
+                                        <p:selectBooleanCheckbox value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.medioContactoBoolean}"
+                                                                 disabled="true"/>
+                                        <h:outputLabel value="Orden sin Representante Legal:" style="font-weight:bold"/>
+                                        <p:selectBooleanCheckbox value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.sinColaborador}" disabled="true" />                             
+
+                                    </p:panelGrid>
+
+                                    <p:panelGrid columns="1" id="panelDatosRepresentanteLegalDocumentos" border="0" styleClass="noBorders">
+
+                                        <p:spacer width="100" height="1"/>                            		
+                                        <p:commandButton value="Documentos de Representante Legal" onclick="PF('dlgDocRepLegal').show();"
+                                                         type="button"  style="float:left;" />
+
+
+                                    </p:panelGrid>
+
+
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:accordionPanel>
+
+
+
+                        <p:accordionPanel multiple="true" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlAsociados}">
+                            <p:tab title="Asociados Contribuyente">
+                                <p:panelGrid >
+                                    <f:facet name="header">
+                                        <p:row>
+                                            <p:column style="width:80px;">
+                                                <h:outputText value="Asociado"/>
+                                            </p:column>
+                                            <p:column style="width:80px;">
+                                                <h:outputText value="RFC"/>
+                                            </p:column>
+                                            <p:column style="width:130px;">
+                                                <h:outputText value="Nombre"/>
+                                            </p:column>
+                                            <p:column style="width:150px;">
+                                                <h:outputText value="E-mail"/>
+                                            </p:column>
+                                            <p:column style="width:95px;">
+                                                <h:outputText value="Documento Sustento"/>
+                                            </p:column>
+                                        </p:row>
+
+
+                                    </f:facet>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="Representante Legal"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.rfc}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.nombre}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.representanteLegal.correo}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton value="Ver Documentos" onclick="PF('dlgDocRepLegal').show();"
+                                                             type="button"  style="float:left;" />
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="Apoderado Legal"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.apoderadoLegal.rfc}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.apoderadoLegal.nombre}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.apoderadoLegal.correo}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton value="Ver Documentos" onclick="PF('dlgDocApoderadoLegal').show();"
+                                                             type="button"  style="float:left;" />
+                                        </p:column>
+                                    </p:row>	                    		
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="Apoderado Legal del Representante Legal"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.apoderadoLegalRepresentanteLegal.rfc}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.apoderadoLegalRepresentanteLegal.nombre}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.apoderadoLegalRepresentanteLegal.correo}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton value="Ver Documentos" onclick="PF('dlgDocApoderadoLegalRL').show();"
+                                                             type="button"  style="float:left;" />
+
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>                    		
+
+
+
+                            </p:tab>
+
+
+
+                        </p:accordionPanel>
+
+
+
+
+
+                        <p:accordionPanel multiple="true" rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlAgenteAdnl}">
+                            <!-- Empieza agente aduanal -->
+                            <p:tab title="Agente Aduanal">								
+                                <p:panelGrid styleClass="noBorders" style="width:100%">
+                                    <p:row>
+                                        <p:column style="width:55%">
+                                            <p:panelGrid id="panelDatosAA">
+                                                <p:row style="width:100%">
+                                                    <p:column style="width:30%">
+                                                        <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                                    </p:column>
+                                                    <p:column style="width:70%">
+                                                        <p:inputText style="width:90%;"
+                                                                     disabled="true"
+                                                                     value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.agenteAduanal.rfc}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row style="width:100%">
+                                                    <p:column style="width:30%">
+                                                        <h:outputLabel value="Nombre/Raz&oacute;n Social:" style="font-weight:bold"/>
+                                                    </p:column>
+                                                    <p:column style="width:70%">
+                                                        <p:inputTextarea style="width:90%; height:auto;"
+                                                                         value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.agenteAduanal.nombre}"
+                                                                         disabled="true"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row style="width:100%">
+                                                    <p:column style="width:30%">
+                                                        <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                                    </p:column>
+                                                    <p:column style="width:70%">
+                                                        <p:inputText style="width:90%;"
+                                                                     disabled="true"
+                                                                     value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.agenteAduanal.correo}"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row style="width:100%; border:0px !important; border-style:none !important">
+                                                    <p:column style="width:30%; border:0px !important; border-style:none !important">
+                                                        <h:outputLabel value="#{msj['label.medios.contacto']}:" style="font-weight:bold"/>
+                                                    </p:column>
+                                                    <p:column style="width:70%; border:0px !important; border-style:none !important">
+                                                        <p:selectBooleanCheckbox value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.agenteAduanal.medioContactoBoolean}"
+                                                                                 disabled="true"/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row style="width:100%;border:0px !important; border-style:none !important">
+                                                    <p:column style="width:30%;border:0px !important; border-style:none !important">
+                                                        <h:outputLabel value="Orden sin Agente Aduanal:" style="font-weight:bold"/>
+                                                    </p:column>
+                                                    <p:column style="width:70%;border:0px !important; border-style:none !important">
+                                                        <p:selectBooleanCheckbox value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.agenteAduanal.sinColaborador}" disabled="true" />
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </p:column>
+                                        <p:column style="width:45%">
+                                            <div style="margin: 0px auto; height:190px; width:100%; position:relative;">
+                                                <div style="width:200px; position:absolute; bottom: 0; left:25%;">
+                                                    <p:commandButton value="Documentos Agente Aduanal" action="#{detalleOrdenUnificadoMB.cargaDocumentosAgenteAduanal}" 
+                                                                     /> 
+
+                                                </div>
+                                            </div>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:accordionPanel>
+
+                        <!-- Inicio de bloque de Oficios Firmados -->
+                        <h:panelGrid id="panelDatoHistoricoOficiosFirmado" columns="3" border="0" style="width:100% !important; height:100% !important;" 
+                                     rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlOficiosFirm}">
+                            <p:dataTable id="tablaHistoricoOficiosFirmados" var="documentacion" value="#{detalleOrdenUnificadoMB.helper.listaOficiosFirmados}" editable="false" 
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                         {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                <f:facet name="header">
+                                    #{msj[&apos;titulo.tbl.oficios.firmados&apos;]}
+                                </f:facet>
+                                <p:column headerText="#{msj['column.label.detalle']}" >
+                                    <p:column>
+                                        <p:rowToggler/>
+                                    </p:column>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.id.oficio']}" >
+                                    <p:commandLink style="color:blue;"
+                                                   action="#{detalleOrdenUnificadoMB.redireccionaOficioFirmado}" ajax="true" proces="@this" update="@form" 
+                                                   value="#{documentacion.idOficio}" disabled="#{!documentacion.adminOficio.blnDocReq}" >
+                                        <f:setPropertyActionListener value="${documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                        <f:param name="identificador1" value="#{detalleOrdenUnificadoMB.ordenConsultaSeleccionada.idMetodo}"/>
+                                    </p:commandLink>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.tipo.oficio']}" >
+                                    <h:outputText value="#{documentacion.fecetTipoOficio.nombre}"/>
+
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.oficio']}" >
+                                    <div align="center">
+                                        <h:commandButton image="/resources/images/document.png" title="#{documentacion.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoDescargaOficio}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                                <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" >
+                                    <div align="center">
+                                        <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true" immediate="true" style="padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoDescargaAcuse}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.fecha.notificacion']}" >
+                                    <h:outputLabel value="#{documentacion.fecetDetalleNyV.fecNotificacionNyV}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.fecha.firma']}" >
+                                    <h:outputLabel value="#{documentacion.fechaFirma}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.oficios.dependientes']}" >
+                                    <div align="center">
+                                        <p:commandLink action="#{detalleOrdenUnificadoMB.getOficiosDependientesEstatusOficioNotificadoContribuyente}" value="#{documentacion.totalOficiosDependientes}" style="color:#0170b7;" ajax="true" onclick="PF('dlgOficiosDependientes').show();" immediate="true" update=":detalleOrdenDocUnif:tablaDlgOficiosDependientes">
+                                            <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                        </p:commandLink>
+                                    </div>
+                                </p:column>
+                                <p:rowExpansion>
+                                    <h:panelGrid columns="2" cellpadding="4" style="width:auto;" styleClass=" ui-widget-content grid">
+                                        <h:outputText value="#{msj['column.label.anexos.oficio']} :"/>
+                                        <p:commandLink action="#{detalleOrdenUnificadoMB.getAnexosOficio}" value="#{documentacion.totalAnexosOficio}" style="color:#0170b7;" ajax="true" onclick="PF('dlgAnexosOficio').show();" immediate="true" update=":detalleOrdenDocUnif:tablaDlgAnexosOficio">
+                                            <f:setPropertyActionListener value="#{documentacion}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                        </p:commandLink>
+                                        <h:outputText value="#{msj['column.label.fecha.carga.oficio']} :"/>
+                                        <h:outputLabel value="#{documentacion.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputLabel>
+                                    </h:panelGrid>
+                                </p:rowExpansion>
+                            </p:dataTable>
+                        </h:panelGrid>
+
+                        <p:dialog widgetVar="dlgOficiosDependientes" header="#{msj['titulo.dlg.oficios.dependientes']}" resizable="false" modal="true" width="515" height="auto">
+                            <h:panelGroup layout="block" style="padding:5px;">
+                                <h:panelGrid border="1" width="100%">
+                                    <p:dataTable id="tablaDlgOficiosDependientes" var="docs" value="#{detalleOrdenUnificadoMB.helper.listaOficiosDependientes}" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                        <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                            <h:outputLabel value="#{docs.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="#{msj['column.label.tipo.oficio']}" style="width:110px">
+                                            #{docs.fecetTipoOficio.nombre}
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.anexos.oficio']}" style="width:55px">
+                                            <div align="center">
+                                                <p:commandLink action="#{detalleOrdenUnificadoMB.getAnexosOficio}" value="#{docs.totalAnexosOficio}" style="color:#0170b7;" ajax="true" onclick="PF('dlgAnexosOficio').show();" immediate="true" update=":detalleOrdenDocUnif:tablaDlgAnexosOficio">
+                                                    <f:setPropertyActionListener value="#{docs}" target="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado}"/>
+                                                </p:commandLink>
+                                            </div>
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.documento']}" style="width:45px">
+                                            <div align="center">
+                                                <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                    <f:setPropertyActionListener value="#{docs}" target="#{detalleOrdenUnificadoMB.helper.ofDependienteSeleccionado}"/>
+                                                    <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoDescargaOfDependiente}"/>
+                                                </h:commandButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </p:dialog>
+                        <p:dialog widgetVar="dlgAnexosOficio" header="#{msj['titulo.dlg.anexos.oficio']}" resizable="false" modal="true" width="515" height="auto">
+                            <h:panelGroup layout="block" style="padding:5px;">
+                                <h:panelGrid border="1" width="100%">
+                                    <p:dataTable id="tablaDlgAnexosOficio" var="docs" value="#{detalleOrdenUnificadoMB.helper.listaAnexosOficio}" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                        <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                            <h:outputLabel value="#{docs.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                            #{docs.nombreArchivo}
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.documento']}" style="width:45px">
+                                            <div align="center">
+                                                <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                    <f:setPropertyActionListener value="#{docs}" target="#{detalleOrdenUnificadoMB.helper.anexoOficioSeleccionado}"/>
+                                                    <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoDescargaAnexoOficio}"/>
+                                                </h:commandButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </p:dialog>
+                        <!-- Fin de bloque de Oficios Firmados -->
+
+
+                        <p:dialog widgetVar="dlgAnexosOficioRechazo" header="#{msj['titulo.dlg.anexos.oficio']}" resizable="false" modal="true" width="515" height="auto">
+                            <h:panelGroup id="panelAnexosOficioRechazo" layout="block" style="padding:5px;">
+                                <h:panelGrid columns="4" width="100%">
+                                    <h:outputLabel value="Id Oficio"/>
+                                    <p:inputText style="width:100px;" readonly="true" value="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado.idOficio}"/>
+                                    <h:outputLabel value="Fecha de Carga"/>
+                                    <p:inputText style="width:80px;" readonly="true" value="#{detalleOrdenUnificadoMB.helper.oficioSeleccionado.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:inputText>
+                                </h:panelGrid>
+                                <h:panelGrid border="1" width="100%">
+                                    <p:dataTable id="tablaAnexosOficioRechazado" var="docs" value="#{detalleOrdenUnificadoMB.helper.listaOficioAnexosRechazo}" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" 
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                        <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                            <h:outputLabel value="#{docs.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                            #{docs.nombreArchivo}
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.documento']}" style="width:35px">
+                                            <div align="center">
+                                                <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                    <f:setPropertyActionListener value="#{docs}" target="#{detalleOrdenUnificadoMB.helper.anexoOficioSeleccionado}"/>
+                                                    <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoDescargaAnexoOficio}"/>
+                                                </h:commandButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </p:dialog>
+                        <p:dialog widgetVar="dlgAnexosRechazoOficio" header="#{msj['titulo.dlg.anexos.oficio']}" resizable="false" modal="true" width="515" height="auto">
+                            <h:panelGroup layout="block" style="padding:5px;">
+                                <h:panelGrid border="1" width="100%">
+                                    <p:dataTable id="tablaDlgAnexosRechazoOficio" var="docs" value="#{detalleOrdenUnificadoMB.helper.listaAnexosRechazoOficio}" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                        <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                            <h:outputLabel value="#{docs.fechaCarga}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                            </h:outputLabel>
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                            #{docs.nombreArchivo}
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.documento']}" style="width:45px">
+                                            <div align="center">
+                                                <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                    <f:setPropertyActionListener value="#{docs}" target="#{detalleOrdenUnificadoMB.helper.anexoRechazoOficioSeleccionado}"/>
+                                                    <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoDescargaAnexoRechazoOficio}"/>
+                                                </h:commandButton>
+                                            </div>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                        </p:dialog>
+                        <!-- Fin de bloque de Historicos de Oficios Rechazados -->
+
+                        <p:dialog id="dlgDocRepLegal" widgetVar="dlgDocRepLegal" header="Documentos del representante legal " resizable="false"
+                                  modal="true" width="600" height="auto" >
+
+                            <h:panelGrid id="pnlDocRepLegal" columns="1">
+                                <p:outputLabel value="Documentaci&oacute;n Representate Legal" style="font-weight:bold;"/>
+                                <p:separator/>
+                                <p:dataTable id="tablaDoctoRepresentanteLegal"
+                                             value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.documentosRepresentante}" var="documento"
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.nombre.documento']}" style="width:80%; border:1px solid !important;"  >
+                                        <div style="text-align:center;">
+                                            <h:outputText id="txtNombreArchivoRL" value="#{documento.nombreArchivo}"/>
+                                        </div>
+                                    </p:column>
+                                    <p:column id="hdrNombreDocumento" headerText="#{msj['column.documento']}" style="width:20%; border:1px solid !important;">
+                                        <div style="text-align:center;">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="Documento" ajax="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{documento.rutaArchivo}"
+                                                                             target="#{detalleOrdenUnificadoMB.rutaArchivo}" />
+                                                <f:setPropertyActionListener value="#{documento.nombreArchivo}"
+                                                                             target="#{detalleOrdenUnificadoMB.nombreArchivo}" />
+
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoRepresentanteLegal}" />
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>						                        	
+                                </p:dataTable>				        		
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog id="dlgDocApoderadoLegal" widgetVar="dlgDocApoderadoLegal" header="Documentos del apoderado legal " resizable="false"
+                                  modal="true" width="600" height="auto" >
+
+                            <h:panelGrid id="pnlDocApoderadoLegal" columns="1">
+                                <p:outputLabel value="Documentaci&oacute;n Apoderado Legal" style="font-weight:bold;"/>
+                                <p:separator/>
+                                <p:dataTable id="tablaDoctoApoderadoLegal"
+                                             value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.documentosAL}" var="documento"
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.nombre.documento']}" style="width:80%; border:1px solid !important;"  >
+                                        <div style="text-align:center;">
+                                            <h:outputText id="txtNombreArchivoAL" value="#{documento.nombreArchivo}"/>
+                                        </div>
+                                    </p:column>
+                                    <p:column id="hdrNombreDocumentoAL" headerText="#{msj['column.documento']}" style="width:20%; border:1px solid !important;">
+                                        <div style="text-align:center;">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="Documento" ajax="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{documento.rutaArchivo}"
+                                                                             target="#{detalleOrdenUnificadoMB.rutaArchivo}" />
+                                                <f:setPropertyActionListener value="#{documento.nombreArchivo}"
+                                                                             target="#{detalleOrdenUnificadoMB.nombreArchivo}" />
+
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargar}" />
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>						                        	
+                                </p:dataTable>				        		
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog id="dlgDocApoderadoLegalRL" widgetVar="dlgDocApoderadoLegalRL" header="Documentos del apoderado legal del Representante Legal" resizable="false"
+                                  modal="true" width="600" height="auto" >
+
+                            <h:panelGrid id="pnlDocApoderadoLegalRL" columns="1">
+                                <p:outputLabel value="Documentaci&oacute;n Apoderado Legal del Representante Legal" style="font-weight:bold;"/>
+                                <p:separator/>
+                                <p:dataTable id="tablaDoctoApoderadoLegalRL"
+                                             value="#{detalleOrdenUnificadoMB.helper.colaboradoresDTO.documentosALRL}" var="documento"
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.nombre.documento']}" style="width:80%; border:1px solid !important;"  >
+                                        <div style="text-align:center;">
+                                            <h:outputText id="txtNombreArchivoALRL" value="#{documento.nombreArchivo}"/>
+                                        </div>
+                                    </p:column>
+                                    <p:column id="hdrNombreDocumentoALRL" headerText="#{msj['column.documento']}" style="width:20%; border:1px solid !important;">
+                                        <div style="text-align:center;">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="Documento" ajax="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{documento.rutaArchivo}"
+                                                                             target="#{detalleOrdenUnificadoMB.rutaArchivo}" />
+                                                <f:setPropertyActionListener value="#{documento.nombreArchivo}"
+                                                                             target="#{detalleOrdenUnificadoMB.nombreArchivo}" />
+
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargar}" />
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>						                        	
+                                </p:dataTable>				        		
+                            </h:panelGrid>
+                        </p:dialog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <p:messages id="messagesPapelesTrabajo" showDetail="true" closable="true"  for="msgPapelesTrabajo"/>
+
+                        <h:panelGrid id="panelPapelesTrabajo" columns="3" border="0" style="width:100% !important; height:100% !important;"
+                                     rendered="#{detalleOrdenUnificadoMB.vistaHelper.pnlPapelesTrab}">
+                            <p:spacer width="30px" height="20px"/>     
+                            <p:column>
+                                <p:dataTable id="tablaPapelesTrabajo" style="border:none;" value="#{detalleOrdenUnificadoMB.helper.listaPapelesTrabajo}"
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" var="papeles"
+                                             paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <f:facet name="header">
+                                        #{msj['titulo.panel.papeles.trabajo']}
+                                    </f:facet>           
+                                    <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="20%">
+                                        <div align="center">       
+                                            <h:outputText id="txtFechaCPapel" value="#{papeles.papelesTrabajo.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                                            </h:outputText>
+                                        </div>
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.nombre.documento.trabajo']}" width="60%">
+                                        <h:outputText value="#{papeles.papelesTrabajo.nombreArchivo}" />
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.archivo.trabajo']}" width="10%" >
+                                        <div align="center">   	
+                                            <h:commandButton image="/resources/images/document.png" title="Documento"
+                                                             ajax="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{papeles}"
+                                                                             target="#{detalleOrdenUnificadoMB.helper.papelTrabajoSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoPapelesTrabajoOrden}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </h:panelGrid>
+
+                        <p:spacer width="30px" height="20px"/>
+                        <p:commandButton value="#{msj['btn.pantalla.anterior']}" style="float:right"
+                                         action="#{detalleOrdenUnificadoMB.regresa}" />
+                        <p:commandButton value="Consulta cifras" style="float: right;"
+                                         action="#{detalleOrdenUnificadoMB.redireccionaCifras}"
+                                         ajax="true" proces="@this" update="@form">		
+                        </p:commandButton>
+                    </h:panelGrid>
+
+
+                    <p:dialog widgetVar="dlgOficiosDependientes" header="#{msj['consultar.pnl.oficiosdepen.titulo']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGrid id="pnlOficiosDependientes">
+                            <h:panelGrid>
+
+                                <h:panelGrid>
+                                    <p:dataTable var="oficioDependiente" style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado.listOficioDependientes}" paginator="true" rows="5"
+                                                 paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                        <p:column headerText="#{msj['label.fecha.creacion']}">
+                                            <h:outputText value="#{oficioDependiente.fechaCarga}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.oficiosdepen.tipo']}">
+                                            <h:outputText value="#{oficioDependiente.tipoOficio}" />
+                                        </p:column>
+
+                                        <p:column headerText="#{msj['consultar.pnl.oficiosdepen.anexo']}">
+                                            <p:commandLink id="linkAnexosOficiosDependientes"
+                                                           action="#{detalleOrdenUnificadoMB.buscarAnexosOficioDependientes}"
+                                                           style="color:#0170b7;" ajax="true" onclick="PF('dlgAnexosOficiosDependientes').show();" immediate="true" 
+                                                           update=":detalleOrdenDocUnif:pnlAnexosOficiosDependientes">								
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.helper.oficioConsultaDependeienteSeleccionado}"
+                                                    value="#{oficioDependiente}" />
+                                                <h:outputText value="#{oficioDependiente.anexos}" />
+                                            </p:commandLink>
+
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.oficiosdepen.doc']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{oficioDependiente.nombreArchivo}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{oficioDependiente.rutaArchivo}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{oficioDependiente.nombreArchivo}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDependienteOficio}" />
+                                            </h:commandButton>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                    <p:spacer height="20px" />
+
+                                    <p:commandButton value="#{msj['consultar.btn.regresar']}" style="float:right"
+                                                     onclick="PF('dlgOficiosDependientes').hide();" />
+                                </h:panelGrid>
+
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlgAnexosOficiosDependientes" header="#{msj['titulo.dlg.oficios.dependientes']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGrid id="pnlAnexosOficiosDependientes">
+                            <h:panelGrid>
+                                <h:panelGrid>
+                                    <p:dataTable var="anexoOficio"
+                                                 style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.oficioConsultaDependeienteSeleccionado.listFecetOficioAnexo}">
+                                        <p:column headerText="#{msj['consultar.pnl.anexosoficidepen.fecenvio']}">
+                                            <h:outputText value="#{anexoOficio.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.anexosoficidepen.presentadopor']}">
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.oficioConsultaDependeienteSeleccionado.presentadoPor}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.anexosoficidepen.archivo']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{anexoOficio.nombreArchivo}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{anexoOficio.rutaArchivo}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{anexoOficio.nombreArchivo}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDependienteAnexoOficio}" />
+                                            </h:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:spacer height="20px" />
+                                    <p:commandButton value="#{msj['consultar.btn.regresar']}" onclick="PF('dlgAnexosOficiosDependientes').hide();"                                     
+                                                     style="float:center;"/>
+                                </h:panelGrid>
+
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog id="pnlDocPruebaAlegatos" widgetVar="pnlDocPruebaAlegatos" header="#{msj['titulo.documentos.enviados']}" showEffect="clip"
+                              hideEffect="clip" resizable="false" modal="true" width="800" height="auto">
+
+                        <h:panelGrid columns="4" cellspacing="15">
+                            <h:outputText value="#{msj['consultar.tablepromooficios.id']}:" style="font-weight:bold;"/>
+                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.promocionConsultaSeleccionada.idPromocion}" />
+                            <h:outputText value="#{msj['consultar.tablepromocion.fechaenvio']}:" style="font-weight:bold;"/>
+                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.promocionConsultaSeleccionada.fechaEnvio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>					
+                        </h:panelGrid>
+
+                        <p:dataTable var="fecetAlegato" style="display:block; text-align:center" 
+                                     value="#{detalleOrdenUnificadoMB.helper.promocionConsultaSeleccionada.listFecetAlegato}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                            <p:column headerText="#{msj['label.id.prueba.alegato']}">
+                                <h:outputText value="#{fecetAlegato.idAlegato}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['label.nombre.documento']}">
+                                <h:outputText value="#{fecetAlegato.nombreArchivo}" />
+                            </p:column>
+                            <p:column headerText="#{msj['consultar.tabledocalegato.archivo']}">
+                                <h:commandButton ajax="true" 
+                                                 image="/resources/images/document.png" process="@this"
+                                                 title="#{fecetAlegato.nombreArchivo}">
+                                    <f:setPropertyActionListener
+                                        target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                        value="#{fecetAlegato.rutaArchivo}" />
+                                    <f:setPropertyActionListener
+                                        target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                        value="#{fecetAlegato.nombreArchivo}" />
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOrdenUnificadoMB.archivoPromocionAnexoOrden}" />
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <p:spacer height="40px" />
+
+                        <p:commandButton value="#{msj['consultar.btn.regresar']}" style="float:right"
+                                         onclick="PF('pnlDocPruebaAlegatos').hide();" />
+                    </p:dialog>
+                    <p:dialog id="dlgAnexosOficios" widgetVar="dlgAnexosOficios" header="#{msj['titulo.dlg.anexos.oficio']}" resizable="false"
+                              modal="true" width="600" height="auto" >
+                        <h:panelGrid id="pnlAnexosOficios">
+                            <h:panelGrid>
+                                <h:panelGrid>
+                                    <p:dataTable var="anexoOficio" style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado.listFecetOficioAnexo}"
+                                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                 {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                        <p:column headerText="#{msj['label.fecha.creacion']}">
+                                            <h:outputText value="#{anexoOficio.fechaCreacion}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{msj['label.nombre.documento']}">
+                                            <h:outputText value="#{anexoOficio.nombreArchivo}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.oficiosdepen.doc']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{anexoOficio.nombreArchivo}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{anexoOficio.rutaArchivo}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{anexoOficio.nombreArchivo}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoOficioAnexos}" />
+                                            </h:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:spacer height="20px" />
+                                    <p:commandButton value="#{msj['consultar.btn.regresar']}" style="float:right"
+                                                     onclick="PF('dlgAnexosOficios').hide();" />
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog id="dlgOficiosDeRequerimientos" widgetVar="dlgOficiosDeRequerimientos" header="#{msj['consultar.pnl.oficiosrequerimiento.titulo']}" resizable="false"
+                              modal="true" width="600" height="auto" >
+
+                        <h:panelGrid id="pnlOficiosDeRequerimientos">
+                            <h:panelGrid border="1">
+                                <f:facet name="header">
+                                    <h:outputText value="#{msj['consultar.pnl.oficiosrequerimiento.titulo']}" />
+                                </f:facet>
+                                <h:panelGrid>
+                                    <p:dataTable var="promocionOficioConsulta" style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado.listPromocionOficioConsulta}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{msj['consultar.tablepromooficios.titulo']}" />
+                                        </f:facet>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.id']}">
+                                            <h:outputText
+                                                value="#{promocionOficioConsulta.idPromocionOficio}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.tipo']}">
+                                            <h:outputText value="#{promocionOficioConsulta.tipoPromocionStr}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.fecenvio']}">
+                                            <h:outputText value="#{promocionOficioConsulta.fechaEnvio}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.promocion']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{promocionOficioConsulta.nombreArchivo}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{promocionOficioConsulta.rutaArchivo}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{promocionOficioConsulta.nombreArchivo}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargable}" />
+                                            </h:commandButton>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.docContr']}">
+                                            <p:commandLink id="linkDocPruebasOficioAlegatos"
+                                                           action="#{detalleOrdenUnificadoMB.buscarDocPruebasAlegatosOficio}"
+                                                           ajax="true" onclick="PF('dlgDocPruebasOficioAlegatos').show();" immediate="true" 
+                                                           update=":detalleOrdenDocUnif:pnlDocPruebasOficioAlegatos">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.helper.promocionOficioConsultaSeleccionada}"
+                                                    value="#{promocionOficioConsulta}" />
+                                                <h:outputText
+                                                    value="#{promocionOficioConsulta.documentosContribuyente}" />
+                                            </p:commandLink>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.acuse']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{promocionOficioConsulta.nombreAcuse}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{promocionOficioConsulta.rutaAcuse}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{promocionOficioConsulta.nombreAcuse}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargable}" />
+                                            </h:commandButton>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.extemporaneo']}">
+                                            <p:outputPanel rendered="#{promocionOficioConsulta.extemporaneo}">
+                                                <h:commandButton image="/resources/images/ok.png" />
+                                            </p:outputPanel>
+                                            <p:outputPanel
+                                                rendered="#{!promocionOficioConsulta.extemporaneo}">
+                                                <h:commandButton image="/resources/images/cancel.png" />
+                                            </p:outputPanel>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablepromooficios.presentadopor']}">
+                                            <h:outputText value="#{promocionOficioConsulta.presentadoPor}" />
+                                        </p:column>
+                                    </p:dataTable>					
+                                    <p:spacer height="20px" />		
+                                    <!--************************* TABLA DE PRORROGA  OFICIO**********************************-->			
+                                    <p:dataTable var="prorrogaOficioConsulta"
+                                                 style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.oficioConsultaSeleccionado.listProrrogaOficioConsulta}">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{msj['consultar.tableprorrogaoficios.titulo']}" />
+                                        </f:facet>
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.id']}">
+                                            <h:outputText
+                                                value="#{prorrogaOficioConsulta.idProrroga}" />
+                                        </p:column>
+
+                                        <p:column  headerText="#{msj['consultar.tableprorrogaoficios.fecsol']}">
+                                            <h:outputText value="#{prorrogaOficioConsulta.fechaSolicitud}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.acuse'] }">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{prorrogaOficioConsulta.nombreAcuse}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{prorrogaOficioConsulta.rutaAcuse}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{prorrogaOficioConsulta.nombreAcuse}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargable}" />
+                                            </h:commandButton>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.doccontr']}">
+                                            <p:commandLink id="linkDocuContribuyente"
+                                                           action="#{detalleOrdenUnificadoMB.buscarDocProrrogaOficio}"
+                                                           ajax="true" onclick="PF('dlgDocProrrogaOficio').show();" immediate="true" 
+                                                           update=":detalleOrdenDocUnif:pnlDocProrrogaOficio">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.helper.prorrogaOficioConsultaSeleccionada}"
+                                                    value="#{prorrogaOficioConsulta}" />
+                                                <h:outputText
+                                                    value="#{prorrogaOficioConsulta.totalDocumentosContribuyente}" />
+                                            </p:commandLink>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.docresol']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{prorrogaOficioConsulta.nombreResolucion}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{prorrogaOficioConsulta.rutaResolucion}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{prorrogaOficioConsulta.nombreResolucion}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargable}" />
+                                            </h:commandButton>
+                                        </p:column>
+
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.estatus']}">
+                                            <h:outputText value="#{prorrogaOficioConsulta.estatus}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.motivo'] }">
+                                            <h:outputText value="#{prorrogaOficioConsulta.flujoProrrogaOficioConsultaDTO.motivo}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tableprorrogaoficios.anexosresol'] }">
+                                            <p:commandLink id="linkDocAnexosResolProrrogaOficio"
+                                                           action="#{detalleOrdenUnificadoMB.buscarDocAnexoResolProrrogaOficio}"
+                                                           ajax="true" onclick="PF('dlgDocAnexosResolProrrogaOficio').show();" immediate="true" 
+                                                           update=":detalleOrdenDocUnif:pnlDocAnexosResolProrrogaOficio">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.helper.flujoProrrogaOficioConsultaDTOSeleccionada}"
+                                                    value="#{prorrogaOficioConsulta.flujoProrrogaOficioConsultaDTO}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.helper.prorrogaOficioConsultaSeleccionada}"
+                                                    value="#{prorrogaOficioConsulta}" />
+                                                <h:outputText value="#{prorrogaOficioConsulta.flujoProrrogaOficioConsultaDTO.totalAnexos}" />
+                                            </p:commandLink>
+
+                                        </p:column>	
+                                    </p:dataTable>
+                                    <p:spacer height="20px" />
+                                    <p:commandButton value="#{msj['consultar.btn.regresar']}" style="float:right"
+                                                     onclick="PF('dlgOficiosDeRequerimientos').hide();" />
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlgDocPruebasOficioAlegatos" header="#{msj['titulo.dlg.oficios.dependientes']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGrid id="pnlDocPruebasOficioAlegatos" >
+                            <h:panelGrid>
+                                <h:panelGrid>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{msj['consultar.pnl.docpruebasoficalegatos.titulo']}" />
+                                    </f:facet>
+                                    <p:dataTable var="alegatoOficio"
+                                                 style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.promocionOficioConsultaSeleccionada.listFecetAlegatoOficio}">
+                                        <p:column headerText="#{msj['consultar.tablealegatooficio.fecenvio']}">
+                                            <h:outputText value="#{alegatoOficio.fechaCarga}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablealegatooficio.presentadopor']}">
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.promocionOficioConsultaSeleccionada.presentadoPor}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.tablealegatooficio.archivo']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{alegatoOficio.nombreArchivo}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{alegatoOficio.rutaArchivo}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{alegatoOficio.nombreArchivo}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargable}" />
+                                            </h:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:spacer height="20px" />
+                                    <p:commandButton value="#{msj['consultar.btn.regresar']}" style="float:right"
+                                                     onclick="PF('dlgDocPruebasOficioAlegatos').hide();" />
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlgDocProrrogaOficio" resizable="false" modal="true" width="515" height="auto">		
+                        <h:panelGrid id="pnlDocProrrogaOficio">
+                            <h:panelGrid>
+                                <h:panelGrid>
+                                    <f:facet name="header">
+                                        <h:outputText value="Documentacion Contribuyente" />
+                                    </f:facet>
+                                    <p:dataTable var="docProrrogaOficio"
+                                                 style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.prorrogaOficioConsultaSeleccionada.listFecetDocProrrogaOficio}">
+                                        <p:column headerText="#{msj['consultar.pnl.docProrrogaOrden.fecenvio']}">
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.prorrogaOficioConsultaSeleccionada.fechaSolicitud}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.docProrrogaOrden.presentadopor']}">
+                                            <h:outputText value="#{detalleOrdenUnificadoMB.helper.prorrogaOficioConsultaSeleccionada.presentadoPor}" />							
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.docProrrogaOrden.archivo']}">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{docProrrogaOficio.nombreArchivo}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{docProrrogaOficio.rutaArchivo}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{docProrrogaOficio.nombreArchivo}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargable}" />
+                                            </h:commandButton>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                    <p:spacer height="20px" />
+
+                                    <p:commandButton value="#{msj['consultar.btn.regresar']}" style="float:right"
+                                                     onclick="PF('dlgDocProrrogaOficio').hide();" />
+                                </h:panelGrid>
+
+                            </h:panelGrid>
+                        </h:panelGrid>		
+                    </p:dialog>		
+
+                    <p:dialog widgetVar="dlgDocAnexosResolProrrogaOficio" header="#{msj['consultar.pnl.docanexosresolprorofic.titulo']}" resizable="false" modal="true" width="515" height="auto">				
+                        <h:panelGrid id="pnlDocAnexosResolProrrogaOficio">
+                            <h:panelGrid>
+
+                                <h:panelGrid>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{msj['consultar.pnl.docanexosresolprorofic.titulo'] }" />
+                                    </f:facet>
+                                    <p:dataTable var="anexoProrrogaOficio"
+                                                 style="display:block; text-align:center"
+                                                 value="#{detalleOrdenUnificadoMB.helper.flujoProrrogaOficioConsultaDTOSeleccionada.listAnexosProrrogaOficios}">
+                                        <p:column headerText="#{msj['consultar.pnl.docanexosresolprorofic.fecenvio'] }">
+                                            <h:outputText value="#{anexoProrrogaOficio.fechaCreacion}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />								
+                                            </h:outputText>
+
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.docanexosresolprorofic.presentadopor'] }">
+                                            <h:outputText value="#{anexoProrrogaOficio.presentadoPor}" />
+                                        </p:column>
+                                        <p:column headerText="#{msj['consultar.pnl.docanexosresolprorofic.archivo'] }">
+                                            <h:commandButton ajax="true"
+                                                             image="/resources/images/document.png" process="@this"
+                                                             title="#{anexoProrrogaOficio.nombreArchivo}">
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.rutaArchivo}"
+                                                    value="#{anexoProrrogaOficio.rutaArchivo}" />
+                                                <f:setPropertyActionListener
+                                                    target="#{detalleOrdenUnificadoMB.nombreArchivo}"
+                                                    value="#{anexoProrrogaOficio.nombreArchivo}" />
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOrdenUnificadoMB.archivoDescargable}" />
+                                            </h:commandButton>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                    <p:spacer height="20px" />
+
+                                    <p:commandButton value="#{msj['consultar.btn.regresar']}" style="float:right"
+                                                     onclick="PF('dlgDocAnexosResolProrrogaOficio').hide();" />
+                                </h:panelGrid>
+
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlgAnexosSolicitudContr" header="#{msj['titulo.dlg.informacion.anexos']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelGrpAnexosSolicitudContr" layout="block" style="padding:5px;">
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaAnexosSolicitudContr" var="docs" value="#{detalleOrdenUnificadoMB.solHelper.listaAnexosSolicitudContribuyenteHistorico}" 
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                        <h:outputLabel value="#{docs.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                        #{docs.nombreArchivo}
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.documento']}" style="width:35px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}" target="#{detalleOrdenUnificadoMB.solHelper.solicitudContribuyenteAnexoHistoricoVOSeleccionada}"/>
+                                                <p:fileDownload contentDisposition="attachment" value="#{detalleOrdenUnificadoMB.archivoAnexoResolucionProrrogaOrden}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>		
+
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

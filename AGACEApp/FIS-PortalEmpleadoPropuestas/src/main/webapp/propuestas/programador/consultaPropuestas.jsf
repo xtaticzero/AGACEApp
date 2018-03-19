@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <title>AGACE</title>
+            <style type="text/css">
+               .ui-selectonemenu-panel
+               {
+                   max-width:80% !important;
+               }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form id="formConsultaPropuestas" styleClass="panel-principal" >
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardar" showDetail="false" globalOnly="true" closable="true"/>
+                
+                <p:panel id="panelConsultaPropuestas" styleClass="panel-interno" header="#{msj['label.consulta.propuestas']}" style="width:1050px;">
+                
+                    <h:panelGrid id="panelBusquedaPropuestas" border="0" columns="6" width="100%">
+                        
+                        <p:outputLabel value="#{msj['label.consulta.rfc.propuestas']}: " style="float:left;font-weight:bold;" />
+                        <h:inputText id="RFC" value ="#{consultaPropuestasMB.rfc}" style="float:left;width:120px;" maxlength="15"/>
+
+                        <p:outputLabel value="#{msj['label.consulta.estatus.propuestas']}:" style="float:left;font-weight:bold;width:50px;"/>
+                        <p:selectOneMenu id="cmbEstatus" value="#{consultaPropuestasMB.idEstatusPropuestas}" style="float:left;width:150px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1" />
+                            <f:selectItems value="#{consultaPropuestasMB.listaTipoEstatus}" var="listaEstatus"
+                                           style="font;" itemLabel="#{listaEstatus.descripcion}" itemValue="#{listaEstatus.id}" />
+                        </p:selectOneMenu>                                            
+
+                        <h:panelGroup> 		    
+                            <h:outputText value="#{msj['label.consulta.fecha.comite.propuestas']}" style="float:center;font-weight:bold"/><br/>
+			                <p:selectOneMenu id="cmbFechaComite" widgetVar="cmbFechaComite" value="#{consultaPropuestasMB.idTipoFechaComite}" style="width:150px;">
+                                <f:selectItem id="tipoFechaComite"
+                                              itemLabel="#{msj['combo.item.selecciona.tipo.fecha']}" itemValue="-1"/>
+                                <f:selectItems value="#{consultaPropuestasMB.listaFechasComiteEnumBusqueda}"
+                                               var="fechaComite" itemLabel="#{fechaComite.descripcion}" itemValue="#{fechaComite.id}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>                        
+                        
+                        <h:panelGroup>
+                            <p:calendar id="txtFechaInicialR" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="7"
+                                        value="#{consultaPropuestasMB.fechaInicio}" navigator="true"/>                              
+                            <h:outputLabel value=" a " style="font-weight:bold;">                        
+                            <p:calendar id="txtFechaFinR" locale="es" pattern="dd/MM/yyyy" showOn="button" 
+                                        readonlyInput="true" size="7"
+                                        value="#{consultaPropuestasMB.fechaFin}" navigator="true">
+                            </p:calendar>
+                            </h:outputLabel>  
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{msj['label.consulta.id.registro.propuestas']}:" style="float:left;font-weight:bold;" />
+                        <h:inputText id="IdRegistro" value ="#{consultaPropuestasMB.idRegistro}" style="float:left;width:120px;" maxlength="15"/>
+                        
+                        <p:outputLabel value="#{msj['label.consulta.entidad.propuestas']}: " style="float:left;font-weight:bold;width:50px;"/>                                               
+                        <p:selectOneMenu id="cmbEntidad" value="#{consultaPropuestasMB.entidad}" style="float:left;width:150px;" >
+                            <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1"/>
+                            <f:selectItems value="#{consultaPropuestasMB.listaEntidades}" var="entidad"
+                                                style="font;" itemLabel="#{entidad.nombre}" itemValue="#{entidad.nombre}"/>                    
+                        </p:selectOneMenu>                        
+                                                
+                        <h:outputText value="#{msj['label.consulta.unidad.administrativa.propuestas']}" style="font-weight:bold;width:100px;"/>
+			            <p:selectOneMenu id="cmbUAA" widgetVar="cmbUAA" value="#{consultaPropuestasMB.idUnidadAdministrativa}" style="width:150px;">
+                            <f:selectItem id="unidadAdministrativa"
+                                           itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1"/>
+                            <f:selectItems value="#{consultaPropuestasMB.listaUnidadAdministrativa}"
+                                           var="unidadAdministrativa" itemLabel="#{unidadAdministrativa.nombre}" itemValue="#{unidadAdministrativa.idArace}"/>
+                        </p:selectOneMenu>                                                                            
+
+                        <p:spacer width="150" height="1" />
+                        <p:spacer width="150" height="1" />
+                        <p:spacer style="width:50px;" height="1" />
+                        <p:commandButton value="#{msj['btn.buscar']}" styleClass="ui-confirmdialog-no" style="float:right;"
+                                                            action="#{consultaPropuestasMB.buscarPropuestas}" update="formConsultaPropuestas panelConsultaPropuestas tablaConsultaPropuestas" />
+                                             
+                    </h:panelGrid>
+                    <br/>
+                    <br/>
+                    
+                    <h:panelGrid id="panelTablaInformeComite"  border="0" width="100%">
+                        <p:dataTable id="tablaConsultaPropuestas" widgetVar="tablaConsultaPropuestas"
+                                     var="listaPropuestas" value="#{consultaPropuestasMB.listaPropuestas}"  editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                     paginator="true"
+                                     rows="10" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                     {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" >
+                                    
+                                    <p:column width="9">
+                                        <p:rowToggler/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.consulta.folio.propuestas']}">
+                                        <h:outputText value="#{listaPropuestas.idRegistro}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.consulta.rfc.propuestas']}" style="width:80px;text-align:center;">
+                                        <h:outputText value="#{listaPropuestas.rfc}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.nombre.razon.social']}">
+                                        <h:outputText value="#{listaPropuestas.nombreContribuyente}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.propuesta.estatus']}" >
+                                        <h:outputText value="#{listaPropuestas.estatus}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.entidad']}">
+                                        <h:outputText value="#{listaPropuestas.entidad}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.tipo.contribuyente']}">
+                                        <h:outputText value="#{listaPropuestas.tipoContribuyente}" />
+                                    </p:column>
+                                                        
+                                    <p:column headerText="#{msj['label.actividad.preponderante']}">
+                                        <h:outputText value="#{listaPropuestas.actividadPreponderante}" />
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['column.fecha.comite']}" filterBy="#{listaPropuestas.tipoComite}" filterMatchMode="exact" filterStyle="width:100px;">
+	                        	       <f:facet name="filter">
+							               <p:selectOneMenu onchange="PF('tablaConsultaPropuestas').filter()" style="width: 90%;">
+							                    <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipo.fecha']}" itemValue="#{null}" noSelectionOption="true" />
+							                    <f:selectItems value="#{consultaPropuestasMB.listaFechasComiteEnum}" var="fechaComite" itemLabel="#{fechaComite.descripcion}" itemValue="#{fechaComite}"/>
+							               </p:selectOneMenu>
+							           </f:facet>                                
+							           <h:outputText value="#{listaPropuestas.fechaInforme}" rendered="#{listaPropuestas.fechaInforme != null and listaPropuestas.fechaInforme == null }">                                                                           
+	                            	       <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                                   </h:outputText>
+	                                   <h:outputText value="#{listaPropuestas.fechaPresentacion}" rendered="#{listaPropuestas.fechaPresentacion != null}" >                                    
+	                            	       <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                                   </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['label.programador']}" style="width:100px;text-align:center;">
+                                        <h:outputText value="#{listaPropuestas.rfcEmpleado}"/>
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['label.causa.motivo']}">
+                                        <h:outputText value="#{listaPropuestas.causaMotivo}" />
+                                    </p:column>
+                                                                                            
+                                    <p:rowExpansion>
+                                        <p:panelGrid id="display" columns="2" cellpadding="4"
+                                                    styleClass=" ui-widget-content grid" width="100%">
+                                                    
+                                            <h:outputText value="#{msj['label.regimen']}  "/>
+                                            <h:outputText value="#{listaPropuestas.regimen}"/>
+
+                                            <h:outputText value="#{msj['label.subprograma']} "/>
+                                            <h:outputText value="#{listaPropuestas.subprograma}"/>
+
+                                            <h:outputText value="#{msj['label.consulta.expediente.propuestas']}  "/>
+                                            <h:commandButton  ajax="true" image="/resources/images/document.png" style="padding:0px 40px;"
+                                                              actionListener="#{consultaPropuestasMB.visualizarDocumentos}"  process="@this">                                    
+                                                <f:setPropertyActionListener value="#{listaPropuestas.listaExpediente}" target="#{consultaPropuestasMB.listaDocumento}"/>
+                                            </h:commandButton>
+                                            
+                                        </p:panelGrid>
+                                    </p:rowExpansion>
+                                </p:dataTable>                    
+                    </h:panelGrid>
+                    
+                    <p:dialog header="Consulta Documentos" widgetVar="dialogoDocumentos" width="500" height="250" onHide="rc()">
+                        <p:dataTable var="documento" value="#{consultaPropuestasMB.listaDocumento}">
+                            <p:column headerText="#{msj['label.nombre.documento']}" style="width:75%;">
+                                <h:outputText value="#{documento.nombre}" />
+                            </p:column>
+                            <p:column headerText="Descargar" style="25%;">
+                                
+                                <div align="center">
+                                    <h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 40px;">
+                                            <f:setPropertyActionListener value="#{documento}" target="#{consultaPropuestasMB.documento}"/>
+                                            <p:fileDownload contentDisposition="attachment" value="#{consultaPropuestasMB.descargarArchivo}"/>
+                                    </h:commandButton>
+                                </div>    
+                            </p:column>
+                        </p:dataTable>
+                    </p:dialog>
+                    
+                    <h:panelGrid id="panelBotonesInformeComite" columns="2" style="width:100%">
+                                <p:commandButton value="#{msj['btn.exportar']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s"
+                                                styleClass="ui-confirmdialog-no" style="float:right;width:80px;" disabled="#{consultaPropuestasMB.mostrarExportar}">
+                                    <p:fileDownload value="#{consultaPropuestasMB.xlsReporte}"/>
+                                </p:commandButton>                                                                                                               
+                                <p:commandButton value="#{msj['btn.limpiar']}" styleClass="ui-confirmdialog-no" style="float:left;width:80px;"
+                                                            actionListener="#{consultaPropuestasMB.limpiaCamposBusqueda}" update="formConsultaPropuestas" process="@this"/>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>             
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

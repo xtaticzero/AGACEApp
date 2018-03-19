@@ -1,0 +1,425 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{detalleOficioUnificadoMB.init}"/>
+        </f:metadata>
+        <h:head/>
+        <h:body>
+        
+            <h:form id="formDocumentacionOficio" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogOficioDocs').show();" onsuccess="PF('statusDialogOficioDocs').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogOficioDocs" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                
+                <p:panel id="panelDocumentacionOficio" header="#{detalleOficioUnificadoMB.oficioSeleccionado.fecetTipoOficio.nombre}" styleClass="panel-interno">
+                 
+                <p:accordionPanel multiple="true">
+                    <p:tab title="#{msj['consutlar.pnl.documentacion.oficio.enviada.por.cont']}">
+                                    
+                    <p:dataTable id="tablaDocumentacionRequeridaOficio" var="documentacion"
+                                 value="#{detalleOficioUnificadoMB.helper.listaPromociones}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} 
+                                 &amp;nbsp; {NextPageLink} {LastPageLink}" currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">                        
+                        <f:facet name="header">
+                            #{msj['consutlar.pnl.documentacion.oficio.enviada.a.la.auto']}
+                        </f:facet>
+                        <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">#{documentacion.idPromocionOficio}</p:column>
+                        <p:column headerText="#{msj['consultar.pnl.docProrrogaOrden.fecenvio']}" style="width:80px">
+                            <h:outputLabel value="#{documentacion.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </p:column>                       
+                        <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="#{documentacion.nombreArchivo}" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{detalleOficioUnificadoMB.helper.promocionSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOficioUnificadoMB.archivoDescargaPromocionOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+                            #{documentacion.descripcionTipoPromocion}
+                        </p:column>
+                         <p:column headerText="#{msj['consutlar.pnl.documentacion.oficio.anexos.promocion']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{detalleOficioUnificadoMB.getPruebasAlegatosPromocion}"
+                                               value="#{documentacion.contadorPruebasAlegatos}" style="color:#0170b7;"
+                                               oncomplete="PF('dlgDocEnviada').show();"
+                                               update=":formDocumentacionOficio:txtIdPromocion :formDocumentacionOficio:panelDocumentosPromocion 
+                                               :formDocumentacionOficio:txtFechaEnvio :formDocumentacionOficio:tablaPruebasAlegatos">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{detalleOficioUnificadoMB.helper.promocionSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['titulo.tabla.documentacion.extemporanea']}" style="width:70px">
+                            <div align="center">
+                                <p:graphicImage value="/resources/images/#{documentacion.extemporanea==1?'ok':'cancel'}.png" style="border:0"/>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.presentada.por']}" style="width:70px">
+                            <h:outputText value="#{documentacion.idAsociadoCarga == null ? detalleOficioUnificadoMB.helper.ordenSeleccionada.fecetContribuyente.nombre : documentacion.asociado.nombre}"/>
+                        </p:column>
+                    </p:dataTable>  
+                    </p:tab>  
+                </p:accordionPanel>                        
+                    <!-- Inicio de bloque de Prorrogas -->
+                    <br/>
+                    <p:accordionPanel id="pnlProrroga" multiple="true" rendered="#{detalleOficioUnificadoMB.helper.prorrogaVisible}">
+                        <p:tab title="#{msj['consutlar.pnl.documentacion.oficio.prorroga.solicitud']}">
+                                    
+                        <p:messages id="msgProrroga" showDetail="true" globalOnly="true" closable="true"/>
+                        <p:dataTable id="tablaProrroga" var="documentacion" 
+                                     value="#{detalleOficioUnificadoMB.helper.listaProrrogaHistorico}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj['consutlar.pnl.documentacion.oficio.prorroga.titulo']}
+                            </f:facet>
+                            <p:column headerText="#{msj['label.id.prorroga']}" style="width:50px">#{documentacion.idProrrogaOficio}</p:column>
+                            <p:column headerText="#{msj['consultar.pnl.documentacion.oficio.fecenvio']}" style="width:80px">
+                                <h:outputLabel value="#{documentacion.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column headerText="#{msj['consultar.pnl.documentacion.oficio.doc.solicitud']}" style="width:80px">
+                                <div align="center">
+                                    <p:commandLink action="#{detalleOficioUnificadoMB.getDocumentacionProrrogaContribuyenteOficio}"
+                                                   value="#{documentacion.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                                   ajax="true" onclick="PF('dlgDocProrrogaContOficio').show();" immediate="true"
+                                                   update=":formDocumentacionOficio:panelDocContProrroga">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                                     target="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada}"/>
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+                                <p:outputLabel value="#{documentacion.fececEstatus.descripcion}"/>
+                            </p:column>                            
+                            <p:column headerText="#{msj['consultar.pnl.documentacion.oficio.prorroga.doc.resolucion']}" style="width:110px">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{documentacion.nombreAcuse}" ajax="true" immediate="true"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                                     target="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{detalleOficioUnificadoMB.archivoDescargaResolucionProrrogaOficio}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>       
+                            <p:column headerText="#{msj['column.label.justificacion']}">
+                                    <h:outputText value="#{documentacion.fecetFlujoProrrogaOficio.justificacion}"/>                            
+                            </p:column>
+                            <p:column headerText="#{msj['consultar.pnl.documentacion.oficio.prorroga.anexos.resolucion']}">
+                                    <p:commandLink action="#{detalleOficioUnificadoMB.getDocumentacionRechazoProrroga}"
+                                                   value="#{documentacion.totalDocumentosRechazo}" style="color:#0170b7;"
+                                                   ajax="true" onclick="PF('dlgAnexosRechazoProrrogaOficio').show();"
+                                                   update=":formDocumentacionOficio:panelAnexosProrrogaOficio"
+                                                   immediate="true" disabled="#{documentacion.fecetFlujoProrrogaOficio.idFlujoProrrogaOficio == null}">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                                     target="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada}"/>
+                                    </p:commandLink>                            
+                            </p:column>                                                                        
+                        </p:dataTable>  
+                        </p:tab> 
+                    </p:accordionPanel>
+                    <!-- Fin de bloque de prorrogas -->
+                                      
+                    
+                    <p:separator rendered="#{detalleOficioUnificadoMB.helper.prorrogaVisible}"/>
+                    <p:panel id="panelProrrogasAntecedentes" rendered="false">
+                        <p:dataTable id="tablaHistoricoProrrogas" var="documentacion"
+                                 value="#{detalleOficioUnificadoMB.helper.listaProrrogaHistorico}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                 
+                        <f:facet name="header">
+                            #{msj[&apos;titulo.tabla.historico.prorroga&apos;]}
+                        </f:facet>
+                                 
+                        <p:column headerText="#{msj['column.label.detalle']}" style="width:35px" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="#{msj['label.id.prorroga']}" style="width:35px" >#{documentacion.idProrrogaOficio}</p:column>
+                        <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:80px">
+                            <h:outputLabel value="#{documentacion.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Acuse" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOficioUnificadoMB.archivoDescargaAcuseProrrogaOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{detalleOficioUnificadoMB.getDocumentacionProrrogaContribuyente}"
+                                               value="#{documentacion.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocProrrogaContOficio').show();" immediate="true"
+                                               update=":formDocumentacionOficio:panelDocContProrroga">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+                            #{documentacion.fececEstatus.descripcion}
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.documento.resolucion.prorroga']}" style="width:80px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Acuse" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOficioUnificadoMB.archivoDescargaResolucionProrrogaOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="#{msj['column.label.justificacion']} :"/>
+                                <h:outputText value="#{documentacion.fecetFlujoProrrogaOficio.justificacion}"/>
+                                
+                                <h:outputText value="#{msj['column.label.anexos.resolucion.prorroga']} :"/>
+                                <p:commandLink action="#{detalleOficioUnificadoMB.getAnexosProrrogaOficio}"
+                                               value="#{documentacion.totalDocumentosRechazo}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgAnexosProrrogaOficio').show();" immediate="true" 
+                                               update=":formDocumentacionOficio:tablaAnexosProrrogaOficio">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada}"/>
+                                </p:commandLink>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable> 
+                    </p:panel>
+                    
+                    <h:panelGrid id="panelDocumentosPromocion" >
+                        <p:dialog widgetVar="dlgDocEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto" id="dialogoDocumentacion"
+                              rendered="#{detalleOficioUnificadoMB.helper.panelDocumentacionVisible}" 
+                              visible="#{detalleOficioUnificadoMB.helper.panelDocumentacionVisible}" >
+                        <p:ajax event="close" update="panelDocumentosPromocion" listener="#{detalleOficioUnificadoMB.cierraVentana}" />
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="Id Promoción"/>
+                                <p:inputText id="txtIdPromocion" style="width:50px;" readonly="true"
+                                             value="#{detalleOficioUnificadoMB.helper.promocionSeleccionada.idPromocionOficio}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                             value="#{detalleOficioUnificadoMB.helper.promocionSeleccionada.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaPruebasAlegatos" var="docs"
+                                             value="#{detalleOficioUnificadoMB.helper.listaPruebasAlegatos}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">#{docs.idAlegatoOficio}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="#{msj['column.label.archivo']}" style="width:35px">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{detalleOficioUnificadoMB.helper.pruebaAlegatoSeleccionada}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{detalleOficioUnificadoMB.archivoDescargaPruebasAlegatos}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    </h:panelGrid>                    
+                    
+                    <p:dialog widgetVar="dlgAnexosProrrogaOficio" header="#{msj['titulo.dlg.informacion.anexos']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelGrpAnexosProrrogaOficio" layout="block" style="padding:5px;">
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaAnexosProrrogaOficio" var="docs"
+                                             value="#{detalleOficioUnificadoMB.helper.listaAnexosProrrogaOficio}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                        <h:outputLabel value="#{docs.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="#{msj['label.documento']}" style="width:35px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                             style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}"
+                                                                             target="#{detalleOficioUnificadoMB.helper.anexoProrrogaOficioSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOficioUnificadoMB.archivoDescargaAnexoProrrogaOficio}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    
+                    <p:dialog widgetVar="dlgDocProrrogaContOficio" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelDocContProrroga" layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="#{msj['label.id.prorroga']}"/>
+                                <p:inputText id="txtIdProrrogaOficio" style="width:50px;" readonly="true"
+                                             value="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada.idProrrogaOficio}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtFechaCargaProrrogaOficio" style="width:80px;" readonly="true"
+                                             value="#{detalleOficioUnificadoMB.helper.prorrogaOficioSeleccionada.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaDocumentosProrrogaContribuyente" var="docs"
+                                             value="#{detalleOficioUnificadoMB.helper.listaDocumentosProrrogaOficio}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.label.id.documento']}" style="width:60px">#{docs.idDocProrrogaOficio}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="#{msj['column.label.archivo']}" style="width:25px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                             style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}"
+                                                                             target="#{detalleOficioUnificadoMB.helper.documentacionProrrogaOficioSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{detalleOficioUnificadoMB.archivoDescargaDocumentacionProrroga}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    
+                    <p:dialog widgetVar="dlgAnexosRechazoProrrogaOficio" header="#{msj['titulo.documentos.enviados']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelAnexosProrrogaOficio" layout="block" style="padding:5px;">
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaAnexosProrroga" var="docs" value="#{detalleOficioUnificadoMB.helper.listaDocumentosRechazoProrroga}" 
+                                	editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" 
+                                	paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             
+                                	{PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" 
+                                	currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.label.id.documento']}" style="width:60px">
+                                        #{docs.idAnexosProrrogaOficio}
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                        #{docs.nombreArchivo}
+                                    </p:column>
+                                    <p:column headerText="#{msj['column.label.archivo']}" style="width:25px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}" target="#{detalleOficioUnificadoMB.helper.anexoProrrogaOficioSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment" value="#{detalleOficioUnificadoMB.archivoAnexoProrrogaOficio}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    
+                    <!-- Papeles de Trabajo -->
+                    <p:messages id="messagesPapelesTrabajoIdOficio" showDetail="true"
+						closable="true" for="msgPapelesTrabajoIdOficio" />
+					<p:panel rendered="#{detalleOficioUnificadoMB.helper.panelPapelesVisible}">                    
+					
+						<h:panelGrid columns="2">
+							<p:column>
+								<p:dataTable id="tblPapelTrabajo" style="border:none;"
+									value="#{detalleOficioUnificadoMB.helper.listaPapelesTrabajoOficio}"
+									editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+									paginator="true" rows="5" var="papeles"
+									paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   
+									#{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="({currentPage} de {totalPages})"
+									paginatorPosition="bottom">
+									<f:facet name="header">
+					                                   #{msj['titulo.panel.papeles.trabajo']}
+					                </f:facet>
+									<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+										width="25%">
+										<div align="center">
+											<h:outputText 
+												value="#{papeles.papelesTrabajo.fechaCreacion}">
+												<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+													timeZone="America/Mexico_City" />
+											</h:outputText>
+										</div>
+									</p:column>
+									<p:column headerText="#{msj['column.nombre.documento.trabajo']}"
+										width="50%">
+										<h:outputText value="#{papeles.papelesTrabajo.nombreArchivo}" />
+									</p:column>
+									<p:column headerText="#{msj['column.archivo.trabajo']}" width="10%">
+										<div align="center">
+											<h:commandButton image="/resources/images/document.png"
+												title="Documento" ajax="true" style="padding:0px 5px;">
+												<f:setPropertyActionListener value="#{papeles}"
+													target="#{detalleOficioUnificadoMB.helper.papelTrabajoSeleccionado}" />
+												<p:fileDownload contentDisposition="attachment"
+													value="#{detalleOficioUnificadoMB.archivoDescargaPapelTrabajo}" />
+											</h:commandButton>
+										</div>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</h:panelGrid>
+				
+					</p:panel>
+                                        
+                    <h:panelGrid columns="2" id="panelBotones" width="700">
+                        <p:column rowspan="2">
+                            <p:commandButton value="#{msj['btn.pantalla.anterior']}" style="float:right;width:120px;"
+                                             action="#{detalleOficioUnificadoMB.redireccionaRegreso}"
+											 ajax="true" proces="@this" update="@form"/>
+                        </p:column>
+                    </h:panelGrid>
+                    
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

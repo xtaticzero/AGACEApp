@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+        	<f:event type="preRenderView" listener="#{ordenesValidarMB.init}" />
+        	<f:event type="preRenderView" listener="#{documentacionOrdenMB.limpiaFormulario}" />
+        	<f:event type="preRenderView" listener="#{documentacionOficioMB.limpiaFormulario}" />
+        	<f:event type="preRenderView" listener="#{documentacionPropuestaOrdenAuditorMB.limpiaFormulario}" />
+        	<f:event type="preRenderView" listener="#{compulsasManagedBean.limpiaFormulario}" />
+    	</f:metadata>
+
+        <h:head>
+        </h:head>
+        <h:body>
+            <h:form id="formOrdenPorValidar" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardarSeg" showDetail="false" globalOnly="false" closable="true"/>
+                <p:panel id="pannelOrdenPorValidar" header="Órdenes por validar seguimiento"  styleClass="panel-interno">
+                    <p:ajaxStatus onstart="PF('statusDialogSeguimiento').show();" onsuccess="PF('statusDialogSeguimiento').hide();"/>
+                    <p:dialog modal="true" widgetVar="statusDialogSeguimiento" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                              resizable="false">
+                        <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                    </p:dialog>
+                    
+                    <p:dataTable widgetVar="tablaOrdenPorValidarSeguimiento" id="tablaOrdenPorValidarSeguimiento" var="ordenPorValidar" value="#{ordenesValidarMB.listaPorValidarSeguimiento}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="10" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom">
+                        <p:column headerText="Detalle" width="6%" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="Número de orden" filterBy="#{ordenPorValidar.numeroOrden}" width="15%" >
+                            <p:commandLink style="color:blue;" action="documentacionOrden" value="#{ordenPorValidar.numeroOrden}" disabled="#{ordenPorValidar.mostrarNumeroOrden}">
+                                <f:setPropertyActionListener value="${ordenPorValidar}" target="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada}" />
+                                <f:setPropertyActionListener value="true" target="#{documentacionOrdenMB.attributeHelper.recargarInformacion}" />
+                                <f:setPropertyActionListener value="${ordenPorValidar}" target="#{compulsasManagedBean.ordenSeleccionada}" />
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="Id de registro" filterBy="#{ordenPorValidar.idRegistroPropuesta}" width="15%">
+                            <p:commandLink style="color:blue;" action="documentacionPropuesta" value="#{ordenPorValidar.idRegistroPropuesta}">
+                                <f:setPropertyActionListener value="${ordenPorValidar.idRegistroPropuesta}" target="#{documentacionPropuestaOrdenAuditorMB.idRegistroPropuestaSeleccionada}" />
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="RFC" filterBy="#{ordenPorValidar.fecetContribuyente.rfc}" width="15%" >
+                            <h:outputText value="#{ordenPorValidar.fecetContribuyente.rfc}"/>
+                        </p:column>
+                        <p:column headerText="Método" filterBy="#{ordenPorValidar.feceaMetodo.nombre}" width="15%" filterMatchMode="contains">
+                            <h:outputText value="#{ordenPorValidar.feceaMetodo.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Prioridad sugerida" filterBy="#{ordenPorValidar.prioridadSugerida}" filterMatchMode="exact" width="9%">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('tablaOrdenPorValidarSeguimiento').filter()">
+                                    <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{ordenesValidarMB.prioridadRegistrada}" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <div align="center">
+                            	#{ordenPorValidar.prioridadSugerida}
+                            </div>
+                        </p:column>
+                        <p:column headerText="Sem&aacute;foro" filterBy="#{ordenPorValidar.imagenSemaforo}" filterMatchMode="exact" width="10%">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('tablaOrdenPorValidarSeguimiento').filter()" >
+                                    <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                    <f:selectItem itemLabel="Verde" itemValue="semaforo-verde" />
+                                    <f:selectItem itemLabel="Amarillo" itemValue="semaforo-amarillo" />
+                                    <f:selectItem itemLabel="Naranja" itemValue="semaforo-naranja" />
+                                    <f:selectItem itemLabel="Azul" itemValue="semaforo-azul" />
+                                    <f:selectItem itemLabel="Gris" itemValue="semaforo-gris" />
+                                    <f:selectItem itemLabel="Cafe" itemValue="semaforo-cafe" />
+                                    <f:selectItem itemLabel="Rojo" itemValue="semaforo-rojo" />
+                                    <f:selectItem itemLabel="Negro" itemValue="semaforo-negro" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <div align="center">
+                                <p:graphicImage id="imagenSemaforoOrden" value="/resources/images/#{ordenPorValidar.imagenSemaforo}-16x16.png" style="border:0"/>
+                                <p:tooltip id="toolSemaforo" for="imagenSemaforoOrden" value="#{ordenPorValidar.descripcionSemaforo}" trackMouse="true" />
+                            </div>
+                        </p:column>
+                               <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="#{msj['label.plazo.concluir.orden']} :"/>
+                                <h:outputText value="#{ordenPorValidar.descripcionPlazoRestante}"/>
+                                <h:outputText value="Estatus :"/>
+                                <h:outputText value="#{ordenPorValidar.fececEstatus.descripcion}"/>
+                                <h:outputText value="Expediente de Orden :"/>
+                                <h:commandButton ajax="true" image="/resources/images/document.png"                                 			
+                                            style="padding:0px 5px;" update="docDialog"
+											 action="#{documentacionOrdenMB.cargaDocumentosOrdenOficio}">   
+								<f:setPropertyActionListener value="#{ordenPorValidar}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.ordenSeleccionDescarga}"/>											 
+                                </h:commandButton>                                
+                            </h:panelGrid>
+                        </p:rowExpansion>
+
+                    </p:dataTable>                 
+                     
+                    <p:dialog id="modalDialog" header="Rechazar orden" widgetVar="rechazarOrden" showEffect="clip"
+                              hideEffect="clip" modal="true" style="font-weight:bold">
+                        <div align="center">
+                            <h:outputText value="¿Está seguro que desea rechazar la orden #{ordenPorValidar.numeroOrden}?"/>
+                        </div>
+                        <br/>
+                        <div align="center">
+                            <p:commandButton id="aceptar9" value="Aceptar" onclick="rechazarOrden.close()"/>&nbsp; 
+                            <p:commandButton value="Cancelar" onclick="rechazarOrden.close()"/>
+                        </div>
+                    </p:dialog>
+                     
+                    <p:dialog id="aceptarDialog" header="Validar orden" widgetVar="aceptarOrden" showEffect="clip"
+                              hideEffect="clip" modal="true" style="font-weight:bold">
+                        <div align="center">
+                            <h:outputText value="¿Está seguro que desea enviar la información seleccionada #{ordenPorValidar.numeroOrden} al área correspondiente?"/>
+                        </div>
+                        <br/>
+                        <div align="center">
+                            <p:commandButton value="Aceptar" onclick="aceptarOrden.close()"/>&nbsp; 
+                            <p:commandButton value="Cancelar" onclick="aceptarOrden.close()"/>
+                        </div>
+                    </p:dialog>
+                     
+                    <p:dialog id="Dialogo" header="Órdenes por validar" widgetVar="dlg12a" showEffect="clip"
+                              hideEffect="clip" modal="true" width="450">
+                        <div align="center">
+                            <h:outputText value="¿Desea validar todas las órdenes?"/>
+                        </div>
+                        <br/>
+                        <div align="center">
+                            <p:commandButton id="aceptar1" value="Aceptar" onclick="dlg12a.close();"/>&nbsp; 
+                            <p:commandButton value="Cancelar" onclick="dlg12a.close()"/>
+                        </div>
+                    </p:dialog>
+                    
+                     <p:dialog id="docDialog" header="Expediente Orden" widgetVar="docDialog" showEffect="clip"
+                              hideEffect="clip" resizable="false" modal="true" closable="false"
+                          width="515" height="auto">
+                        <p:dataTable var="datos" value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionDescarga}">
+                              <p:column headerText="Fecha">
+							       <h:outputText value="#{datos.fechaCreacion}">
+							        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+										timeZone="America/Mexico_City" />
+										</h:outputText>
+							    </p:column>
+							 
+							    <p:column headerText="Nombre del Documento Orden">
+							        <h:outputText value="#{documentacionOrdenMB.attributeHelper.expediente.nombreArchivo}" />
+							    </p:column>
+							 
+							    <p:column headerText="Descargar">
+							     <div align="center">
+							        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                			title="#{datos.numeroOrden}.pdf" 
+                                            style="padding:0px 5px;">
+	                                    <f:setPropertyActionListener value="#{datos}"
+	                                                                 target="#{documentacionOrdenMB.dtoHelper.ordenSeleccionDescarga}"/>
+	                                    <p:fileDownload contentDisposition="attachment"
+	                                                    value="#{documentacionOrdenMB.archivoSeleccionDescarga}"/>
+                                	</h:commandButton>
+                                	</div>
+							    </p:column>
+                         </p:dataTable>
+                         <br></br>
+                         <div>
+                            <h:outputText value="Oficios"/>
+                         </div>                         
+                        <p:separator/>
+                        
+                         <p:dataTable  id="tablaOficiosAdmin" var="oficio" value="#{documentacionOrdenMB.lstOficioHelper.listaOficiosAdmin}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom">
+                              <p:column headerText="Fecha">
+							        <h:outputText value="#{oficio.fechaCreacion}">
+							        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+										timeZone="America/Mexico_City" />
+										</h:outputText>
+							    </p:column>
+							 
+							    <p:column headerText="Nombre del Oficio">
+							        <h:outputText value="#{oficio.nombreArchivo}" />
+							    </p:column>
+							 
+							    <p:column headerText="Descargar">
+							     <div align="center">
+							        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                			title="#{oficio.nombreArchivo}.pdf"
+                                            style="padding:0px 5px;">
+	                                    <f:setPropertyActionListener value="#{oficio}"
+	                                                                 target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionDescarga}"/>
+	                                    <p:fileDownload contentDisposition="attachment"
+	                                                    value="#{documentacionOrdenMB.archivoOficioSeleccionDescarga}"/>
+                                	</h:commandButton>
+                                	</div>
+							    </p:column>
+                         </p:dataTable>
+                         <br/>
+                        <p:commandButton value="Cerrar" onclick="PF('docDialog').hide();"
+                                     
+                                     action="#{documentacionOrdenMB.limpiarOficiosAdmin}" 
+                                     style="float:center;"></p:commandButton>
+                         
+                         
+                    </p:dialog>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

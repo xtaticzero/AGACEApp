@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"> 
+
+
+
+    <p:dialog header="#{validarRetroMB.validarYRetroalimentarHelper.msjRechazo}" widgetVar="dlgRechazar" closable="false" modal="true" resizable="false">
+        <p:panel id="panelConfirmRechazo" style="width: 600px!important">
+            <p:messages id="msgsArchivosRechazo" showDetail="false" autoUpdate="true" globalOnly="true" closable="true"/>
+            <h:panelGrid columns="1" style="width:100% !important;">
+                <h:panelGroup style="text-align: center !important; width: 100%;">
+                    <p:outputLabel value="Fecha validación:"/>
+                    <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.fechaRegistro}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </h:panelGroup>
+                <h:panelGroup style="text-align: center !important; width: 100%;">
+                    <p:outputLabel value="Id Registro:"/>
+                    <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idRegistro}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </h:panelGroup>
+            </h:panelGrid>
+
+            <h:panelGrid columns="1" style="width:100% !important;" border="0">
+                <h:panelGrid columns="1" style="width:100% !important;" border="0">
+
+                    <p:fileUpload fileUploadListener="#{validarRetroMB.fileRechazoUpload}" mode="advanced"
+                                  update=":formValidaRetroalimentarPropuesta:panelConfirmRechazo :formValidaRetroalimentarPropuesta:msgsArchivosRechazo" 
+                                  auto="true" 
+                                  sizeLimit="4194304" 
+                                  allowTypes="/(\.|\/)(docx|xlsx|pdf)$/" 
+                                  cancelLabel="#{msj['btn.file.upload.cancelar']}"
+                                  uploadLabel="#{msj['btn.file.upload.cargaarchivo']}"
+                                  invalidFileMessage="#{msj['file.upload.archivo.invalido']}"
+                                  invalidSizeMessage="#{msj['file.upload.archivo.grande']}"
+                                  label="#{msj['btn.examinar']}"
+                                  oncomplete="ocultaMsgAgace('msgsArchivosRechazo');"/>
+                </h:panelGrid>
+                <h:panelGrid style="width:100% !important;text-align: center !important;" border="0">
+                    <p:dataTable id="tblArchivosRechazo" 
+                                 var="docRechazo" 
+                                 value="#{validarRetroMB.retroalimentarLstHelper.listaDocumentoRechazo}" 
+                                 style="width: 100% !important;"
+                                 emptyMessage="#{msj['label.lista.vacia']}"
+                                 paginator="true"
+                                 rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}  {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                 paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{validarRetroMB.validarYRetroalimentarHelper.msjDocumento}"/>
+                        </f:facet>
+                        <p:column headerText="Fecha y Hora" style="width:20%;">
+                            <h:outputText value="#{docRechazo.fechaRechazo}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mma" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Documento" style="width:60%;">
+                            <p:commandLink id="downloadArchivoRechazo" 
+                                           process="@this"
+                                           immediate="true"
+                                           ajax="false">
+                                <h:outputText value="#{docRechazo.nombreArchivo}" style="color:blue"/>
+
+                                <f:setPropertyActionListener value="#{docRechazo.archivo}" 
+                                                             target="#{validarRetroMB.validarYRetroalimentarHelper.archivoDescargableIS}"/>
+                                <f:setPropertyActionListener value="#{docRechazo.nombreArchivo}" 
+                                                             target="#{validarRetroMB.validarYRetroalimentarHelper.nombreArchivoDescarga}"/>
+                                <p:fileDownload value="#{validarRetroMB.documento}" />
+
+                            </p:commandLink>
+                        </p:column>
+                        <p:column style="width:20%;text-align: center">
+                            <p:commandLink action="#{validarRetroMB.eliminarArchivoRechazo}" 
+                                           process="@this" 
+                                           update=":formValidaRetroalimentarPropuesta:panelConfirmRechazo ">
+                                <h:outputText value="Eliminar" style="color:blue"/>
+                                <f:setPropertyActionListener value="#{docRechazo}" 
+                                                             target="#{validarRetroMB.validarYRetroalimentarHelper.archivoRechazoSeleccionado}"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+                <h:panelGrid columns="2" width="100%;" border="0" style="text-align: left !important;">
+
+
+                    <h:panelGroup>
+                        <p:outputLabel value="Observación:" style="width: 100% !important; font-weight:bold;" />                        
+                        <p:outputLabel value=" * "
+                                       style="color:red;font-weight:bold"/>
+                    </h:panelGroup>
+
+                    <p:scrollPanel mode="native" style="width:380px;height:130px">
+                        <h:panelGrid columns="1" style="width:100% !important;text-align: center !important;" border="0">
+                            <h:panelGrid columns="1" style="width:100% !important;text-align: left !important;" border="0">
+                                <p:outputLabel value="Observaciones:"/>
+                                <h:panelGroup style="width: 100%!important; text-align: center !important;">
+                                    <p:inputTextarea id="txtObservacionesRechazada" rows="5" cols="17" 
+                                                     value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaRechazo.descripcion}" 
+                                                     style="width: 350px !important;"
+                                                     styleClass="max"
+                                                     maxlength="400">
+
+                                        <p:ajax event="blur" 
+                                                listener="#{validarRetroMB.habiltarRechazo}" 
+                                                update="btnRechazar"/>
+                                    </p:inputTextarea>  
+
+                                </h:panelGroup>
+                            </h:panelGrid>                    
+                        </h:panelGrid>    
+                    </p:scrollPanel>
+
+
+                </h:panelGrid>        
+            </h:panelGrid>
+
+            <h:panelGrid style="width:100% !important;text-align: center !important;">
+                <h:panelGroup style="text-align: center !important; width: 100%;">            
+                    <p:commandButton id="btnRechazar" value="#{msj['btn.prpuestas.validar.confirm.aceptar']}" 
+                                     actionListener="#{validarRetroMB.rechazarPropuesta}" 
+                                     onsuccess="PF('dlgRechazar').hide();" 
+                                     styleClass="ui-confirmdialog-yes" 
+                                     icon="ui-icon-check" 
+                                     update=":formValidaRetroalimentarPropuesta  "
+                                     disabled="#{!validarRetroMB.flgHabilitarRechazo}"
+                                     oncomplete="ocultaMsgAgace('msgs');"/>
+                    <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.cancelar']}"
+                                     actionListener="#{validarRetroMB.cancelarRechazoPropuesta}"
+                                     onclick="PF('dlgRechazar').hide();" 
+                                     styleClass="ui-confirmdialog-no" 
+                                     icon="ui-icon-close" 
+                                     update=":formValidaRetroalimentarPropuesta "
+                                     />
+                </h:panelGroup>  
+            </h:panelGrid>
+        </p:panel>
+    </p:dialog>
+</f:view>

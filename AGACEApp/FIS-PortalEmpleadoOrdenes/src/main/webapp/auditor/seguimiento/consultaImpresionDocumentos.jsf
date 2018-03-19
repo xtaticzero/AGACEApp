@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formDocumentacionOrden" styleClass="panel-principal">
+                <p:panel id="panelDatosGenerales" header="Documentación Orden" styleClass="panel-interno">
+                    <br/>
+                    <h:outputLabel value="Datos Generales" style="font-weight:bold"/>
+                    <hr size="1" noshade="noshade" align="left"/>
+                    <br/>
+                    
+                    <h:panelGrid id="panelDatosContribuyente" columns="3" border="0" width="100%">
+                        <h:outputText value="#{msj['label.id.registro']}:" style="width:10%;font-weight:bold;" />
+                        <p:spacer width="10%" height="1"/>
+                        <h:outputText value="#{msj['label.numero.orden']}:" style="width:80%;font-weight:bold;" />
+                        
+                        <h:outputText value="#{reimpresionDocumentosMB.ordenSeleccionada.cveRegistro}" style="width:10%;" />
+                        <p:spacer width="10%" height="1"/>
+                        <h:outputText value="#{reimpresionDocumentosMB.ordenSeleccionada.cveOrden}" style="width:80%" />
+                        
+                        <h:outputText value="#{msj['label.rfc']}:" style="width:10%;font-weight:bold;" />
+                        <p:spacer width="10%" height="1"/>
+                        <h:outputText value="#{msj['label.nombre']}:" style="width:80%;font-weight:bold;" />
+                        
+                        <h:outputText value="#{reimpresionDocumentosMB.ordenSeleccionada.rfcContribuyente}" style="width:10%;" />
+                        <p:spacer width="10%" height="1"/>
+                        <h:outputText value="#{reimpresionDocumentosMB.ordenSeleccionada.nombreContribuyente}" style="width:80%" />
+                    </h:panelGrid>
+                    
+                    <br/>
+                    
+                    <h:outputLabel value="Links de Descarga" style="font-weight:bold"/>
+                    <hr size="1" noshade="noshade" align="left"/>
+                    
+                    <p:graphicImage value="/resources/images/document.png"/>
+                    <p:commandLink value="Resolución Definitiva" style="color:#0170b7;" ajax="true">
+                        <p:fileDownload value="#{reimpresionDocumentosMB.archivoSeleccionOrdenes}"
+                                        contentDisposition="attachment" />
+                        <f:param name="documentosDescargas" value="Resolución Definitiva"/>
+                    </p:commandLink>
+                     
+                    <br/>
+                     
+                    <p:graphicImage value="/resources/images/document.png"/>
+                    <p:commandLink value="Oficio de Observaciones u Oficio de Conclusion" style="color:#0170b7" ajax="true">
+                        <p:fileDownload value="#{reimpresionDocumentosMB.archivoSeleccionOrdenes}"
+                                        contentDisposition="attachment" />
+                        <f:param name="documentosDescargas" value="Oficio de Observaciones"/>
+                    </p:commandLink>
+                     
+                    <br/>
+                     
+                    <p:graphicImage value="/resources/images/document.png"/>
+                    <p:commandLink value="Oficio de Imposicion por no Reiteración" style="color:#0170b7;" ajax="true">
+                        <p:fileDownload value="#{reimpresionDocumentosMB.archivoSeleccionOrdenes}"
+                                        contentDisposition="attachment" />
+                        <f:param name="documentosDescargas" value="Oficio de Imposicion"/>
+                    </p:commandLink>
+                     
+                    <br/>
+                     
+                    <p:graphicImage value="/resources/images/document.png"/>
+                    <p:commandLink value="Oficio de Requerimiento Subsecuente" style="color:#0170b7;" ajax="true">
+                        <p:fileDownload value="#{reimpresionDocumentosMB.archivoSeleccionOrdenes}"
+                                        contentDisposition="attachment" />
+                        <f:param name="documentosDescargas" value="Oficio de Requerimiento"/>
+                    </p:commandLink>
+                     
+                    <br/>
+                     
+                    <p:graphicImage value="/resources/images/document.png"/>
+                    <p:commandLink value="Acuses de Recepción con Sello Digital" style="color:#0170b7;" ajax="true">
+                        <p:fileDownload value="#{reimpresionDocumentosMB.archivoSeleccionOrdenes}"
+                                        contentDisposition="attachment" />
+                        <f:param name="documentosDescargas" value="Acuse de Recepcion"/>
+                    </p:commandLink>
+                     
+                    <br/>
+                     
+                    <p:graphicImage value="/resources/images/document.png"/>
+                    <p:commandLink value="Oficio de Aceptacion o Rechazo de Prorroga" style="color:#0170b7" ajax="true">
+                        <p:fileDownload value="#{reimpresionDocumentosMB.archivoSeleccionOrdenes}"
+                                        contentDisposition="attachment" />
+                        <f:param name="documentosDescargas" value="Oficio de Aceptacion"/>
+                    </p:commandLink>
+                     
+                    <br/>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

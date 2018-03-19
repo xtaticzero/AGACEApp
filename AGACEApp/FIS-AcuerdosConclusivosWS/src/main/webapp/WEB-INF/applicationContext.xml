@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:ws="http://jax-ws.dev.java.net/spring/core" xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/servlet.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://jax-ws.dev.java.net/spring/core http://jax-ws.dev.java.net/spring/core.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <util:properties id="agace_prop"
+                     location="file:///siat/fece/configuracion/fece.properties" />
+        
+    <context:annotation-config />
+    <context:component-scan base-package="mx.gob.sat.siat.service" />
+    <import resource="classpath*:agace-negocio.xml"/>
+        
+    <bean id="agaceOrdenDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.ordenes.impl.AgaceOrdenDaoImpl" />
+    <bean id="suspensionDAO"
+          class="mx.gob.sat.siat.feagace.modelo.dao.ordenes.suspension.dao.impl.SuspensionDAOImpl" />
+    <bean id="tiemposHelper"
+          class="mx.gob.sat.siat.feagace.negocio.common.tiempos.helper.TiemposHelper" />
+    <bean id="suspensionService"
+          class="mx.gob.sat.siat.feagace.negocio.ordenes.suspension.service.impl.SuspensionServiceImpl" />
+    <bean id="ordenNotificacionDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.common.impl.OrdenNotificacionDaoImpl" />
+    <bean id="fececLeyendaService"
+          class="mx.gob.sat.siat.feagace.negocio.common.impl.FececLeyendaServiceImpl" />
+    <bean id="fececLeyendaDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.common.impl.FececLeyendaDaoImpl" />
+    <bean id="notificacionService"
+          class="mx.gob.sat.siat.feagace.negocio.common.impl.NotificacionServiceImpl" />
+    <bean id="unidadDesahogoDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.common.impl.UnidadDesahogoDaoImpl" />    
+
+    <bean id="mailServices"
+          class="mx.gob.sat.siat.common.correo.services.impl.MailServicesSunImpl"
+          autowire-candidate="true" >
+    </bean>
+    
+    <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.SimpleStringPBEConfig">
+        <property name="algorithm" value="PBEWithMD5AndDES" />
+        <property name="password" value="Pa55word" />
+    </bean>
+    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+        <property name="config" ref="environmentVariablesConfiguration" />
+    </bean>
+    <bean id="propertyConfigurer"
+          class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+        <constructor-arg ref="configurationEncryptor" />
+        <property name="locations">
+            <list>
+                <value>file:///siat/fece/configuracion/fece.properties</value>
+                <value>file:///siat/fece/configuracion/AGACE_PROPIEDADES.properties</value>
+            </list>
+        </property>
+    </bean>
+	
+    <!-- BEGIN NYV -->
+    <!--<bean id="nyvRepository" class="mx.gob.sat.siat.feagace.negocio.NyVRepositoryMockServiceImpl" />-->
+    <!-- END NYV -->
+
+    <!-- Data source para BD agace -->
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="#{agace_prop['aplicacion.jndi']}" />
+        <property name="cache" value="true" />
+        <property name="resourceRef" value="true" />
+        <property name="lookupOnStartup" value="false" />
+        <property name="proxyInterface" value="javax.sql.DataSource" />
+    </bean>
+    <!-- JDBC Template para DB agace -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <wss:binding url="/agace-ac">
+        <wss:service>
+            <ws:service bean="#acuerdoConclusivoWS" />
+        </wss:service>
+    </wss:binding>
+
+</beans>

@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{cargaPruebasPericialesManagedBean.init}"/>
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formCargaPruebasPericiales" styleClass="panel-principal" enctype="multipart/form-data">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelDocumentos" style="border-bottom-right-radius:0;border-bottom-left-radius:0;"
+                         styleClass="panel-principal" header="#{msj['label.panel.solicitud.pruebas.periciales']}">
+                    <h:panelGrid border="0" columns="5">
+                        <h:outputLabel value="Número Órden: " style="float:left;font-weight:bold"/>
+                        <h:outputLabel value="#{cargaPruebasPericialesManagedBean.ordenSeleccionado.numeroOrden}"
+                                       style="float:left;font-weight:bold"/>
+                        <p:spacer width="400" height="1"/>
+                        <h:outputLabel value="Método: " style="float:right;font-weight:bold"/>
+                        <h:outputLabel value="#{cargaPruebasPericialesManagedBean.ordenSeleccionado.feceaMetodo.nombre}"
+                                       style="float:left;font-weight:bold"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <br/>
+                    <br/>
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.panel.adjuntar.solicitud.pruebas.periciales']}"/>
+                    </h:panelGroup>
+                    <p:fileUpload id="flUpPro" widgetVar="flUpPro"
+                                  fileUploadListener="#{cargaPruebasPericialesManagedBean.handleFileUploadPruebaPericial}"
+                                  mode="advanced" dragDropSupport="false" multiple="false" sizeLimit="4196000"
+                                  label="#{msj['label.boton.adjuntar.pruebas.periciales']}"
+                                  invalidSizeMessage="#{msj['error.tamanio.archivo']}" auto="true"
+                                  update="@form"
+                                  invalidFileMessage="#{msj['error.tipo.archivo']}"
+                                  allowTypes="/(\.|\/)(pdf|docx|xlsx)$/"
+                                  oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                    
+                   <p:spacer width="1" height="25"/>
+                    <h:outputText value="#{msj['titulo.tabla.solicitud.prueba.pericial']}" style="font-weight:bold;"/>
+                    
+                    <p:dataTable id="tablaPruebaPericialCargada" var="tablaPruebaPericialCargada"
+                                 value="#{cargaPruebasPericialesManagedBean.listaDocsPruebasPericiales}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}"> 
+                        <p:column headerText="Fecha de envío de solicitud" width="33%">
+                            <h:outputText value="#{cargaPruebasPericialesManagedBean.fechaHoy}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>                        
+                       
+                        <p:column headerText="#{msj['column.label.archivo']}" width="33%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{tablaPruebaPericialCargada}"
+                                                                 target="#{cargaPruebasPericialesManagedBean.docPruebaPericialSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{cargaPruebasPericialesManagedBean.pruebaPericialSeleccionadaDescarga}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        
+                        <p:column width="33%">
+                                <p:commandLink value="Eliminar"
+                                               action="#{cargaPruebasPericialesManagedBean.descartarPruebaLista}" ajax="true"
+                                               update="@form" style="color:blue;" immediate="true">
+                                    <f:setPropertyActionListener value="#{tablaPruebaPericialCargada}"
+                                                                 target="#{cargaPruebasPericialesManagedBean.docPruebaPericialSeleccionada}"/>
+                                </p:commandLink>
+                            </p:column>
+                            
+                            
+                    </p:dataTable>
+                    
+                    <br/>
+                    <br/>
+                    <br/>
+                    
+                    <p:commandButton value="#{msj['label.boton.enviar.pruebas.periciales']}" update="@form"
+                                     action="#{cargaPruebasPericialesManagedBean.enviarFirma}"
+                                     style="float:right;"/>
+                    <br/>
+                    <br/>
+                    <br/>
+                   
+                            <p:commandButton value="#{msj['label.boton.pantalla.anterior']}" action="#{cargaPruebasPericialesManagedBean.regresa}" style="float:right;width:130px;" ajax="true" immediate="true" />
+                        <br/>
+                   
+                    <br/>
+                </p:panel>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

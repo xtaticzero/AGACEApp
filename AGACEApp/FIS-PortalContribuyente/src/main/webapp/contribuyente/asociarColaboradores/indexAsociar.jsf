@@ -1,0 +1,1318 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{asociarColaboradoresManagedBean.init}"/>
+        </f:metadata>
+        <h:head>
+            <script>
+
+            </script>
+        </h:head>
+        <h:body>
+            <h:form id="formAsociar" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelContribuyenteOrdenes"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" styleClass="panel-principal"
+                         header="Órdenes" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.monstrarPanelOrdenes}">
+                    <p:panel styleClass="panel-secundario"
+                             rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarDatosApoderadoLegal}">
+                        <h:panelGrid border="0" columns="4">
+                            <h:outputLabel value="Apoderado Legal." style="float:right;font-weight:bold"/>
+                            <p:spacer width="500" height="1"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid columns="2">    
+                        <h:panelGrid columns="2" id="panelDatosApoderadoLegal" border="0" styleClass="panel-secundario">
+                            <h:outputLabel value="#{msj['label.rfc']}" style="font-weight:bold"/>
+                            <p:inputText id="txtApoderadoRFC" style="width:300px;"
+                                         value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.rfc}"
+                                         disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.deshabilitarCampos}">
+                            </p:inputText>
+                            <h:outputLabel value="#{msj['label.nombre.razon']}" style="font-weight:bold"/>
+                            <p:inputText style="width:300px;"
+                                         value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.nombre}"
+                                         disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.deshabilitarCampos}"/>
+                            <h:outputLabel value="#{msj['label.email']}" style="font-weight:bold"/>
+                            <p:inputText style="width:300px;"
+                                         value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.correo}"
+                                         disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.deshabilitarCorreo}"/>
+                            <h:outputLabel value="#{msj['label.medios.contacto']}" style="font-weight:bold"/>
+                            <p:selectBooleanCheckbox value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.medioContactoBoolean}"
+                                                     disabled="true"/>
+                            <p:spacer width="50" height="1"/>
+	                        <p:spacer width="50" height="1"/>
+	                        <h:outputLabel value="Órdenes sin Apoderado Legal:" style="font-weight:bold"/>
+                            <p:selectBooleanCheckbox value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.sinColaborador}"
+                             disabled="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarOrdenSinAL}">
+                                <p:ajax update="@form" 
+                                        listener="#{asociarColaboradoresManagedBean.validaSinApoderadoLegal}"/>
+                                        
+                            </p:selectBooleanCheckbox>
+                             <p:spacer width="50" height="1"/>
+                            </h:panelGrid>
+                            	
+                            	
+                            <h:panelGrid columns="1" id="panelDatosAgenteLegalDocumentos" border="0" style="align:right">      
+                            <p:commandButton value="#{msj['consultar.btn.buscar']} " styleClass="ui-confirmdialog-no"
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.deshabilitarBotonBusquedaColaborador}"
+                                             action="#{asociarColaboradoresManagedBean.buscarColaborador}"
+                                             update="@form" 
+                                             rendered="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.visibleBusquedaColaborador}"
+                                             style="float:left;">
+                                <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                             value="AL"/>
+                            </p:commandButton>
+                            <p:commandButton value="#{msj['btn.nuevo.busqueda']} " styleClass="ui-confirmdialog-no"
+                                             action="#{asociarColaboradoresManagedBean.nuevaBusquedaColaborador}"
+                                             update="@form" 
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.deshabilitarBotonBusquedaColaborador}"
+                                             rendered="#{!asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalVO.visibleBusquedaColaborador}"
+                                             style="float:left;">
+                                <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                             value="AL"/>
+                            </p:commandButton>
+                            <p:spacer width="100" height="1"/>
+                            <p:commandButton value="Cancelar Busqueda" action="#{asociarColaboradoresManagedBean.cancelarNuevoColaborador}"
+                                             update="@form" 
+                                       style="float:left;" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarCancelarBusquedaAL}">
+                                     <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                             value="AL"/>
+                            </p:commandButton>
+                            
+                            <p:spacer width="100" height="1"/>
+                            <p:commandButton value="Adjuntar documentos" onclick="PF('dlgDocApoderadoLegal').show();"
+                                     type="button"  style="float:left;" update=":formAsociar:dlgDocApoderadoLegal" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoAL}" />
+                                     
+                            		<p:commandButton value="Ver documentos" onclick="PF('dlgDocApoderadoLegal').show();"
+                                     type="button"  style="float:left;" update=":formAsociar:dlgDocApoderadoLegal" rendered="#{!asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoAL}" />
+                             <p:spacer width="100" height="1"/>         
+                                     <p:commandButton value="#{msj['btn.guardar']}" styleClass="ui-confirmdialog-no" update="@form"
+                                             action="#{asociarColaboradoresManagedBean.preGuardarColaborador}"
+                                             rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarGuardarApoderadoLegal}"
+                                             style="float:left;">
+                                <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                             value="AL"/>
+                            </p:commandButton>
+                                     
+                        </h:panelGrid>
+                        </h:panelGrid>
+                    </p:panel>
+                    <br/>
+                    <br/>
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Órdenes" style="float:right;font-weight:bold"/>
+                        <p:spacer width="500" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:dataTable id="tablaOrdenes" var="datos" value="#{asociarColaboradoresManagedBean.ascColListHelper.listaOrdenes}"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <p:column headerText="Detalle" width="7%" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>                        
+                        <p:column headerText="Número de orden">
+                            <p:commandLink value="#{datos.numeroOrden}" disabled="#{datos.mostrarNumeroOrden}"
+                                           action="#{asociarColaboradoresManagedBean.cargaOrdenSeleccionada}"
+                                           ajax="true" update="@form" style="color:blue;" immediate="true">
+                                <f:setPropertyActionListener value="#{datos}"
+                                                             target="#{asociarColaboradoresManagedBean.ascColDTOHelper.ordenSeleccionado}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="ID ORDEN">
+                            <h:outputText value="#{datos.idOrden}"/>
+                        </p:column>
+                        <p:column headerText="Nombre método">
+                            <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['titulo.tabla.fecha.not']}">
+                            <h:outputText value="#{datos.fecetDetalleNyV.fecNotificacionNyV}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>                      
+
+
+                        
+                         <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">                                
+                                <h:outputText value="Estatus :"/>
+                                <h:outputText value="#{datos.fececEstatus.descripcion}"/>
+                                <h:outputText value="Expediente de Orden :"/>
+                                <h:commandButton ajax="true" image="/resources/images/document.png"                                 			
+                                            style="padding:0px 5px;" update="docDialog"
+											 action="#{asociarColaboradoresManagedBean.cargaDocumentosOrdenOficio}">   
+								<f:setPropertyActionListener value="#{datos}"
+                                                                  target="#{asociarColaboradoresManagedBean.ascColDTOHelper.ordenSeleccionDescarga}"/>										 
+                                </h:commandButton>                                
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Compulsas con Terceros asignadas" style="float:right;font-weight:bold"/>
+                        <p:spacer width="500" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:dataTable id="tablaCompulsas" var="datos" value="#{asociarColaboradoresManagedBean.ascColListHelper.listaCompulsas}"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <p:column headerText="Detalle" width="7%" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>  
+                        <p:column headerText="Número de Órden Compulsa">
+                            <p:commandLink value="#{datos.orden.numeroOrden}" disabled="#{datos.mostrarNumeroOrden}"
+                                           action="#{asociarColaboradoresManagedBean.cargaCompulsaSeleccionada}"
+                                           ajax="true" update="@form" style="color:blue;" immediate="true">
+                                <f:setPropertyActionListener value="#{datos}"
+                                                             target="#{asociarColaboradoresManagedBean.ascColDTOHelper.compulsaSeleccionada}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="ID COMPULSA">
+                            <h:outputText value="#{datos.idCompulsa}"/>
+                        </p:column>                        
+                        <p:column headerText="#{msj['titulo.tabla.fecha.not']}">
+                            <h:outputText value="#{datos.orden.fecetDetalleNyV.fecNotificacionContNyV}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+
+                        <p:rowExpansion>
+                            <h:panelGrid id="displayCompulsas" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">                                
+                                <h:outputText value="Estatus :"/>
+                                <h:outputText value="#{datos.orden.fececEstatus.descripcion}"/>
+                                <h:outputText value="Oficio de compulsas :"/>
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.compulsaSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{asociarColaboradoresManagedBean.archivoDescargaOficioCompulsa}"/>
+                                </h:commandButton>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+
+                    </p:dataTable>
+                    <br/>
+                            <p:commandButton value="#{msj['label.boton.pantalla.anterior']}" action="#{asociarColaboradoresManagedBean.regresaTest}" style="float:right;width:130px;" ajax="true" immediate="true" />
+                       <br/>
+                       <br/>
+                </p:panel>
+                <p:panel id="panelAsociarColaboradoresOrden"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" styleClass="panel-principal"
+                         header="Detalle Orden"
+                         rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarPanelOrdenAsociarColaboradores}">
+                    <h:panelGrid border="0" columns="5">
+                        <h:outputLabel value="Número Orden: " style="float:left;font-weight:bold"/>
+                        <h:outputLabel value="#{asociarColaboradoresManagedBean.ascColDTOHelper.ordenSeleccionado.numeroOrden}"
+                                       style="float:left;font-weight:bold"/>
+                        <p:spacer width="400" height="1"/>
+                        <h:outputLabel value="Método: " style="float:right;font-weight:bold"/>
+                        <h:outputLabel value="#{asociarColaboradoresManagedBean.ascColDTOHelper.ordenSeleccionado.feceaMetodo.nombre}"
+                                       style="float:left;font-weight:bold"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <br/>
+                    <br/>
+                    <p:accordionPanel multiple="true">
+                        <p:tab title="Datos del Contribuyente">
+                            <h:panelGrid columns="3" id="panelDatosContribuyente" border="0"
+                                         styleClass="panel-secundario">
+                                <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Nombre/ Razón Social:" style="font-weight:bold"/>
+                                <p:inputText id="txtRfc" style="width:150px;" disabled="true"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.rfc}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                                                 value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.nombre}"/>
+                                <p:message id="msgRFC" for="txtRfc" display="text"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value=" " style="font-weight:bold"/>
+                                <h:outputLabel value="Régimen:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Situación del Contribuyente:" style="font-weight:bold"/>
+                                <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.regimen}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.situacion}"/>
+                                <h:outputLabel value="Tipo de Contribuyente:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                                <p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.tipo}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputTextarea id="txtActividad" style="width:325px;height:auto;" disabled="true"
+                                                 value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.actividadPreponderante}"/>
+                                <h:outputLabel value="Domicilio Fiscal del Contribuyente:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Situación del Domicilio:" style="font-weight:bold"/>
+                                <p:inputTextarea id="txtDomFiscal" style="width:325px;height:auto;" disabled="true"
+                                                 value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.domicilioFiscal}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.situacionDomicilio}"/>
+                                <h:outputLabel value="Entidad:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Medios de Contacto:" style="font-weight:bold"/>
+                                <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.entidad}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputText id="txtMediosCon" style="width:325px;height:auto;" disabled="true"
+                                             value="#{asociarColaboradoresManagedBean.ascColAttribHelper.leyendaContribuyenteMedios}"/>
+                            </h:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>
+                    <br/>
+                    <br/>
+                    <p:accordionPanel multiple="true">
+                        <p:tab title="Agregar o Modificar Representante Legal" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarDatosRepresentanteLegal}">
+							<h:panelGrid columns="2">                            
+                            	<h:panelGrid columns="2" id="panelDatosRepresentanteLegal" border="0"
+                                         styleClass="panel-secundario" style="width:500px;">
+                            		<h:outputLabel value="Seleccione un RFC Asociado:" style="font-weight:bold"/>
+                                	<p:selectOneMenu id="labelRFCRL"
+                                                 disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.deshabilitarComboColaborador}"
+                                                 value="#{asociarColaboradoresManagedBean.ascColAttribHelper.rfcRLLista}"
+                                                 style="width:160px;">
+                                    	<f:selectItem itemLabel="#{msj['combo.item.selecciona.rfc']}" itemValue="-1"/>
+                                    	<f:selectItems value="#{asociarColaboradoresManagedBean.ascColDTOHelper.contribuyente.repLegal}"
+                                                   var="lista" style="font:red;" itemLabel="#{lista.rfc}"
+                                                   itemValue="#{lista.rfc}"/>
+                                    	<p:ajax update="@form" event="change"
+                                            listener="#{asociarColaboradoresManagedBean.llenaCamposRL}"/>
+                                	</p:selectOneMenu>
+                            		<h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                	<p:inputText style="width:200px;" id="txtRLRFC"
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.deshabilitarCampos}"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.rfc}">
+                                	</p:inputText>
+                                	<h:outputLabel value="Nombre:" style="font-weight:bold"/>
+                                	<p:inputText style="width:200px;"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.nombre}"
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.deshabilitarCampos}">
+                                    <p:ajax />
+                                    </p:inputText>
+                            		<h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                	<p:inputText style="width:200px;"
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.deshabilitarCorreo}"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.correo}" >
+                                             
+                                      <p:ajax />
+                                    </p:inputText>
+	                            	<h:outputLabel value="#{msj['label.medios.contacto']}" style="font-weight:bold"/>
+	                                <p:selectBooleanCheckbox value="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.medioContactoBoolean}"
+	                                                         disabled="true"/>
+	                                <p:spacer width="50" height="1"/>
+	                                <p:spacer width="50" height="1"/>
+	                                <h:outputLabel value="Órden sin Representante L.:" style="font-weight:bold"/>
+	                                <p:selectBooleanCheckbox value="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.sinColaborador}" 
+									disabled="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarOrdenSinRL}">
+	                                    <p:ajax update="@form"
+	                                            listener="#{asociarColaboradoresManagedBean.validaSinRepresentanteLegal}"/>
+                                	</p:selectBooleanCheckbox>
+                                	
+                                	<p:spacer width="50" height="1"/>
+                            	</h:panelGrid>
+                            	
+                            	
+                            	<h:panelGrid columns="1" id="panelDatosRepresentanteLegalDocumentos" border="0"
+                                         >
+                            		<p:commandButton value="#{msj['consultar.btn.buscar']} " styleClass="ui-confirmdialog-no" style="float:left;"
+                                                 disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.deshabilitarBotonBusquedaColaborador}"
+                                                 action="#{asociarColaboradoresManagedBean.buscarColaborador}"
+                                                 update="@form" 
+                                                 rendered="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.visibleBusquedaColaborador}">
+                                    	<f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                                 value="RL"/>
+                                	</p:commandButton>
+                                	<p:commandButton value="#{msj['btn.nuevo.busqueda']} " styleClass="ui-confirmdialog-no"
+                                                 action="#{asociarColaboradoresManagedBean.nuevaBusquedaColaborador}"
+                                                 disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.deshabilitarBotonBusquedaColaborador}"
+                                                 update="@form" 
+                                                 rendered="#{!asociarColaboradoresManagedBean.ascColDTOHelper.representanteLegalVO.visibleBusquedaColaborador}"
+                                                 style="float:left;">
+                                    	<f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                                 value="RL"/>
+                                	</p:commandButton>                            	
+                            		<p:spacer width="100" height="1"/>
+                            		
+                            		<p:commandButton value="Cancelar Busqueda" action="#{asociarColaboradoresManagedBean.cancelarNuevoColaborador}"
+                                             update="@form" 
+                                       style="float:left;" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarCancelarBusquedaRL}">
+                                     <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                             value="RL"/>
+                            		</p:commandButton>
+                            		<p:spacer width="100" height="1"/>
+                            		
+                            		<p:commandButton value="Adjuntar documentos" onclick="PF('dlgDocRepLegal').show();"
+                                     type="button"  style="float:left;" update=":formAsociar:dlgDocRepLegal" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoRL}" />
+                                     
+                            		<p:commandButton value="Ver documentos" onclick="PF('dlgDocRepLegal').show();"
+                                     type="button"  style="float:left;" update=":formAsociar:dlgDocRepLegal" rendered="#{!asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoRL}" />
+                                     <p:spacer width="100" height="1"/>                                      
+                                     <p:commandButton value="#{msj['btn.guardar']}" styleClass="ui-confirmdialog-no" update="@form"
+                                                 action="#{asociarColaboradoresManagedBean.preGuardarColaborador}"
+                                                 rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarGuardarRepresentanteLegal}"
+                                                 style="float:left;">
+                                    	<f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                                 value="RL"/>
+                                	</p:commandButton>
+                            	</h:panelGrid>
+                            
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Agregar o Modificar Apoderado Legal del Representante Legal" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarDatosApoderadoLegalRL}">
+                            <h:panelGrid columns="2">  
+                            <h:panelGrid columns="2" id="panelDatosALRL" border="0" styleClass="panel-secundario">                                
+                                <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;" id="txtALRLRFC"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.rfc}"
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.deshabilitarCampos}">
+
+                                </p:inputText>
+                                <h:outputLabel value="Nombre:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.nombre}"
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.deshabilitarCampos}"/>
+                                <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.correo}"
+                                             disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.deshabilitarCorreo}"/>
+                                <h:outputLabel value="#{msj['label.medios.contacto']}" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.medioContactoBoolean}"
+                                                         disabled="true"/>
+                                <p:spacer width="50" height="1"/>
+	                        	<p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Órden sin Apoderado L. R.L.:" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.sinColaborador}"
+                                disabled="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarOrdenSinALRL}">
+                                    <p:ajax update="@form" 
+                                            listener="#{asociarColaboradoresManagedBean.validaSinApoderadoLegalRL}"/>
+                                </p:selectBooleanCheckbox>
+                                <p:spacer width="50" height="1"/>
+                                 
+                                </h:panelGrid>
+                            	
+                            	
+                            <h:panelGrid columns="1" id="panelDatosALRLDocumentos" border="0" style="align:right">
+                            	<p:commandButton value="#{msj['consultar.btn.buscar']} " styleClass="ui-confirmdialog-no" style="float:left;"
+                                                 disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.deshabilitarBotonBusquedaColaborador}"
+                                                 action="#{asociarColaboradoresManagedBean.buscarColaborador}"
+                                                 update="@form" 
+                                                 rendered="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.visibleBusquedaColaborador}">
+                                    <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                                 value="ALRL"/>
+                                </p:commandButton>
+                                <p:commandButton value="#{msj['btn.nuevo.busqueda']} " styleClass="ui-confirmdialog-no"
+                                                 action="#{asociarColaboradoresManagedBean.nuevaBusquedaColaborador}"
+                                                 disabled="#{asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.deshabilitarBotonBusquedaColaborador}"
+                                                 update="@form" 
+                                                 rendered="#{!asociarColaboradoresManagedBean.ascColDTOHelper.apoderadoLegalRLVO.visibleBusquedaColaborador}"
+                                                 style="float:left;">
+                                    <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                                 value="ALRL"/>
+                                </p:commandButton>
+                                <p:spacer width="100" height="1"/>
+                                <p:commandButton value="Cancelar Busqueda" action="#{asociarColaboradoresManagedBean.cancelarNuevoColaborador}"
+                                             update="@form" 
+                                       style="float:left;" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarCancelarBusquedaALRL}">
+                                     <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                             value="ALRL"/>
+                            </p:commandButton>
+                            
+                            <p:spacer width="100" height="1"/>
+                            	<p:commandButton value="Adjuntar documentos" onclick="PF('dlgDocALRL').show();"
+                                     type="button"  style="float:left;" update=":formAsociar:dlgDocALRL" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoALRL}" />
+                                     
+                            		<p:commandButton value="Ver documentos" onclick="PF('dlgDocALRL').show();"
+                                     type="button"  style="float:left;" update=":formAsociar:dlgDocALRL" rendered="#{!asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoALRL}" />
+                                     <p:spacer width="100" height="1"/> 
+                                     <p:commandButton value="#{msj['btn.guardar']}" styleClass="ui-confirmdialog-no" update="@form"
+                                                 action="#{asociarColaboradoresManagedBean.preGuardarColaborador}"
+                                                 rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarGuardarApoderadoLegalRL}"
+                                                 style="float:left;">
+                                    <f:setPropertyActionListener target="#{asociarColaboradoresManagedBean.ascColAttribHelper.tipoColaborador}"
+                                                                 value="ALRL"/>
+                                </p:commandButton>
+                                
+                                
+                            </h:panelGrid>
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Agregar o Modificar Agente Aduanal"  rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarDatosAgenteAduanal}">
+                            <h:panelGrid columns="2" id="panelDatosAA" border="0" styleClass="panel-secundario">
+                                <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;" id="txtAARFC"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.agenteAduanalVO.rfc}"
+                                             disabled="true">
+
+                                </p:inputText>
+                               
+                              
+
+                                <h:outputLabel value="Nombre:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.agenteAduanalVO.nombre}"
+                                             disabled="true"/>
+                                
+                                <h:outputLabel value="#{msj['label.email']}:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{asociarColaboradoresManagedBean.ascColDTOHelper.agenteAduanalVO.correo}"
+                                             disabled="true"/>
+                                
+                                <h:outputLabel value="#{msj['label.medios.contacto']}" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{asociarColaboradoresManagedBean.ascColDTOHelper.agenteAduanalVO.medioContactoBoolean}"
+                                                         disabled="true"/>
+                               
+                            </h:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>
+                    <br/>
+                    <br/>
+                    <div align="center">
+                        <h:outputLabel value="Documentación de la Órden" style="font-weight:bold"/>
+                    </div>
+                    <p:spacer width="495" height="1"/>
+
+                    <p:separator/>
+                    <br/>
+                    
+                    <p:fieldset legend="Documentación del Contribuyente" toggleable="true" toggleSpeed="500" collapsed="true">
+                    	<p:fieldset legend="Consulta y envío de documentación a la autoridad" toggleable="true" toggleSpeed="500" collapsed="true">
+                    		<p:dataTable id="tablaPromociones" var="datos"
+                                 value="#{asociarColaboradoresManagedBean.ascColListHelper.listaPromociones}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                  <f:facet name="header">Documentación enviada a la autoridad</f:facet>
+		                        <p:column headerText="#{msj['column.label.detalle']}" style="width:35px">
+		                            <p:column>
+		                                <p:rowToggler/>
+		                            </p:column>
+		                        </p:column>
+		                        <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">
+		                            #{datos.idPromocion}
+		                        </p:column>
+		                        <p:column headerText="#{msj['label.fecha.promocion']}" style="width:80px">
+		                            <h:outputLabel value="#{datos.fechaCarga}">
+		                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+		                            </h:outputLabel>
+		                        </p:column>
+		                        <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+		                            <div align="center">
+		                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreArchivo}"
+		                                                 ajax="true" style="padding:0px 5px;">
+		                                    <f:setPropertyActionListener value="#{datos}"
+		                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.promocionSeleccionada}"/>
+		                                    <p:fileDownload contentDisposition="attachment"
+		                                                    value="#{asociarColaboradoresManagedBean.archivoDescargaPromocion}"/>
+		                                </h:commandButton>
+		                            </div>
+		                        </p:column>
+		                        <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+		                            #{datos.descripcionTipoPromocion}
+		                        </p:column>
+		                        <p:column headerText="#{msj['label.promocion.anexos']}" style="width:80px">
+		                            <div align="center">
+		                                <p:commandLink action="#{asociarColaboradoresManagedBean.getPruebasAlegatosPromocion}"
+		                                               value="#{datos.contadorPruebasAlegatos}" style="color:#0170b7;"
+		                                               ajax="true" immediate="true"
+		                                               onclick="PF('dlgDocEnviada').show();" update=":formAsociar:tablaPruebasAlegatos :formAsociar:txtIdPromocion :formAsociar:txtFechaEnvio">
+		                                    <f:setPropertyActionListener value="#{datos}"
+		                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.promocionSeleccionada}"/>
+		                                </p:commandLink>
+		                            </div>
+		                        </p:column>
+		                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+		                            <div align="center">
+		                                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true"
+		                                                 style="padding:0px 5px;">
+		                                    <f:setPropertyActionListener value="#{datos}"
+		                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.promocionSeleccionada}"/>
+		                                    <p:fileDownload contentDisposition="attachment"
+		                                                    value="#{asociarColaboradoresManagedBean.archivoSelecciondaDescargaAcuse}"/>
+		                                </h:commandButton>
+		                            </div>
+		                        </p:column>
+		                  <!--        <p:column headerText="Extemporánea" style="width:70px">
+		                            <div align="center">
+		                                <p:graphicImage value="/resources/images/#{datos.extemporanea==1?'ok':'cancel'}.png"
+		                                                style="border:0"/>
+		                            </div>
+		                        </p:column> -->
+		                        <p:rowExpansion>
+		                            <h:panelGrid id="displayOrden" columns="2" cellpadding="4" style="width:auto;"
+		                                         styleClass=" ui-widget-content grid">
+		                                <h:outputText value="#{msj['label.presentada.por']} "/>
+		                                <h:outputText value="#{datos.idAsociadoCarga == null ? asociarColaboradoresManagedBean.ascColDTOHelper.ordenSeleccionado.fecetContribuyente.nombre : datos.asociado.nombre}"/>
+		
+		                            </h:panelGrid>
+		                        </p:rowExpansion>
+		                    </p:dataTable>
+		                    <br/>
+		                    <p:commandButton value="Agregar Documentos" style="float:right;"
+		                                     action="#{asociarColaboradoresManagedBean.cargaDocumentosOrden}"/>
+                    	</p:fieldset>
+                    	<p:spacer width="40" height="10"/>
+                    	<p:fieldset legend="Solicitud de prórroga Órden" toggleable="true" toggleSpeed="500" collapsed="true" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarProrrogas}">
+                    			<p:dataTable id="tablaProrrogas" var="datos" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarProrrogas}"
+                                 value="#{asociarColaboradoresManagedBean.ascColListHelper.listaProrroga}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+			                        <f:facet name="header">Solicitudes de prórroga enviadas a la autoridad</f:facet>
+			
+			                        <p:column headerText="#{msj['label.id.prorroga']}" style="width:35px">
+			                            #{datos.idProrrogaOrden}
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:80px">
+			                            <h:outputLabel value="#{datos.fechaCarga}">
+			                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+			                            </h:outputLabel>
+			                        </p:column>
+			                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+			                            <div align="center">
+			                                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true"
+			                                                 style="padding:0px 5px;">
+			                                    <f:setPropertyActionListener value="#{datos}"
+			                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.prorrogaOrdenSeleccionada}"/>
+			                                    <p:fileDownload contentDisposition="attachment"
+			                                                    value="#{asociarColaboradoresManagedBean.archivoSelecciondaDescargaAcuseProrroga}"/>
+			                                </h:commandButton>
+			                            </div>
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.documentacion.solicitud']}" style="width:80px">
+			                            <div align="center">
+			                                <p:commandLink action="#{asociarColaboradoresManagedBean.getDocsProrrogasOrden}"
+			                                               value="#{datos.totalDocumentosContribuyente}" style="color:#0170b7;"
+			                                               ajax="true" onclick="PF('dlgDocProrrogaEnviada').show();" update=":formAsociar:tablaDocsProrrogaOrden :formAsociar:txtIdProrroga :formAsociar:txtProrrogaFechaEnvio">
+			                                    <f:setPropertyActionListener value="#{datos}"
+			                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.prorrogaOrdenSeleccionada}"/>
+			                                </p:commandLink>
+			                            </div>
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+			                            <h:outputLabel value="#{datos.fececEstatus.descripcion}"/>
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.documento.resolucion.prorroga']}" style="width:80px">
+			                            <div align="center">
+			                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreResolucion}"
+			                                                 ajax="true" style="padding:0px 5px;" rendered="#{datos.mostrarDocRes}">
+			                                    <f:setPropertyActionListener value="#{datos}"
+			                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.prorrogaOrdenSeleccionada}"/>
+			                                    <p:fileDownload contentDisposition="attachment"
+			                                                    value="#{asociarColaboradoresManagedBean.archivoDescargaProrrogaResolucionOrden}"/>
+			                                </h:commandButton>
+			                            </div>
+			                        </p:column>
+			
+			                    </p:dataTable>
+			                    <br/>
+			                    <p:commandButton value="Agregar Prórroga" style="float:right;"  rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarBtnProrrogas}"
+			                                     action="#{asociarColaboradoresManagedBean.cargaProrrogaOrden}"></p:commandButton>
+			                    <br/>
+                    	</p:fieldset>
+                    	<p:spacer width="40" height="10"/>
+                    	<p:fieldset legend="Solicitud de pruebas periciales" toggleable="true" toggleSpeed="500" collapsed="true" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarPruebasPericiales}">
+                    			<p:dataTable id="tablaPruebasPericiales" var="datos" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarPruebasPericiales}"
+                                 value="#{asociarColaboradoresManagedBean.ascColListHelper.listaPruebasPericiales}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+			                        <f:facet name="header">Solicitud de pruebas periciales enviadas a la autoridad</f:facet>
+			
+			                        <p:column headerText="#{msj['label.id.prueba.pericial']}" style="width:35px">
+			                            #{datos.idPruebasPericiales}
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:80px">
+			                            <h:outputLabel value="#{datos.fechaCarga}">
+			                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+			                            </h:outputLabel>
+			                        </p:column>
+			                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+			                            <div align="center">
+			                                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true"
+			                                                 style="padding:0px 5px;">
+			                                    <f:setPropertyActionListener value="#{datos}"
+			                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.pruebaPericialSeleccionada}"/>
+			                                    <p:fileDownload contentDisposition="attachment"
+			                                                    value="#{asociarColaboradoresManagedBean.archivoSelecciondaDescargaAcusePruebaPericial}"/>
+			                                </h:commandButton>
+			                            </div>
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.documentacion.solicitud']}" style="width:80px">
+			                            <div align="center">
+			                                <p:commandLink action="#{asociarColaboradoresManagedBean.getDocsPruebasPericiales}"
+			                                               value="#{datos.totalDocumentosContribuyente}" style="color:#0170b7;"
+			                                               ajax="true" onclick="PF('dlgDocPruebasPericialesEnviada').show();" update=":formAsociar:tablaDocsPruebasPericiales :formAsociar:txtIdPruebaPericial :formAsociar:txtPruebaPericialFechaEnvio">
+			                                    <f:setPropertyActionListener value="#{datos}"
+			                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.pruebaPericialSeleccionada}"/>
+			                                </p:commandLink>
+			                            </div>
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+			                            <h:outputLabel value="#{datos.fececEstatus.descripcion}"/>
+			                        </p:column>
+			                        <p:column headerText="#{msj['column.label.documento.resolucion.prueba.pericial']}" style="width:80px">
+			                            <div align="center">
+			                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreResolucion}"
+			                                                 ajax="true" style="padding:0px 5px;" rendered="#{datos.mostrarDocRes}">
+			                                    <f:setPropertyActionListener value="#{datos}"
+			                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.pruebaPericialSeleccionada}"/>
+			                                    <p:fileDownload contentDisposition="attachment"
+			                                                    value="#{asociarColaboradoresManagedBean.archivoDescargaPruebaPericialResolucion}"/>
+			                                </h:commandButton>
+			                            </div>
+			                        </p:column>
+			
+			                    </p:dataTable>
+			                    <br/>
+			                    <p:commandButton value="Solicitar Oficio" style="float:right;"  rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarBtnPruebasPericiales}"
+			                                     action="#{asociarColaboradoresManagedBean.cargaPruebaPericial}"></p:commandButton>
+                    	</p:fieldset>
+                    </p:fieldset>
+                    <p:spacer width="40" height="10"/>
+                    <p:fieldset legend="Documentación de la autoridad" toggleable="true" toggleSpeed="500" collapsed="true">
+                    	<p:dataTable id="tablaOficios" var="datos"
+                                 value="#{asociarColaboradoresManagedBean.ascColListHelper.listaOficiosFirmados}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <f:facet name="header">Documentos recibidos de la autoridad</f:facet>
+                        <p:column headerText="#{msj['column.label.id.oficio']}" style="width:80px">
+                            <p:commandLink value="#{datos.idOficio}"
+                                           action="#{asociarColaboradoresManagedBean.cargaOficioSeleccionado}" disabled="#{datos.mostrarIdOficio}" 
+                                           ajax="true" update="@form" style="color:blue;">
+                                <f:setPropertyActionListener value="#{datos}"
+                                                             target="#{asociarColaboradoresManagedBean.ascColDTOHelper.oficioSeleccionado}"/>
+                            </p:commandLink>
+                        </p:column>                       
+                        <p:column headerText="#{msj['column.label.tipo.oficio']}" style="width:150px">#{datos.fecetTipoOficio.nombre}</p:column>
+                        <p:column headerText="#{msj['column.label.oficio']}" style="width:50px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="#{datos.nombreArchivo}" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.oficioSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{asociarColaboradoresManagedBean.archivoDescargaOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Acuse" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;" disabled="#{datos.rutaAcuseNyv== null}">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.oficioSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{asociarColaboradoresManagedBean.archivoDescargaOficioAcuse}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.fecha.notificacion']}" style="width:70px">
+                            <h:outputLabel value="#{datos.fecetDetalleNyV.fecNotificacionContNyV}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </p:column>
+
+                        <p:column headerText="#{msj['column.label.oficios.dependientes']}" style="width:70px">
+                            <div align="center">
+                                <p:commandLink action="#{asociarColaboradoresManagedBean.getDependientesOficio}"
+                                               value="#{datos.totalOficiosDependientes}" style="color:#0170b7;"
+                                               update=":formAsociar:tablaDlgOficiosDependientes"
+                                               ajax="true"  immediate="true" onclick="PF('dlgDocDependiente').show();">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.oficioSeleccionado}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column> 
+                    </p:dataTable>
+                    	
+                    </p:fieldset>
+                    
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p:commandButton value="#{msj['label.boton.pantalla.anterior']}" styleClass="ui-confirmdialog-no" 
+                                     update="@form" action="#{asociarColaboradoresManagedBean.regresa}" style="float:right;width:130px;" ajax="true" immediate="true"/>
+                    <br/>
+                    <br/>
+                </p:panel>
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="noIdc" resizable="false" modal="true"
+                          width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{asociarColaboradoresManagedBean.ascColAttribHelper.mensajeNoIdc}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.no']}" onclick="PF('noIdc').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                     action="#{asociarColaboradoresManagedBean.cancelarNuevoColaborador}"
+                                     style="float:right;" update="@form"></p:commandButton>
+                    <p:commandButton value="#{msj['btn.si']}" onclick="PF('noIdc').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{asociarColaboradoresManagedBean.habilitaCamposColaborador}"
+                                     update="@form" style="float:right;"></p:commandButton>
+                </p:dialog>
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarMediosContacto" resizable="false"
+                          modal="true" width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{asociarColaboradoresManagedBean.ascColAttribHelper.mensajeNoMediosContacto}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.no']}" onclick="PF('confirmarMediosContacto').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                     action="#{asociarColaboradoresManagedBean.deshabilitaEmailColaborador}"
+                                     style="float:right;" update="@form"></p:commandButton>
+                    <p:commandButton value="#{msj['btn.si']}" onclick="PF('confirmarMediosContacto').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{asociarColaboradoresManagedBean.habilitaEmailColaborador}" update="@form"
+                                     style="float:right;"></p:commandButton>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="ingresaEmail" resizable="false" modal="true"
+                          width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{asociarColaboradoresManagedBean.ascColAttribHelper.mensajeNoEnvioCorreo}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('ingresaEmail').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;"/>
+                </p:dialog>
+
+                <p:dialog widgetVar="dlgDocEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Promoción"/>
+                            <p:inputText id="txtIdPromocion" style="width:50px;" readonly="true"
+                                         value="#{asociarColaboradoresManagedBean.ascColAttribHelper.idPromocionSeleccionada}"/>
+                            <h:outputLabel value="Fecha de Envio Promoción"/>
+                            <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                         value="#{asociarColaboradoresManagedBean.ascColAttribHelper.fechaEnvioPromocionSeleccionada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaPruebasAlegatos" var="docs"
+                                         value="#{asociarColaboradoresManagedBean.ascColListHelper.listaPruebasAlegatos}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">#{docs.idAlegato}</p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                <p:column headerText="#{msj['titulo.columna.tabla.documento']}" style="width:35px">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                     style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{docs}"
+                                                                     target="#{asociarColaboradoresManagedBean.ascColDTOHelper.pruebaAlegatoSeleccionada}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{asociarColaboradoresManagedBean.archivoDescargaPruebasAlegatos}"/>
+                                    </h:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                <p:dialog widgetVar="dlgDocProrrogaEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Prórroga"/>
+                            <p:inputText id="txtIdProrroga" style="width:50px;" readonly="true"
+                                         value="#{asociarColaboradoresManagedBean.ascColAttribHelper.idProrrogaOrdenSeleccionada}"/>
+                            <h:outputLabel value="Fecha de Envio Prórroga"/>
+                            <p:inputText id="txtProrrogaFechaEnvio" style="width:80px;" readonly="true"
+                                         value="#{asociarColaboradoresManagedBean.ascColAttribHelper.fechaEnvioProrrogaOrdenSeleccionada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDocsProrrogaOrden" var="docs"
+                                         value="#{asociarColaboradoresManagedBean.ascColListHelper.listaDocsProrrogaOrden}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.id.prorroga']}" style="width:60px">#{docs.idProrrogaOrden}</p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                <p:column headerText="#{msj['titulo.columna.tabla.documento']}" style="width:35px">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                     style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{docs}"
+                                                                     target="#{asociarColaboradoresManagedBean.ascColDTOHelper.docProrrogaOrdenSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{asociarColaboradoresManagedBean.archivoDescargaDocProrrogaOrdenSeleccionado}"/>
+                                    </h:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarAsociado" resizable="false"
+                          modal="true" width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.asociado']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.no']}" onclick="PF('confirmarAsociado').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"                                    
+                                     style="float:right;"></p:commandButton>
+                    <p:commandButton value="#{msj['btn.si']}" onclick="PF('asociadoConfirmado').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{asociarColaboradoresManagedBean.confirmarAsociado}" 
+                                     style="float:right;"></p:commandButton>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="asociadoConfirmado" resizable="false" modal="true"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.asociado.ok']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('asociadoConfirmado').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form"/>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="acuseCreado" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.acuse']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('acuseCreado').hide();"
+                                     action="#{asociarColaboradoresManagedBean.cargaPromociones}"   ajax="false"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form">
+                        <p:fileDownload 
+                            value="#{asociarColaboradoresManagedBean.ascColFileStreamedHelper.archivoDescargaAcuse}" />
+                    </p:commandButton>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="acuseProrrogaCreado" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.prorroga.acuse']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('acuseProrrogaCreado').hide();"
+                                     action="#{asociarColaboradoresManagedBean.cargaProrrogas}"   ajax="false"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form">
+                        <p:fileDownload 
+                            value="#{asociarColaboradoresManagedBean.ascColFileStreamedHelper.archivoDescargaAcuseProrroga}" />
+                    </p:commandButton>
+                </p:dialog>
+                <p:dialog widgetVar="dlgDocDependiente" header="#{msj['titulo.dlg.oficios.dependientes']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDlgOficiosDependientes" var="docs"
+                                         value="#{asociarColaboradoresManagedBean.ascColListHelper.listaOficiosDependientes}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                    <h:outputLabel value="#{docs.fechaCreacion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputLabel>
+                                </p:column>
+                                <p:column headerText="#{msj['column.label.tipo.oficio']}" style="width:110px">#{docs.fecetTipoOficio.nombre}</p:column>
+                                
+                                <p:column headerText="#{msj['label.documento']}" style="width:45px">
+                                    <div align="center">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{asociarColaboradoresManagedBean.ascColDTOHelper.ofDependienteSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{asociarColaboradoresManagedBean.archivoDescargaOfDependiente}"/>
+                                        </h:commandButton>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+
+                
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="acuseCompulsaCreado" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.acuse']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('acuseCompulsaCreado').hide();"
+                                     ajax="false"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form">
+                        <p:fileDownload 
+                            value="#{asociarColaboradoresManagedBean.ascColFileStreamedHelper.archivoDescargaAcuseCompulsa}" />
+                    </p:commandButton>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="acuseProrrogaCompulsaCreado" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.prorroga.acuse']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('acuseProrrogaCompulsaCreado').hide();"
+                                     ajax="false"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form">
+                        <p:fileDownload 
+                            value="#{asociarColaboradoresManagedBean.ascColFileStreamedHelper.archivoDescargaAcuseProrrogaCompulsa}" />
+                    </p:commandButton>
+                </p:dialog>
+                 <p:dialog id="docDialog" header="Expediente Orden" widgetVar="docDialog" showEffect="clip"
+                              hideEffect="clip" resizable="false" modal="true" closable="false"
+                          width="515" height="auto">
+                        <p:dataTable var="datos" value="#{asociarColaboradoresManagedBean.ascColDTOHelper.ordenSeleccionDescarga}">
+                              <p:column headerText="Fecha">
+							        <h:outputText value="#{asociarColaboradoresManagedBean.ascColAttribHelper.fechaOrdenDocExpediente}">
+							        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+										timeZone="America/Mexico_City" />
+										</h:outputText>
+							    </p:column>
+							 
+							    <p:column headerText="Nombre del Documento Orden">
+							        <h:outputText value="#{asociarColaboradoresManagedBean.ascColAttribHelper.nombreDocumentoOrden}" />
+							    </p:column>
+							 
+							    <p:column headerText="Descargar">
+							     <div align="center">
+							        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.ordenSeleccionDescarga}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{asociarColaboradoresManagedBean.archivoOrdenSeleccionDescarga}"/>
+                                	</h:commandButton>
+                                	</div>
+							    </p:column>
+                         </p:dataTable>
+                         <br></br>
+                         <div>
+                            <h:outputText value="Oficios"/>
+                         </div>                         
+                        <p:separator/>
+                        
+                         <p:dataTable  id="tablaOficiosAdmin" var="oficio" value="#{asociarColaboradoresManagedBean.ascColListHelper.listaOficiosAdmin}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom">
+                              <p:column headerText="Fecha">
+							        <h:outputText value="#{oficio.fechaCreacion}">
+							        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+										timeZone="America/Mexico_City" />
+									</h:outputText>
+							        
+							    </p:column>
+							 
+							    <p:column headerText="Nombre del Oficio">
+							        <h:outputText value="#{oficio.nombreArchivo}" />
+							    </p:column>
+							 
+							    <p:column headerText="Descargar">
+							     <div align="center">
+							        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                			title="#{datos.numeroOrden}.pdf"
+                                            style="padding:0px 5px;">
+	                                    <f:setPropertyActionListener value="#{oficio}"
+	                                                                 target="#{asociarColaboradoresManagedBean.ascColDTOHelper.oficioSeleccionadoDescarga}"/>
+	                                    <p:fileDownload contentDisposition="attachment"
+	                                                    value="#{asociarColaboradoresManagedBean.archivoOficioSeleccionDescarga}"/>
+                                	</h:commandButton>
+                                	</div>
+							    </p:column>
+                         </p:dataTable>
+                         <br/>
+                        <p:commandButton value="Cerrar" onclick="PF('docDialog').hide();"
+                                     
+                                     action="#{asociarColaboradoresManagedBean.limpiarOficiosAdmin}" 
+                                     style="float:center;"></p:commandButton>
+                         
+                         
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgDocPruebasPericialesEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Prueba Pericial"/>
+                            <p:inputText id="txtIdPruebaPericial" style="width:50px;" readonly="true"
+                                         value="#{asociarColaboradoresManagedBean.ascColAttribHelper.idPruebaPericialSeleccionada}"/>
+                            <h:outputLabel value="Fecha de Envio Prueba Pericial"/>
+                            <p:inputText id="txtPruebaPericialFechaEnvio" style="width:80px;" readonly="true"
+                                         value="#{asociarColaboradoresManagedBean.ascColAttribHelper.fechaEnvioPruebaPericialSeleccionada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaDocsPruebasPericiales" var="docs"
+                                         value="#{asociarColaboradoresManagedBean.ascColListHelper.listaDocsPruebasPericiales}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.id.prorroga']}" style="width:60px">#{docs.idDocPruebasPericiales}</p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                <p:column headerText="#{msj['label.documento']}" style="width:35px">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                     style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{docs}"
+                                                                     target="#{asociarColaboradoresManagedBean.ascColDTOHelper.docPruebaPericialSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{asociarColaboradoresManagedBean.archivoDescargaDocPruebaPericialSeleccionado}"/>
+                                    </h:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="acusePruebasPericialesCreado" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.pruebas.periciales.acuse']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('acusePruebasPericialesCreado').hide();"
+                                     ajax="false"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form">
+                        <p:fileDownload 
+                            value="#{asociarColaboradoresManagedBean.ascColFileStreamedHelper.archivoDescargaAcusePruebasPericiales}" />
+                    </p:commandButton>
+                </p:dialog>
+                
+                <p:dialog id="dlgDocRepLegal" widgetVar="dlgDocRepLegal" header="Documentos del representante legal " resizable="false"
+                          modal="true" width="600" height="auto" >
+                    
+                    
+                    
+                    <h:panelGrid id="pnlDocRepLegal" columns="1">
+                    	<p:messages id="messagesDocumentoRL" showDetail="true"
+							closable="true" for="msgDocumentoRL" />
+							
+							
+                        <p:spacer width="500" height="20" />  
+						<p:fileUpload id="flUpDocRL" widgetVar="flUpDocRL"
+							styleClass="fileupload-buttonbar"
+							fileUploadListener="#{asociarColaboradoresManagedBean.fileUploadDocRL}"
+							mode="advanced" dragDropSupport="false" multiple="false"
+							label="#{msj['label.adjuntar']}" cancelLabel="Cancelar todos"
+							uploadLabel="Guardar" showButtons="true" auto="true" update="tablaDocRepLegal messagesDocumentoRL"
+							immediate="true" sizeLimit="4194304"
+							allowTypes="/(\.|\/)(docx|xlsx|pdf)$/"
+							invalidSizeMessage="Error al cargar el archivo, debe ser mayor a 1 KB y menor que 4 MB "
+							invalidFileMessage="#{msj['error.tipo.archivo']}" ajax="true"
+							rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoRL}" 
+							oncomplete="ocultaMsgAgace('messagesDocumentoRL');" />
+			
+						<p:spacer width="500" height="20" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoRL}" />
+						
+						
+						<p:dataTable id="tablaDocRepLegal" var="documento"
+							value="#{asociarColaboradoresManagedBean.ascColListHelper.documentosRL}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							paginator="true" rows="5"
+ 							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+			
+							<p:column headerText="Nombre del documento" style="width:80%">
+								<h:outputText value="#{documento.nombreArchivo}" />
+							</p:column>
+			
+							<p:column headerText="Archivo" style="width:20%">
+								<div align="center">
+									<h:commandButton image="/resources/images/document.png"
+										title="Documento" ajax="true" style="padding:0px 5px;">
+										<f:setPropertyActionListener value="#{documento}"
+											target="#{asociarColaboradoresManagedBean.ascColDTOHelper.documentoSeleccionadoRL}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{asociarColaboradoresManagedBean.archivoDescargaRL}" />
+									</h:commandButton>
+								</div>
+							</p:column>
+			
+							<p:column headerText="Eliminar" style="width:20%" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoRL}">
+								<p:commandLink value="Eliminar" style="color:blue;" ajax="true"
+									action="#{asociarColaboradoresManagedBean.eliminarDocRL}"
+									rendered="#{documento.eliminar}" update="tablaDocRepLegal" inmediate="true">
+									<f:setPropertyActionListener value="#{documento}"
+										target="#{asociarColaboradoresManagedBean.ascColDTOHelper.documentoSeleccionadoRL}" />
+								</p:commandLink>
+			
+							</p:column>
+			
+						</p:dataTable>
+						<p:spacer width="500" height="20"/>
+                        
+			</h:panelGrid>
+		</p:dialog>
+		
+			<p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarOrdenSinAsociado" resizable="false"
+                          modal="true" width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{asociarColaboradoresManagedBean.ascColAttribHelper.leyendaOrdenSinAsociado}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.no']}" onclick="PF('confirmarOrdenSinAsociado').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"                                    
+                                     style="float:right;"></p:commandButton>
+                    <p:commandButton value="#{msj['btn.si']}" onclick="PF('confirmarOrdenSinAsociado').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="@form"
+                                     action="#{asociarColaboradoresManagedBean.guardarColaborador}" 
+                                     style="float:right;"></p:commandButton>
+                </p:dialog>
+                
+            <p:dialog id="dlgDocApoderadoLegal" widgetVar="dlgDocApoderadoLegal" header="Documentos del apoderado legal " resizable="false"
+                          modal="true" width="600" height="auto" >
+                    
+                    
+                    
+                    <h:panelGrid id="pnlDocApoderadoLegal" columns="1">
+                    	<p:messages id="messagesDocumentoAL" showDetail="true"
+							closable="true" for="msgDocumentoAL" />
+							
+							
+                        <p:spacer width="500" height="20" />  
+						<p:fileUpload id="flUpDocAL" widgetVar="flUpDocAL"
+							styleClass="fileupload-buttonbar"
+							fileUploadListener="#{asociarColaboradoresManagedBean.fileUploadDocAL}"
+							mode="advanced" dragDropSupport="false" multiple="false"
+							label="#{msj['label.adjuntar']}" cancelLabel="Cancelar todos"
+							uploadLabel="Guardar" showButtons="true" auto="true" update="tablaDocApoderadoLegal messagesDocumentoAL"
+							immediate="true" sizeLimit="4194304"
+							allowTypes="/(\.|\/)(docx|xlsx|pdf)$/"
+							invalidSizeMessage="Error al cargar el archivo, debe ser mayor a 1 KB y menor que 4 MB "
+							invalidFileMessage="#{msj['error.tipo.archivo']}" ajax="true"
+							rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoAL}" 
+							oncomplete="ocultaMsgAgace('messagesDocumentoAL');" />
+			
+						<p:spacer width="500" height="20" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoAL}" />
+						
+						
+						<p:dataTable id="tablaDocApoderadoLegal" var="documento"
+							value="#{asociarColaboradoresManagedBean.ascColListHelper.documentosAL}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							paginator="true" rows="5"
+ 							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+			
+							<p:column headerText="Nombre del documento" style="width:80%">
+								<h:outputText value="#{documento.nombreArchivo}" />
+							</p:column>
+			
+							<p:column headerText="Archivo" style="width:20%">
+								<div align="center">
+									<h:commandButton image="/resources/images/document.png"
+										title="Documento" ajax="true" style="padding:0px 5px;">
+										<f:setPropertyActionListener value="#{documento}"
+											target="#{asociarColaboradoresManagedBean.ascColDTOHelper.documentoSeleccionadoAL}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{asociarColaboradoresManagedBean.archivoDescargaAL}" />
+									</h:commandButton>
+								</div>
+							</p:column>
+			
+							<p:column headerText="Eliminar" style="width:20%" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoAL}">
+								<p:commandLink value="Eliminar" style="color:blue;" ajax="true"
+									action="#{asociarColaboradoresManagedBean.eliminarDocAL}"
+									rendered="#{documento.eliminar}" update="tablaDocApoderadoLegal" inmediate="true">
+									<f:setPropertyActionListener value="#{documento}"
+										target="#{asociarColaboradoresManagedBean.ascColDTOHelper.documentoSeleccionadoAL}" />
+								</p:commandLink>
+			
+							</p:column>
+			
+						</p:dataTable>
+						<p:spacer width="500" height="20"/>
+                        
+			</h:panelGrid>
+		</p:dialog>
+		<p:dialog id="dlgDocALRL" widgetVar="dlgDocALRL" header="Documentos del apoderado legal del representante legal " resizable="false"
+                          modal="true" width="600" height="auto" >
+                    <h:panelGrid id="pnlDocALRL" columns="1">
+                    	<p:messages id="messagesDocumentoALRL" showDetail="true"
+							closable="true" for="msgDocumentoALRL" />
+							
+							
+                        <p:spacer width="500" height="20" />  
+						<p:fileUpload id="flUpDocALRL" widgetVar="flUpDocALRL"
+							styleClass="fileupload-buttonbar"
+							fileUploadListener="#{asociarColaboradoresManagedBean.fileUploadDocALRL}"
+							mode="advanced" dragDropSupport="false" multiple="false"
+							label="#{msj['label.adjuntar']}" cancelLabel="Cancelar todos"
+							uploadLabel="Guardar" showButtons="true" auto="true" update="tablaDocALRL messagesDocumentoALRL"
+							immediate="true" sizeLimit="4194304"
+							allowTypes="/(\.|\/)(docx|xlsx|pdf)$/"
+							invalidSizeMessage="Error al cargar el archivo, debe ser mayor a 1 KB y menor que 4 MB "
+							invalidFileMessage="#{msj['error.tipo.archivo']}" ajax="true"
+							rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoALRL}" 
+							oncomplete="ocultaMsgAgace('messagesDocumentoALRL');" />
+			
+						<p:spacer width="500" height="20" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoALRL}" />
+						
+						
+						<p:dataTable id="tablaDocALRL" var="documento"
+							value="#{asociarColaboradoresManagedBean.ascColListHelper.documentosALRL}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+							paginator="true" rows="5"
+ 							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+			
+							<p:column headerText="Nombre del documento" style="width:80%">
+								<h:outputText value="#{documento.nombreArchivo}" />
+							</p:column>
+			
+							<p:column headerText="Archivo" style="width:20%">
+								<div align="center">
+									<h:commandButton image="/resources/images/document.png"
+										title="Documento" ajax="true" style="padding:0px 5px;">
+										<f:setPropertyActionListener value="#{documento}"
+											target="#{asociarColaboradoresManagedBean.ascColDTOHelper.documentoSeleccionadoALRL}" />
+										<p:fileDownload contentDisposition="attachment"
+											value="#{asociarColaboradoresManagedBean.archivoDescargaALRL}" />
+									</h:commandButton>
+								</div>
+							</p:column>
+			
+							<p:column headerText="Eliminar" style="width:20%" rendered="#{asociarColaboradoresManagedBean.ascColAttribHelper.mostrarAdjuntarDocumentoALRL}">
+								<p:commandLink value="Eliminar" style="color:blue;" ajax="true"
+									action="#{asociarColaboradoresManagedBean.eliminarDocALRL}"
+									rendered="#{documento.eliminar}" update="tablaDocALRL" inmediate="true">
+									<f:setPropertyActionListener value="#{documento}"
+										target="#{asociarColaboradoresManagedBean.ascColDTOHelper.documentoSeleccionadoALRL}" />
+								</p:commandLink>
+			
+							</p:column>
+			
+						</p:dataTable>
+						<p:spacer width="500" height="20"/>
+                        
+			</h:panelGrid>
+		</p:dialog>
+                
+
+            </h:form>             
+            <h:outputScript library="js/" name="agace.js"/>             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

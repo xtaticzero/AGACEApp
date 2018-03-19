@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel styleClass="panel-subinterno-consulta" 
+             header="#{msj['label.ordenes.asignadas']}"
+             id="panelXUnidadAdmin"
+             rendered="#{consultaAdminOrdenesMB.consultaOrdenesHelper.flgMostrarUnidadesDesahogo}">      
+             <h:panelGrid columns="3" rendered="false">
+                    <h:outputLabel value="#{msj['label.combo.seleccione.unidad.adm']}: " />
+                    <p:selectOneMenu id="comboUnidadesDesahogo" 
+                                     value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.idUnidadAdminSeleccionada}" style="width:200px !important">
+                        <f:selectItem itemLabel="#{msj['label.todas']}" itemValue="#{null}" />
+                        <f:selectItems value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.lstUnidadesAdministrativasDesahogo}"                                                  
+                                       var="unidadAdmin" itemValue="#{unidadAdmin.idArace}" itemLabel="#{unidadAdmin.nombre}"/>
+                        <p:ajax event="change" process="@form"/>
+                    </p:selectOneMenu>
+            </h:panelGrid> 
+            <h:panelGrid columns="3" rendered="#{consultaAdminOrdenesMB.consultaOrdenesHelper.flgMostrarComboRoles}">
+                    <h:outputLabel value="#{msj['label.combo.seleccione.rol']}: " />
+                    <p:selectOneMenu value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.rolSeleccionado}" >
+                    	<f:selectItem itemLabel="#{msj['label.seleccione.rol']}" itemValue="#{null}" />
+                        <f:selectItems value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.lstRolesValidos}"                                                  
+                                       var="rol" itemValue="#{rol}" itemLabel="#{rol.descripcion}"/>
+                        <p:ajax event="change" process="@form"/>
+                    </p:selectOneMenu>
+                    <p:commandButton value="Consultar" 
+                                     action="#{consultaAdminOrdenesMB.consultaInicialRol}" 
+                                     immediate="true"
+                                     update=":formConsultaEjecutivaOrdenes :formConsultaEjecutivaOrdenes:panelXGrupoMetodo "/>
+            </h:panelGrid>
+    </p:panel>            
+</f:view>

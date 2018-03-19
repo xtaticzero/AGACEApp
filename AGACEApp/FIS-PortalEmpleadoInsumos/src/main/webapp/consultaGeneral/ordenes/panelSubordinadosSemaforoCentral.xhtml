@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelXSubordinadoSemaforo" styleClass="panel-subinterno-consOrd" header="#{msj['label.consulta.info.ordenes']}"
+             rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.flgMostrarTlbSubordinados}">
+
+        <p:dataTable value="#{consultaUGOrdenesMB.detalleCategoriaEmpleado}" var="empleadoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}">
+            <f:facet name="header">
+                <h:outputLabel value="#{msj['label.firmantes']}" style="font-weight:bold"/>
+            </f:facet>
+            <p:column headerText="#{msj['label.firmantes']}">
+                <h:outputText value="#{empleadoEntry.key.nombre} #{empleadoEntry.key.apellidoPaterno} #{empleadoEntry.key.apellidoMaterno}" />
+            </p:column>
+            <p:column headerText="Total" style="text-align:center;">
+                <h:outputText value="#{empleadoEntry.value}" rendered="#{empleadoEntry.value eq 0}"/>
+                <p:commandLink value="#{empleadoEntry.value}"
+                               action="#{consultaUGOrdenesMB.consultarXFirmante}"
+                               ajax="true" immediate="true" update=":formConsultaEjecutivaOrdenes "
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{empleadoEntry.value ne 0}">
+                    <f:setPropertyActionListener value="#{empleadoEntry}"
+                                                 target="#{consultaUGOrdenesMB.consultaOrdenesHelper.empleadoSeleccionado}" />
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="#{msj['label.todas.ordenes']}" style="text-align:center;"/>
+                    <p:column style="text-align:center;" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXEmpleados eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaUGOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXEmpleados}"/>
+                        </f:facet>                                        
+                    </p:column>                                    
+                    <p:column style="text-align:center;" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXEmpleados ne 0}">
+                        <f:facet name="footer">
+                            <p:commandLink value="#{consultaUGOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXEmpleados}"
+                                           action="#{consultaUGOrdenesMB.consultarXEmpleadoSemaforoSeleccionado}"
+                                           ajax="true" immediate="true" update=":formConsultaEjecutivaOrdenes "
+                                           style="color: blue; text-decoration: underline;">
+                            </p:commandLink>
+                        </f:facet>
+                    </p:column>
+                </p:row>
+            </p:columnGroup> 
+        </p:dataTable>
+        
+        <h:panelGrid columns="1" style="text-align: left ! important; width: 100%;">
+            <h:panelGroup>
+                <p:commandButton value="#{msj['btn.pantalla.anterior']}"
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaUGOrdenesMB.regresarDeFirmante}"
+                                 update=":formConsultaEjecutivaOrdenes "/>
+                
+            </h:panelGroup> 
+        </h:panelGrid>
+    </p:panel>      
+</f:view>

@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui"
+          xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core">
+        <h:head>
+        <style type="text/css">
+                .borderNone.ui-panelgrid>*>tr,
+                .borderNone.ui-panelgrid .ui-panelgrid-cell {
+                    border: none;
+                }
+          </style>
+        </h:head>
+        <h:body>
+        <h:form id="form">
+            <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+        <p:messages id="msgReportePistaBusq" showDetail="true" globalOnly="true" closable="true" autoUpdate="true" style="width:620px;"/>
+        
+        
+        
+         <p:panel id="pnlCombo" styleClass="panel-interno" header="#{msj['pnl.pistaAudit.titulo.consulta']}" visible="#{repPistaAuditMB.panelTipoConsulta}"
+                   style="width:700px !important;">
+              <p:panelGrid id="panelPrincipal" styleClass="noBorders">
+            	<p:row>
+            	<p:column>
+            	<p:selectOneMenu id="tipoPista" value="#{repPistaAuditMB.tipoConsulta}" style="width: 250px;">
+           				<f:selectItem itemLabel="#{msj['combo.pistas.sinopcion']}" itemValue="0" />
+			            <f:selectItem itemLabel="#{msj['combo.pistas.internas']}" itemValue="1" />
+			            <f:selectItem itemLabel="#{msj['combo.pistas.externas']}" itemValue="2" />			          			          			           					           
+			  	</p:selectOneMenu>
+			  	</p:column>
+			  	</p:row>           		
+            </p:panelGrid>
+            <br/>
+            <p:commandButton value="Aceptar" action="#{repPistaAuditMB.redireccionaConsulta}" process="@form"
+                                    update="@form"  onclick="statusDialog.show();" onsuccess="statusDialog.hide();"/> 
+            </p:panel>
+        
+                
+          <p:panel id="pnlBusqueda" styleClass="panel-interno" header="#{msj['pnl.pistaAudit.titulo.buscar']}" visible="#{repPistaAuditMB.repPistAuditModel.pnlBusqueda}" 
+                   style="width:700px !important;">
+            <p:panelGrid id="gridOrden" styleClass="borderNone">
+            <p:row>
+               <p:column>
+                    <h:outputText value="#{msj['lbl.pistaAudit.numOrden']}:" />
+                </p:column>
+                <p:column>
+                    <p:inputText id="numOrden" value="#{repPistaAuditMB.repPistAuditModel.numOrden}" maxlength="15" disabled="#{repPistaAuditMB.repPistAuditModel.campoActivoOrden}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column> 
+                <p:column >
+                    <h:outputText value="#{msj['lbl.pistaAudit.idRegistro']}:" />
+                </p:column>
+                <p:column >
+                    <p:inputText id="idReg" value="#{repPistaAuditMB.repPistAuditModel.idRegistro}" maxlength="15" disabled="#{repPistaAuditMB.repPistAuditModel.campoActivoRegistro}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditMB.validaCampos}" process="@this" />
+                    </p:inputText>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+            
+            <p:panelGrid id="gridUsuario" styleClass="borderNone">
+            <p:row>
+               <p:column>
+                    <h:outputText value="#{msj['lbl.pistaAudit.rfcUsuario']}:" />
+                </p:column>
+                <p:column>
+                    <p:autoComplete id="user"  completeMethod="#{repPistaAuditMB.autocompletarRFC}" value="#{repPistaAuditMB.repPistAuditModel.rfcUsuario}" maxlength="13" disabled="#{repPistaAuditMB.repPistAuditModel.campoActivoRfcUser}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditMB.validaCampos}" process="@this" />
+                    </p:autoComplete>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{msj['lbl.pistaAudit.nomUsuario']}:" />
+                </p:column>
+                <p:column>
+                    <p:autoComplete id="nomUser" completeMethod="#{repPistaAuditMB.autocompletarNombre}" value="#{repPistaAuditMB.repPistAuditModel.nomUsuario}" maxlength="20" disabled="#{repPistaAuditMB.repPistAuditModel.campoActivoUsuario}">
+                        <p:ajax event="blur" update="@form" listener="#{repPistaAuditMB.validaCampos}" process="@this" />
+                    </p:autoComplete>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+            <p:panelGrid styleClass="borderNone">
+            <p:row>
+                <p:column>
+                    <h:outputText value="#{msj['lbl.pistaAudit.periodo']}:" />
+                </p:column>
+                 <p:column>
+                    <h:outputText value="#{msj['lbl.pistaAudit.inicio']}:" />
+                </p:column>
+                <p:column>
+                    <p:calendar showOn="button" pattern="dd/MM/yyyy" readonlyInput="true" size="8"
+                    maxdate="#{repPistaAuditMB.repPistAuditModel.fechaFin}" value="#{repPistaAuditMB.repPistAuditModel.fechaBusqInicio}" 
+                    disabled="#{repPistaAuditMB.repPistAuditModel.campoActivoCalendar}" locale="es" disabledWeekends="true" navigator="true"/>
+                </p:column> 
+                 <p:column>
+                    <h:outputText value="#{msj['lbl.pistaAudit.fin']}:" />
+                </p:column>
+                <p:column>
+                    <p:calendar showOn="button" pattern="dd/MM/yyyy" readonlyInput="true" size="8"
+                    maxdate="#{repPistaAuditMB.repPistAuditModel.fechaFin}" value="#{repPistaAuditMB.repPistAuditModel.fechaBusqFin}"  
+                    disabled="#{repPistaAuditMB.repPistAuditModel.campoActivoCalendar}" locale="es" disabledWeekends="true" navigator="true"/>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+            <p:panelGrid styleClass="borderNone">
+            <p:row>
+                <p:column colspan="2">
+                    <p:commandButton value="#{msj['btn.pistaAudit.buscar']}" action="#{repPistaAuditMB.buscarPistaAuditoria}" process="@form"
+                                    update="@form"  onclick="statusDialog.show();" onsuccess="statusDialog.hide();"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:commandButton id="btnLimpiar" value="#{msj['btn.pistaAudit.limpiar']}" action="#{repPistaAuditMB.cleanBusqueda}" proces="@form"
+                                    update="@form"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:commandButton value="Regresar" action="#{repPistaAuditMB.activaPanelTipoConsulta}" process="@form"
+                                    update="@form"  onclick="statusDialog.show();" onsuccess="statusDialog.hide();"/>
+                </p:column>
+            </p:row>
+            </p:panelGrid>
+          </p:panel>
+          <p:panel id="pnlTabla" visible="#{repPistaAuditMB.repPistAuditModel.pnlTabla}" style="width:780px !important;">
+          <p:panel style="border: 0px !important;width:750px !important;">
+                <f:facet name="header">
+                    <h:outputText value="#{msj['pnl.pistaAudit.titulo.tabla']}" />
+                    <p:commandButton id="idXls" icon="ui-icon-arrowthick-1-s" value="XLS" ajax="false" style="margin-left:72%;" 
+                                    onclick="PrimeFaces.monitorDownload(start, stop);">
+                       <p:fileDownload value="#{repPistaAuditMB.archivoExcel}"/>
+                    </p:commandButton>
+                    <p:spacer width="15" height="10"/>
+                    <p:commandButton id="idPdf" icon="ui-icon-arrowthick-1-s" value="PDF" ajax="false" 
+                                    onclick="PrimeFaces.monitorDownload(start, stop);">
+                        <p:fileDownload value="#{repPistaAuditMB.archivoPDF}"/>
+                    </p:commandButton>
+                </f:facet>
+            </p:panel>
+            <p:scrollPanel style="width:750px;height:300px" mode="native">
+            <p:dataTable id="tablaPistasAuditoria" paginator="true" rows="10" value="#{repPistaAuditMB.listRepInterno}" var="repI"
+                                 paginatorPosition="bottom" emptyMessage="#{msj['tbl.pistaAudit.empyRegistros']}" style="width:1000px !important;">
+                 <p:column headerText="#{msj['column.pistaAudit.fechaHora']}">
+                       <h:outputText value="#{repI.fechaYHora}" width="50">
+                         <f:convertDateTime pattern="dd/MM/yy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                       </h:outputText>
+                 </p:column>
+                 <p:column headerText="#{msj['column.pistaAudit.rfcUsuario']}" width="90">
+                       <h:outputText value="#{repI.rfcUsuario}"/>
+                 </p:column>
+                 <p:column headerText="#{msj['column.pistaAudit.nomUsuario']}" width="90">
+                       <h:outputText value="#{repI.nomUsuario}"/>
+                </p:column>
+                 <p:column headerText="#{msj['column.pistaAudit.ipMaquina']}" width="200">
+                       <h:outputText value="#{repI.ipMaquina}"/>
+                 </p:column>
+                 <p:column headerText="#{msj['column.pistaAudit.nomMaquina']}" width="200">
+                       <h:outputText value="#{repI.nomMaquina}"/>
+                 </p:column>
+                 <p:column headerText="#{msj['column.pistaAudit.modIngreso']}" width="100">
+                       <h:outputText value="#{repI.modIngreso}"/>
+                 </p:column>
+                 <p:column headerText="#{msj['column.pistaAudit.operRealizada']}" width="100">
+                       <h:outputText value="#{repI.operRealizada}"/>
+                 </p:column>
+                 
+            </p:dataTable>
+            </p:scrollPanel>
+            <p:panelGrid styleClass="borderNone">
+            <p:row>
+                <p:column>
+                <p:commandButton id="btnRegresar" value="#{msj['btn.pistaAudit.regresar']}" action="#{repPistaAuditMB.btnRegresarPanel}" process="@this" update="@form" />
+                </p:column>
+                </p:row>
+            </p:panelGrid>
+          </p:panel>
+          </h:form>
+          <h:outputScript library="js/" name="agace.js"/>
+          </h:body>
+    </html>
+</f:view>

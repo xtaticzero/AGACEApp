@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+  
+        	<!--<p:ajaxStatus onstart="PF('statusDialog').show();" 
+			onsuccess="PF('statusDialog').hide();"/>
+		<p:dialog modal="true" widgetVar="statusDialog"
+			header="#{msj['titulo.panel.espere']}" draggable="false"
+			closable="false" resizable="false">
+			<p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+		</p:dialog>-->
+		<p:panel id="panelOrdenes" 
+			style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;"
+			styleClass="panel-interno" header="#{msj['label.consulta.propuesta.centrarl']}">
+			<h:panelGrid border="0" columns="4">
+				<p:spacer width="10" height="1" />
+				<p:spacer width="300" height="1" />
+				<p:spacer width="300" height="1" />
+				<p:spacer width="10" height="1" />
+				<h:outputLabel value="#{msj['separador.panel.datos.contribuyente']}"
+					style="float:left;font-weight:bold" />
+				<p:spacer width="200" height="1" />
+				<h:outputLabel
+					value="Id del Registro: #{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idRegistro}"
+					style="float:right;font-weight:bold" />
+				<p:spacer width="10" height="1" />
+			</h:panelGrid>
+			<p:separator />
+			<h:panelGrid columns="3" id="panelDatosOrden" border="0"
+				styleClass="panel-secundario">
+				<h:outputLabel value="#{msj['lbl.propuestas.rfc']}" style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['lbl.propuestas.nombreRazonSocial']}"
+					style="font-weight:bold" />
+				<h:panelGrid id="panelBuscarContribuyente" columns="1">
+					<p:inputText ajax="false" id="txtRFC" maxlength="15"
+						disabled="true"
+						value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.rfc}">
+					</p:inputText>
+					<p:message id="msgRFC" for="txtRFC" display="text" />
+				</h:panelGrid>
+				<p:spacer width="50" height="1" />
+				<p:inputTextarea id="txtNombre" style="width:325px;height:16px;"
+					disabled="true"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.nombre}" />
+				<h:outputLabel value="#{msj['lbl.propuestas.regimen']}" style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['lbl.propuestas.situacionContribuyente']}"
+					style="font-weight:bold" />
+				<p:inputText id="txtRegimen" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.regimen}" />
+				<p:spacer width="50" height="1" />
+				<p:inputText id="txtSituacion" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.situacion}" />
+				<h:outputLabel value="#{msj['label.tipo.contribuyente']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['lbl.propuestas.situacionDomicilio']}"
+					style="font-weight:bold" />
+				        
+				<p:inputText id="txtTipos" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.tipo}" />
+				<p:spacer width="50" height="1" />
+         			<p:inputText id="txtDomicilios" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.situacionDomicilio}" />
+
+                                
+                                <h:outputLabel value="#{msj['lbl.propuestas.domicilioFiscalContribuyente']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+                                <h:outputLabel value="#{msj['label.entidad']}"
+					style="font-weight:bold" />
+                                <p:inputTextarea id="txtDomFiscals" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.domicilioFiscal}" />
+				<p:spacer width="50" height="1" />
+                        <p:inputText id="txtEntidads" style="width:325px;height:auto;" disabled="true" value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.entidad}"/>
+
+                                <h:outputLabel value="#{msj['lbl.propuestas.actividadPreponderante']}"
+					style="font-weight:bold" />
+                                <p:spacer width="50" height="1" />
+                        	        
+				<p:spacer width="50" height="1" />
+                        	<p:inputText id="txtActividads" style="width:325px;height:auto;"
+					disabled="true"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fecetContribuyente.actividadPreponderante}" />
+
+
+			</h:panelGrid>
+		</p:panel>
+<p:panel id="panelListaOrdenes" styleClass="panel-interno" 
+			style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;">
+                            <h:outputLabel value="#{msj['separador.panel.datos.previos.propuesta']}"
+				style="font-weight:bold" rendered="true" />
+			<p:separator rendered="true" />
+			<h:panelGrid columns="6" border="0" styleClass="panel-secundario"
+				rendered="true">
+                                
+                                
+                                
+				<h:outputLabel value="#{msj['column.unidad.admin.atencion']}" style="font-weight:bold" />
+				<p:spacer width="30" height="1" />
+				<h:outputLabel value="#{msj['label.subprograma']}:"
+					style="font-weight:bold" />
+				<p:spacer width="30" height="1" />
+				<h:outputLabel value="#{msj['label.tipo.propuesta']}" style="font-weight:bold" />
+
+                                   <!--  -->
+                                <p:selectOneMenu id="cmbUnidad"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idArace}"
+					style="width:100%;">
+					<f:selectItem 
+                                                itemLabel="#{msj['combo.item.selecciona.metodo']}" />
+					<f:selectItems
+						value="#{validarRetroMB.unidadValues}" var="lista"
+						itemLabel="#{lista.descUnidad}"
+						itemValue="#{lista.idUnidad}" />	
+                                       <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				<p:spacer width="50" height="1" />   
+				<p:selectOneMenu id="cmbSubprograma" 
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idSubprograma}"
+					style="width:300px;">
+					<f:selectItem
+						itemLabel="#{msj['combo.item.selecciona.subprograma']}"
+						 />
+					<f:selectItems value="#{validarRetroMB.retroalimentarLstHelper.listaSubprograma}"
+						var="lista" itemLabel="#{lista.clave} - #{lista.descripcion}"
+						itemValue="#{lista.idSubprograma}" />
+                                                
+                                        <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				<p:spacer width="50" height="1" />
+				<p:selectOneMenu id="cmbCausa" 
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idCausaProgramacion}"
+					style="width:100%;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.causa']}"
+						 />
+					<f:selectItems
+						value="#{validarRetroMB.retroalimentarLstHelper.listaCausaProgramacion}"
+						var="lista"
+						itemLabel="#{lista.idCausaProgramacion} - #{lista.descripcion}"
+						itemValue="#{lista.idCausaProgramacion}" />
+                                        <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+                                
+                                
+                               <!-- -->
+                                <p:message id="msgUnidad" for="cmbUnidad" display="text" />
+				<p:spacer width="50" height="1" />
+				<p:message id="msgSubprograma" for="cmbSubprograma" display="text" />
+				<p:spacer width="50" height="1" />
+                              <p:message id="msgCausa" for="cmbCausa" display="text" />
+                                
+                                 <!-- -->
+				<h:outputLabel value="#{msj['label.metodo.revision']}" style="font-weight:bold" />
+				<p:spacer width="30" height="1" />
+				<h:outputLabel value="#{msj['label.subprograma']}:"
+					style="font-weight:bold" />
+				<p:spacer width="30" height="1" />
+				<h:outputLabel value="#{msj['label.tipo.propuesta']}" style="font-weight:bold" />
+
+				<!--  -->
+				<p:selectOneMenu id="cmbMetodo"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idMetodo}"
+					style="width:100%;">
+					<f:selectItem 
+                                                itemLabel="#{msj['combo.item.selecciona.metodo']}" />
+					<f:selectItems
+						value="#{validarRetroMB.retroalimentarLstHelper.listaMetodoRevision}" var="lista"
+						itemLabel="#{lista.idMetodo} - #{lista.nombre}"
+						itemValue="#{lista.idMetodo}" />	
+                                       <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+				<p:spacer width="50" height="1" />   
+				<p:selectOneMenu id="cmbPropuesta"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idTipoPropuesta}"
+					style="width:100%;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.propuesta']}"
+						 />
+					<f:selectItems
+						value="#{validarRetroMB.retroalimentarLstHelper.listaTipoPropuesta}" var="lista"
+						itemLabel="#{lista.idTipoPropuesta} - #{lista.descripcion}"
+						itemValue="#{lista.idTipoPropuesta}" />
+                                        <p:ajax update="@form" event="change"  />
+				</p:selectOneMenu>
+                                <p:spacer width="50" height="1" />
+			         <p:selectBooleanCheckbox id="prioridadInsumo" name="prioridadInsumo" 
+					ajax="true" value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.prioridad}" />
+				
+                        
+                        	       
+                                <!-- -->
+                                <p:message id="msgMetodo" for="cmbMetodo" display="text" />
+				<p:spacer width="50" height="1" />
+				<p:message id="msgTipoPropuesta" for="cmbPropuesta" display="text" />
+				<p:spacer width="50" height="1" />
+                              <p:message id="msgPrioridadInsumo" for="prioridadInsumo" display="text" />
+				
+                                
+				<!--  -->
+				<h:outputLabel value="#{msj['label.tipo.revision']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.fecha.present.comite']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['label.fecha.inf.comite']}"
+					style="font-weight:bold" />
+                                 
+                                
+				<!--  -->
+				<p:selectOneMenu id="cmbRevision" 
+                                           disabled="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idMetodo!=2}"
+					value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idRevision}"
+					style="width:160px;">
+					<f:selectItem itemLabel="#{msj['combo.item.selecciona.revision']}"
+                                            	 />
+					<f:selectItems value="#{validarRetroMB.retroalimentarLstHelper.listaTipoRevision}"
+						var="lista" itemLabel="#{lista.idRevision} - #{lista.descripcion}"
+						itemValue="#{lista.idRevision}"/>
+				</p:selectOneMenu>
+
+				<p:spacer width="50" height="1" />
+                         		<p:calendar id="txtFechaInicialPreComite" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fechaPresentacion}" />
+
+                         	<p:spacer width="50" height="1" />
+					<p:calendar id="txtFechaInicialInfComite" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fechaInforme}" />
+                                    <p:spacer width="50" height="1" />
+                                <!-- -->
+				<p:spacer width="50" height="1" />
+                                <p:spacer width="50" height="1" />
+				<p:message id="msgRevision" for="cmbRevision" display="text" />
+				<p:spacer width="50" height="1" />
+                           
+				<!--  -->
+			      <h:outputLabel value="#{msj['label.fecha.pre.comite.reg']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value="#{msj['label.fecha.inf.comite.reg']}"
+					style="font-weight:bold" />
+				<p:spacer width="50" height="1" />
+				<h:outputLabel value=""
+					style="font-weight:bold" />
+                             <!-- -->
+                              
+                               
+                                <p:calendar id="txtFechaInicialPreComiteReg" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fechaPresentacionRegional}" />
+
+				<p:spacer width="50" height="1" />
+                                <p:calendar id="txtFechaInicialInfComiteReg" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fechaInformeRegional}" />
+                         		
+                         	<p:spacer width="50" height="1" />
+					
+                                      <!-- -->
+                                <p:spacer width="50" height="1" />
+                                <p:spacer width="50" height="1" />
+				<p:message id="msgtxtFechaInicialPreComiteReg" for="txtFechaInicialPreComiteReg" display="text" />
+				<p:spacer width="50" height="1" />
+                                <p:spacer width="50" height="1" />
+                                  <!--  last-->
+                                
+			</h:panelGrid>
+		
+				
+			<br />
+			<br />
+			<h:panelGrid id="panelPeriodoPropuesto" columns="7" width="40%">
+                                        <h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold" />
+                                        <p:spacer width="50" height="1" />
+					<h:outputLabel value="#{msj['label.inicio']}:" style="font-weight:bold" />
+					<p:calendar id="txtFechaInicial" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fechaInicioPeriodo}" />
+					<p:spacer width="50" height="1" />
+					<h:outputLabel value="#{msj['label.fin']}:" style="font-weight:bold;" />
+					<p:calendar id="txtFechaFinal" locale="es" navigator="true" pattern="dd/MM/yyyy" disabled="true"
+						showOn="button" readonlyInput="true" size="6"
+						value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.fechaFinPeriodo}" />
+				</h:panelGrid>
+
+			<h:panelGrid id="panelAcciones" width="850" rendered="true">
+				<p:column>
+					<h:panelGrid columns="7" id="panelImpuestos" border="0" 
+						styleClass="panel-secundario">
+						<h:outputLabel value="#{msj['label.impuesto']}:" style="font-weight:bold" />
+						<p:spacer width="50" height="1" />
+						<h:outputLabel value="#{msj['label.monto']}:" style="font-weight:bold" />
+						<p:spacer width="50" height="1" />
+						<h:outputLabel value="#{msj['label.periodo']}:" style="font-weight:bold" />
+						<p:spacer width="50" height="1" />
+						<p:spacer width="50" height="1" />
+						<p:selectOneMenu id="cmbImpuesto"
+				    	value="#{validarRetroMB.validarYRetroalimentarHelper.impuestoPropuesta.idTipoImpuesto}"
+							style="width:160px;">
+							<f:selectItem
+								itemLabel="#{msj['combo.item.selecciona.tipoImpuesto']}"
+								 />
+							<f:selectItems
+								value="#{validarRetroMB.retroalimentarLstHelper.listaTipoImpuesto}" var="lista"
+								itemLabel="#{lista.abreviatura} - #{lista.descripcion}"
+								itemValue="#{lista.idTipoImpuesto}" />
+                                            <p:ajax update="formValidaRetroalimentarPropuesta:txtMonto formValidaRetroalimentarPropuesta:txtPeriodo formValidaRetroalimentarPropuesta:panelImpuestos formValidaRetroalimentarPropuesta:msgImpuesto formValidaRetroalimentarPropuesta:msgMonto formValidaRetroalimentarPropuesta:msgPeriodo"  listener="#{validarRetroMB.agregarImpuestoCero}" event="change"  />
+
+						</p:selectOneMenu>
+						<p:spacer width="50" height="1" />
+						<p:inputText id="txtMonto"
+							value="#{validarRetroMB.validarYRetroalimentarHelper.impuestoPropuesta.monto}" />
+						<p:spacer width="50" height="1" />
+						<h:panelGrid id="panelPeriodoImpuesto" columns="5">
+							<h:outputLabel value="#{msj['label.inicio']}:" style="font-weight:bold" />
+							<p:calendar id="txtPeriodo"  navigator="true" locale="es" pattern="dd/MM/yyyy"
+								showOn="button" readonlyInput="true" size="6" disabled="false"
+								value="#{validarRetroMB.validarYRetroalimentarHelper.impuestoPropuesta.periodoInicial}" />
+							<p:spacer width="1" height="1" />
+							<h:outputLabel value="#{msj['label.fin']}:" style="font-weight:bold;" />
+							<p:calendar locale="es" navigator="true" pattern="dd/MM/yyyy" showOn="button"
+								readonlyInput="true" size="6" disabled="false"
+								value="#{validarRetroMB.validarYRetroalimentarHelper.impuestoPropuesta.periodoFinal}" />
+						</h:panelGrid>
+						<p:commandButton  value="#{msj['boton.agregar']}"
+								actionListener="#{validarRetroMB.agregarImpuesto}"
+							update="@form" />
+						<p:spacer width="50" height="1" />
+						<p:message id="msgImpuesto" for="cmbImpuesto" display="text" />
+						<p:spacer width="50" height="1" />
+						<p:message id="msgMonto" for="txtMonto" display="text" />
+						<p:spacer width="50" height="1" />
+						<p:message id="msgPeriodo" for="txtPeriodo" display="text" />
+						<p:spacer width="50" height="1" />
+						<p:spacer width="50" height="1" />
+					</h:panelGrid>
+				</p:column>
+			</h:panelGrid>
+
+			<br />
+			<br />
+			<p:column rendered="true">
+				<div align="center">
+					<p:dataTable id="tblImpuesto" var="var"
+						value="#{validarRetroMB.retroalimentarLstHelper.listaImpuestos}"
+						emptyMessage="#{msj['label.lista.vacia']}" >
+						<f:facet name="header">
+							<h:outputLabel value="#{msj['label.impuestos']}" style="font-weight:bold" />
+						</f:facet>
+						<p:columnGroup type="header">
+							<p:row>
+								<p:column rowspan="2" headerText="Impuesto" />
+								<p:column rowspan="2" headerText="Monto" />
+								<p:column colspan="2" headerText="Periodo" />
+								<p:column rowspan="2" headerText="" />
+							</p:row>
+							<p:row>
+								<p:column headerText="#{msj['label.inicio']}:" />
+								<p:column headerText="#{msj['label.fin']}:" />
+							</p:row>
+						</p:columnGroup>
+						<p:column>
+							<h:outputText value="#{var.fececTipoImpuesto.descripcion}" />
+						</p:column>
+						<p:column style="text-align:center;">
+							<h:outputText value="#{var.monto}" >
+								<f:convertNumber type="currency" currencySymbol="$" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align:center;">
+							<h:outputText id="txtFechaInicio"
+								value="#{var.periodoInicial}">
+								<f:convertDateTime pattern="dd-MM-yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column style="text-align:center;">
+							<h:outputText id="txtFechaFin" value="#{var.periodoFinal}">
+								<f:convertDateTime pattern="dd-MM-yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<p:commandLink value="#{msj['btn.eliminar']}"
+							        ajax="true" immediate="true" update="@form"
+                                                                action="#{validarRetroMB.descartarImpuesto}"
+								oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+								<f:setPropertyActionListener value="#{var}"
+									target="#{validarRetroMB.validarYRetroalimentarHelper.impuestoSeleccionado}" />
+							</p:commandLink>
+						</p:column>
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column footerText="#{msj['label.presuntiva']}" style="text-align:center;" />
+								<p:column style="text-align:center;">
+									<f:facet name="footer">
+										<h:outputText
+											value="#{validarRetroMB.totalMonto}" >
+											<f:convertNumber type="currency" currencySymbol="$" />
+										</h:outputText>
+									</f:facet>
+								</p:column>
+                                                                <p:column colspan="3" />
+							</p:row>
+						</p:columnGroup>
+					</p:dataTable>
+				</div>
+			</p:column>	
+
+
+
+			<p:messages id="msgExitoDescartarOficioAnexo" showDetail="true"
+				globalOnly="true" closable="true" />
+
+			<h:panelGrid columns="2" cellpadding="10" width="100%" id="panelSubirArchivo" >
+				
+                                <p:fileUpload fileUploadListener="#{validarRetroMB.fileExpedienteUpload}" mode="advanced" 
+                                  update="tablaDocumentos msgExitoDescartarOficioAnexo" 
+                                  auto="true" 
+                                  sizeLimit="4194304" 
+                                  allowTypes="/(\.|\/)(doc|docx|xls|xlsx|pdf)$/" 
+                                  cancelLabel="#{msj['btn.file.upload.cancelar']}"
+                                  uploadLabel="#{msj['btn.file.upload.cargaarchivo']}"
+                                  invalidFileMessage="#{msj['file.upload.archivo.invalido']}"
+                                  invalidSizeMessage="#{msj['file.upload.archivo.grande']}"
+                                  label="#{msj['label.adjuntar']}"
+                                  oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');"/>
+                                
+                                <p:dataTable id="tablaDocumentos" var="documento"
+					style="text-align:left;width:300px;"
+					value="#{validarRetroMB.retroalimentarLstHelper.listaDocumentoExpediente}" editable="false"
+					emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+					rows="15"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+					<f:facet name="header">
+						<h:outputLabel value="#{msj['label.encabezado.documento']}"
+							style="font-weight:bold" />
+					</f:facet>
+					<p:column headerText="#{msj['label.fecha.expediente']}" styleClass="someClass">
+						<h:outputText id="txtFechaHora" value="#{documento.fechaCreacion}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msj['label.nombre.expediente']}" styleClass="someClass">
+                                                <div style="width: 100px;">#{documento.nombre}</div>
+					</p:column>
+					<p:column>
+						<p:commandLink value="#{msj['label.descartar']}"
+							action="#{validarRetroMB.eliminarArchivoExp}"
+							ajax="true" immediate="true" update="@form"
+							oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+							<f:setPropertyActionListener value="#{documento}"
+								target="#{validarRetroMB.validarYRetroalimentarHelper.archivoSeleccionado}" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+                   
+			<br />
+			
+			<p:column rendered="true">
+				<br/>
+				<div align="center">
+					<p:dataTable id="tablaDocumentacionExpediente"
+						value="#{validarRetroMB.retroalimentarLstHelper.listaDocumentoExpediente}"
+						var="documento" editable="false"
+						emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+						rows="10"
+						paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({currentPage} de {totalPages})"
+						paginatorPosition="bottom">
+						<f:facet name="header">#{msj['label.expediente.electronico.informe']}</f:facet>
+
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+							width="100px">
+							<h:outputText id="txtFechaCargaPromocion"
+								value="#{documento.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+						<p:column id="hdrNombreDocumento"
+							headerText="#{msj['column.expediente']}">
+							<div style="width: 200px;">#{documento.nombre}</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.documento']}">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true"
+								style="float:left;padding:0px 5px;">
+								<f:setPropertyActionListener value="#{documento}"
+									target="#{validarRetroMB.documentoSeleccionado}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{validarRetroMB.documentoSeleccionDescarga}" />
+							</h:commandButton>
+						</p:column>
+					</p:dataTable>
+				</div>
+			</p:column>
+			
+			
+			
+			<p:column rendered="true">
+				<br/>
+				<br/>
+				<br/>
+				<div align="right">
+		
+                 <p:commandButton value="#{msj['btn.registrar']}" 
+                        update="formValidaRetroalimentarPropuesta:cmbMetodo formValidaRetroalimentarPropuesta:cmbSubprograma formValidaRetroalimentarPropuesta:cmbPropuesta formValidaRetroalimentarPropuesta:cmbCausa" 
+                        actionListener="#{validarRetroMB.validaFormularioRegistrar}" />
+                               
+             
+             				<p:commandButton value="#{msj['btn.regresar']}" action="indexOrigenCentralRegional" />
+			</div>
+			</p:column>
+            
+                
+
+</p:panel>
+ 
+<h:outputScript library="js/" name="agace.js" />
+
+	<h:outputStylesheet library="css/" name="agace.css" />
+
+  
+</f:view>

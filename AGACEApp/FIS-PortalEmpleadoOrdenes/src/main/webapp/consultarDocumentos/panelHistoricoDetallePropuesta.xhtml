@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <h:panelGroup id="panelDetalleHistoricoPropuesta" 
+             rendered="#{consultaAdminOrdenesMB.consultaOrdenesHelper.flgMostrarDetallePropuesta}">        
+
+			<p:fieldset id="tolgateAcciones" widgetVar="tolgateAcciones" legend="Historial de acciones de la propuesta"
+				toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle"
+					listener="#{consultarPropuestasAsignadasMB.handleToggleAcciones}"
+					update="tablaHistorialAcciones" />
+
+
+				<p:dataTable id="tablaHistorialAcciones" var="accion"
+					value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.listaHistoricoAccion}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="5"
+					paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+
+					<f:facet name="header">#{msj['label.titulo.historial.acciones']}</f:facet>
+
+					<p:column headerText="#{msj['column.fecha.hora.carga.documento']}">
+						<div align="center">
+							<h:outputText value="#{accion.fechaHora}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							</h:outputText>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.observaciones.asignada']}">
+						<div align="center">
+							<h:outputText value="#{accion.observaciones}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.causa.historial']}">
+						<div align="center">
+							<h:outputText value="#{accion.fececMotivo.descripcion}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.accion.historial']}">
+						<div align="center">
+							<h:outputText
+								value="#{accion.fececAccionesFuncionario.descripcion}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.usuario.accion.historial']}">
+						<h:outputText
+							value="#{accion.empleadoDto.nombre} (  #{accion.descripcionTipoEmpleado} )" />
+
+					</p:column>
+
+					<p:column headerText="#{msj['label.documento']}">
+						<div align="center">
+							<p:commandLink value="#{accion.numeroDocumentos}" ajax="true"
+								action="#{consultarPropuestasAsignadasMB.obtenerDocumentosHistoricoAccion}"
+								immediate="true"
+								update=":formDetallePropuesta:pnlDocumentoHistoricoAccion"
+								style="color:#0170b7;"
+								rendered="#{accion.numeroDocumentos != -1}">
+								<f:setPropertyActionListener value="#{accion}" immediate="true"
+									target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.historicoAccion}" />
+							</p:commandLink>
+
+							<h:outputText value="N/A"
+								rendered="#{accion.numeroDocumentos == -1}" />
+
+						</div>
+					</p:column>
+				</p:dataTable>
+			</p:fieldset>
+			<br />
+			<br />
+			<p:fieldset id="tolgateRetro" widgetVar="tolgateRetro" legend="#{msj['btn.historico.retroalimentacion']}"
+				toggleable="true" toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle"
+					listener="#{consultarPropuestasAsignadasMB.handleToggleRetrolimentacion}"
+					update="tablaHistoricoRetroalimentacion" />
+
+				<p:panel id="pnlHistoricoRetro" header="#{msj['titulo.historico']}">
+					<h:panelGrid columns="2" width="100%">
+						<p:spacer width="530" height="1" />
+						<h:outputText
+							value="#{msj['label.registro']}: #{consultarPropuestasAsignadasMB.propuestaAnalizar.idRegistro}"
+							style="font-weight:bold;" />
+					</h:panelGrid>
+
+
+					<p:dataTable id="tablaHistoricoRetroalimentacion"
+						var="retroalimentacion"
+						value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.listaHistoricoRetroalimentar}"
+						editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+						paginator="true" rows="5"
+						paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+						currentPageReportTemplate="({currentPage} de {totalPages})"
+						paginatorPosition="bottom">
+
+						<f:facet name="header">#{msj['label.titulo.historial.retroalimentacion']}</f:facet>
+
+						<p:column headerText="Detalle" width="32">
+							<p:rowToggler />
+						</p:column>
+
+
+						<p:column
+							headerText="#{msj['column.propuestas.por.validar.prioridad']}"
+							width="50">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.prioridadSugerida}" />
+							</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.inicio']}" width="55">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.fechaInicioPeriodo}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.fin']}" width="55">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.fechaFinPeriodo}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column headerText="#{msj['column.asignadas.tipo.propuesta']}"
+							width="70">
+							<div align="center">
+								<h:outputText
+									value="#{retroalimentacion.fececTipoPropuesta.descripcion}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column
+							headerText="#{msj['column.propuestas.por.validar.fecha.atencion']}"
+							width="80">
+							<div align="center">
+								<h:outputText value="#{retroalimentacion.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</div>
+						</p:column>
+
+						<p:column
+							headerText="#{msj['label.impuesto.historial.retroalimentacion']}"
+							width="70">
+
+							<div align="center">
+								<p:commandLink value="#{msj['label.titulo.ver.impuesto']}"
+									ajax="true"
+									action="#{consultarPropuestasAsignadasMB.obtenerImpuestosRetro}"
+									immediate="true" update=":formDetallePropuesta:pnlImpuestoHistorico"
+									style="color:#0170b7;">
+									<f:setPropertyActionListener value="#{retroalimentacion}"
+										immediate="true"
+										target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+								</p:commandLink>
+							</div>
+
+						</p:column>
+
+
+						<p:column 
+							width="55">
+							
+							  <f:facet name="header">
+                                 <h:outputText id="idNotaInformativa" value="#{msj['label.historico.nota.informativa']}" title="#{msj['toltip.nota.informativa']}"/>
+                              </f:facet>
+							
+							<div align="center">
+								<p:commandLink
+									value="#{retroalimentacion.numeroDocRetroalimentacion}"
+									ajax="true"
+									action="#{consultarPropuestasAsignadasMB.obtenerDocumentosRetroalimentados}"
+									immediate="true" update=":formDetallePropuesta:pnlDocumentoHistorcio"
+									style="color:#0170b7;">
+									<f:setPropertyActionListener value="#{retroalimentacion}"
+										immediate="true"
+										target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+								</p:commandLink>
+							</div>
+
+						</p:column>
+						
+						<p:tooltip id="toolTipNotaInf" for="idNotaInformativa" value="#{msj['toltip.nota.informativa']}" />
+			
+						<p:column
+							headerText="#{msj['label.prpuestas.validar.retro.solicitud']}"
+							width="80">
+							<div align="center">
+								<p:commandLink
+									action="#{consultarPropuestasAsignadasMB.obtenerSolictudRetroalimentacion}"
+									update=":formDetallePropuesta:idHistoricoRetroalimentacion"
+									inmediate="true" width="120">
+									<h:graphicImage ajax="true"
+										value="/resources/images/document.png" />
+									<f:setPropertyActionListener value="#{retroalimentacion}"
+										target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+								</p:commandLink>
+
+							</div>
+						</p:column>
+
+						<p:rowExpansion>
+							<h:panelGrid id="displayHistorico" columns="2" cellpadding="8"
+								style="width:600px;" styleClass=" ui-widget-content grid">
+								<h:outputText value="#{msj['label.causa.programacion']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececCausaProgramacion.descripcion}" />
+								<h:outputText
+									value="#{msj['column.origen.central.subprograma']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececSubprograma.clave} - #{retroalimentacion.fececSubprograma.descripcion}" />
+								<h:outputText
+									value="#{msj['column.propuestas.por.validar.sector']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececSector.descripcion}" />
+								<h:outputText
+									value="#{msj['label.seguimiento.motivo.retroalimentacion']}" />
+								<h:outputText
+									value="#{retroalimentacion.fececMotivo.descripcion}" />
+							</h:panelGrid>
+						</p:rowExpansion>
+
+					</p:dataTable>
+				</p:panel>
+			</p:fieldset>
+			<br />
+			<br />
+			<p:fieldset id="tolgateOrden" widgetVar="tolgateOrden" legend="Historial de documento orden" toggleable="true"
+				toggleSpeed="500" collapsed="true">
+				<p:ajax event="toggle"
+					listener="#{consultarPropuestasAsignadasMB.handleToggleExpedienteOrden}"
+					update=":formDetallePropuesta:tablaHistoricoOrden :formDetallePropuesta:tablaHistoricoOrdenOficio " />
+				<p:dataTable id="tablaHistoricoOrden" var="documento"
+					value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.listaHistorialOrden}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="5"
+					paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+
+					<f:facet name="header">#{msj['label.propuestas.doctos.orden']}</f:facet>
+
+					<p:column headerText="#{msj['column.fechaHora.orden']}"
+						styleClass="someClass" style="width:80px;">
+						<div align="center">
+							<h:outputText value="#{documento.fechaHora}" style="width:80px;">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es_MX"
+									timeZone="America/Mexico_City" />
+							</h:outputText>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['column.asignadas.expediente']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{documento.nombreArchivo}" />
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						style="width:50px;">
+						<div align="center">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true" style="padding:0px 5px;">
+								<f:setPropertyActionListener value="#{documento.rutaArchivo}"
+									target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.rutaArchivo}" />
+								<f:setPropertyActionListener value="#{documento.nombreArchivo}"
+									target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarPropuestasAsignadasMB.descargarArchivo}" />
+							</h:commandButton>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.usuario.accion.historial']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{documento.descripcionEmpleado}" />
+						</div>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<br />
+
+				<p:dataTable id="tablaHistoricoOrdenOficio"
+					value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.listaHistorialOficio}"
+					var="oficio" editable="false"
+					emptyMessage="#{msj['label.lista.vacia']}" rows="5"
+					paginator="true"
+					paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom">
+					<f:facet name="header">
+						<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}"
+							style="font-weight:bold" />
+					</f:facet>
+					<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+						style="width:80px;">
+						<div align="center">
+							<h:outputText value="#{oficio.fechaHora}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es_MX"
+									timeZone="America/Mexico_City" />
+							</h:outputText>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['column.label.oficio']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{oficio.nombreArchivo}" />
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						style="width:50px;">
+						<div align="center">
+							<h:commandButton image="/resources/images/document.png"
+								title="Documento" ajax="true" style="padding:0px 5px;">
+								<f:setPropertyActionListener value="#{oficio.rutaArchivo}"
+									target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.rutaArchivo}" />
+								<f:setPropertyActionListener value="#{oficio.nombreArchivo}"
+									target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.nombreArchivo}" />
+								<p:fileDownload contentDisposition="attachment"
+									value="#{consultarPropuestasAsignadasMB.descargarArchivo}" />
+							</h:commandButton>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.usuario.accion.historial']}"
+						style="width:130px;margin:auto;">
+						<div align="center">
+							<h:outputText value="#{oficio.descripcionEmpleado}" />
+						</div>
+					</p:column>
+				</p:dataTable>
+			</p:fieldset>
+
+		<p:dialog header="#{msj['label.impuestos']}"
+			widgetVar="dlgHistoricoImpuestosRetro" resizable="false" modal="true"
+			width="700" closable="false">
+
+			<p:panel id="pnlImpuestoHistorico">
+				<p:dataTable id="tablaImpuestoHistorico" var="impuesto"
+					value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.listaImpuestos}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.impuestos']}
+                            </f:facet>
+
+					<p:column headerText="#{msj['label.impuesto']}" width="150">
+						<h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}" />
+					</p:column>
+
+					<p:column headerText="#{msj['lbl.propuestas.concepto']}"
+						width="150">
+						<h:outputText value="#{impuesto.fececConcepto.descripcion}" />
+					</p:column>
+
+					<p:column headerText="#{msj['label.monto']}" width="150" style="text-align:center;">
+						<h:outputText value="#{impuesto.monto}">
+						   <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+						</h:outputText>   
+					</p:column>
+
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="1" />
+							<p:column footerText="#{msj['label.presuntiva']}"
+								style="text-align:center; font-weight: bold;" />
+							<p:column style="text-align:center;">
+								<f:facet name="footer">
+									<h:outputText
+										value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.presuntiva}">
+										<f:convertNumber currencySymbol="$" currencyCode="MXN"
+											type="currency" locale="es_MX" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
+
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+                <br/>
+                <h:outputLabel value="#{consultarPropuestasAsignadasMB.labelFechaComite}" style="font-weight:bold"/>
+                <br/>
+                <p.spacer width="20px" height="20px"/>
+                <p:calendar id="txtFechaInformeComite2" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                            value="#{consultarPropuestasAsignadasMB.propuestaAnalizar.fechaInforme}"
+                            rendered="#{consultarPropuestasAsignadasMB.propuestaAnalizar.fechaInforme!=null}"/>
+                <p:calendar id="txtFechaPresentacionComite2" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="10" disabled="true"
+                            value="#{consultarPropuestasAsignadasMB.propuestaAnalizar.fechaPresentacion}"
+                            rendered="#{consultarPropuestasAsignadasMB.propuestaAnalizar.fechaPresentacion!=null}"/>
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarImpuesto" value="Cerrar"
+						onclick="PF('dlgHistoricoImpuestosRetro').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+			</p:panel>
+		</p:dialog>
+
+		<p:dialog header="#{msj['titulo.historico']}"
+			widgetVar="dlgHistoricoDocumentacionAccion" resizable="false"
+			modal="true" width="700" closable="false">
+
+			<p:panel id="pnlDocumentoHistoricoAccion">
+				<p:dataTable id="tablaDocumentacionArchivosAccion" var="documento"
+					value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.listaDocumentosExpediente}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.titulo.archivos.cargados']}
+                            </f:facet>
+
+					<p:column headerText="#{msj['label.titulo.fecha.carga']}"
+						width="90">
+						<div align="center">
+							<h:outputText value="#{documento.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.nombre.archivo.historico']}"
+						width="400">
+						<div align="center">
+							<h:outputText value="#{documento.nombre}" />
+
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						width="90">
+						<h:commandButton image="/resources/images/document.png"
+							title="Documento" ajax="true" style="padding:0px 5px;">
+							<f:setPropertyActionListener value="#{documento.rutaArchivo}"
+								target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.rutaArchivo}" />
+							<f:setPropertyActionListener value="#{documento.nombre}"
+								target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarPropuestasAsignadasMB.descargarArchivo}" />
+						</h:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarDocumentoAccion" value="Cerrar"
+						onclick="PF('dlgHistoricoDocumentacionAccion').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+			</p:panel>
+		</p:dialog>
+		
+        <p:dialog header="#{msj['titulo.historico']}"
+			widgetVar="dlgHistoricoDocumentacionRetro" resizable="false"
+			modal="true" width="700" closable="false">
+
+			<p:panel id="pnlDocumentoHistorcio">
+				<p:dataTable id="tablaDocumentacionArchivos" var="documento"
+					value="#{consultarPropuestasAsignadasMb.consultarPropAsignadaHelper.listaDocumentos}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.titulo.archivos.cargados']}
+                            </f:facet>
+
+					<p:column headerText="#{msj['label.titulo.fecha.carga']}"
+						width="90">
+						<div align="center">
+							<h:outputText value="#{documento.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.nombre.archivo.historico']}"
+						width="400">
+						<div align="center">
+							<h:outputText value="#{documento.nombreArchivo}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{msj['label.encabezado.documento']}"
+						width="90">
+						<h:commandButton image="/resources/images/document.png"
+							title="Documento" ajax="true" style="padding:0px 5px;">
+							<f:setPropertyActionListener value="#{documento.rutaArchivo}"
+								target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.rutaArchivo}" />
+							<f:setPropertyActionListener value="#{documento.nombreArchivo}"
+								target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment"
+								value="#{consultarPropuestasAsignadasMB.descargarArchivo}" />
+						</h:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarDocumento" value="Cerrar"
+						onclick="PF('dlgHistoricoDocumentacionRetro').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+
+
+
+			</p:panel>
+		</p:dialog>
+		
+		
+		<p:dialog
+			header="#{msj['label.titulo.historico.retroalimentaciones']}"
+			widgetVar="dlgHistoricoRetroalimentacion" resizable="false"
+			modal="true" closable="false" width="700">
+
+
+			<p:panel id="idHistoricoRetroalimentacion">
+				<h:panelGrid columns="2" width="100%">
+					<p:spacer width="500" height="1" />
+					<h:outputText
+						value="#{msj['label.registro']}: #{consultarPropuestasAsignadasMB.propuestaAnalizar.idRegistro}"
+						style="font-weight:bold;" />
+				</h:panelGrid>
+
+				<p:dataTable id="tablaRetroalimentacionArchivos" var="solicitud"
+					value="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.listaSolicitudRetroalimentacion}"
+					editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					paginator="true" rows="15"
+					paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					currentPageReportTemplate="({currentPage} de {totalPages})"
+					paginatorPosition="bottom" filterDelay="1000">
+					<f:facet name="header">
+                               #{msj['label.titulo.retroalimentacion']}
+                            </f:facet>
+					<p:column headerText="#{msj['titulo.label.fecha.solicitud']}"
+						width="90">
+						<div align="center">
+							<h:outputText value="#{solicitud.fechaCreacion}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</div>
+					</p:column>
+					<p:column headerText="#{msj['label.motivo.retro.asiganda']}"
+						width="380">
+						<h:outputText value="#{solicitud.fececMotivo.descripcion}" />
+
+					</p:column>
+					<p:column headerText="Archivos" width="50">
+						<div align="center">
+							<p:commandLink value="#{solicitud.numeroDocRetroalimentacion}"
+								ajax="true"
+								action="#{consultarPropuestasAsignadasMB.obtenerDocumentosRetroalimentacion}"
+								immediate="true" update=":formDetallePropuesta:pnlDocumentoHistorcio"
+								style="color:#0170b7;">
+								<f:setPropertyActionListener value="#{solicitud}"
+									immediate="true"
+									target="#{consultarPropuestasAsignadasMB.consultarPropAsignadaHelper.solicitudRetroalimentacion}" />
+							</p:commandLink>
+						</div>
+					</p:column>
+				</p:dataTable>
+
+				<div align="right">
+					<p:spacer width="1" height="30" />
+					<p:commandButton id="cerrarSolicitud" value="Cerrar"
+						onclick="PF('dlgHistoricoRetroalimentacion').hide();"
+						style="width:80px;" ajax="true" />
+				</div>
+			</p:panel>
+		</p:dialog>
+
+        <p:separator/>
+        <h:panelGrid style="width: 100%; text-align: right;">
+            <p:column colspan="3">
+                <div align="right">
+                    <p:commandButton value="#{msj['btn.pantalla.anterior']}" 
+                                     ajax="true" proces="@this" update="@form" 
+                                     immediate="true"
+                                     action="#{consultarPropuestasAsignadasMB.redireccionaRegreso}"/>                    
+                </div>
+            </p:column>
+        </h:panelGrid>
+    </h:panelGroup>
+</f:view>

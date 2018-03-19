@@ -1,0 +1,369 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+        <h:head>
+            <title>AGACE</title>
+            <style type="text/css">
+                .ui-selectonemenu-panel {
+                    max-width: 58% !important;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form id="formPropuestas" enctype="multipart/form-data" styleClass="panel-principal" onkeypress="if (event.keyCode == 13) { return false; }">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+
+                <p:messages for="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true"/>
+                <p:panel id="panelOrdenes" styleClass="panel-interno" style="width:950px;"
+                         header="#{msj['label.titulo.asignacion.firmante']}"
+                         rendered="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.muestraPropuestas}">
+
+                    <!-- Tabla de detalle propuesta -->
+                    <h:panelGrid id="panelPropuestas" width="100%">
+                        <h:outputLabel value="#{msj['label.propuestas.por.asignar']} #{asignarPropuestaFirmanteMB.asignarAttributoHelper.prioridadGrid})" style="font-weight:bold;"/>
+                        <p:separator/>
+                        <p:dataTable id="tablaPropuestasAsignar" var="propuestas" widgetVar="tablaPropuestasAsignar"
+                                     value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaPropuestasPorAsignar}" rows="5"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" paginatorTemplate="Página: {CurrentPageReport}  {FirstPageLink} {PreviousPageLink}  
+                                     Ir a página: {PageLinks} {NextPageLink} {LastPageLink} "
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom" 
+                                     rowKey="#{propuestas.propuesta.idPropuesta}"
+                                     selection="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaPropuestasAsignadas}"
+                                     filterDelay="1000">
+
+                            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                            
+                            <p:column headerText="#{msj['column.detalle']}" style="width:25px;text-align:left;">
+                                <p:rowToggler/>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.folio']}" style="width:75px;text-align:center;">
+                                <h:outputText value="#{propuestas.propuesta.idRegistro}"/>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.insumo.metodo']}" filterBy="#{propuestas.metodo.abreviatura}" 
+                                      filterStyle="width: 30px;" style="text-align:center;">
+                                <h:outputText value="#{propuestas.metodo.abreviatura}"/>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.presuntiva']}" style="width:100px;text-align:center;">
+                                <h:outputText value="#{propuestas.propuesta.presuntiva}">
+                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.propuesta.prioridad']}" filterBy="#{propuestas.propuesta.prioridadSugerida}" 
+                                      filterStyle="width: 30px;" width="40">
+                                <div align="center">
+                                    <h:outputText value="#{propuestas.propuesta.prioridadSugerida}"/>                           
+                                </div>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.subprograma']}" style="width:100px;text-align:center;">
+                                <h:outputText value="#{propuestas.subprograma.clave} #{propuestas.subprograma.descripcion}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{msj['column.tipoPropuesta']}" style="width:70px;text-align:center;">
+                                <h:outputText value="#{propuestas.tipoPropuesta.descripcion}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{msj['column.inicio']}" filterBy="#{propuestas.propuesta.fechaInicioPeriodo}" filterFunction="#{asignarPropuestaFirmanteMB.filtraFecha}"
+                                      filterStyle="width: 60px;" width="65">
+                                <h:outputText value="#{propuestas.propuesta.fechaInicioPeriodo}">
+                                   <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.fin']}" filterBy="#{propuestas.propuesta.fechaFinPeriodo}" filterFunction="#{asignarPropuestaFirmanteMB.filtraFecha}"
+                                      filterStyle="width: 60px;" width="65">
+                                <h:outputText value="#{propuestas.propuesta.fechaFinPeriodo}">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            
+                            <p:column headerText="#{msj['column.fecha.comite']}" filterBy="#{propuestas.propuesta.tipoComite}" filterMatchMode="exact" filterStyle="width: 80px;" width="100">
+	                        	<f:facet name="filter">
+							          <p:selectOneMenu onchange="PF('tablaPropuestasAsignar').filter()" style="width: 90%;">
+							                <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipo.fecha']}" itemValue="#{null}" noSelectionOption="true" />
+							                <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaFechasComiteEnum}" var="fechaComite" itemLabel="#{fechaComite.descripcion}" itemValue="#{fechaComite}"/>
+							          </p:selectOneMenu>
+							      </f:facet>                                
+                                <h:outputText value="#{propuestas.propuesta.fechaInforme}" rendered="#{propuestas.propuesta.fechaInforme != null}">                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+	                            <h:outputText value="#{propuestas.propuesta.fechaPresentacion}" rendered="#{propuestas.propuesta.fechaPresentacion != null}" >                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+                            </p:column>
+                                                        
+                            <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                                    
+                                    <h:outputText value="#{msj['label.sector']} "/>
+                                    <h:outputText value="#{propuestas.sector.descripcion}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </h:panelGrid>
+
+                    <p:spacer height="15px"/>
+
+                    <h:panelGrid id="panelFirmantes" columns="3" style="float:right;">
+                        <h:outputText value="#{msj['column.propuesta.asignar.firmante']}"/>
+                        <p:selectOneMenu id="cmbFirmantes" widgetVar="cmbFirmantes"
+                                         value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.rfcFirmanteSeleccionado}"
+                                         style="width:200px;">
+                            <f:selectItem id="rfcFirmanteSeleccionado"
+                                          itemLabel="#{msj['combo.item.selecciona.firmante']}" itemValue="-1"/>
+                            <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.firmantesEmpleado}"
+                                           var="firmante" itemLabel="#{firmante.nombreCompleto}" itemValue="#{firmante.rfc}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="#{msj['btn.asignar']}"
+                                         rendered="#{not empty asignarPropuestaFirmanteMB.asignarListaHelper.firmantesEmpleado}"
+                                         update=":formPropuestas:panelPropuestas @form"
+                                         action="#{asignarPropuestaFirmanteMB.validaSeleccionFirmante}"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                    </h:panelGrid>
+
+                    <p:spacer height="15px"/>
+
+                    <h:panelGrid id="panelPropuestasAsignados" columns="1" width="100%">
+                        <h:outputLabel value="#{msj['column.propuestas.asignadas']}" style="font-weight:bold;"/>
+                        <p:separator/>
+                        <p:dataTable id="tablaPropuestasAsignadas" var="datos"
+                                     value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaContadorPropuestas}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['column.firmante']}">
+                                #{datos.nombre}
+                            </p:column>
+                            <p:column headerText="#{msj['column.propuestas.asignadas']}" width="50%"
+                                      style="font-align:center;">
+                                #{datos.totalInsumos}
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    
+                    <br/><br/>     
+                    <h:outputLabel value="#{msj['label.propuestas.por.asignar']} #{asignarPropuestaFirmanteMB.asignarAttributoHelper.prioridadFiltros})" style="font-weight:bold;font-align:left;"/>  
+                    <p:separator/>                                      
+                    <h:panelGrid id="panelPropuestasAsignarP3" columns="4" width="100%">
+                      
+                        <h:panelGroup>
+                            <p:outputLabel value="#{msj['label.metodo.revision']}*" style="float:left;font-weight:bold"/><br/>
+                            <p:selectOneMenu id="cmbMetodoRev" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.idMetodo}" style="width:150px;">
+                                <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1" />
+                                <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaMetodos}" var="listaMetodos"
+                                           style="font;" itemLabel="#{listaMetodos.abreviatura}" itemValue="#{listaMetodos.idMetodo}" />
+                                <p:ajax event="change" ajax="true" update=":formPropuestas:panelPropuestasAsignarP3" listener="#{asignarPropuestaFirmanteMB.evaluaTipoMetodo}" />
+                            </p:selectOneMenu>                                            
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <p:outputLabel value="#{msj['label.tipo.propuesta']}*" style="float:left;font-weight:bold"/><br/>
+                            <p:selectOneMenu id="cmbTipoPropuesta" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.idTipoPropuesta}" style="width:150px;">
+                                <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1" />
+                                <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaTipoPropuestas}" var="listaPropuestas"
+                                           style="font;" itemLabel="#{listaPropuestas.descripcion}" itemValue="#{listaPropuestas.idTipoPropuesta}" />
+                                <p:ajax event="change" ajax="true" update=":formPropuestas:panelPropuestasAsignarP3" listener="#{asignarPropuestaFirmanteMB.cambiaTitulos}" />
+                            </p:selectOneMenu>                                    
+                        </h:panelGroup>    
+                        
+                        <h:panelGroup>
+                            <p:outputLabel value="#{asignarPropuestaFirmanteMB.tituloFechas}" style="float:left;font-weight:bold;width:100px;"/>
+                            <br/>
+                            <p:outputLabel value="#{asignarPropuestaFirmanteMB.tituloFechaInicial}:" style="float:left;font-weight:bold;" /><br/>
+                            <p:calendar id="fechaPrimerPedimento" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                    readonlyInput="true" size="7" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.fechaPrimerPedimento}" navigator="true"/>                        
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <br/>
+                            <p:outputLabel value="#{asignarPropuestaFirmanteMB.tituloFechafinal}:" style="float:left;font-weight:bold;" /><br/>
+                            <p:calendar id="fechaUltimoPedimento" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                    readonlyInput="true" size="7" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.fechaUltimoPedimento}" navigator="true"/>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <p:outputLabel value="#{msj['label.tipo.revision']}:*" style="float:left;font-weight:bold"/><br/>
+                            <p:selectOneMenu id="cmbTipoRevision" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.idTipoRevision}" 
+                                         disabled="#{!asignarPropuestaFirmanteMB.asignarAttributoHelper.habilitaTipoRevision}" style="width:150px;">
+                                <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1" />
+                                <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaTipoRevision}" var="listaTipoRevision"
+                                           style="font;" itemLabel="#{listaTipoRevision.descripcion}" itemValue="#{listaTipoRevision.idRevision}" />
+                            </p:selectOneMenu>
+                        </h:panelGroup>                        
+                        
+                        <h:panelGroup>
+                            <p:outputLabel value="#{msj['label.subprograma']}:*" style="float:left;font-weight:bold"/><br/>
+                            <p:selectOneMenu id="cmbSubprograma" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.idSubprograma}" style="width:150px;">
+                                <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1" />
+                                <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaSubprograma}" var="listaSubprograma"
+                                           style="font;" itemLabel="#{listaSubprograma.clave} - #{listaSubprograma.descripcion}" itemValue="#{listaSubprograma.idSubprograma}" />
+                            </p:selectOneMenu>
+                        </h:panelGroup>                        
+                        
+                        <h:panelGroup>
+                            <p:outputLabel value="#{msj['label.presuntiva']}" style="float:left;font-weight:bold;width:50px;"/>
+                            <br/>
+                            <h:outputText value="($):" style="float:left;font-weight:bold;"/>                            
+                            <pe:inputNumber id="idPresuntivaMenor" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.presuntivaMenor}"  decimalSeparator="." 
+                                            thousandSeparator="," maxValue="999999999999.99" required="false" requiredMessage="" 
+                                            style="width:100px" decimalPlaces="2" />
+				        </h:panelGroup>
+				        <h:panelGroup>
+                            <br/>
+                            <h:outputText value="a ($): " style="float:left;font-weight:bold;" />
+                            <pe:inputNumber id="idPresuntivaMayor" value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.presuntivaMayor}"  decimalSeparator="." 
+                                            thousandSeparator="," maxValue="999999999999.99" required="false" requiredMessage="" 
+                                            style="width:100px" decimalPlaces="2" />                          
+                        </h:panelGroup>
+                        <p:spacer width="50" height="1" />
+                        <p:spacer width="50" height="1" />
+                        <p:spacer width="50" height="1" /> 
+                        <h:panelGroup>                       
+                        <p:commandButton value="#{msj['btn.limpiar']}" styleClass="ui-confirmdialog-no" style="float:right;width:80px;"
+                                         actionListener="#{asignarPropuestaFirmanteMB.limpiarBusqueda}" update="formPropuestas" process="@this"/>                       
+                        <p:commandButton value="#{msj['btn.buscar']}" styleClass="ui-confirmdialog-no" style="float:right;"
+                                         actionListener="#{asignarPropuestaFirmanteMB.buscarPropuestaPrior3}" update="panelPropuestasPrior3" />
+                        </h:panelGroup>
+                    </h:panelGrid>
+                                                            
+                                        <!-- Tabla de detalle propuesta -->
+                    <h:panelGrid id="panelPropuestasPrior3" width="100%">
+                        <p:messages for="msgValidaBusqueda" showDetail="true" globalOnly="true" closable="true"/>
+                        
+                        <p:dataTable id="tablaPropuestasAsignarPrior3" var="propuestas" widgetVar="tablaPropuestasAsignarPrior3"
+                                     value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaPropuestasPrior3}" rows="5"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" paginatorTemplate="Página: {CurrentPageReport}  {FirstPageLink} {PreviousPageLink}  
+                                     Ir a página: {PageLinks} {NextPageLink} {LastPageLink} "
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom" 
+                                     rowKey="#{propuestas.propuesta.idPropuesta}"
+                                     selection="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaPropuestasAsignadasPrior3}">
+
+                            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                            
+                            <p:column headerText="#{msj['column.detalle']}" style="width:25px;text-align:left;">
+                                <p:rowToggler/>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.folio']}" style="width:75px;text-align:center;">
+                                <h:outputText value="#{propuestas.propuesta.idRegistro}"/>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.insumo.metodo']}" style="width:35px;text-align:center;">
+                                <h:outputText value="#{propuestas.metodo.abreviatura}"/>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.presuntiva']}" style="width:100px;text-align:center;">
+                                <h:outputText value="#{propuestas.propuesta.presuntiva}">
+                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.propuesta.prioridad']}" width="40">
+                                <div align="center">
+                                    <h:outputText value="#{propuestas.propuesta.prioridadSugerida}"/>                           
+                                </div>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.subprograma']}" style="width:100px;text-align:center;">
+                                <h:outputText value="#{propuestas.subprograma.clave} #{propuestas.subprograma.descripcion}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{msj['column.tipoPropuesta']}" style="width:70px;text-align:center;">
+                                <h:outputText value="#{propuestas.tipoPropuesta.descripcion}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{msj['column.inicio']}" width="65">
+                                <h:outputText value="#{propuestas.propuesta.fechaInicioPeriodo}">
+                                   <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{msj['column.fin']}" width="65">
+                                <h:outputText value="#{propuestas.propuesta.fechaFinPeriodo}">
+                                    <f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            
+                            <p:column headerText="#{msj['column.fecha.comite']}" filterBy="#{propuestas.propuesta.tipoComite}" filterMatchMode="exact" filterStyle="width: 80px;" width="100">
+	                        	<f:facet name="filter">
+							          <p:selectOneMenu onchange="PF('tablaPropuestasAsignarPrior3').filter()" style="width: 90%;">
+							                <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipo.fecha']}" itemValue="#{null}" noSelectionOption="true" />
+							                <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.listaFechasComiteEnum}" var="fechaComite" itemLabel="#{fechaComite.descripcion}" itemValue="#{fechaComite}"/>
+							          </p:selectOneMenu>
+							      </f:facet>                                
+                                <h:outputText value="#{propuestas.propuesta.fechaInforme}" rendered="#{propuestas.propuesta.fechaInforme != null}">                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+	                            <h:outputText value="#{propuestas.propuesta.fechaPresentacion}" rendered="#{propuestas.propuesta.fechaPresentacion != null}" >                                    
+	                            	 <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+	                            </h:outputText>
+                            </p:column>
+                                                        
+                            <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                                    
+                                    <h:outputText value="#{msj['label.sector']} "/>
+                                    <h:outputText value="#{propuestas.sector.descripcion}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    
+                    <p:spacer height="15px"/>
+                    
+                    <h:panelGrid id="panelFirmantesPrior3" columns="3" style="float:right;">
+                        <h:outputText value="#{msj['column.propuesta.asignar.firmante']}"/>
+                        <p:selectOneMenu id="cmbFirmantesPrior3" widgetVar="cmbFirmantesPrior3"
+                                         value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.rfcFirmanteSeleccionadoPrior3}"
+                                         style="width:200px;">
+                            <f:selectItem id="rfcFirmanteSeleccionadoPrior3"
+                                          itemLabel="#{msj['combo.item.selecciona.firmante']}" itemValue="-1"/>
+                            <f:selectItems value="#{asignarPropuestaFirmanteMB.asignarListaHelper.firmantesEmpleado}"
+                                           var="firmante" itemLabel="#{firmante.nombreCompleto}" itemValue="#{firmante.rfc}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="#{msj['btn.asignar']}"
+                                         rendered="#{not empty asignarPropuestaFirmanteMB.asignarListaHelper.firmantesEmpleado}"
+                                         update=":formPropuestas"
+                                         action="#{asignarPropuestaFirmanteMB.validaSeleccionFirmantePrior3}"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                    </h:panelGrid>
+                    <p:spacer height="50px"/>
+                    
+                </p:panel>
+
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarAsignarPropuesta" modal="true" resizable="false"  closable="false" visible="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.muestraDialogoAsignar}">
+                    <h:panelGrid style="text-align:left" width="350">
+                        <p:outputLabel value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.mensaje1}" />
+                        <h:panelGrid columns="2">
+                            <p:commandButton id="btnAsignarInsumo" value="#{msj['label.confirm.aceptar']}" onclick="PF('confirmarAsignarPropuesta').hide();" action="#{asignarPropuestaFirmanteMB.asignarFirmante}" update="@form" oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                            <p:commandButton value="Cancelar" onclick="PF('confirmarAsignarPropuesta').hide();" action="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.ocultaDialogoAsignar}" update="@form"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:dialog>
+
+                <p:dialog header="Mensaje" widgetVar="msg2" modal="true" resizable="false" closable="false">
+                    <h:panelGrid style="text-align:left" width="350">
+                        <p:outputLabel value="#{asignarPropuestaFirmanteMB.asignarAttributoHelper.mensaje2}" />
+                        <h:panelGrid columns="2">
+                            <p:commandButton value="Aceptar" update="@form" action="#{asignarPropuestaFirmanteMB.init}" onclick="PF('msg2').hide();"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:dialog>       
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

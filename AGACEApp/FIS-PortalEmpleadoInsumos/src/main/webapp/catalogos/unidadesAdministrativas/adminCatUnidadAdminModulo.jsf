@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <h:head>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/> 
+            <style>
+                #formUnidadXGeneral:pickListGrupoUnidadRegla tr td ul {
+                    height:500px;
+                    width: 400px;
+                }
+
+                .ui-picklist .ui-picklist-list {
+                    height: 200px;
+                    list-style-type: none;
+                    margin: 0;
+                    overflow: auto;
+                    padding: 0;
+                    width: 250px;
+                }
+                .ui-corner-all {
+                    border-radius: 3px 3px 3px 3px;
+                }
+                .ui-widget-content {
+                    background: none repeat scroll 0 0 #FFFFFF;
+                    border: 1px solid #A8A8A8;
+                    color: #4F4F4F;
+                }
+                ul {
+                }
+                /*.ui-widget {
+                    font-size: 100% !important;
+                }*/
+                .ui-widget {
+                    font-family: Arial,sans-serif;
+                    /*font-size: 1.1em;*/
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <p:panel style="width: 850px;
+                     margin-left:auto;
+                     margin-right:auto;">
+                <ui:include src="panelUnidadXGeneral.xhtml" />            
+            </p:panel>
+        </h:body>
+    </html>
+</f:view>

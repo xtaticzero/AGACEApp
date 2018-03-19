@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-3.2.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee-3.2.xsd">
+    
+    
+    
+    <context:component-scan base-package="mx.gob.sat.siat.feagace.negocio.common.reportes.impl" />    
+    <context:component-scan base-package="mx.gob.sat.siat.feagace.modelo.dao" />    
+    <context:component-scan base-package="mx.gob.sat.siat.ws.empleado" />
+    <context:component-scan base-package="mx.gob.sat.siat.ws.nyv" />
+    
+    <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.SimpleStringPBEConfig">
+        <property name="algorithm" value="PBEWithMD5AndDES" />
+        <property name="password" value="Pa55word" />
+    </bean>
+    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+        <property name="config" ref="environmentVariablesConfiguration" />
+    </bean>
+    <bean id="propertyConfigurer"
+          class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+        <constructor-arg ref="configurationEncryptor" />
+        <property name="locations">
+            <list>
+                <value>file:///siat/fece/configuracion/fece.properties</value>
+                <value>file:///siat/fece/configuracion/AGACE_PROPIEDADES.properties</value>
+                <value>classpath:jdbcTest.properties</value>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Data source para BD agace -->
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+        <property name="url"      value="${url.db.test}" />
+        <property name="username" value="${usr.db.test}" />
+        <property name="password" value="${pass.db.test}" />
+    </bean>
+    <!-- JDBC Template para DB agace -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <!-- Transaction Manager para conexion a BD -->
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="find*" read-only="true" />
+            <tx:method name="obtener*" read-only="true" />
+            <tx:method name="buscar*" read-only="true" />
+            <tx:method name="set*" read-only="true" />
+            <tx:method name="search*" read-only="true" />
+            <tx:method name="*" rollback-for="java.lang.Throwable"
+                       propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
+    <!--    <aop:config>
+        <aop:pointcut id="businessServicePointcut"
+                      expression="target(mx.gob.sat.siat.base.service.BaseBusinessServices) AND execution(public * *(..))" />
+        <aop:advisor advice-ref="transactionAdvice" pointcut-ref="businessServicePointcut" />
+    </aop:config>-->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          scope="singleton">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+        
+    <bean id="empleadoClientRepository"
+          class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceInterface"
+                  value="mx.gob.sat.siat.ws.empleado.repository.EmpleadoClientRepository" />
+        <property name="wsdlDocumentUrl" value="${empleadoServiceUnificado.wsdl}"/>
+        <property name="serviceName" value="ServicioEmpleado" />
+        <property name="portName" value="BasicHttpBinding_IServicioEmpleado" />
+    </bean>
+    
+    
+    <bean id="empleadoService" class="mx.gob.sat.siat.feagace.negocio.EmpleadoServiceImpl"></bean>
+    <bean id="serviceCatUnidadAdminXModulo" class="mx.gob.sat.siat.feagace.negocio.common.catalogos.impl.ServiceCatUnidadAdminXModuloImpl"></bean>
+    <bean id="serviceCatGrupoDeUnidadAdmin" class="mx.gob.sat.siat.feagace.negocio.common.catalogos.impl.ServiceCatGrupoDeUnidadAdminImpl"></bean>
+</beans>

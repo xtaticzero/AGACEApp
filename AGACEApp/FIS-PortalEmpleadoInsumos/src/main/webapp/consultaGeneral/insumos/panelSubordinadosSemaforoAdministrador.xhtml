@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelXSubordinadoSemaforo1" style="width:80% !important" 
+             rendered="#{consultaUGInsumosMB.helper.esVisiblePanelAdministrador}">
+		<f:facet name="header"> 
+           <h:outputText value="SubAdministradores" style="font-weight:bold;"/>
+        </f:facet>
+        <p:dataTable value="#{consultaUGInsumosMB.resumenSubAdmonSet}" var="empleadoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}">
+            <p:column headerText="SubAdministradores" style="font-size:70%;">
+                <h:outputText value="#{empleadoEntry.key.nombreCompleto}"/>
+            </p:column>
+            <p:column headerText="Total" style="text-align: right;font-size:70%;">
+                <h:outputText value="#{empleadoEntry.value}" rendered="#{empleadoEntry.value eq 0}"/>
+                <p:commandLink id="consultarXEmpleadoSemaforoSeleccionado"
+                			   value="#{empleadoEntry.value}"
+                               action="#{consultaUGInsumosMB.detalleInsumosEmpleado}"
+                               ajax="true" immediate="true"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{empleadoEntry.value ne 0}" update=":form:panelPrincipal">
+                    <f:setPropertyActionListener value="#{empleadoEntry}"
+                                                 target="#{consultaUGInsumosMB.empleadoSeleccionado}" />
+					<f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="2" />                                                 
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="Todos los SubAdministradores" style="text-align:center;font-size:70%;"/>
+                    <p:column style="text-align:right;font-size:70%;">    
+                    	<f:facet name="footer">		                    
+                    		<p:outputLabel value="#{consultaUGInsumosMB.totalEstatus}" rendered="#{consultaUGInsumosMB.totalEstatus eq 0}"/> 
+                    		<p:commandLink id="consultarXEstatus"
+                               value="#{consultaUGInsumosMB.totalEstatus}"
+                               action="#{consultaUGInsumosMB.totalInsumoDetalleSubAdmon}"
+                               ajax="true" immediate="true"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{consultaUGInsumosMB.totalEstatus ne 0}" update=":form:panelPrincipal">
+                               <f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="-2" />
+                             </p:commandLink>          
+                    	</f:facet>                                                     
+                    </p:column>                                    
+                </p:row>
+            </p:columnGroup>   
+        </p:dataTable>
+        <p:separator/>
+        <p:dataTable value="#{consultaUGInsumosMB.resumenSemaforoSubAdmonSet}" var="semaforoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}" >
+            <f:facet name="header"> 
+	            <h:outputLabel value="#{msj['label.semaforos']}" style="font-weight:bold;"/>
+	        </f:facet>
+            <p:column headerText="#{msj['label.semaforos']}" style="font-size:70%;">
+                <p:graphicImage value="/resources/images/#{semaforoEntry.key.textoImagenSemaforo}-16x16.png" style="border:0" title="#{semaforoEntry.key.descripcionSemaforoInsumos}"/>
+                <p:outputLabel value="#{semaforoEntry.key.nombre}" />
+                
+                
+                
+            </p:column>
+            <p:column headerText="Total" style="text-align: right;font-size:70%;">
+                <h:outputText value="#{semaforoEntry.value}" rendered="#{semaforoEntry.value eq 0}"/>
+                <p:commandLink id="consultarXEstatusOSemaforoTotal"
+                               value="#{semaforoEntry.value}"
+                               action="#{consultaUGInsumosMB.consultarXSemaforo}"
+                               ajax="true" immediate="true"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{semaforoEntry.value ne 0}" update=":form:panelPrincipal">
+                    <f:setPropertyActionListener value="#{semaforoEntry}"
+                                                 target="#{consultaUGInsumosMB.semaforoSeleccionado}" />
+<f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="2" />                                                
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="Insumos Totales" style="text-align:center;font-size:70%;"/>
+                    <p:column style="text-align:right;font-size:70%;">    
+                    	<f:facet name="footer">		                    
+                    		<p:outputLabel value="#{consultaUGInsumosMB.totalSemaforo}" rendered="#{consultaUGInsumosMB.totalSemaforo eq 0}"/> 
+                    		<p:commandLink id="consultarXSemaforo"
+                               value="#{consultaUGInsumosMB.totalSemaforo}"
+                               action="#{consultaUGInsumosMB.totalSemaforoDetalleSubAdmin}"
+                               ajax="true" immediate="true"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{consultaUGInsumosMB.totalSemaforo ne 0}" update=":form:panelPrincipal">
+                               <f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="2" />                               
+                            </p:commandLink>          
+                    	</f:facet>                                                     
+                    </p:column>                                    
+                </p:row>
+            </p:columnGroup>        
+         </p:dataTable>       
+         <p:panelGrid styleClass="noBorders" style="width: 100%">
+        	<p:row>
+        		<p:column>
+			  		<p:commandButton style="float: right;" 
+			  			value="Pantalla Anterior" action="#{consultaUGInsumosMB.pantallaAnteriorAdministrador}" immediate="true" process="@this"
+			  			update="panelPrincipal"/>
+			  	</p:column>    
+			</p:row>
+		</p:panelGrid>        
+    </p:panel>      
+</f:view>

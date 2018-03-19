@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"> 
+    <p:dialog id="confirmRetro" header="#{msj['label.prpuestas.validar.retro.detalle.dialog.retroalimentacion.heder']}" widgetVar="dlgConfirmRetro" closable="false" modal="true" resizable="false">
+
+        <h:panelGrid columns="1" style="width:100% !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">
+                <p:outputLabel value="Fecha validacion:"/>
+                <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.fechaRegistro}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </h:panelGroup>
+        </h:panelGrid>
+        
+      
+        <h:panelGrid style="width:100% !important;text-align: center !important;">
+            <h:outputText 
+                value="#{validarRetroMB.msjConfirmacionRetroalimentacion}" />
+        </h:panelGrid>
+        
+        
+            <h:panelGrid style="width:100% !important;text-align: center !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">            
+                <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.aceptar']}" actionListener="#{validarRetroMB.generarRetroalimentacion}" oncomplete="PF('dlgConfirmRetroalimentacionDetalle').show();PF('dlgConfirmRetro').hide();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update="@this"/>
+                <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.cancelar']}" onclick="PF('dlgConfirmRetro').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </h:panelGroup>  
+        </h:panelGrid>
+
+    </p:dialog>
+    
+    
+    
+        <p:dialog id="confirmRetroAviso" header="#{msj['label.prpuestas.validar.retro.detalle.dialog.retroalimentacion.heder']}" widgetVar="dlgConfirmRetroAviso" closable="false" modal="true" resizable="false">
+
+        <h:panelGrid columns="1" style="width:100% !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">
+                <p:outputLabel value="Fecha validacion:"/>
+                <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.fechaRegistro}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </h:panelGroup>
+        </h:panelGrid>
+        
+         
+                       <h:panelGroup layout="block" style="padding:5px;">
+                     <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.mensajeAntecedentes}" escape="false"/>
+                    </h:panelGroup>
+                 
+        
+        
+            <h:panelGrid style="width:100% !important;text-align: center !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">  
+            <p:commandButton id="btnAceptarRetro" value="#{msj['btn.prpuestas.validar.confirm.aceptar']}" 
+                                     actionListener="#{validarRetroMB.retroalimentarPropuesta}"
+                                     onsuccess="PF('dlgConfirmRetroalimentacionDetalle').hide();" 
+                                     styleClass="ui-confirmdialog-yes" 
+                                     icon="ui-icon-check" 
+                                     update=":formValidaRetroalimentarPropuesta"
+                                     oncomplete="ocultaMsgAgace('msgs');"/>
+            <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.cancelar']}" onclick="PF('dlgConfirmRetroAviso').hide();"
+            				actionListener="#{validarRetroMB.cancelarRetroalimentacionPropuesta}"
+            				update=":formValidaRetroalimentarPropuesta"
+            				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </h:panelGroup>  
+        </h:panelGrid>
+
+    </p:dialog>
+    
+    
+    
+    
+    
+    
+    
+    
+</f:view>

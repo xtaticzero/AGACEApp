@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{firmanteSeguimientoMB.cargaOrdenesDocumentosFirmar}"/>
+        </f:metadata>
+        <h:head/>
+        <h:body>
+            <h:form id="formSeguimientoPorFirmar" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogFirmar').show();" onsuccess="PF('statusDialogFirmar').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogFirmar" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <div align="right" style="width:836px"/>
+                <p:messages id="msgExitoGuardarFirmar" showDetail="false" closable="true" globalOnly="true"/>
+                <p:panel id="pannelSegPorFirmar" header="Seguimiento de Solicitudes" styleClass="panel-interno">
+                    <p:dataTable id="tablaSegPorValidar" var="segPorFirmar" widgetVar="segPorFirmar"
+                                 value="#{firmanteSeguimientoMB.listaPorFirmarSeguimiento}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10" paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}                                     
+                                 {PreviousPageLink} &amp;nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} 
+                                 &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <p:column headerText="Detalle" width="30">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="N&uacute;mero de orden" filterBy="#{segPorFirmar.numeroOrden}">
+                            <p:commandLink style="color:#0170b7;" action="documentacionOrden?faces-redirect=true" disabled="#{segPorFirmar.mostrarNumeroOrden}">
+                                <h:outputText value="#{segPorFirmar.numeroOrden}" style="color:blue;"/>
+                                <f:setPropertyActionListener value="#{segPorFirmar}"
+                                                             target="#{firmanteSeguimientoMB.ordenSeleccionada}"/>
+                                <f:setPropertyActionListener value="#{segPorFirmar}"
+                                                             target="#{documentacionFirmanteMB.ordenSeleccionado}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="ID de Registro" filterBy="#{segPorFirmar.idRegistroPropuesta}">
+                            <p:commandLink headerText="ID de Registro" style="color:blue;"
+                                           action="documentacionPropuesta" value="#{segPorFirmar.idRegistroPropuesta}">
+                                <f:param name="idRegistro" value="#{segPorFirmar.idRegistroPropuesta}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="RFC" filterBy="#{segPorFirmar.fecetContribuyente.rfc}">
+                            #{segPorFirmar.fecetContribuyente.rfc}
+                        </p:column>
+                        <p:column headerText="M&eacute;todo" filterBy="#{segPorFirmar.feceaMetodo.abreviatura}">
+                            #{segPorFirmar.feceaMetodo.nombre}
+                        </p:column>
+                        <p:column headerText="Prioridad Sugerida" filterBy="#{segPorFirmar.prioridadSugerida}" filterMatchMode="exact"
+                                  width="11%">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('segPorFirmar').filter()">
+                                    <f:selectItem itemLabel="Todos" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{firmanteSeguimientoMB.prioridadRegistrada}" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <div align="center">
+                            	#{segPorFirmar.prioridadSugerida}
+                            </div>
+                        </p:column>
+                        <p:column headerText="Sem&aacute;foro" filterBy="#{segPorFirmar.imagenSemaforo}"
+                                  filterMatchMode="exact" width="11%">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('segPorFirmar').filter()">
+                                    <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Verde" itemValue="semaforo-verde"/>
+                                    <f:selectItem itemLabel="Amarillo" itemValue="semaforo-amarillo"/>
+                                    <f:selectItem itemLabel="Naranja" itemValue="semaforo-naranja"/>
+                                    <f:selectItem itemLabel="Azul" itemValue="semaforo-azul"/>
+                                    <f:selectItem itemLabel="Gris" itemValue="semaforo-gris"/>
+                                    <f:selectItem itemLabel="Cafe" itemValue="semaforo-cafe"/>
+                                    <f:selectItem itemLabel="Rojo" itemValue="semaforo-rojo"/>
+                                    <f:selectItem itemLabel="Negro" itemValue="semaforo-negro"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <div align="center">
+                                <p:graphicImage id="imagenSemaforoOrden" value="/resources/images/#{segPorFirmar.imagenSemaforo}-16x16.png"
+                                                style="border:0"/>
+								<p:tooltip id="toolSemaforo" for="imagenSemaforoOrden" value="#{segPorFirmar.descripcionSemaforo}" trackMouse="true" />
+                            </div>
+                        </p:column>                        
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="#{msj['label.plazo.concluir.orden']} :"/>
+                                <h:outputText value="#{segPorFirmar.descripcionPlazoRestante}"/>
+                                <h:outputText value="Estatus :"/>
+                                <h:outputText value="#{segPorFirmar.fececEstatus.descripcion}"/>
+                                <h:outputText value="Expediente de Orden :"/>
+                                <h:commandButton ajax="true" image="/resources/images/document.png"                                 			
+                                            style="padding:0px 5px;" update="docDialog"
+											 action="#{documentacionOrdenMB.cargaDocumentosOrdenOficio}">   
+								<f:setPropertyActionListener value="#{segPorFirmar}"
+                                                                 target="#{documentacionOrdenMB.dtoHelper.ordenSeleccionDescarga}"/>											 
+                                </h:commandButton>                                
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                        
+                    </p:dataTable>
+                </p:panel>
+                <h:panelGrid id="panelBotones" columns="2" width="700">
+                    <p:column rowspan="2">
+                        <p:commandButton value="#{msj['btn.pantalla.anterior']}" ajax="false" style="float:right;"
+                                         action="#{documentacionOrdenMB.navegaMenu}"/>
+                    </p:column>
+                </h:panelGrid>
+                <p:dialog id="docDialog" header="Expediente Orden" widgetVar="docDialog" showEffect="clip"
+                              hideEffect="clip" resizable="false" modal="true" closable="false"
+                          width="515" height="auto">
+                        <p:dataTable var="expediente" value="#{documentacionOrdenMB.attributeHelper.expediente}">
+                              <p:column headerText="Fecha">
+							        <h:outputText value="#{expediente.fechaCreacion}">
+										<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+											timeZone="America/Mexico_City" />
+									</h:outputText>
+							    </p:column>
+							 
+							    <p:column headerText="Nombre del Documento Orden">
+							        <h:outputText value="#{expediente.nombreArchivo}" />
+							    </p:column>
+							 
+							    <p:column headerText="Descargar">
+							     <div align="center">
+							        <h:commandButton ajax="true" image="/resources/images/document.png"  title="#{expediente.nombreArchivo}" style="padding:0px 5px;">
+	                                    <f:setPropertyActionListener value="#{expediente.rutaArchivo}" target="#{documentacionOrdenMB.attributeHelper.rutaArchivo}"/>
+	                                     <f:setPropertyActionListener value="#{expediente.nombreArchivo}" target="#{documentacionOrdenMB.attributeHelper.nombreArchivo}"/>
+	                                    <p:fileDownload contentDisposition="attachment" value="#{documentacionOrdenMB.archivoDescargar}"/>
+                                	</h:commandButton>
+                                	</div>
+							    </p:column>
+                         </p:dataTable>
+                         <br></br>
+                         <div>
+                            <h:outputText value="Oficios"/>
+                         </div>                         
+                        <p:separator/>
+                        
+                         <p:dataTable  id="tablaOficiosAdmin" var="oficio" value="#{documentacionOrdenMB.lstOficioHelper.listaOficiosAdmin}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="5" paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a p&aacute;gina: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom">
+                              <p:column headerText="Fecha">
+							        <h:outputText value="#{oficio.fechaCreacion}">
+										<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+											timeZone="America/Mexico_City" />
+									</h:outputText>
+							    </p:column>
+							 
+							    <p:column headerText="Nombre del Oficio">
+							        <h:outputText value="#{oficio.nombreArchivo}" />
+							    </p:column>
+							 
+							    <p:column headerText="Descargar">
+							     <div align="center">
+							        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                			title="#{oficio.nombreArchivo}"
+                                            style="padding:0px 5px;">
+	                                    <f:setPropertyActionListener value="#{oficio.rutaArchivo}" target="#{documentacionOrdenMB.attributeHelper.rutaArchivo}"/>
+	                                     <f:setPropertyActionListener value="#{oficio.nombreArchivo}" target="#{documentacionOrdenMB.attributeHelper.nombreArchivo}"/>
+	                                    <p:fileDownload contentDisposition="attachment" value="#{documentacionOrdenMB.archivoDescargar}"/>
+                                	</h:commandButton>
+                                	</div>
+							    </p:column>
+                         </p:dataTable>
+                         <br/>
+                        <p:commandButton value="Cerrar" onclick="PF('docDialog').hide();"
+                                     action="#{documentacionOrdenMB.limpiarOficiosAdmin}" 
+                                     style="float:center;"></p:commandButton>
+                    </p:dialog>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{documentacionAgenteAduanalMB.init}"/>
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formCargaDocAgenteAduanal" styleClass="panel-principal" enctype="multipart/form-data">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelHistoricoPanel"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" styleClass="panel-principal"
+                         header="Documentos">
+                         
+                <p:dataTable id="tablaPromociones" var="datos"
+                                 value="#{documentacionAgenteAduanalMB.listaPromocionAgenteAduanal}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                 {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">                        
+                        <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">
+                            #{datos.idPromocionAgenteAduanal}
+                        </p:column>
+                        <p:column headerText="#{msj['label.fecha.envio.promocion']}" style="width:80px">
+                            <h:outputLabel value="#{datos.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreArchivo}"
+                                                 ajax="true" style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{documentacionAgenteAduanalMB.promocionAgenteAduanalSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionAgenteAduanalMB.archivoDescargaPromocion}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+                            Documentación Requerida
+                            </p:column>
+                        <p:column headerText="#{msj['label.pruebas.alegatos']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{documentacionAgenteAduanalMB.getPruebasAlegatosPromocion}"
+                                               value="#{datos.contadorPruebasAlegatos}" style="color:#0170b7;"
+                                               ajax="true" immediate="true"
+                                               onclick="PF('dlgDocEnviada').show();" update=":formCargaDocAgenteAduanal:tablaPruebasAlegatos :formCargaDocAgenteAduanal:txtIdPromocion :formCargaDocAgenteAduanal:txtFechaEnvio">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{documentacionAgenteAduanalMB.promocionAgenteAduanalSeleccionado}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>                        
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+                    <p:separator/>
+    
+                    <h:panelGroup layout="block" style="padding:5px;" rendered="#{!documentacionAgenteAduanalMB.noVerEditables}">
+                    <br/>
+                    <br/>
+                        <h:outputText value="Adjuntar Promoción"/>
+                    <p:fileUpload id="flUpPromo" widgetVar="flUpPromo"
+                                  fileUploadListener="#{documentacionAgenteAduanalMB.handleFileUploadPromocion}"
+                                  mode="advanced" dragDropSupport="false" multiple="false" sizeLimit="4196000"
+                                  label="Examinar"
+                                  invalidSizeMessage="#{msj['error.tamanio.archivo']}" auto="true"
+                                  update="@form"
+                                  invalidFileMessage="#{msj['error.tipo.archivo']}"
+                                  allowTypes="/(\.|\/)(pdf|docx|xlsx)$/"
+                                  oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                    
+                    </h:panelGroup>                    
+                    <p:spacer width="1" height="25"/>
+                    <h:outputText value="#{msj['titulo.tabla.promocion']}" style="font-weight:bold;"/>
+                    <p:dataTable id="tablaPromocionCargada" var="tablaPromocionCargada"
+                                 value="#{documentacionAgenteAduanalMB.listaPromocionesCargadas}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}">
+                        <p:column headerText="#{msj['titulo.tabla.promocion.fecha']}" styleClass="someClass" width="10%">
+                            <h:outputText id="txtFechaCargaPromocion" value="#{tablaPromocionCargada.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msj['titulo.tabla.promocion.nombre.archivo']}" styleClass="someClass"
+                                  style="table-layout:fixed">
+                            <div style="width:500px;">
+                                #{tablaPromocionCargada.nombreArchivo}
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['titulo.tabla.promocion.tipo']}" styleClass="someClass">
+                            <h:outputText id="tipoPromocion" value="Documentación Requerida">
+                                
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.archivo']}" width="10%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{tablaPromocionCargada}"
+                                                                 target="#{documentacionAgenteAduanalMB.promocionAgenteAduanalSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionAgenteAduanalMB.archivoDescargaPromocionSeleccionada}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton value="Eliminar Promoción" action="#{documentacionAgenteAduanalMB.limpiarPromocion}"
+                    rendered="#{documentacionAgenteAduanalMB.visibleBtnEliminarOrden}"
+                                     update="@form" style="float:right;"/>
+                    <br/>
+                    <br/>
+                    
+                    <h:panelGrid id="panelPruebasAlegatos" border="0" columns="1"
+                                 rendered="#{documentacionAgenteAduanalMB.mostrarPruebasAlegatos}">
+                        <h:panelGroup id="tituloPruebas" layout="block" style="padding:5px;">
+                            <h:outputText value="Documentación Requerida"/>
+                        </h:panelGroup>
+                        <p:fileUpload id="flUpPruebas" widgetVar="flUpPruebas"
+                                      fileUploadListener="#{documentacionAgenteAduanalMB.handleFileUploadPruebasAlegatos}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" sizeLimit="4196000"
+                                      label="Examinar"
+                                      invalidSizeMessage="#{msj['error.tamanio.archivo']}"
+                                      invalidFileMessage="#{msj['error.tipo.archivo']}"
+                                      auto="true" update=" :formCargaDocAgenteAduanal:msgGeneral :formCargaDocAgenteAduanal:tablaPruebasAlegatosCargada"
+                                      allowTypes="/(\.|\/)(pdf|docx|xlsx)$/"
+                                      oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                        
+                        <p:dataTable id="tablaPruebasAlegatosCargada" var="tablaPruebasAlegatosCargada"
+                                     value="#{documentacionAgenteAduanalMB.listaAlegatoAgenteAduanalCargadas}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                           
+                            <p:column headerText="#{msj['titulo.columna.tabla.documento']}"
+                                      styleClass="someClass" style="table-layout:fixed">
+                                <div style="width:650px;">
+                                    #{tablaPruebasAlegatosCargada.nombreArchivo}
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.archivo']}" width="10%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{tablaPruebasAlegatosCargada}"
+                                                                 target="#{documentacionAgenteAduanalMB.alegatoAgenteAduanalSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionAgenteAduanalMB.archivoDescargaAnexoSeleccionada}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                            <p:column width="10%">
+                                <p:commandLink value="Eliminar"
+                                               action="#{documentacionAgenteAduanalMB.descartarPruebaLista}" ajax="true"
+                                               update="@form" style="color:blue;" immediate="true">
+                                    <f:setPropertyActionListener value="#{tablaPruebasAlegatosCargada}"
+                                                                 target="#{documentacionAgenteAduanalMB.alegatoAgenteAduanalSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGroup rendered="#{!documentacionAgenteAduanalMB.noVerEditables}">
+                    <br/>
+                    <br/>
+                    <p:commandButton value="Guardar"
+                                     update="@form"
+                                     action="#{documentacionAgenteAduanalMB.guardar}"
+                                     style="float:right;"/>
+                    <br/>
+                    <br/>
+                   
+                            <p:commandButton value="Regresar" action="#{documentacionAgenteAduanalMB.regresa}" style="float:right;">
+                            <f:setPropertyActionListener value="#{documentacionAgenteAduanalMB.ordenSeleccionado}" target="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada}" />
+                                <f:setPropertyActionListener value="true" target="#{documentacionOrdenMB.attributeHelper.recargarInformacion}" />
+                                </p:commandButton>
+                    </h:panelGroup>
+				    <p:commandButton value="Regresar" style="float:right;width:80px;" rendered="#{documentacionAgenteAduanalMB.noVerEditables}"
+                                             action="#{documentacionAgenteAduanalMB.redireccionaRegreso}"
+											 ajax="true" proces="@this" update="@form"/>				                                                 
+                    <br/>                   
+                    <br/>                              
+                    </p:panel>
+                    
+                    
+                    
+               <p:dialog widgetVar="dlgDocEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                          modal="true" width="515" height="auto">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:panelGrid columns="4" width="100%">
+                            <h:outputLabel value="ID Promoción"/>
+                            <p:inputText id="txtIdPromocion" style="width:50px;" readonly="true"
+                                         value="#{documentacionAgenteAduanalMB.promocionAgenteAduanalSeleccionado.idPromocionAgenteAduanal}"/>
+                            <h:outputLabel value="Fecha de Envio Promoción"/>
+                            <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                         value="#{documentacionAgenteAduanalMB.promocionAgenteAduanalSeleccionado.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:inputText>
+                        </h:panelGrid>
+                        <h:panelGrid border="1" width="100%">
+                            <p:dataTable id="tablaPruebasAlegatos" var="docs"
+                                         value="#{documentacionAgenteAduanalMB.listaAlegatoAgenteAduanal}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">#{docs.idAlegatoAgenteAduanal}</p:column>
+                                <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                <p:column headerText="" style="width:35px">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                     style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{docs}"
+                                                                     target="#{documentacionAgenteAduanalMB.alegatoAgenteAduanalSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionAgenteAduanalMB.archivoDescargaPruebasAlegatos}"/>
+                                    </h:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="cargaExito" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="Documentos Cargados Satisfactoriamente"/>
+                    </h:panelGroup>
+                    <p:commandButton value="Aceptar" action="#{documentacionAgenteAduanalMB.regresa}" style="float:right;">
+                            <f:setPropertyActionListener value="#{documentacionAgenteAduanalMB.ordenSeleccionado}" target="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada}" />
+                                <f:setPropertyActionListener value="true" target="#{documentacionOrdenMB.attributeHelper.recargarInformacion}" />
+                                </p:commandButton>
+                       
+                    
+                </p:dialog>
+
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head></h:head>
+        <h:body>
+            <h:form id="detalleOficioPorFirmarMB" styleClass="panel-principal">
+                <p:dialog modal="true" widgetVar="statusDialogProcesaDocs" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>                   
+                 <p:panel header="Detalle del Oficio Por Firmar" style="panel-interno">
+                        <p:outputPanel deferred="true">
+                            <h4>
+                                #{detalleOficioPorFirmarMB.tituloOficio}
+                            </h4>
+                        </p:outputPanel>
+                        <p:separator/>                        
+                        <!-- inicia compulsa -->
+                        
+                        <h:panelGrid id="panelDatosCompulsa" styleClass="ui-widget-content grid" cellpadding="10" rendered="#{detalleOficioPorFirmarMB.compulsa == null ? 'false': 'true'}">
+                            <p:row>
+                                <p:column style="width: 50%;">
+                                    <p:outputLabel value="RFC del Tercero Compulsado(Contribuyente): "
+                                                   style="font-weight:bold"/>
+                                </p:column>
+                                <p:column style="width: 50%;">
+                                    <p:outputLabel value="#{detalleOficioPorFirmarMB.compulsa.rfcTerceroCompulsado}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Nombre del Tercero Compulsado(Contribuyente): "
+                                                   style="font-weight:bold"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{detalleOficioPorFirmarMB.compulsa.nombreTerceroCompulsado}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Medios de contacto del Tercero Compulsado: "
+                                                   style="font-weight:bold"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{empty detalleOficioPorFirmarMB.medios ? 'No' : 'Si'}"
+                                                   style="font-weight:bold"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="RFC del Representante Legal del Tercero Compulsado: "
+                                                   style="font-weight:bold"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{detalleOficioPorFirmarMB.compulsa.rfcAsociado}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Nombre del Representante Legal del Tercero Compulsado: "
+                                                   style="font-weight:bold"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{detalleOficioPorFirmarMB.compulsa.nombreAsociado}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Email del Representante Legal del Tercero Compulsado: "
+                                                   style="font-weight:bold"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{detalleOficioPorFirmarMB.compulsa.correoAsociado}"/>
+                                </p:column>
+                            </p:row>
+                        </h:panelGrid>
+                        <!-- termina compulsa -->
+                        <!-- inicia cambio de metodo -->                         
+                        <h:panelGrid id="panelDatosCambioMetodo" styleClass="ui-widget-content grid"
+                                     rendered="#{detalleOficioPorFirmarMB.cambioMetodo == null ? 'false': 'true'}">
+                            <p:row>
+                                <p:column style="width: 50%;">
+                                    <p:outputLabel value="Nuevo método: " style="font-weight:bold"/>
+                                </p:column>
+                                <p:column style="width: 50%;">
+                                    <p:outputLabel value="#{detalleOficioPorFirmarMB.cambioMetodo.nombreNuevoMetodo}"/>
+                                </p:column>
+                            </p:row>
+                        </h:panelGrid>
+                         <br></br>
+                        <!-- termina cambio de metodo-->
+                        <p:messages id="messagesOficio" showDetail="false" closable="true" globalOnly="false"/>
+                        <!-- Inicia descargar Oficio -->                        
+                        <p:remoteCommand name="seccionMessagesOficio" update="messagesOficio"/>
+                        <p:dataTable id="oficiosDetalle" value="#{detalleOficioPorFirmarMB.oficios}" var="oficio"
+                                         rowKey="#{oficio.idOficio}" emptyMessage="#{msj['label.lista.vacia']}"
+                                         paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="Nombre del documento">
+                                    <h:outputText value="#{oficio.nombreArchivo}"/>
+                                </p:column>
+                                <p:column headerText="Archivo">
+                                   <div align="center">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{oficio.nombreArchivo}" ajax="true"
+                                                     style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{oficio}"
+                                                                     target="#{detalleOficioPorFirmarMB.oficioSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{detalleOficioPorFirmarMB.archivoDescargaDocumentacion}"/>
+                                    </h:commandButton>
+                                   </div> 
+                                </p:column>
+                            </p:dataTable>
+                        <!-- termina descargar oficio -->
+                        <br></br>
+                        <!-- inicia descarga anexos -->
+                        
+                        <p:outputLabel value="Anexos" style="font-weight:bold;"/>
+                        <p:separator/>
+                        <br></br>
+                        <p:dataTable id="anexosDetalle" value="#{detalleOficioPorFirmarMB.anexos}" var="anexo"
+                                         rowKey="#{anexo.idOficio}" emptyMessage="#{msj['label.lista.vacia']}"
+                                         paginator="true" rows="5"
+                                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                                         paginatorPosition="bottom">
+                                <p:column headerText="Nombre del documento">
+                                    <h:outputText value="#{anexo.nombreArchivo}"/>
+                                </p:column>
+                                <p:column headerText="Archivo">
+                                    <div align="center">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{anexo.nombreArchivo}" ajax="true"
+                                                     style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                     target="#{detalleOficioPorFirmarMB.documentoAnexoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{detalleOficioPorFirmarMB.archivoDescargaDocumentoAnexoOficio}"/>
+                                    </h:commandButton>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        <h:panelGrid id="panelBotones" columns="2" width="100%">
+                            <p:column rowspan="2">
+                                <p:commandButton value="#{msj['btn.pantalla.anterior']}" style="float:right;" action="documentacionOrden"/>
+                            </p:column>
+                        </h:panelGrid>
+                        <!-- termina descarga anexos -->                  
+                </p:panel>
+            </h:form>             
+            <h:outputScript library="js/" name="agace.js"/>             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

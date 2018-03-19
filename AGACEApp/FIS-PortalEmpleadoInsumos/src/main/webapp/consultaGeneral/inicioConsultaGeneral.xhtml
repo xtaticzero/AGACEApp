@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head/>
+        <h:body>            
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+            <h:form id="form" styleClass="panel-principal">
+            <p:ajaxStatus onstart="PF('statusDialogDocs').show();" onsuccess="PF('statusDialogDocs').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogDocs" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+            <p:panel id="panelPrincipalCifras" header="#{msj['label.consulta.general.consulta']}" styleClass="panel-interno">
+            <p:panelGrid id="panelPrincipal" style="width:100% !important;" styleClass="noBorders">
+            	<p:row>
+            	<p:column>
+            	<p:selectOneMenu id="concepto" value="#{consultaUsuarioGeneralMB.tipoConsulta}" style="width: 250px;">
+           				<p:ajax event="change" listener="#{consultaUsuarioGeneralMB.redirectConsulta}" process="@this"/>
+           				<f:selectItem itemLabel="#{msj['label.consulta.general.menu.sinopcion']}" itemValue="0" />
+			            <f:selectItem itemLabel="#{msj['label.consulta.general.menu.insumos']}" itemValue="1" />
+			            <f:selectItem itemLabel="#{msj['label.consulta.general.menu.propuestas']}" itemValue="2" />			          
+			            <f:selectItem itemLabel="#{msj['label.consulta.general.menu.ordenes']}" itemValue="3" />			          			           					           
+			  	</p:selectOneMenu>
+			  	</p:column>
+			  	</p:row>           		
+            </p:panelGrid>
+            </p:panel>        
+            </h:form>         
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelXSubordinadoSemaforo" styleClass="panel-subinterno-insumos" 
+             rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.flgMostrarTlbCategorias}">
+
+        <p:dataTable value="#{consultaAdminInsumosMB.detalleCategoriaEmpleado}" var="empleadoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}">
+            <f:facet name="header"> 
+	            <h:outputLabel rendered="#{!consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE}" value="Insumos Asignados" style="font-weight:bold"/>
+	            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and !consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Asignados" style="font-weight:bold"/>
+	            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Registrados" style="font-weight:bold"/>
+	        </f:facet>
+            <p:column headerText="Administradores">
+                <h:outputText value="#{empleadoEntry.key.nombreCompleto}" />
+            </p:column>
+            <p:column headerText="Total" style="text-align: right;">
+                <h:outputText value="#{empleadoEntry.value}" rendered="#{empleadoEntry.value eq 0}"/>
+                <p:commandLink id="consultarASubordinado"
+                			   value="#{empleadoEntry.value}"
+                               action="#{consultaAdminInsumosMB.consultarASubordinado}"
+                               ajax="true" immediate="true" update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:tablaDetalleInsumo"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{empleadoEntry.value ne 0}">
+                    <f:setPropertyActionListener value="#{empleadoEntry}"
+                                                 target="#{consultaAdminInsumosMB.consultaInsumosHelper.empleadoSeleccionado}" />
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="Insumos Totales" style="text-align:center;"/>
+                    <p:column style="text-align:right;" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEmpleados eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEmpleados}"/>
+                        </f:facet>                                        
+                    </p:column>                                    
+                    <p:column style="text-align:right;" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEmpleados ne 0}">
+                        <f:facet name="footer">
+                            <p:commandLink id="consultarXEmpleadoSemaforoSeleccionado"
+                            			   value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXEmpleados}"
+                                           action="#{consultaAdminInsumosMB.consultarXEmpleadoSemaforoSeleccionado}"
+                                           ajax="true" immediate="true" update="@form"
+                                           style="color: blue; text-decoration: underline;">
+                            </p:commandLink>
+                        </f:facet>
+                    </p:column>
+                </p:row>
+            </p:columnGroup> 
+        </p:dataTable>
+        <p:separator/>
+        <p:dataTable value="#{consultaAdminInsumosMB.detalleSemaforoFiltrado}" var="semaforoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.semaforoSeleccionado eq null}">
+            <f:facet name="header"> 
+	            <h:outputLabel rendered="#{!consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE}" value="Insumos Asignados" style="font-weight:bold"/>
+	            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and !consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Asignados" style="font-weight:bold"/>
+	            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos Registrados" style="font-weight:bold"/>
+	        </f:facet>
+            <p:column headerText="Semaforos">
+                <p:graphicImage value="/resources/images/#{semaforoEntry.key.textoImagenSemaforo}-16x16.png" style="border:0"/>
+                <p:outputLabel value="#{semaforoEntry.key.nombre}" />                                
+            </p:column>
+            <p:column headerText="Total" style="text-align: right;">
+                <h:outputText value="#{semaforoEntry.value}" rendered="#{semaforoEntry.value eq 0}"/>
+                <p:commandLink value="#{semaforoEntry.value}"
+                               action="#{consultaAdminInsumosMB.consultarXEmpleadoSemaforoSeleccionado}"
+                               ajax="true" immediate="true" update="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{semaforoEntry.value ne 0}">
+                    <f:setPropertyActionListener value="#{semaforoEntry}"
+                                                 target="#{consultaAdminInsumosMB.consultaInsumosHelper.segundoSemaforoSeleccionado}" />
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="Insumos Totales" style="text-align:center;"/>
+                    <p:column style="text-align:right;" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXSemaforosFiltrados eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXSemaforosFiltrados}"/>
+                        </f:facet>                                        
+                    </p:column>                                    
+                    <p:column style="text-align:right;" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXSemaforosFiltrados ne 0}">
+                        <f:facet name="footer">
+                            <p:commandLink value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.totalXSemaforosFiltrados}"
+                                           action="#{consultaAdminInsumosMB.consultarXEmpleadoSemaforoSeleccionado}"
+                                           ajax="true" immediate="true" update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:tablaDetalleInsumo"
+                                           style="color: blue; text-decoration: underline;">
+                            </p:commandLink>
+                        </f:facet>
+                    </p:column>
+                </p:row>
+            </p:columnGroup>                             
+        </p:dataTable>
+        <h:panelGrid columns="1" style="text-align: right ! important; width: 100%;">
+            <h:panelGroup>
+                <p:commandButton id="regresarSubordinadosSemaforo"
+                				 value="#{msj['btn.pantalla.anterior']}"
+                                 rendered="#{!consultaAdminInsumosMB.consultaInsumosHelper.flgRegresarASubordinado}"
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaAdminInsumosMB.regresarSubordinadosSemaforo}"
+                                 update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"/>
+                <p:commandButton id ="regresarNivelDeEmpleado"
+                				 value="#{msj['btn.pantalla.anterior']}"
+                                 rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.flgRegresarASubordinado}"
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaAdminInsumosMB.regresarNivelDeEmpleado}"
+                                 update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"/>
+            </h:panelGroup> 
+        </h:panelGrid>
+    </p:panel>      
+</f:view>

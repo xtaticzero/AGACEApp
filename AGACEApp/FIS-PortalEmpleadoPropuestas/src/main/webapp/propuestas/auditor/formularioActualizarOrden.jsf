@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+     
+     <br/>
+     <h:outputText value="Adjuntar Documento (EHO./GABINETE./UCA./REE./MCA.):"/>
+     <h:outputText value="*" style="color:red;"/> 
+     <h:panelGrid columns="2">
+        <h:panelGrid> 
+           <p:fileUpload id="flUpLoadInfoComplementaria" widgetVar="flUpArchivoInfoComplementaria" style="width:300px;"
+                         fileUploadListener="#{consultarPropuestasAsignadasManagedBean.handleFileUploadInformacionComplementaria}"
+                         mode="advanced" dragDropSupport="false" multiple="false"
+                         label="Adjuntar" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                         update="tablaInfoComplementaria :formPropuestas:msgExitoGuardar"
+                         showButtons="true" auto="true" ajax="true"
+                         oncomplete="ocultaMsgAgace('msgExitoGuardar');"
+                         disabled="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.ordenActualizable}"/>
+        </h:panelGrid>
+        <h:panelGrid>
+           <p:dataTable id="tablaInfoComplementaria" var="tablaOrdenCargada" 
+                        value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaOrdenes}" 
+                        editable="false" emptyMessage="#{msj['label.lista.vacia']}" rows="5" paginator="true"
+                        paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                        currentPageReportTemplate="({currentPage} de {totalPages})"
+                        paginatorPosition="bottom">
+              <f:facet name="header">
+                #{msj['header.tabla.documento.orden']}
+              </f:facet>
+              <p:column headerText="Fecha de carga" styleClass="someClass" style="width:40px;">
+                 <h:outputText id="txtFechaCargaInfoComplementaria" value="#{tablaOrdenCargada.documentoOrden.fechaCreacion}">
+                    <f:convertDateTime pattern="dd/MM/yy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                 </h:outputText>
+              </p:column>
+              <p:column id="hdrNombreInfoComplementaria" headerText="Expediente" style="width:120px;margin:auto;">
+                 <p:commandLink value="#{tablaOrdenCargada.documentoOrden.nombreArchivo}" style="color:blue;" ajax="false" update=":formPropuestas @form">
+                    <f:setPropertyActionListener value="#{tablaOrdenCargada.input}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.archivoDescargableIS}" />
+                    <f:setPropertyActionListener value="#{tablaOrdenCargada.documentoOrden.nombreArchivo}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.nombreArchivoDescarga}" />
+                    <f:setPropertyActionListener value="#{tablaOrdenCargada.documentoOrden}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.docOrdenSeleccionado}" />
+                    <p:fileDownload value="#{consultarPropuestasAsignadasManagedBean.documentoDescarga}" update=":formPropuestas @form"/>
+                 </p:commandLink>
+              </p:column>
+              <p:column styleClass="someClass" style="width:30px;">
+                 <p:commandLink style="color:blue;" value="#{msj['label.confirm.eliminar']}" rendered="#{tablaOrdenCargada.isEliminar}"
+                                action="#{consultarPropuestasAsignadasManagedBean.descartarDocumentoOrden}"
+                                ajax="true" inmediate="true" update="tablaInfoComplementaria :formPropuestas @form">
+                    <f:setPropertyActionListener value="#{tablaOrdenCargada}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.documentoOrdenSeleccionado}" />
+                 </p:commandLink>
+              </p:column>
+           </p:dataTable>
+        </h:panelGrid>
+     </h:panelGrid>
+     <br/>
+     <br/>
+     <h:panelGrid columns = "2" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.permiteOficios}">
+        <h:outputLabel value="Otros oficios:"/>
+        <p:selectOneMenu style="width:200px;" value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.tipoOficioSeleccionado}"
+                         disabled="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.oficioActaulizable}" >
+           <p:ajax event="change" update="@this" />
+           <f:selectItem itemLabel="Seleccione el oficio" itemValue="-1" />
+           <f:selectItems value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.oficios}" 
+                                var="listaOficios" itemLabel="#{listaOficios.idTipoOficio} - #{listaOficios.nombre}" itemValue="#{listaOficios.idTipoOficio}"/>
+        </p:selectOneMenu>
+     </h:panelGrid>
+     <br/>
+     <br/>
+     <h:outputText value="Adjuntar oficio:" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.permiteOficios}"/>
+     <br/>
+     <br/>
+     <h:panelGrid columns="2" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.permiteOficios}">
+        <h:panelGrid> 
+           <p:fileUpload id="flUpLoadOficio" widgetVar="flUpArchivoOficio" style="width:300px;"
+                         fileUploadListener="#{consultarPropuestasAsignadasManagedBean.handleFileUploadOficios}"
+                         mode="advanced" dragDropSupport="false" multiple="false"
+                         label="Adjuntar" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                         update="tablaOficios :formPropuestas:msgExitoGuardar"
+                         showButtons="true" auto="true" ajax="true"
+                         oncomplete="ocultaMsgAgace('msgExitoGuardar');"
+                         disabled="#{!consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.oficioActaulizable}"/>
+        </h:panelGrid>
+        <h:panelGrid>
+        <p:dataTable id="tablaOficios" var="tablaOficioCargado" 
+                        value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaOficios}"
+                        editable="false" emptyMessage="#{msj['label.lista.vacia']}" rows="5" paginator="true"
+                        paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                        currentPageReportTemplate="({currentPage} de {totalPages})"
+                        paginatorPosition="bottom">
+                        
+              <f:facet name="header">
+                Oficio
+              </f:facet>
+              <p:column headerText="Fecha de carga" styleClass="someClass" style="width:40px;">
+                 <h:outputText id="txtFechaCargaOficio" value="#{tablaOficioCargado.oficio.fechaCreacion}">
+                    <f:convertDateTime pattern="dd/MM/yy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                 </h:outputText>
+              </p:column>
+              <p:column id="hdrNombreOficio" headerText="Nombre Oficio" style="width:120px;margin:auto;">
+                 <p:commandLink value="#{tablaOficioCargado.oficio.nombreArchivo}" style="color:blue;" ajax="false" update=":formPropuestas @form">
+                    <f:setPropertyActionListener value="#{tablaOficioCargado.input}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.archivoDescargableIS}" />
+                    <f:setPropertyActionListener value="#{tablaOficioCargado.oficio.nombreArchivo}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.nombreArchivoDescarga}" />
+                    <f:setPropertyActionListener value="#{tablaOficioCargado.oficio}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.oficioSeleccionado}" />
+                    <p:fileDownload value="#{consultarPropuestasAsignadasManagedBean.documentoDescarga}" update=":formPropuestas @form"/>
+                 </p:commandLink>
+              </p:column>
+              <p:column styleClass="someClass" style="width:30px;">
+                 <p:commandLink style="color:blue;" value="#{msj['label.confirm.eliminar']}" rendered="#{tablaOficioCargado.isEliminar}"
+                                action="#{consultarPropuestasAsignadasManagedBean.descartarOficio}"
+                                ajax="true" inmediate="true" update="tablaOficios :formPropuestas @form" >
+                    <f:setPropertyActionListener value="#{tablaOficioCargado}"
+                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.documentoOrdenSeleccionado}" />
+                    
+                 </p:commandLink>
+              </p:column>
+                        
+        </p:dataTable>
+        </h:panelGrid>
+     </h:panelGrid>
+     <br/>
+     <br/>
+     <h:outputText value="Agente Aduanal" style="font-weight:bold;" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraAgenteAduanal}"/>
+     <h:panelGrid columns="3" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraAgenteAduanal}">
+                  <h:outputLabel value="#{msj['label.docElect.rfcAgAduanal']}" style="font-weight:bold" />
+                  <p:inputText id="txtRfcAgAduanal" style="width:150px;height:auto;" value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.agenteAduanalVO.rfc}"
+                               maxlength="13"/>
+                  <p:commandButton value="Nueva Busqueda" action="#{consultarPropuestasAsignadasManagedBean.buscarAgenteAduanal}" 
+                                   update=":formPropuestas @form"/>
+
+                  <h:outputLabel value="#{msj['label.docElect.nombreAgAduanal']}" style="font-weight:bold" />  
+                  <p:inputText id="txtNombreAgAduanal" style="width:150px;height:auto;" 
+                               value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.agenteAduanalVO.nombre}"
+                               disabled="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.agenteAduanalVO.deshabilitarCampos}"/>
+                  <h:outputText value=""/>
+                               
+                  <h:outputLabel value="#{msj['label.docElect.emailAgAduanal']}" style="font-weight:bold"  />
+                  <p:inputText id="txtEmailAgAduanal" style="width:150px;height:auto;" 
+                               value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.agenteAduanalVO.correo}"
+                               disabled="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.agenteAduanalVO.deshabilitarCorreo}" /> 
+                  <p:commandButton value="Guardar Agente Aduanal" ajax="false"  action="#{consultarPropuestasAsignadasManagedBean.agregarAgenteAduanal}" 
+                                   update=":formPropuestas:msgExitoGuardar">
+                     
+                  </p:commandButton>
+                  </h:panelGrid>
+                  <h:panelGrid columns="2" rendered="#{consultarPropuestasAsignadasManagedBean.cpaBooleanHelper.muestraAgenteAduanal}">
+                    <h:outputText value="Medios de Contacto:" style="font-weight:bold;"/>
+                    <p:selectBooleanCheckbox value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.agenteAduanalVO.medioContactoBoolean}" disabled="true"/>
+                  </h:panelGrid>
+     <br/>
+     <br/>
+     <h:panelGrid columns="2" style="margin:auto;">
+       <p:commandButton value="Actualizar orden" action="#{consultarPropuestasAsignadasManagedBean.validaActualizarDocumentoOrden}" update=":formPropuestas:msgExitoGuardar @form"/>
+       <p:commandButton value="#{msj['label.confirm.cancelar']}"
+                        styleClass="ui-confirmdialog-no" style="float:right;"
+                        action="#{consultarPropuestasAsignadasManagedBean.regresaDetalle}"
+                        update=":formPropuestas @form"/>
+     </h:panelGrid>
+     
+</ui:composition>

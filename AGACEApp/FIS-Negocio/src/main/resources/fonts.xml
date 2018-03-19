@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+    <bean id="fontFamilyConstantia" class="net.sf.jasperreports.engine.fonts.SimpleFontFamily">
+        <property name="name" value="Constantia"/>
+        <property name="normal" value="fonts/constan.ttf"/>
+        <property name="bold" value="fonts/constanb.ttf"/>
+        <property name="italic" value="fonts/constani.ttf"/>
+        <property name="pdfEncoding" value="Identity-H"/>
+        <property name="pdfEmbedded" value="true"/>
+    </bean>
+    <bean id="fontFamilyArial" class="net.sf.jasperreports.engine.fonts.SimpleFontFamily">
+        <property name="name" value="Arial"/>
+        <property name="normal" value="fonts/arial.ttf"/>
+        <property name="bold" value="fonts/arialbd.ttf"/>
+        <property name="italic" value="fonts/ariali.ttf"/>
+        <property name="pdfEncoding" value="Identity-H"/>
+        <property name="pdfEmbedded" value="true"/>
+    </bean> 
+</beans>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelDetallePropuesta" 
+             styleClass="panel-subinterno-consOrd" 
+             header="#{msj['titulo.panel.detalle.propuesta']}" 
+             rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.flgMostrarDetallePropuesta}">
+        <h:panelGrid id="panelCabeceraContribuyente" columns="3" border="0" width="100%">
+            <p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}" style="font-weight:bold;"/>
+            <p:spacer width="470" height="10"/>
+            <p:outputLabel value="Id Registro: #{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.idRegistro}" style="font-weight:bold;"/>
+        </h:panelGrid>
+        <p:separator/>
+        <h:panelGrid id="panelInputContribuyente" columns="3" width="100%">
+            <h:outputLabel value="#{msj['label.rfc.contribuyente']}"
+                           style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <h:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+            <h:panelGrid id="panelBuscarContribuyente" columns="1">
+                <p:inputText id="txtRFC" maxlength="15" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.rfc}"
+                             />                                
+            </h:panelGrid>
+            <p:spacer width="50" height="1"/>
+            <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.nombre}"/>
+            <h:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <h:outputLabel value="#{msj['label.situacion.contribuyente']}:" style="font-weight:bold;"/>
+            <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.regimen}"/>
+            <p:spacer width="50" height="15px"/>
+            <p:inputText id="txtSituacionContribuyente" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.situacion}"/>
+            <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+
+            <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/> 
+            <p:inputText id="txtTipoContribuyente" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.tipo}"/>
+            <p:spacer width="50" height="15px"/>
+
+            <p:inputText id="txtSituacionDomicilio" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.situacionDomicilio}"/> 
+            <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:"
+                           style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <h:outputLabel value="#{msj['label.actividad.preponderante']}:" style="font-weight:bold;"/> 
+            <p:inputTextarea id="txtDomicilioFiscalContribuyente" style="width:325px;height:auto;"
+                             disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.domicilioFiscal}"/>
+            <p:spacer width="50" height="15px"/>
+            <p:inputText id="txtActividadPreponderante" style="width:325px;height:auto;" disabled="true" 
+                         value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.actividadPreponderante}"/> 
+            <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+            <p:spacer width="50" height="1"/>
+            <p:spacer width="50" height="1"/>
+            <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fecetContribuyente.entidad}"/>
+            <p:spacer width="50" height="15px"/>
+            <p:spacer width="50" height="1"/>
+        </h:panelGrid>
+        <p:spacer width="20" height="50"/>
+        <h:panelGrid columns="3" border="0" width="100%">
+            <p:outputLabel value="#{msj['separador.panel.datos.previos.propuesta']}" style="font-weight:bold;"/>            
+        </h:panelGrid>        
+        <p:separator/>
+        <h:panelGrid columns="4" border="0" style="width: 100% !important;" >
+            <p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.unidad.admon']}" 
+                           style="font-weight:bold" />
+            <p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.metodo.revision']}:" 
+                           style="font-weight:bold"/>
+            <p:outputLabel value="#{msj['label.causa.programacion']}" 
+                           style="font-weight:bold"/>            
+            <p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.tipo.propuesta']}" 
+                           style="font-weight:bold"/>
+
+            <p:inputTextarea id="txtUnidad" 
+                             style="width:140px !important;height: 40px!important; overflow:auto;" 
+                             disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.unidadAdministrativa.nombre}"/>
+            <p:inputTextarea id="txtMetodo" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.feceaMetodo.abreviatura}" />
+            <p:inputTextarea id="txtCausa2" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececCausaProgramacion.descripcion}" />
+            <p:inputTextarea id="txtPropuesta" 
+                             style="width:140px !important;height: 40px!important; overflow:auto;" 
+                             disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececTipoPropuesta.descripcion}"/>
+            <p:spacer width="50" height="1" />
+            <p:spacer width="50" height="1" />
+            <p:spacer width="50" height="1" />
+            <p:spacer width="50" height="1" />            
+
+            <p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.subprograma']}:" 
+                           style="font-weight:bold"/>
+            <p:outputLabel value="#{msj['label.sector']}:" 
+                           style="font-weight:bold"/>
+            <p:outputLabel value="#{msj['column.propuestas.por.validar.prioridad']}:" 
+                           style="font-weight:bold"/>
+            
+            <p:outputLabel value="#{msj['label.operaciones.especifica']}:" 
+                           style="font-weight:bold" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 1}"/>
+            <p:outputLabel value="#{msj['label.docElect.propuesta']}:" 
+                           style="font-weight:bold" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 2}"/>
+
+
+            <p:inputTextarea id="txtSubprograma" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececSubprograma.descripcion}"/>
+            <p:inputTextarea id="txtSector" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececSector.descripcion}" />
+            <p:inputTextarea id="txtPrioridad" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.prioridadSugerida}"/>
+
+            <h:panelGrid columns="2" border="0" style="width: 100% !important;">
+                <p:outputLabel value="#{msj['lbl.propuestas.del.pedimento']}" 
+                               style="font-weight:bold" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 1}"/>
+                <p:outputLabel value="#{msj['lbl.propuestas.al.pedimento']}"
+                               style="font-weight:bold" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 1}"/>
+                <p:outputLabel value="#{msj['label.docElect.inicio']}" 
+                               style="font-weight:bold" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 2}"/>
+                <p:outputLabel value="#{msj['label.docElect.Fin']}"
+                               style="font-weight:bold" rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 2}"/>
+                <p:calendar id="txtFechaInicial" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fechaInicioPeriodo}" 
+                            disabled="true"
+                            locale="es" 
+                            pattern="dd/MM/yyyy" 
+                            showOn="button"
+                            navigator="true"
+                            readonlyInput="true" size="7">
+                </p:calendar>
+                <p:calendar id="txtFechaFinal" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fechaFinPeriodo}" 
+                            disabled="true"
+                            locale="es" 
+                            pattern="dd/MM/yyyy" 
+                            showOn="button"
+                            navigator="true"
+                            readonlyInput="true" size="7" >
+                </p:calendar>
+            </h:panelGrid>
+            <p:spacer/>
+            <p:spacer/>
+            <p:spacer/>
+            <p:spacer/>
+            <p:outputLabel value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.tipoComite.descripcion}" style="font-weight:bold"/>
+            <p:outputLabel value="#{msj['label.docElect.tipo.revision']}" style="font-weight:bold" rendered="#{consultaUGOrdenesMB.esORG}"/>
+            <p:spacer rendered="#{!consultaUGOrdenesMB.esORG}"/>            
+            <p:spacer/>
+            <p:spacer/>
+            <p:calendar value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fechaInforme}"
+                        rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fechaInforme ne null}"
+                        disabled="true"
+                        locale="es" 
+                        pattern="dd/MM/yyyy" 
+                        showOn="button"
+                        navigator="true"
+                        readonlyInput="true" size="7" >
+            </p:calendar>
+            <p:calendar  value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fechaPresentacion}"
+                         rendered="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fechaPresentacion ne null}"
+                         disabled="true"
+                         locale="es" 
+                         pattern="dd/MM/yyyy" 
+                         showOn="button"
+                         navigator="true"
+                         readonlyInput="true" size="7" >
+            </p:calendar>
+            <p:inputTextarea style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.fececRevision.descripcion}" rendered="#{consultaUGOrdenesMB.esORG}"/>
+
+        </h:panelGrid>
+
+        <p:spacer height="10"/>
+        <p:dataTable var="archivo" 
+                     value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.listaDocumentos}" 
+                     emptyMessage="#{msj['label.lista.vacia']}"
+                     paginator="true"
+                     rows="5"
+                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}  {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                     paginatorPosition="bottom">
+            <f:facet name="header">
+                <p:outputLabel value="#{msj['label.prpuestas.validar.retro.detalle.tbl.heder']}"/>
+            </f:facet>
+            <p:column headerText="#{msj['lbl.propuestas.fecha']}">
+                <h:outputText value="#{archivo.fechaCreacion}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="#{msj['column.expediente']}">
+                <p:commandLink process="@this" 
+                               update=":formValidaRetroalimentarPropuesta "
+                               disabled="false"
+                               immediate="true"
+                               ajax="false">
+                    <h:outputText value="#{archivo.nombre}" style="color:blue"/>
+                    <f:setPropertyActionListener value="#{archivo}" target="#{consultaUGOrdenesMB.consultaOrdenesHelper.docExpedienteSeleccionado}"/>
+			        <p:fileDownload contentDisposition="attachment" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.archivoDescargaDocExp}"/>
+                </p:commandLink>
+            </p:column>
+        </p:dataTable>
+        <p:spacer height="10"/>
+        <p:dataTable id="tblImpuestos" var="impuesto"  
+                     value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.lstImpuestos}"
+                     emptyMessage="#{msj['label.lista.vacia']}" style="width:100%;">
+            <f:facet name="header">
+                <h:outputLabel value="#{msj['label.impuestos']}" style="font-weight:bold"/>
+            </f:facet>
+            <p:columnGroup type="header">
+                <p:row>
+                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.impuesto']}"/>
+                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.concepto']}"/>
+                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.monto']}"/>                    
+                </p:row>
+            </p:columnGroup>
+            <p:column>
+                <h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}"/>
+            </p:column>
+            <p:column>
+                <h:outputText id="txtConcepto"
+                              value="#{impuesto.fececConcepto.descripcion}"/>
+            </p:column>
+
+            <p:column>
+                <div align="right">
+                    <h:outputText value="#{impuesto.monto}" style="text-align:right">
+                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                    </h:outputText>
+                </div>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column colspan="2" footerText="#{msj['lbl.propuestas.presuntiva']}: " style="text-align:right"/>
+                    <p:column colspan="1" style="text-align:left;">
+                        <f:facet name="footer">
+                            <div align="right">
+                                <h:outputText value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.presuntiva}" style="text-align:right !important;">
+                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                </h:outputText>
+                            </div>
+                        </f:facet>
+                    </p:column>                    
+                </p:row>
+            </p:columnGroup>
+        </p:dataTable>
+        <p:separator/>
+        <p:dataTable id="tablaPapelesTrabajo" style="border:none;" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.propuestaSeleccionada.listaPapelesTrabajo}"
+        		editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" var="papeles"
+                paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                             <f:facet name="header">
+                                   #{msj['label.papeles.trabajo']}
+                             </f:facet>           
+                             <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="30%">
+                                <h:outputText id="txtFechaCPapel" value="#{papeles.fechaCreacion}">
+                                   <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                                </h:outputText>
+                             </p:column>
+                             <p:column headerText="#{msj['label.nombre.documento']}" width="40%">
+                                <h:outputText id="nombrePapel" value="#{papeles.nombreArchivo}" />
+                             </p:column>
+                             <p:column headerText="Archivo" width="15%" >
+                                <div align="center">
+	                                <h:commandButton image="/resources/images/document.png" title="Documento"
+			                                                    ajax="true" style="padding:0px 5px;" >
+			                                       <f:setPropertyActionListener value="#{papeles}" target="#{consultaUGOrdenesMB.consultaOrdenesHelper.papelTrabajoSeleccionado}"/>
+			        							   <p:fileDownload contentDisposition="attachment" value="#{consultaUGOrdenesMB.consultaOrdenesHelper.archivoDescargaPapelTrabajo}"/>
+			                        </h:commandButton>
+	                            </div>                              
+                             </p:column>
+        </p:dataTable>
+        <p:separator/>
+        <h:panelGrid style="width: 100%; text-align: right;">
+            <p:column colspan="3">
+                <div align="right">
+                    <p:commandButton value="#{msj['btn.pantalla.anterior']}" 
+                                     ajax="false" 
+                                     immediate="true"
+                                     action="#{consultaUGOrdenesMB.regresarPantallaLstOrdenes}"
+                                     update=":formConsultaEjecutivaOrdenes :formConsultaEjecutivaOrdenes:tablaDetalleOrdenes " />                    
+                </div>
+            </p:column>
+        </h:panelGrid>
+        
+    </p:panel>
+</f:view>

@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+   
+   
+   <h:panelGrid id="panelMotivoRechazo" columns="5">
+                        <h:outputText value="#{msj['label.fecha.rechazo']}: " style="font-weight:bold;"/>
+                        <h:outputText value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.fechaCargaArchivo}">
+                            <f:convertDateTime pattern="dd/MM/yy"/>
+                        </h:outputText>
+                        <p:spacer width="60" height="1"/>
+                        <h:outputText value="#{msj['label.registro']}: " style="font-weight:bold;"/>
+                        <h:outputText value="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelRegistro}"/>
+                    </h:panelGrid>
+                    <!-- Panel rechazar propuesta -->
+                     <p:spacer width="10px" height="22px"/>
+                    <p:outputLabel value="#{msj['label.adjuntar.documento']}" style="font-weight:bold;"/>
+                    <p:outputLabel value=" *" style="color:red;"/>
+                    <p:outputLabel value=" :"/>
+                    <h:panelGrid columns="1" cellpadding="10" width="500">
+                        <p:fileUpload id="flUpLoadDocRechazo" widgetVar="flUpRechazo"
+                                      fileUploadListener="#{consultarPropuestasAsignadasManagedBean.handleFileUploadRechazo}"
+                                      mode="advanced" dragDropSupport="false" multiple="false"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      update="tablaDocRechazo :formPropuestas:msgExitoGuardar" showButtons="true"
+                                      auto="true" ajax="false" oncomplete="ocultaMsgAgace('msgExitoGuardar');" process="@this"/>
+                        <p:dataTable id="tablaDocRechazo" style="width:500px" var="tablaRechazoCargado"
+                                     value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaRechazo}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                Documento de Rechazo
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" styleClass="someClass"
+                                      width="70px;">
+                                <h:outputText id="txtFechaCargaRechazo" value="#{tablaRechazoCargado.fechaRechazo}">
+                                    <f:convertDateTime pattern="dd/MM/yy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreRechazo" headerText="Documento" style="width:200px;">
+                                <div style="width:230px;margin:auto;">
+                                    <p:commandLink value="#{tablaRechazoCargado.nombreArchivo}" style="color:blue;" ajax="false" update=":formPropuestas @form" onclick="pageRefresh();">
+                                        <f:setPropertyActionListener value="#{tablaRechazoCargado.archivo}"    
+                                                                     target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.archivoDescargableIS}" />                             
+                                        <f:setPropertyActionListener value="#{tablaRechazoCargado.nombreArchivo}"
+                                                                     target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.nombreArchivoDescarga}" />
+                                        <p:fileDownload value="#{consultarPropuestasAsignadasManagedBean.documentoDescarga}" />
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+                            <p:column id="idEliminar" style="width:60px;">
+                                <p:commandLink style="color:blue;margin:auto;" value="#{msj['label.confirm.eliminar']}"
+                                               action="#{consultarPropuestasAsignadasManagedBean.descartarDocRechazo}" 
+                                               ajax="true" immediate="true" update="tablaDocRechazo :formPropuestas:msgExitoGuardar">
+                                    <f:setPropertyActionListener value="#{tablaRechazoCargado}"
+                                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.docRechazoSeleccionado}" />
+
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <h:panelGrid columns="4"  width="330">
+                        <p:outputLabel value="#{msj['label.motivo.rechazo.asignada']}" style="font-weight:bold;"/>
+                        <p:outputLabel value=" *" style="color:red;"/>
+                        <p:selectOneMenu id="cmbMotivoRechazo"
+                                         value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.motivoRechazoSeleccionado}"
+                                         style="width:200px;">
+                            <f:selectItem itemLabel="Selecciona un motivo" itemValue="-1"/>
+                            <f:selectItems value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.motivosOperacion}"
+                                           var="listaMotivos" itemLabel="#{listaMotivos.descripcion}"
+                                           itemValue="#{listaMotivos.idMotivo}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <p:spacer width="1" height="15"/>
+                    
+                    <p:outputLabel value="#{msj['label.observaciones.asignada']}" style="font-weight:bold;"/>
+                    <p:outputLabel value=":"/>
+                    <p:outputLabel value=" *" style="color:red;"/>
+                    
+                    <h:panelGrid columns="1" width="310">
+                       <p:inputTextarea id="txtCausaRechazo" style="width:100%;height:70px;"
+                                        value="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.observaciones}"
+                                        maxlength="400" process="@this" />
+                    </h:panelGrid>
+
+                    <p:spacer width="1" height="15"/>
+                    <h:panelGrid id="panelBotonesRechazar" columns="2" layout="block" style="margin:auto">
+                        <p:commandButton id="btnRechazarInsumo" value="#{msj['label.confirm.aceptar']}"
+                                         action="#{consultarPropuestasAsignadasManagedBean.validarRechazoPropuesta}" styleClass="ui-confirmdialog-yes"
+                                         style="float:right;" ajax="true" update=":formPropuestas @form"
+                                         oncomplete="ocultaMsgAgace('msgExitoGuardar');" partialSubmit="true"/>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}"
+                                         styleClass="ui-confirmdialog-no" style="float:right;"
+                                         action="#{consultarPropuestasAsignadasManagedBean.regresaDetalle}"
+                                         update=":formPropuestas @form"/>
+                    </h:panelGrid>
+                    <p:remoteCommand update="panelRechazoPropuesta" name="pageRefresh"/>
+   
+</ui:composition>

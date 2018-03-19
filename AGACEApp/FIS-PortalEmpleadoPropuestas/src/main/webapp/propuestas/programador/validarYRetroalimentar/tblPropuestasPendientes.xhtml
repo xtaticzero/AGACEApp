@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:fieldset id="propuestasPendiente" widgetVar="propuestasPendiente" legend="#{msj['titulo.fielset.propuesta.pendientes']}" style="margin-bottom:20px" toggleable="true" toggleSpeed="500" collapsed="true">
+        <p:ajax event="toggle" listener="#{validarRetroMB.propuestasPendientesToggle}" update="propuetasPendientesTbl pnlGridBotonesPendiente " oncomplete="ocultaMsgAgace('msgs');"/>
+        <h:panelGrid columns="2" cellpadding="5">
+            <p:dataTable id="propuetasPendientesTbl" var="propPV" value="#{validarRetroMB.retroalimentarLstHelper.listaPropuestasPendientes}" 
+                         rowKey="#{propPV.idPropuesta}"
+                         emptyMessage="#{msj['label.lista.vacia']}" 
+                         paginator="true"
+                         rows="5"
+                		selection="#{validarRetroMB.retroalimentarLstHelper.listaPropuestaPendienteSeleccionada}"                                  
+                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}  {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom">
+                         
+                <p:ajax event="rowSelectCheckbox" listener="#{validarRetroMB.actualizarBotonesValidar}" 
+                           			update=":formValidaRetroalimentarPropuesta:pnlGridBotones :formValidaRetroalimentarPropuesta:propuetasPorValidarTbl @form"/>
+
+                <p:ajax event="rowUnselectCheckbox" listener="#{validarRetroMB.actualizarBotonesSinSeleccionValidar}" 
+                           			update=":formValidaRetroalimentarPropuesta:pnlGridBotones @form" />
+
+				<p:ajax event="toggleSelect" listener="#{validarRetroMB.headerToggleSelectValidar}" 
+									update=":formValidaRetroalimentarPropuesta:pnlGridBotones :formValidaRetroalimentarPropuesta:propuetasPorValidarTbl @form" />
+
+                           			                           			         
+                <p:column selectionMode="multiple" style="text-align:center; width:7%" disabledSelection="{!propPV.esProcesable}"/>   
+
+                         
+                <p:column headerText="#{msj['column.propuestas.por.validar.folio']}" style="width:15%">
+                    <h:outputText value="#{propPV.idRegistro}" />
+                </p:column>
+                <p:column headerText="#{msj['column.propuestas.por.validar.rfc']}" styleClass="someClass"
+                          style="width:15%">
+
+                    <p:commandLink action="#{validarRetroMB.verDetallePendientes}" process="@this" update=":formValidaRetroalimentarPropuesta ">
+                        <h:outputText value="#{propPV.fecetContribuyente.rfc}" style="color:blue"/>
+                        <f:setPropertyActionListener value="#{propPV}" 
+                                                     target="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada}"/>
+                    </p:commandLink>
+                    
+                </p:column>
+                <p:column headerText="#{msj['column.propuestas.por.validar.prioridad']}" style="width:10%;">
+                       <div align="center">
+                        <h:outputText value="#{propPV.prioridadSugerida}"/>
+                    </div>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.metodo']}" style="width:10%;">
+                    <div align="center">
+                        <h:outputText value="#{propPV.feceaMetodo.abreviatura}"/>
+                    </div>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.subprograma']}" style="width:15%;text-align: center;">
+                    <h:outputText value="#{propPV.fececSubprograma.clave} #{propPV.fececSubprograma.descripcion}"/>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.unidad.admin.atencion']}" style="width:20%">
+                    <h:outputText value="#{propPV.fececArace.nombre}"/>
+                </p:column>
+
+                <p:column headerText="#{msj['column.propuestas.por.validar.presuntiva']}" style="width:20%;text-align: right;">
+                    <h:outputText value="#{propPV.presuntiva}">
+                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                    </h:outputText>
+                </p:column>                 
+            </p:dataTable>
+        </h:panelGrid>
+        
+        <h:panelGrid id="pnlGridBotonesPendiente" columns="5" style="width:100%">
+        	<p:spacer width="120px" height="20px"/>
+        	<p:spacer width="120px" height="20px"/>
+        	<p:spacer width="120px" height="20px"/>
+	        <p:commandButton value="#{msj['btn.prpuestas.validar.retro.aprobar']}" disabled="#{!validarRetroMB.esProcesable}" onclick="PF('dlgAprobar').show();" oncomplete="ocultaMsgAgace('msgs');"/>
+        	<p:commandButton  value="#{msj['btn.prpuestas.validar.retro.rechazar']}" disabled="#{!validarRetroMB.esProcesable}" onclick="PF('dlgConfirmRechazar').show();" oncomplete="ocultaMsgAgace('msgs');"/>
+        </h:panelGrid>
+        
+    </p:fieldset>            
+</f:view>

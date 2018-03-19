@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+    <p:column>
+        <p:outputLabel value="#{msj['label.numero.orden']}" style="font-weight:bold;"/>
+        <br/>
+        <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.numeroOrden}"/>
+        <br/>
+        <br/>
+        <p:outputLabel value="#{msj['label.id.registro']}" style="font-weight:bold;"/>
+        <br/>
+        <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.idRegistroPropuesta}"/>
+        <br/>
+    </p:column>
+    <p:column>
+        <p:outputLabel value="#{msj['label.metodo']}" style="font-weight:bold;"/>
+        <br/>
+        <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.feceaMetodo.nombre}"/>
+        <br/>
+        <br/>
+        <p:outputLabel value="#{msj['label.plazo.concluir.revision.dias']}" style="font-weight:bold;"/>
+        <br/>
+        <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.descripcionPlazoRestante}"/>
+        <br/>
+    </p:column>
+    <p:column>
+        <p:outputLabel value="#{msj['label.rfc.contribuyente']}" style="font-weight:bold;"/>
+        <br/>
+        <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.fecetContribuyente.rfc}"/>
+        <br/>
+        <br/>
+        <p:outputLabel value="#{msj['label.nombre.contribuyente']}" style="font-weight:bold;"/>
+        <br/>
+        <div style="width:370px">
+            <p:outputLabel style="height:auto;" id="txtNombre"
+                           value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.fecetContribuyente.nombre}"/>
+        </div>
+    </p:column>
+</f:view>

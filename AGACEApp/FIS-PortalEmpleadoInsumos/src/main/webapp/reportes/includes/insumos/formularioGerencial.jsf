@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+                
+            <h:panelGrid rendered="#{reporteInsumosMB.reporteDTOHelper.mostrarFormulario}" id="divFormularioGerencialId" columns="2" border="0" cellpadding="4" cellspacing="4">
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.periodo']}: "/> <h:outputText value=" *" style="color:red"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:calendar id="fechaPeriodoInicioId" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="8" 
+                                    maxdate="#{reporteInsumosMB.reporteDTOHelper.fechaActual}" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.fechaInicioPeriodo}" navigator="true">
+                                <p:ajax event="dateSelect" update=":formReportes:fechaPeriodoFinId" listener="#{reporteInsumosMB.handleDateSelectFechaInicio}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+                            </p:calendar>
+                            <h:outputText value=" "/>
+                            <p:calendar disabled="#{reporteInsumosMB.reporteDTOHelper.habilitarFechaPeriodoFin}" id="fechaPeriodoFinId" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true"
+                                    size="8" mindate="#{reporteInsumosMB.reporteDTOHelper.reportesVO.fechaInicioPeriodo}" maxdate="#{reporteInsumosMB.reporteDTOHelper.fechaMinima}"
+                                    value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.fechaFinPeriodo}" navigator="true"/>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.rfc']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:inputText id="txtRFC" maxlength="13" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.rfc}" onkeypress="if(event.keyCode==13){return false;}"></p:inputText>
+                        </h:panelGroup>
+                       
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.entidad']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu id="entidadId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.entidad}" style="width:170px;">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaEntidadInsumos}" var="lista" itemLabel="#{lista.catalogoNombre}" itemValue="#{lista.catalogoNombre}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.estatus']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu style="width:350px;" id="estatusId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.estatusId}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaEstatusInsumos}" var="lista" itemLabel="#{lista.descripcion}" itemValue="#{lista.idEstatus}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.subprograma']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu style="width:350px;" id="subprogramaId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.subprogramaId}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaSubprograma}" var="lista" itemLabel="#{lista.descripcion}" itemValue="#{lista.idSubprograma}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.sector']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu id="sectorId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.sectorId}" style="width:350px;">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaSector}" var="lista" itemLabel="#{lista.descripcion}" itemValue="#{lista.idSector}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.actividad']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu style="width:350px;" id="actividadId" value="#{reporteInsumosMB.reporteDTOHelper.reportesVO.actividad}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteInsumosMB.reporteLstHelper.listaActividad}" var="lista" itemLabel="#{lista.descripcion}" itemValue="#{lista.descripcion}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                       
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup>
+                            <p:commandButton ajax="true" update=":formReportes"  value="#{msj['lbl.reporte.columna.btnGenerarReporte']}" action="#{reporteInsumosMB.generarReporteGerencial}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
+
+</ui:composition>

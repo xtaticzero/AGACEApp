@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"> 
+    <p:dialog id="confirmRetroalimentacionDetalle" header="#{msj['label.titulo.retroalimentar.propuesta']}" widgetVar="dlgConfirmRetroalimentacionDetalle" closable="false" modal="true" resizable="false">
+
+
+        <p:panel id="panelDetalleRetro" style="width: 550px !important">
+            <p:messages id="msgsArchivosRetro" showDetail="false" autoUpdate="true" globalOnly="true" sticky="false" closable="true"/>
+            <h:panelGrid border="0" columns="2" style="width: 500px !important">
+                <h:panelGroup style="width: 50% !important">
+                    <p:outputLabel value="Fecha de atención de Retroalimentacón:"
+                                   style="float:left;font-weight:bold"/>
+                    <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.fechaRegistro}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </h:panelGroup>
+                <h:panelGroup style="width: 50% !important">
+                    <p:outputLabel value="#{validarRetroMB.validarYRetroalimentarHelper.propuestasXValidarSeleccionada.idRegistro}"
+                                   style="float:right;font-weight:bold"/>
+                    <p:outputLabel value="Id de Registro: "
+                                   style="float:right;font-weight:bold;"/>
+                </h:panelGroup>            
+            </h:panelGrid>
+
+            <h:panelGrid columns="1" style="width:100% !important;" border="0">
+
+                <p:fileUpload fileUploadListener="#{validarRetroMB.fileDocRetroUpload}" mode="advanced"
+                              update="tblArchivosRetro btnAceptarRetro :formValidaRetroalimentarPropuesta:msgsArchivosRetro" 
+                              auto="true" 
+                              sizeLimit="4194304" 
+                              allowTypes="/(\.|\/)(docx|xlsx|pdf)$/" 
+                              cancelLabel="#{msj['btn.file.upload.cancelar']}"
+                              uploadLabel="#{msj['btn.file.upload.cargaarchivo']}"
+                              invalidFileMessage="#{msj['file.upload.archivo.invalido']}"
+                              invalidSizeMessage="#{msj['file.upload.archivo.grande']}"
+                              label="#{msj['btn.examinar']}"
+                              oncomplete="ocultaMsgAgace('msgsArchivosRetro');"/>
+            </h:panelGrid>
+
+            <h:panelGrid style="width:100% !important;text-align: center !important;" border="0">
+                <p:dataTable id="tblArchivosRetro" 
+                             var="docRetro" 
+                             value="#{validarRetroMB.retroalimentarLstHelper.lstDocRetroalimentacion}" 
+                             style="width: 100% !important;"
+                             emptyMessage="#{msj['label.lista.vacia']}"
+                             paginator="true"
+                             rows="5"
+                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}  {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                             paginatorPosition="bottom">
+                    <f:facet name="header">
+                        <p:outputLabel value="Documento de Retroalimentación"/>
+                    </f:facet>
+                    <p:column headerText="Fecha y Hora" style="width:20%;">
+                        <h:outputText value="#{docRetro.fechaCreacion}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mma" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Documento" style="width:60%;">
+                        <p:commandLink id="downloadArchivoRechazo" 
+                                       action="#{validarRetroMB.obtenerArchivoRechazo}"
+                                       process="@this"
+                                       immediate="true"
+                                       ajax="false">
+                            <h:outputText value="#{docRetro.nombreArchivo}" style="color:blue"/>
+                            <f:setPropertyActionListener value="#{docRetro.archivo}" 
+                                                         target="#{validarRetroMB.validarYRetroalimentarHelper.archivoDescargableIS}"/>
+                            <f:setPropertyActionListener value="#{docRetro.nombreArchivo}" 
+                                                         target="#{validarRetroMB.validarYRetroalimentarHelper.nombreArchivoDescarga}"/>
+                            <p:fileDownload value="#{validarRetroMB.documento}" />
+                        </p:commandLink>
+                    </p:column>
+                    <p:column style="width:20%;text-align: center">
+                        <p:commandLink action="#{validarRetroMB.eliminarArchivoRetroalimentacion}" 
+                                       process="@this" 
+                                       update=":formValidaRetroalimentarPropuesta:panelDetalleRetro ">
+                            <h:outputText value="Eliminar" style="color:blue"/>
+                            <f:setPropertyActionListener value="#{docRetro}" 
+                                                         target="#{validarRetroMB.validarYRetroalimentarHelper.docRetroSeleccionado}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGrid>
+           
+            <p:scrollPanel mode="native" style="width:450px;height:130px" border="0">
+                <h:panelGrid columns="1" style="width:100% !important;text-align: center !important;" border="0">
+                    <h:panelGrid columns="1" style="width:100% !important;text-align: left !important;" border="0">
+                        <h:panelGroup>
+                            <p:outputLabel value=" * "
+                                           style="color:red;font-weight:bold"/>
+                            <p:outputLabel value="Observaciones"
+                                       style="float:left;font-weight:bold"/>    
+                        </h:panelGroup>
+                        
+
+                        <h:panelGroup style="width: 100%!important; text-align: center !important;">
+                            <p:inputTextarea value="#{validarRetroMB.validarYRetroalimentarHelper.retroalimentacion.descripcion}" rows="5" cols="17" 
+                                             style="width: 340px !important;"
+                                             styleClass="max"
+                                             maxlength="400">
+                                <p:ajax event="blur" 
+                                        listener="#{validarRetroMB.habiltarPendiente}" 
+                                        update="formValidaRetroalimentarPropuesta:panelDetalleRetro :formValidaRetroalimentarPropuesta:msgs"/>
+                            </p:inputTextarea>   
+                        </h:panelGroup>
+                    </h:panelGrid>                    
+                </h:panelGrid>    
+            </p:scrollPanel>
+
+            <h:panelGrid style="width:100% !important;text-align: center !important;">
+                <h:panelGroup style="text-align: center !important; width: 100%;">            
+                                   <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.aceptar']}" disabled="#{!validarRetroMB.habiltarRetroalimentacion}" oncomplete="PF('dlgConfirmRetroAviso').show();PF('dlgConfirmRetroalimentacionDetalle').hide();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update=":formValidaRetroalimentarPropuesta:confirmRetroAviso :formValidaRetroalimentarPropuesta:confirmRetroalimentacionDetalle"/>
+                                   <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.cancelar']}"
+                                     actionListener="#{validarRetroMB.cancelarRetroalimentacionPropuesta}"
+                                     onclick="PF('dlgConfirmRetroalimentacionDetalle').hide();" 
+                                     styleClass="ui-confirmdialog-no" 
+                                     icon="ui-icon-close" 
+                                     update=":formValidaRetroalimentarPropuesta "
+                                     />
+                </h:panelGroup>  
+            </h:panelGrid>                       
+        </p:panel>
+    </p:dialog>
+</f:view>

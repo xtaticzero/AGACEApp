@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"> 
+    <p:dialog id="dlgAprobarPropuestaXValidar" header="#{msj['label.prpuestas.validar.retro.detalle.dialog.aprobar.heder']}" widgetVar="dlgAprobar" closable="false" modal="true" resizable="false">
+
+        <h:panelGrid columns="1" style="width:100% !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">
+                <p:outputLabel value="Fecha validacion:"/>
+                <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.fechaRegistro}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                </h:outputText>
+            </h:panelGroup>
+        </h:panelGrid>
+
+        <h:panelGrid style="width:100% !important;">
+            <h:outputText 
+                value="#{validarRetroMB.msjConfirmacionAprobar}" />
+           <ui:repeat var="propSeleccionada" value="#{validarRetroMB.retroalimentarLstHelper.listaPropuestaXValidarSeleccionada}">
+                			#{propSeleccionada.idRegistro}
+                			<br/>
+            </ui:repeat>
+        </h:panelGrid>
+
+        <h:panelGrid style="width:100% !important;text-align: center !important;">
+            <h:panelGroup style="text-align: center !important; width: 100%;">            
+                <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.aceptar']}" actionListener="#{validarRetroMB.aprobarPropuesta}" onsuccess="PF('dlgAprobar').hide();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update=":formValidaRetroalimentarPropuesta  " oncomplete="ocultaMsgAgace('msgs');"/>
+                <p:commandButton value="#{msj['btn.prpuestas.validar.confirm.cancelar']}" onclick="PF('dlgAprobar').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </h:panelGroup>  
+        </h:panelGrid>
+
+    </p:dialog>
+</f:view>

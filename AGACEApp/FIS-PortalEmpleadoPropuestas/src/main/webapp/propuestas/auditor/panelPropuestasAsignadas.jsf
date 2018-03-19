@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+   
+   <p:dataTable id="tablaPropuestasAnalizar" var="propuestas" widgetVar="tablaPropuestaFiltro"
+                      value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaPropuestasPorAnalizar}"
+                      editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                      paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                        currentPageReportTemplate="({currentPage} de {totalPages})"
+                      paginatorPosition="bottom" rowKey="#{propuestas.idPropuesta}"
+                      selection="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar}">
+            <p:column headerText="#{msj['column.detalle']}" style="width:30px;border-collapse:collapse;">
+                  <p:rowToggler />
+            </p:column>
+            <p:column id="colRegistro" headerText="#{msj['column.asignadas.registro']}" style="text-align: center;width:70px" filterBy="#{propuestas.idRegistro}" filterMatchMode="contains"
+                      >
+               <h:outputText value="#{propuestas.idRegistro}" />
+            </p:column>
+            <p:column id="colRfcContribu" headerText="#{msj['column.asignadas.rfc']}" style="text-align: center;width:80px" filterBy="#{propuestas.fecetContribuyente.rfc}" filterMatchMode="contains"
+                      >
+               <p:commandLink value="#{propuestas.fecetContribuyente.rfc}"
+                              action="#{consultarPropuestasAsignadasManagedBean.enviaDetalleAnalizar}"
+                              ajax="true" update=":formPropuesta @form" style="color:blue;" immediate="true">
+                  <f:setPropertyActionListener value="#{propuestas}" target="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.propuestaSelAnalizar}"/>
+               </p:commandLink>
+            </p:column>
+            <p:column id="colPrioridad" headerText="#{msj['column.asignadas.prioridad']}" style="width:50px; text-align: center;" filterBy="#{propuestas.prioridadSugerida}" filterMatchMode="contains">
+               <h:outputText value="#{propuestas.prioridadSugerida}"/>
+            </p:column>
+            <p:column id="colMetodo" headerText="#{msj['column.asignadas.metodo']}" style="text-align: center;width:50px" filterBy="#{propuestas.feceaMetodo.abreviatura}" filterMatchMode="contains">
+               <h:outputText value="#{propuestas.feceaMetodo.abreviatura}" />
+            </p:column>
+            <p:column id="colPresuntiva" headerText="#{msj['column.asignadas.presuntiva']}" style="text-align: center;width:90px" >
+               <h:outputText value="#{propuestas.presuntiva}">
+                  <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+               </h:outputText>
+            </p:column>
+            <p:column id="colTipoPropuesta" headerText="Tipo de Propuesta" style="text-align: center;width:70px" >
+               <h:outputText value="#{propuestas.fececTipoPropuesta.descripcion}"/>
+            </p:column>
+            <p:column id="colPeriodoIni" headerText="Inicio" style="text-align: center;width:70px" filterBy="#{propuestas.fechaInicioPeriodo}" 
+                      filterFunction="#{consultarPropuestasAsignadasManagedBean.filtraFecha}">
+               <h:outputText value="#{propuestas.fechaInicioPeriodo}">
+                  <f:convertDateTime pattern="dd/MM/yy"/>
+               </h:outputText>
+            </p:column>
+            <p:column id="colPeriodoFin" headerText="Fin" style="text-align: center;width:70px" filterBy="#{propuestas.fechaFinPeriodo}" 
+                      filterFunction="#{consultarPropuestasAsignadasManagedBean.filtraFecha}">
+               <h:outputText value="#{propuestas.fechaFinPeriodo}">
+                  <f:convertDateTime pattern="dd/MM/yy"/>
+               </h:outputText>
+            </p:column>
+            
+            
+            
+            <p:column id="colFechaCom" headerText="#{msj['column.fecha.comite']}" filterBy="#{propuestas.tipoComite}"  filterMatchMode="exact"  style="text-align:center;width:180px" >
+ 
+ 				<f:facet name="filter">
+         			<p:selectOneMenu onchange="PF('tablaPropuestaFiltro').filter()" style="width:160px;">
+                    	<f:selectItem id="tipoFechaComite"
+                        	itemLabel="#{msj['combo.item.selecciona.tipo.fecha']}" itemValue="#{null}"/>                                                       
+                        <f:selectItems value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.listaFechasComiteEnum}"
+                        		var="fechaComite" itemLabel="#{fechaComite.descripcion}" itemValue="#{fechaComite}"/>
+                       	</p:selectOneMenu>
+               	</f:facet>
+ 
+               <h:outputText value="#{propuestas.fechaPresentacion != null ? propuestas.fechaPresentacion : propuestas.fechaInforme}">
+                   <f:convertDateTime pattern="dd/MM/yy"/>
+               </h:outputText>
+            </p:column>
+            
+            <p:rowExpansion>
+               <h:outputText value="#{msj['detalle.columna.sector']} : " />
+               <h:outputText value="#{propuestas.fececSector.descripcion}" />
+               <br/>
+               <h:outputText value="#{msj['column.asignadas.estatus']} : " />
+               <h:outputText value="#{propuestas.fececEstatus.descripcion}" />
+               <br/>
+               <h:outputText value="#{msj['detalle.columna.no.aprobada']} " />
+               <h:outputText value="#{propuestas.empleadoDto.nombre}" />
+            </p:rowExpansion>
+   </p:dataTable>
+      <h:panelGrid>
+         <p:commandButton value="#{msj['btn.pantalla.anterior']}" style="width:120px;" action="indexAsignadas?faces-redirect=true"/>
+      </h:panelGrid>
+</ui:composition>

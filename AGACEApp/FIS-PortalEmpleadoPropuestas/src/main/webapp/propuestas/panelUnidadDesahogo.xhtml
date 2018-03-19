@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel styleClass="panel-subinterno-propuestas" 
+             header="Propuestas Asignadas"
+             id="panelXUnidadAdmin" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarUnidadesDesahogo || consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarOpciones || consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarComboPerfiles}">
+        <p:panelGrid styleClass="noBorders" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarUnidadesDesahogo}">
+            <p:row>
+                <p:column style="text-align: right;" width="50%">
+                    <p:selectOneMenu id="comboUnidadesDesahogo" 
+                                     value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.idUnidadAdminSeleccionada}">
+                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.seleccione']}" itemValue="#{null}" />
+                        <f:selectItems value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.lstUnidadesAdministrativasDesahogo}"                                                  
+                                       var="unidadAdmin" 
+                                       itemValue="#{unidadAdmin.idArace}" itemLabel="#{unidadAdmin.nombre}"/>
+                        <p:ajax event="change" process="@form"/>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column style="text-align: left;" width="50%">
+                    <p:commandButton id="consultarXUnidadAdminSeleccionada"
+                    				 value="Consultar" 
+                                     action="#{consultaAdminPropuestasMB.consultarXUnidadAdminSeleccionada}" 
+                                     immediate="true"
+                                     update=":formConsultaEjecutivaPropuestas :formConsultaEjecutivaPropuestas:panelXGrupoEstatus"/>
+                </p:column>                
+            </p:row>
+        </p:panelGrid>
+        <p:panelGrid styleClass="noBorders" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarOpciones}">        	
+            <p:row>
+                <p:column style="text-align: right;" width="50%">
+                    <p:selectOneMenu id="comboUnidadesOpciones" 
+                                     value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.idOpcion}">
+                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.seleccione.tipo.consulta']}" itemValue="#{null}" />
+                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.programacion']}" itemValue="1" />
+                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.operacion']}" itemValue="2" />
+                        <p:ajax event="change" process="@form"/>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column style="text-align: left;" width="50%">
+                    <p:commandButton id="consultarXUnidadAdminSeleccionadaOpciones"
+                    				 value="Consultar" 
+                                     action="#{consultaAdminPropuestasMB.consultarXUnidadAdminSeleccionada}" 
+                                     immediate="true"
+                                     update=":formConsultaEjecutivaPropuestas :formConsultaEjecutivaPropuestas:panelXGrupoEstatus"/>
+                </p:column>                
+            </p:row>
+        </p:panelGrid>
+        <p:panelGrid styleClass="noBorders" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarComboPerfiles}">
+            <p:row>
+                <p:column style="text-align: right;" width="50%">
+                    <p:selectOneMenu id="comboPerfiles" 
+                                     value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.tipoRolSeleccionado}">
+                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.seleccione.tipo.rol']}" itemValue="#{null}" />
+                        <f:selectItems value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.lstRolesEmpleado}"                                                  
+                                       var="rol" 
+                                       itemValue="#{rol}" itemLabel="#{rol.descripcion}"/>
+                        <p:ajax event="change" process="@form"/>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column style="text-align: left;" width="50%">
+                    <p:commandButton id="consultarXUnidadAdminSeleccionadaRol"
+                    				 value="Consultar" 
+                                     action="#{consultaAdminPropuestasMB.consultarXUnidadAdminSeleccionada}" 
+                                     immediate="true"
+                                     update=":formConsultaEjecutivaPropuestas :formConsultaEjecutivaPropuestas:panelXGrupoEstatus"/>
+                </p:column>                
+            </p:row>
+        </p:panelGrid>
+    </p:panel>            
+</f:view>

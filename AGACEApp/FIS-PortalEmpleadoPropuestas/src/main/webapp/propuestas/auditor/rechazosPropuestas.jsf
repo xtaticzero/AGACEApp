@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+           <title>AGACE</title>
+            <style type="text/css">
+               .ui-selectonemenu-panel
+               {
+                   max-width:58% !important;
+               }
+            </style>
+        </h:head>
+        <h:body>
+                    <h:form id="formPropuestasRechazadas" styleClass="panel-principal">
+                         <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                         <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                                   closable="false" resizable="false">
+                                <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                         </p:dialog>
+                         
+                         <p:panel id="panelRechazoPropuestas" styleClass="panel-interno" style="width:1200px;" header="#{msj['label.propuestas.rechazadas']}">
+                             <h:panelGrid id="panelBusquedaPropuestasRechazadas" border="0" columns="7" width="100%">
+                                <p:spacer width="50" height="1" />
+                                <p:outputLabel value="#{msj['label.rfc']}: " style="float:left;font-weight:bold;" />
+                                <h:inputText id="RFC" value ="#{rechazoPropuestaManagedBean.rfc}" style="width:150px;"  maxlength="15"/>
+                                
+                                <p:outputLabel value="#{msj['label.entidad']}: " style="float:left;font-weight:bold"  rendered="#{rechazoPropuestaManagedBean.mostrarComboEntidad}" />
+                                <p:selectOneMenu id="cmbEntidad" value="#{rechazoPropuestaManagedBean.idEntidad}" style="width:150px;" rendered="#{rechazoPropuestaManagedBean.mostrarComboEntidad}">
+                                    <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1"/>
+                                    <f:selectItems value="#{rechazoPropuestaManagedBean.listaEntidades}" var="listaEntidad"
+                                                style="font:red;" itemLabel="#{listaEntidad}" itemValue="#{listaEntidad}"/>                    
+                                </p:selectOneMenu>
+                                <p:spacer width="50" height="1" rendered="#{rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+                                <p:spacer width="50" height="1" rendered="#{rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+                                <p:spacer width="50" height="1" rendered="#{rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+                                
+                                <p:outputLabel value="#{msj['label.actividad.preponderante']}: " style="float:left;font-weight:bold;width:100px"  />
+                                <p:selectOneMenu id="cmbActividadPreponderante" value="#{rechazoPropuestaManagedBean.idActividadPreponderante}" style="width:150px;" >
+                                <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1"/>
+                                <f:selectItems value="#{rechazoPropuestaManagedBean.listaFececActividadPreponderante}" var="lista"
+                                                style="font:red;" itemLabel="#{lista.descripcion}" itemValue="#{lista.descripcion}"/>                    
+                                </p:selectOneMenu>
+
+                                <p:spacer width="50" height="1" rendered="#{!rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+                                <p:spacer width="50" height="1" rendered="#{!rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+                                <p:spacer width="50" height="1" rendered="#{!rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+
+                                
+                                <p:outputLabel value="#{msj['label.estatus']}: " style="float:left;font-weight:bold"/>
+                                <p:selectOneMenu id="cmbEstatus" value="#{rechazoPropuestaManagedBean.idEstatus}"
+                                                 style="width:150px;">
+                                    <f:selectItem itemLabel="#{msj['combo.item.seleccione']}" itemValue="-1"/>
+                                    <f:selectItems value="#{rechazoPropuestaManagedBean.listaFececEstatus}" var="listaEstatus"
+                                                   style="font:red;" itemLabel="#{listaEstatus.descripcion}" itemValue="#{listaEstatus.idEstatus}"/>                    
+                                </p:selectOneMenu>                     
+                                <p:spacer width="50" height="1" rendered="#{!rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+                                <p:spacer width="50" height="1" rendered="#{!rechazoPropuestaManagedBean.mostrarComboEntidad}"/>
+
+
+                                
+                                <p:commandButton value="#{msj['btn.buscar']}" styleClass="ui-confirmdialog-no" style="float:right;"
+                                                            actionListener="#{rechazoPropuestaManagedBean.buscarRechazos}" update="formPropuestasRechazadas" />
+                             </h:panelGrid>
+                             <br/>
+                             <br/>
+                             <h:panelGrid id="panelTablaPropuestasRechazadas" width="100%">
+                             
+                             <p:dataTable var="listaRechazos" value="#{rechazoPropuestaManagedBean.listaRechazosPropuesta}"  editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                            rows="12" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" >
+                                    
+                                    <p:column headerText="#{msj['column.folio']}" style="width:80px;">
+                                        <h:outputText value="#{listaRechazos.idRegistro}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.rfc']}" >
+                                        <h:outputText value="#{listaRechazos.rfc}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['column.nombre.razon.social']}" >
+                                        <h:outputText value="#{listaRechazos.nombre}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.estatus']}" >
+                                        <h:outputText value="#{listaRechazos.estatus}" />                                        
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.regimen']}" >
+                                        <h:outputText value="#{listaRechazos.regimen}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.subprograma']}" >
+                                        <h:outputText value="#{listaRechazos.subprograma}" />
+                                    </p:column>
+           
+                                    <p:column headerText="#{msj['label.entidad']}">
+                                        <h:outputText value="#{listaRechazos.entidad}"/>
+                                    </p:column>
+
+                                    <p:column headerText="#{msj['label.tipo.contribuyente']}">
+                                        <h:outputText value="#{listaRechazos.tipoContribuyente}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="#{msj['label.actividad.preponderante']}">
+                                        <h:outputText value="#{listaRechazos.actividadPreponderante}"/>
+                                    </p:column>    
+
+                                    <p:column headerText="#{msj['label.fecha.inf.comite']}">
+                                         <h:outputText value="#{listaRechazos.fechaInforme}" >                                    
+                                            <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                                         </h:outputText>
+                                    </p:column>   
+
+                                    <p:column headerText="#{msj['label.programador.subadministrador']}">
+                                         <h:outputText value="#{listaRechazos.rfcCreacion}"/>
+                                    </p:column>
+                                                
+                                    <p:column headerText="#{msj['label.causa.motivo']}">
+                                         <h:outputText value="#{listaRechazos.causaMotivo}"/>
+                                    </p:column>
+                                </p:dataTable>
+                             </h:panelGrid>
+
+                               <h:panelGrid id="panelBotonesRechazo" columns="2" width="100%">
+                            
+                                <p:commandButton value="#{msj['btn.exportar']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s"
+                                                styleClass="ui-confirmdialog-no" style="float:right;width:80px;" disabled="#{rechazoPropuestaManagedBean.mostrarExportar}">
+                                    <p:fileDownload value="#{rechazoPropuestaManagedBean.xlsReporte}"/>
+                                </p:commandButton>
+                                                                                    
+                                <p:commandButton value="#{msj['btn.limpiar']}" styleClass="ui-confirmdialog-no" style="float:left;width:80px;"
+                                                            actionListener="#{rechazoPropuestaManagedBean.limpiarRechazos}" update="formPropuestasRechazadas" process="@this"/>
+                            </h:panelGrid>      
+                         </p:panel>
+                   </h:form>             
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view> 

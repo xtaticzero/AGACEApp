@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui"
+          xmlns:ui="http://java.sun.com/jsf/facelets">
+        <h:head>
+        	<f:metadata>
+            <f:event type="preRenderView" listener="#{firmadoCadenasOriginalesMB.cargarOrdenesFirmar}"/>
+        </f:metadata>
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="formFirmarOrdenes">
+                <p:ajaxStatus onstart="PF('statusDialogFirmar').show();" onsuccess="PF('statusDialogFirmar').hide();"/>
+                <p:dialog modal="true" 
+                          header="#{msj['titulo.panel.espere']}" 
+                          draggable="false" 
+                          closable="false"
+                          resizable="false" 
+                          widgetVar="statusDialogFirmar">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                
+                <p:messages id="msgExitoGuardarFirmar" showDetail="false" globalOnly="true" closable="true" /> 
+                <p:panel id="panelFirmarOrdenes" 
+                         header="#{msj['titulo.panel.ordenes.firmar']}"
+                         style="width:845px">
+                    <p:dataTable currentPageReportTemplate="({currentPage} de {totalPages})" 
+                                 editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" 
+                                 id="tablaMetodos" 
+                                 paginator="true"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 rendered="true" 
+                                 value="#{firmadoCadenasOriginalesMB.listaOrdenesFirmar}" 
+                                 var="datos"
+                                 rowKey="#{datos.idOrden}" 
+                                 rows="20"
+                                 selection="#{firmaDocumentoElectronicoManagedBean.ordenesPorFirmar}">
+                        <p:column selectionMode="multiple" style="width:30px;"/>
+                        <p:column headerText="#{msj['label.encabezado.detalle']}" style="width:30px">
+                            <p:rowToggler/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.id.registro']}" >
+                        	<div align="center">#{datos.idRegistro}</div></p:column>
+                        <p:column headerText="#{msj['label.encabezado.auditor']}" >
+                        	<div align="center">#{datos.nombreAuditor}</div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.titulo.fecha.carga']}" style="width:80px;">
+                            <div align="center">
+                            	<h:outputText value="#{datos.fechaCarga}">
+	                                <f:convertDateTime pattern="dd/MM/yyyy" locale="es_MX" timeZone="America/Mexico_City"/>
+	                            </h:outputText>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.prioridad']}" style="width:50px;">
+                        	<div align="center">
+                            	<h:outputText value="#{datos.prioridadSugerida}"/>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.documentos']}" >
+                            <div align="center">
+	                            <h:commandButton ajax="true" 
+	                                             image="/resources/images/document.png"
+	                                             style="padding:0px 5px;" 
+	                                             action="#{firmadoCadenasOriginalesMB.cargaDocumentosOrden}" >
+	                                <f:setPropertyActionListener value="#{datos}" target="#{firmadoCadenasOriginalesMB.ordenDocParaDescarga}"/>
+	                            </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column style="width:50px;">
+                            <p:commandButton id="idFirmarButton" 
+                                             value="#{msj['label.firmar']}"                                              
+                                             action="#{firmaDocumentoElectronicoManagedBean.firmarOrdenes}" 
+                                             update=":formFirmarOrdenes:msgExitoGuardarFirmar">
+                            </p:commandButton>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" style="width:400px;"
+                                         styleClass=" ui-widget-content grid;ui-widget-header">
+                                <h:outputText value="#{msj['label.rfc.contribuyente']}"
+                                              style="font-weight:bold;bgcolor:blue;"/>
+                                <h:outputText value="#{datos.rfcContribuyente}"/>
+                                <h:outputText value="#{msj['label.nombre.contribuyente']}"/>
+                                <h:outputText value="#{datos.nombreContribuyente}"/>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <br />
+                    <br />
+                    <br />
+                    <p:outputLabel value="Ordenes Firmadas" />
+                    <p:separator/>
+                    <p:dataTable editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" 
+                                 id="tablaOrdenesFirmadas" 
+                                 paginator="true"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 rendered="true" 
+                                 value="#{firmadoCadenasOriginalesMB.ordenesFirmadas}" 
+                                 var="datos"
+                                 rowKey="#{datos.idOrden}" 
+                                 rows="20" >
+                        <p:column headerText="#{msj['label.encabezado.detalle']}" style="width:6%;">
+                        	<p:rowToggler/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.orden.firmada.numero.orden']}" style="width:13%;">
+                            <div align="center"><p:outputLabel value="#{datos.numeroOrden}" /></div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.orden.firmada.numero.oficio']}" style="width:18%;">
+                            <div align="center"><p:outputLabel value="#{datos.numeroOficio}" /></div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.orden.firmada.folionyv']}" style="width:12.5%;" >
+                            <div align="center"><p:outputLabel value="#{datos.folioNyV}" /></div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.orden.firmada.fechaEmision']}" style="width:10%;" >
+                            <div align="center"><p:outputLabel value="#{datos.fechaEmision}" /></div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.orden.firmada.rfc.Contribuyente']}" style="width:12.5%;" >
+                            <div align="center"><p:outputLabel value="#{datos.rfcContribuyente}" /></div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.orden.firmada.nombre.auditor']}" style="width:14.5%;"  >
+                            <div align="center"><p:outputLabel value="#{datos.nombreAuditor}" /></div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.encabezado.orden.firmada.documento']}" style="width:10%;">
+                            <div align="center">
+	                            <h:commandButton ajax="true" 
+	                                             image="/resources/images/pdf.png"
+	                                             style="padding:0px 5px;" 
+												 action="#{firmadoCadenasOriginalesMB.cargaPdfsOrden}" >
+	                                <f:setPropertyActionListener value="#{datos}" target="#{firmadoCadenasOriginalesMB.ordenParaDescarga}"/>
+	                            </h:commandButton>
+                            </div>
+                        </p:column>
+                    	<p:rowExpansion>
+                    		<h:panelGrid id="display" columns="2" cellpadding="4"
+                                                 styleClass=" ui-widget-content grid" width="100%">
+	                            <h:outputText value="#{msj['label.encabezado.orden.firmada.nombre.contribuyente']}:"/>
+	                            <h:outputText value="#{datos.nombreContribuyente}"/>
+	                        </h:panelGrid>
+                    	</p:rowExpansion>
+                    </p:dataTable>
+                    
+                    
+                    
+                    <!-- Mensaje 5 -->                                   
+                    <p:dialog header="Firmar registros" widgetVar="firmarRegistros" resizable="false" modal="true" width="410">
+	                    <h:outputText value="#{msj['label.propuesta.firmar.registros']}"
+	                                  style="float:left;font-weight:bold;"/>
+	                    <br/>
+	                    <br/>
+	                    <div align="right">
+	                        <p:commandButton id="btnConfirmarRechazarRechazo" value="Aceptar"
+	                                         action="#{firmaDocumentoElectronicoManagedBean.firmarOrdenesSeleccionadas}" />                     
+	                        <p:spacer width="10" height="1"/>                        
+	                        <p:commandButton value="Cancelar" onclick="PF('firmarRegistros').hide();" />
+	                    </div>
+	                    <br/>
+	                </p:dialog>
+	                
+	                <br/>
+	                	<div style="text-align: center;">
+	                    	<p:commandButton value="#{msj['btn.pantalla.anterior']}" action="#{firmadoCadenasOriginalesMB.regresarPrincipal}"/>
+	                	</div>       
+                	<br/>
+                	
+                	<!-- dialogo para mostrar el documento de la orden y el oficio de preliquidacion -->
+	                <p:dialog id="dialogDocumentosOrdenFirma" 
+                              header="#{msj['label.titulo.dialogo.doctos.orden']}"
+                              widgetVar="dialogDocumentosOrdenFirma" 
+                              showEffect="clip" 
+                              modal="true" 
+                              resizable="false"
+                              hideEffect="clip"  
+                              width="510" >
+                                                
+                        <p:dataTable id="tablaDocumentacionOrden"
+							value="#{firmadoCadenasOriginalesMB.listaDocumentosOrden}" var="documentoOrden" 
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+	                        <f:facet name="header">
+								<h:outputLabel value="#{msj['label.propuestas.doctos.orden']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+								<h:outputText id="txtFechaCargaDoctoOrden" value="#{documentoOrden.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+								</h:outputText>
+							</p:column>
+							<p:column id="hdrNombreDocumentoOrden" headerText="#{msj['column.expediente']}">
+								<div style="width: 200px;margin:auto;">#{documentoOrden.nombreArchivo}</div>
+							</p:column>
+							<p:column headerText="#{msj['label.encabezado.documento']}" >
+								<div align="center">
+					            	<h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 5px;" >
+					                	<f:setPropertyActionListener value="#{documentoOrden}" target="#{firmadoCadenasOriginalesMB.docSeleccionado}"/>
+	                                	<p:fileDownload contentDisposition="attachment" value="#{firmadoCadenasOriginalesMB.archivoDocSeleccionDescarga}"/>
+					            	</h:commandButton>
+				            	</div>
+				            </p:column>
+						</p:dataTable>
+                        <br/>
+                        
+                        <p:dataTable id="tablaOficiosOrden"
+                        		value="#{firmadoCadenasOriginalesMB.oficiosPendientesDeFirmar}" var="oficioPendienteFirma" 
+                        		editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        	<f:facet name="header">
+								<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" >
+		                        <h:outputText value="#{oficioPendienteFirma.fechaCreacion}">
+		                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+		                        </h:outputText>
+		                    </p:column>
+		                    <p:column headerText="#{msj['column.label.oficio']}">
+		                                    #{oficioPendienteFirma.nombreArchivo}
+		                    </p:column>
+		                    <p:column headerText="#{msj['label.encabezado.documento']}" >
+		                    	<div align="center">
+			                    	<h:commandButton title="#{oficioPendienteFirma.nombreArchivo}" ajax="true"
+			                        		image="/resources/images/document.png" style="padding:0px 5px;">
+			                        	<f:setPropertyActionListener value="#{oficioPendienteFirma}" target="#{firmadoCadenasOriginalesMB.oficioSeleccionado}"/>
+			                            <p:fileDownload contentDisposition="attachment" value="#{firmadoCadenasOriginalesMB.archivoDescargaDocumentacion}"/>
+			                    	</h:commandButton>
+		                    	</div>
+		                    </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="#{msj['label.boton.cerrar']}" 
+                                         onclick="PF('dialogDocumentosOrden').hide();" 
+                                         icon="ui-icon-close" 
+                                         style="float:right" />
+                        
+                    </p:dialog>
+                    
+		<!--  dialogo dialogDocumentosFirmadosPdf -->
+		
+					<p:dialog id="dialogDocumentosFirmadosPdf" 
+                              header="#{msj['label.titulo.dialogo.doctos.orden']}"
+                              widgetVar="dialogDocumentosFirmadosPdf" 
+                              showEffect="clip" 
+                              modal="true" 
+                              resizable="false"
+                              hideEffect="clip"  
+                              width="510" >
+                                                
+                        <p:dataTable id="tablaDocumentacionOrdenPdf"
+							value="#{firmadoCadenasOriginalesMB.listaDocumentosPdfOrden}" var="documentoOrden" 
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+							paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+	                        <f:facet name="header">
+								<h:outputLabel value="#{msj['label.propuestas.doctos.orden']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+								<h:outputText id="txtFechaCargaDoctoOrden" value="#{documentoOrden.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+								</h:outputText>
+							</p:column>
+							<p:column id="hdrNombreDocumentoOrden" headerText="#{msj['column.expediente']}">
+								<div style="width: 200px;margin:auto;">#{documentoOrden.nombreArchivo}</div>
+							</p:column>
+							<p:column headerText="#{msj['label.encabezado.documento']}" >
+								<div align="center">
+					            	<h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 5px;" >
+					                	<f:setPropertyActionListener value="#{documentoOrden}" target="#{firmadoCadenasOriginalesMB.docSeleccionadoPdf}"/>
+	                                	<p:fileDownload contentDisposition="attachment" value="#{firmadoCadenasOriginalesMB.archivoSeleccionDescarga}"/>
+					            	</h:commandButton>
+				            	</div>
+				            </p:column>
+						</p:dataTable>
+                        <br/>
+                        
+                        <p:dataTable id="tablaOficiosOrdenPdf"
+                        		value="#{firmadoCadenasOriginalesMB.oficiosFirmadosOrden}" var="oficioPendienteFirma" 
+                        		editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        	<f:facet name="header">
+								<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" >
+		                        <h:outputText value="#{oficioPendienteFirma.fechaFirma}">
+		                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+		                        </h:outputText>
+		                    </p:column>
+		                    <p:column headerText="#{msj['column.label.oficio']}">
+		                                    #{oficioPendienteFirma.nombreArchivo}
+		                    </p:column>
+		                    <p:column headerText="#{msj['label.encabezado.documento']}" >
+		                    	<div align="center">
+			                    	<h:commandButton title="#{oficioPendienteFirma.nombreArchivo}" ajax="true"
+			                        		image="/resources/images/document.png" style="padding:0px 5px;">
+			                        	<f:setPropertyActionListener value="#{oficioPendienteFirma}" target="#{firmadoCadenasOriginalesMB.oficioSeleccionadoPdf}"/>
+			                            <p:fileDownload contentDisposition="attachment" value="#{firmadoCadenasOriginalesMB.archivoDescargaPdfOficio}"/>
+			                    	</h:commandButton>
+		                    	</div>
+		                    </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="#{msj['label.boton.cerrar']}" 
+                                         onclick="PF('dialogDocumentosOrden').hide();" 
+                                         icon="ui-icon-close" 
+                                         style="float:right" />
+                        
+                    </p:dialog>
+                    
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

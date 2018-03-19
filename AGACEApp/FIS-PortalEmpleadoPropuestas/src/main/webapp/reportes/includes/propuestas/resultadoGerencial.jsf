@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <p:scrollPanel id="divResultadosId" rendered="#{reportePropuestasMB.reporteDTOHelper.mostrarResultados}" mode="native" style="border:0px;width:790px;height:550px;">
+        <table border="0" width="750px" cellpadding="2" cellspacing="2">
+            <tr>
+                <td width="85%" align="left"><h:outputLabel value="#{reportePropuestasMB.reporteDTOHelper.rangoFechasReporte}" style="font-weight:bold;font-size:12px;"/></td>
+                <td width="15%" align="right">
+                    <p:commandButton id="btnExcelId" value="#{msj['lbl.reporte.columna.exportar.excel']}" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
+                        <p:fileDownload value="#{reportePropuestasMB.archivoExcel}"/>
+                    </p:commandButton>
+                </td>
+            </tr>
+        </table>
+        <p:dataTable id="listaInsumos" var="res" value="#{reportePropuestasMB.reporteLstHelper.listaPropuestas}" paginator="true" rows="10" paginatorPosition="bottom" 
+                     paginatorAlwaysVisible="true" emptyMessage="#{msj['label.lista.vacia']}" 
+                     rowKey="#{res.registroId}" style="width:1476px;">
+            <p:columnGroup type="header">
+                <p:row>
+                    <p:column style="width:16px;" rowspan="2" headerText="#"/>
+                    <!--
+                    <p:column rendered="#{res.contribuyente.amparado || res.contribuyente.ppee}" style="width:90px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.estatusContribuyente']}"/>
+                    <p:column rendered="#{res.contribuyente.amparado || res.contribuyente.ppee}" style="width:90px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.rfc']}"/>
+                    <p:column rendered="#{res.contribuyente.amparado || res.contribuyente.ppee}" style="width:90px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.fechaHoraIntento']}"/>
+                    -->
+                    <p:column style="width:90px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.idregistro']}"/>
+                    <p:column style="width:130px;" colspan="2" headerText="#{msj['lbl.reporte.columna.periodo.propuesto']}"/>
+                    <p:column style="width:105px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.rfc']}"/>
+                    <p:column style="width:300px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.razonsocial']}"/>
+                    <p:column style="width:300px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.metodo']}"/>
+                    <p:column style="width:100px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.estatus']}"/>
+                    <p:column style="width:100px;" rowspan="2" headerText="#{msj['lbl.reporte.columna.presuntiva']}"/>
+                </p:row>
+                <p:row>
+                    <p:column style="width:65px;" headerText="#{msj['lbl.reporte.columna.periodo.propuesto.inicio']}"/>
+                    <p:column style="width:65px;" headerText="#{msj['lbl.reporte.columna.periodo.propuesto.fin']}"/>
+                </p:row>
+            </p:columnGroup>
+
+            <p:column><p:rowToggler /></p:column>
+            <!--
+            <p:column rendered="#{res.contribuyente.amparado || res.contribuyente.ppee}"><h:outputText value="#{res.contribuyente.estatus}"/></p:column>
+            <p:column rendered="#{res.contribuyente.amparado || res.contribuyente.ppee}"><h:outputText value="#{res.contribuyente.rfcConsulta}"/></p:column>
+            <p:column rendered="#{res.contribuyente.amparado || res.contribuyente.ppee}">
+                <h:outputText value="#{res.contribuyente.fechaConsulta}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                </h:outputText>
+            </p:column
+            -->
+            <p:column><h:outputText value="#{res.registroId}"/></p:column>                           
+            <p:column> 
+                <h:outputText value="#{res.fechaInicioPeriodo}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText>
+            </p:column>
+            <p:column>  
+                <h:outputText value="#{res.fechaFinPeriodo}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                </h:outputText> 
+            </p:column>
+
+            <p:column><h:outputText value="#{res.rfcContribuyente}"/></p:column>
+            <p:column><h:outputText value="#{res.razonSocial}"/></p:column>
+            <p:column><h:outputText value="#{res.metodo}"/></p:column>
+            <p:column><h:outputText value="#{res.estatus}"/></p:column>
+            <p:column>
+                <h:outputText value="#{res.presuntiva}">
+                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                </h:outputText>
+            </p:column>
+
+            <p:rowExpansion>
+                <table border="0" width="100%" cellpadding="2" cellspacing="2">
+                    <tr>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.tiporevision']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.regimen']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.subprograma']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.sector']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.actividad']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.causaprogramacion']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.unidad']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.firmante']}"/></td>
+                        <td><h:outputText value="#{msj['lbl.reporte.columna.auditor']}"/></td>
+                    </tr>
+                    <tr>
+                        <td><h:outputText value="#{res.tipoRevision}"/></td>
+                        <td><h:outputText value="#{res.regimen}"/></td>
+                        <td><h:outputText value="#{res.subprograma}"/></td>
+                        <td><h:outputText value="#{res.sector}"/></td>
+                        <td><h:outputText value="#{res.actividadPrepoderante}"/></td>
+                        <td><h:outputText value="#{res.causaProgramacion}"/></td>
+                        <td><h:outputText value="#{res.unidadAdministrativa}"/></td>
+                        <td><h:outputText value="#{res.firmante}"/></td>
+                        <td><h:outputText value="#{res.auditor}"/></td>
+                    </tr>
+                </table>
+            </p:rowExpansion>
+        </p:dataTable>
+        <br/>
+        <table border="0" width="750px" cellpadding="2" cellspacing="2">
+            <tr>
+                <td width="100%" align="left">
+                    <p:commandButton ajax="true" update=":formReportes"  value="#{msj['lbl.reporte.columna.btnregresar']}" action="#{reportePropuestasMB.regresarFormulario}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                </td>
+            </tr>
+        </table>
+        <br/>
+    </p:scrollPanel>
+
+</ui:composition>

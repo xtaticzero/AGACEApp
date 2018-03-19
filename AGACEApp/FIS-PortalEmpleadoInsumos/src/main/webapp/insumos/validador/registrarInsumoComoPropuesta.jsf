@@ -1,0 +1,472 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head></h:head>
+        <h:body>
+            <h:form enctype="multipart/form-data" id="formContribuyente" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                                <p:spacer width="50" height="1"/>
+                                <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                size="6" disabled="false"
+                                                value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.fechaInicial}"/>
+                <p:panel id="panelOrdenes"
+                         style="border-bottom:none!important;border-bottom-right-radius:0;border-bottom-left-radius:0;"
+                         styleClass="panel-interno" header="Registro de Propuesta Individual">
+                    <h:panelGrid border="0" columns="4">
+                        <p:spacer width="10" height="1"/>
+                        <p:spacer width="300" height="1"/>
+                        <h:outputLabel value="&Aacute;rea de Origen de la Propuesta: #{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.areaOrigen}"
+                                       style="float:right;font-weight:bold"/>
+                        <p:spacer width="10" height="1"/>
+                        <h:outputLabel value="Datos del Contribuyente." style="float:left;font-weight:bold"/>
+                        <p:spacer width="200" height="1"/>
+                        <h:outputLabel value="Estatus de Contacto: Con Medio de Contacto"
+                                       style="float:right;font-weight:bold"/>
+                        <p:spacer width="10" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="3" id="panelDatosOrden" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Nombre/ RazÃ³n Social:" style="font-weight:bold"/>
+                        <p:inputText id="txtRfc" style="width:150px;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.rfc}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.nombre}"/>
+                        <h:outputLabel value="RÃ©gimen:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="SituaciÃ³n del Contribuyente:" style="font-weight:bold"/>
+                        <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.regimen}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.situacion}"/>
+                        <h:outputLabel value="Tipo de Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                        <p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.tipo}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtActividad" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.actividadPreponderante}"/>
+                        <h:outputLabel value="Domicilio Fiscal del Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="SituaciÃ³n del Domicilio:" style="font-weight:bold"/>
+                        <p:inputTextarea id="txtDomFiscal" style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.domicilioFiscal}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.situacionDomicilio}"/>
+                        <h:outputLabel value="Entidad:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fecetContribuyente.entidad}"/>
+                       
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+             
+            <h:form id="formInsumo" enctype="multipart/form-data">
+                <p:panel id="panelListaOrdenes" styleClass="panel-interno"
+                         style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;">
+                    <br/>
+                    <h:outputLabel value="Datos Previos de la Propuesta." style="font-weight:bold"/>
+                    <p:separator/>
+                    <h:panelGrid columns="3" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="Unidad Administrativa de AtenciÃ³n:"
+                                       rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad}"
+                                       style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad}"/>
+                        <h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad == 'false' ? 'true':'false'}"/>
+                        <p:selectOneMenu id="cmbUnidad"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.idArace}"
+                                         rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.unidad']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaUnidades}" var="lista"
+                                           itemLabel="#{lista.idUnidadAdministrativa} - #{lista.nombre}" itemValue="#{lista.idUnidadAdministrativa}"/>
+                            <p:ajax update="@form" event="change"
+                                    listener="#{validarProcedenciaInsumoManagedBean.mostrarTipoRevision}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtSubPrograma" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fececSubprograma.descripcion}"/>
+                        <p:message id="msgUnidad" for="cmbUnidad" display="text"
+                                   rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleUnidad == 'false' ? 'true':'false'}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="MÃ©todo de RevisiÃ³n:" style="font-weight:bold"/>
+                        <p:spacer width="75" height="1"/>
+                        <h:outputLabel value="Tipo de Propuesta:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Causa de ProgramaciÃ³n:" style="font-weight:bold"/>
+                        <p:selectOneMenu id="cmbMetodo"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.idMetodo}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.metodo']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaMetodoRevision}"
+                                           var="lista" itemLabel="#{lista.idMetodo} - #{lista.nombre}"
+                                           itemValue="#{lista.idMetodo}"/>
+                            <p:ajax update="@form" event="change"
+                                    listener="#{validarProcedenciaInsumoManagedBean.mostrarTipoRevision}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="75" height="1"/>
+                        <p:selectOneMenu id="cmbPropuesta"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.idTipoPropuesta}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.propuesta']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaTipoPropuesta}" var="lista"
+                                           itemLabel="#{lista.idTipoPropuesta} - #{lista.descripcion}"
+                                           itemValue="#{lista.idTipoPropuesta}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="50" height="1"/>
+                        <p:selectOneMenu id="cmbCausa"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.idCausaProgramacion}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.causa']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaCausaProgramacion}"
+                                           var="lista" itemLabel="#{lista.idCausaProgramacion} - #{lista.descripcion}"
+                                           itemValue="#{lista.idCausaProgramacion}"/>
+                        </p:selectOneMenu>
+                        <p:message id="msgMetodo" for="cmbMetodo" display="text"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:message id="msgPropuesta" for="cmbPropuesta" display="text"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:message id="msgCausa" for="cmbCausa" display="text"/>
+                        <p:spacer width="50" height="1"/>
+                    </h:panelGrid>
+                    <h:panelGrid id="pgRevision" columns="3" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="Tipo de RevisiÃ³n:"
+                                       rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision}"
+                                       style="font-weight:bold"/>
+                        <p:spacer width="75" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision}"/>
+                        <h:outputLabel value="#{msj['label.sector']}:" style="font-weight:bold"/>
+                        <p:spacer width="75" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision == 'false' ? 'true':'false'}"/>
+                        <p:spacer width="75" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision == 'false' ? 'true':'false'}"/>
+                        <p:selectOneMenu id="cmbRevision"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.idRevision}"
+                                         rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.revision']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaTipoRevision}" var="lista"
+                                           itemLabel="#{lista.idRevision} - #{lista.descripcion}"
+                                           itemValue="#{lista.idRevision}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="75" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision}"/>
+                        <p:inputText id="txtSector" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fececSector.descripcion}"/>
+                        <p:spacer width="75" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision == 'false' ? 'true':'false'}"/>
+                        <p:spacer width="75" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision == 'false' ? 'true':'false'}"/>
+                        <p:message id="msgRevision" for="cmbRevision" display="text"
+                                   rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision}"/>
+                        <p:spacer width="75" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleRevision == 'false' ? 'true':'false'}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.encabezado.prioridad']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Fecha de PresentaciÃ³n a ComitÃ©#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.fechaRegional}"
+                                       rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}"
+                                       style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre == 'false' ? 'true':'false'}"/>
+                        <h:panelGrid id="panelPeriodoPropuesto" columns="5">
+                            <h:outputLabel value="Del:" style="font-weight:bold"/>
+                            <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="6" disabled="true"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fechaInicioPeriodo}"/>
+                            <p:spacer width="1" height="1"/>
+                            <h:outputLabel value="Al:" style="font-weight:bold;"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="6"
+                                        disabled="true"
+                                        value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fechaFinPeriodo}"/>
+                        </h:panelGrid>
+                        <p:spacer width="50" height="1"/>
+                        <p:selectBooleanCheckbox id="prioridadInsumo" name="prioridadInsumo" ajax="true" disabled="true"
+                                                 value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada == null ? false : validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.prioridad}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:calendar id="txtFechaPresentacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                    readonlyInput="true" size="6"
+                                    value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fechaPresentacion}"
+                                    rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre == 'false' ? 'true':'false'}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}"/>
+                        <p:message id="msgFechaPresentacion" for="txtFechaPresentacion" display="text"
+                                   rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaPre}"/>
+                        <h:outputLabel value="Fecha de InformaciÃ³n a ComitÃ©#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.fechaRegional}"
+                                       rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"
+                                       style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:calendar id="txtFechaInformacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                    readonlyInput="true" size="6"
+                                    value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.propuestaSeleccionada.fechaInforme}"
+                                    rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:message id="msgFechaInformacion" for="txtFechaInformacion" display="text"
+                                   rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                        <p:spacer width="50" height="1"
+                                  rendered="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.visibleFechaInf}"/>
+                    </h:panelGrid>
+                    <br/>
+                    <p:messages id="msgExitoDescartarOficioAnexo" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid id="panelAcciones" width="850">
+                        <p:column>
+                            <div align="center">
+                                <p:dataTable id="tablaDocumentos" var="documento" style="text-align:left;width:300px;"
+                                             value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaDocumento}"
+                                             editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                             paginator="true" rows="15"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <f:facet name="header">
+                                        <h:outputLabel value="Expedientes ElectrÃ³nicos" style="font-weight:bold"/>
+                                    </f:facet>
+                                    <p:column headerText="Fecha" styleClass="someClass">
+                                        <h:outputText id="txtFechaHora" value="#{documento.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Expediente" styleClass="someClass">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{documento.nombre}" ajax="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="${documento}"
+                                                                         target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{validarProcedenciaInsumoManagedBean.archivoOficioAnexo}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandLink value="#{msj['label.descartar']}"
+                                                       action="#{validarProcedenciaInsumoManagedBean.descartarDocumento}"
+                                                       ajax="true" immediate="true" update="@form"
+                                                       oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+                                            <f:setPropertyActionListener value="#{documento}"
+                                                                         target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </p:column>
+                        <br/>
+                        <p:column>
+                            <h:panelGrid columns="7" styleClass="panel-secundario">
+                                <h:outputLabel value="Impuesto:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Monto:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Periodo:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:spacer width="50" height="1"/>
+                                
+                                <p:selectOneMenu id="cmbImpuesto"
+                                                 value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.idImpuesto}"
+                                                 style="width:160px;">
+                                    <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipoImpuesto']}"
+                                                  itemValue="-1"/>
+                                    <f:selectItems value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaTipoImpuesto}"
+                                                   var="lista" itemLabel="#{lista.abreviatura} - #{lista.descripcion}"
+                                                   itemValue="#{lista.idTipoImpuesto}"/>
+                                </p:selectOneMenu>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputText id="txtMontoImpuesto" value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.monto}"   />
+                                <p:spacer width="50" height="1"/>
+                                <h:panelGrid id="panelPeriodoImpuesto" columns="5">
+                                    <h:outputLabel value="Del:" style="font-weight:bold"/>
+                                    <p:calendar id="txtPeriodo" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                readonlyInput="true" size="6" disabled="false"
+                                                value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.fechaInicial}"/>
+                                    <p:spacer width="1" height="1"/>
+                                    <h:outputLabel value="Al:" style="font-weight:bold;"/>
+                                    <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true"
+                                                size="6" disabled="false"
+                                                value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoVO.fechaFin}"/>
+                                </h:panelGrid>
+                                <p:commandButton value="Agregar"
+                                                 actionListener="#{validarProcedenciaInsumoManagedBean.agregarImpuesto}"
+                                                 update="@form"/>
+                                                 
+                                <p:spacer width="50" height="1"/>
+                                <p:message id="msgImpuesto" for="cmbImpuesto" display="text"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:message id="msgMonto" for="txtMontoImpuesto" display="text"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:message id="msgPeriodo" for="txtPeriodo" display="text"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:spacer width="50" height="1"/>
+                            </h:panelGrid>
+                        </p:column>
+                    </h:panelGrid>
+                    <br/>
+                    <p:column>
+                        <div align="center">
+                            <p:dataTable id="tblImpuestos" var="impuesto"
+                                         value="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.listaImpuestos}"
+                                         emptyMessage="#{msj['label.lista.vacia']}" style="width:500px;">
+                                <f:facet name="header">
+                                    <h:outputLabel value="Impuestos" style="font-weight:bold"/>
+                                </f:facet>
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column rowspan="2" headerText="Impuesto"/>
+                                        <p:column rowspan="2" headerText="Monto"/>
+                                        <p:column colspan="2" headerText="Periodo"/>
+                                        <p:column rowspan="2" headerText=""/>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column headerText="Del"/>
+                                        <p:column headerText="Al"/>
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:column>
+                                    <h:outputText value="#{impuesto.descripcion}"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{impuesto.monto}">
+                                        <f:convertNumber type="currency" currencySymbol="$"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText id="txtFechaInicio" value="#{impuesto.fechaInicial}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText id="txtFechaFin" value="#{impuesto.fechaFin}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column>
+                                    <p:commandLink value="#{msj['label.descartar']}"
+                                                   action="#{validarProcedenciaInsumoManagedBean.descartarImpuesto}"
+                                                   ajax="true" immediate="true" update="@form"
+                                                   oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+                                        <f:setPropertyActionListener value="#{impuesto}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.impuestoSeleccionado}"/>
+                                    </p:commandLink>
+                                </p:column>
+                                <p:columnGroup type="footer">
+                                    <p:row>
+                                        <p:column footerText="Presuntiva: " style="text-align:right"/>
+                                        <p:column colspan="4" style="text-align:left;">
+                                            <f:facet name="footer">
+                                                <h:outputText value="#{validarProcedenciaInsumoManagedBean.totalMonto}">
+                                                    <f:convertNumber type="currency" currencySymbol="$"/>
+                                                </h:outputText>
+                                            </f:facet>
+                                        </p:column>
+                                    </p:row>
+                                </p:columnGroup>
+                            </p:dataTable>
+                        </div>
+                    </p:column>
+                    <br/>
+                    <p:column>
+                        <div align="center">
+                            <p:commandButton value="Registrar"
+                                             action="#{validarProcedenciaInsumoManagedBean.registrarInsumoPropuesta}"
+                                             update="formInsumo" style="width:80px;"/>
+                             
+                            <p:spacer width="10" height="1"/>
+                             
+                            <p:commandButton value="Limpiar"
+                                             action="#{validarProcedenciaInsumoManagedBean.limpiarFormulario}"
+                                             update="formInsumo" style="width:80px;"/>
+                             
+                            <p:spacer width="10" height="1"/>
+                             
+                            <p:commandButton value="Regresar"
+                                             action="indexValidar"/>
+                        </div>
+                    </p:column>
+                </p:panel>
+                <p:dialog header="Mensaje de Duplicidad" widgetVar="mensajeDuplicidad" resizable="false" modal="true"
+                          width="410">
+                    <h:outputText value="#{validarProcedenciaInsumoManagedBean.vpInsumoAttributesHelper.mensajeDuplicidad}"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton id="aceptarDup" value="Aceptar" onclick="mensajeDuplicidad.hide();"
+                                         style="width:80px;" ajax="true"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+                <p:dialog header="Mensaje de Registro" widgetVar="mensajeRegistrar" resizable="false" modal="true"
+                          width="410">
+                    <h:outputText value="Â¿Esta seguro que desea registrar la propuesta?"
+                                  style="float:left;font-weight:bold;"/>
+                    <br/>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton id="aceptarReg" value="Aceptar" ajax="true"
+                                         action="#{validarProcedenciaInsumoManagedBean.registrarPropuesta}"
+                                         onsuccess="mensajeRegistrar.hide();" style="width:80px;"/>
+                         
+                        <p:spacer width="10" height="1"/>
+                         
+                        <p:commandButton id="cancelarReg" value="Cancelar" onclick="mensajeRegistrar.hide();"
+                                         style="width:80px;" ajax="true"/>
+                    </div>
+                    <br/>
+                </p:dialog>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

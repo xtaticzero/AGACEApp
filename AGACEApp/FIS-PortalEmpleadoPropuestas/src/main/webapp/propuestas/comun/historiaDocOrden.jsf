@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+                
+      <p:panel id="panelHistoricoOrdenesExpediente" header="#{msj['btn.historico']}">           
+       <p:spacer height="20px"/>
+         <p:panel id="panelHistoria">
+           <p:dataTable id="tablaOrden" editable="false" value="#{datoDocumento.listaDocsHistorialOrden}" var="documento"
+                        emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                        paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                        currentPageReportTemplate="({currentPage} de {totalPages})"
+                        paginatorPosition="bottom" rows="5">
+                        <f:facet name="header">
+								<h:outputLabel value="#{msj['column.titulo.orden']}" style="font-weight:bold" />
+							</f:facet>
+                <p:column headerText="#{msj['column.fechaHora.orden']}" styleClass="someClass"
+                              style="width:80px;">
+                        <h:outputText value="#{documento.fechaHora}" style="width:80px;">
+		                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+                        </h:outputText>
+                </p:column>
+                <p:column headerText="#{msj['column.asignadas.expediente']}" style="width:130px;margin:auto;">
+                        <h:outputText value="#{documento.nombreArchivo}" />
+                </p:column>
+                <p:column headerText="#{msj['label.encabezado.documento']}" style="width:50px;">
+                              
+                     <h:commandButton image="/resources/images/document.png"
+                                        title="Documento" ajax="true"
+                                        style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{documento}"
+                                                target="#{verificarProcedenciaMB.verificarProcedenciaHelper.documentoHistOrden}" />
+                                        <p:fileDownload contentDisposition="attachment"
+                                                value="#{verificarProcedenciaMB.documentoHistoDescargaOrden}" />
+                    </h:commandButton>
+                </p:column>
+ <p:column headerText="#{msj['label.usuario.accion.historial']}"  style="width:130px;margin:auto;">
+                        <h:outputText value="#{documento.descripcionEmpleado}" />
+                </p:column>
+           </p:dataTable>
+           </p:panel>
+           <br></br>
+       <p:spacer height="20px"/>
+         <p:panel id="panelHistoriaOficio">
+                       <p:dataTable id="tbOficiosOrden"
+                        		value="#{datoDocumento.listaDocsHistorialOficio}" var="oficio" 
+                        		editable="false" emptyMessage="#{msj['label.lista.vacia']}"  rows="5"
+                         paginator="true"
+                        paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                        currentPageReportTemplate="({currentPage} de {totalPages})"
+                        paginatorPosition="bottom"
+                               >
+                        	<f:facet name="header">
+								<h:outputLabel value="#{msj['consultar.tableoficio.titulo']}" style="font-weight:bold" />
+							</f:facet>
+							<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width:80px;" >
+		                        <h:outputText value="#{oficio.fechaHora}">
+		                        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+		                        </h:outputText>
+		                    </p:column>
+		                    <p:column headerText="#{msj['column.label.oficio']}"  style="width:130px;margin:auto;">
+		                                    #{oficio.nombreArchivo}
+		                    </p:column>
+		                    <p:column headerText="#{msj['label.encabezado.documento']}" style="width:50px;" >
+		                    	<h:commandButton title="#{oficio.nombreArchivo}" ajax="true"
+		                        		image="/resources/images/document.png" style="padding:0px 5px;">
+		                        	<f:setPropertyActionListener value="#{oficio}" target="#{verificarProcedenciaMB.verificarProcedenciaHelper.documentoSeleccionadoOficio}"/>
+		                            <p:fileDownload contentDisposition="attachment" value="#{verificarProcedenciaMB.documentoSeleccionDescargaOficio}"/>
+		                    	</h:commandButton>
+		                    </p:column>
+		                     <p:column headerText="#{msj['label.usuario.accion.historial']}"  style="width:130px;margin:auto;">
+		                                    #{oficio.descripcionEmpleado}
+		                    </p:column>
+                        </p:dataTable>
+           </p:panel>
+
+ <br></br>
+
+           <div style="text-align:right;">
+              <p:commandButton value="Cerrar" actionListener="#{verificarProcedenciaMB.ocultarHistorico}" update="@form"/>
+           </div>
+    </p:panel>         
+</ui:composition>

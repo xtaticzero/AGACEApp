@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <p:fieldset id="fsGrupoUnidadRegla" legend="#{msj['label.catalogo.grupos.unidades.admin']}" 
+                    toggleable="true" 
+                    toggleSpeed="500" 
+                    collapsed="true">
+
+            <h:panelGrid columns="1">
+                <p:commandButton id="btnAgregarUnidadesAGrupo"                             
+                                 onsuccess="PF('dlgAddUnidadesAGrupo').show();"
+                                 value="#{msj['label.catalogo.agregar.unidades.grupo']}" 
+                                 icon="ui-icon-extlink"
+                                 update=":formUnidadXGeneral:pnlAsociarUnidadesAGrupo"
+                                 actionListener="#{catalogManagerMB.agregarUnidadesAGrupo}"
+                                 />                
+                <p:dataTable id="tblGrupoUnidadRegla" 
+                             var="grupoUnidades" 
+                             value="#{catalogManagerMB.lstGrupoUnidadesXRegla}" 
+                             emptyMessage="#{msj['label.lista.vacia']}" 
+                             paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                             paginatorPosition="bottom">
+                    <f:facet name="header">
+                        #{msj['label.catalogo.grupos.unidades.fis']}
+                    </f:facet>
+                    <p:column headerText="#{msj['label.catalogo.tlb.id.grupo']}" style="width:60px;">
+                        <div style="text-align: right;">
+                            <h:outputText value="#{grupoUnidades.grupo.idGrupo}" /> 
+                        </div>                    
+                    </p:column>
+                    <p:column headerText="#{msj['label.catalogo.tlb.grupo']}">
+                        <h:outputText value="#{grupoUnidades.grupo.nombre}" />
+                    </p:column>                    
+                    <p:column headerText="#{msj['label.catalogo.tlb.descripcion']}">
+                        <h:outputText value="#{grupoUnidades.grupo.descripcion}" />
+                    </p:column>
+                    <p:column headerText="#{msj['label.catalogo.tlb.regla']}">
+                        <div style="text-align: right;">
+                            <h:outputText value="#{grupoUnidades.reglaNegocio.clave}" /> 
+                        </div>                        
+                    </p:column>
+                    <p:column headerText="#{msj['label.catalogo.tlb.detalle.unidades']}" style="width:150px;text-align: center;">
+                        <p:commandButton icon="ui-icon-extlink" title="#{msj['label.encabezado.detalle']}" value="#{msj['label.encabezado.detalle']}" onclick="PF('dlgDetalleUnidades').show();" update=":formUnidadXGeneral:pnlDetalleUnidades">
+                            <f:setPropertyActionListener value="#{grupoUnidades}" target="#{catalogManagerMB.grupoUnidadesXReglaSeleccionado}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGrid>
+        </p:fieldset>
+    </html>
+</f:view>

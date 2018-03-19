@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+                
+                
+    <p:panel id="panelOrdenesC">
+            <h:panelGrid border="0" columns="4">
+                    <p:spacer width="10" height="1" />
+                    <p:spacer width="300" height="1" />
+                    <p:spacer width="300" height="1" />
+                    <p:spacer width="10" height="1" />
+                    <h:outputLabel value="#{msj['separador.panel.datos.anteriores.contribuyente']}"
+                            style="float:left;font-weight:bold" />
+                    <p:spacer width="200" height="1" />
+                    <p:spacer width="10" height="1" />
+                    <p:spacer width="10" height="1" />
+            </h:panelGrid>
+            <p:separator />
+            <h:panelGrid columns="4" id="panelDatosOrdenC" border="0" styleClass="panel-secundario" width="100%">
+                <h:outputLabel value="#{msj['label.nombre.rfc']}" style="float:left;font-weight:bold"  />
+                <p:inputText ajax="false" id="txtRFCC" maxlength="15" disabled="true" value="#{contribuyente.rfc}"/>
+                <h:outputLabel value="#{msj['label.nombre.razon.social']}"
+                            style="font-weight:bold" />
+                <p:inputText id="txtNombreC" style="width:250px;height:auto;"
+                            disabled="true"
+                            value="#{contribuyente.nombre}" />
+                <h:outputLabel value="#{msj['label.regimen']}" style="font-weight:bold" />
+                <p:inputText id="txtRegimenC" style="width:200px;height:auto;"
+                            disabled="true"
+                            value="#{contribuyente.regimen}" />
+                <h:outputLabel value="#{msj['label.situacion.contribuyente']}"
+                            style="font-weight:bold" />
+                <p:inputText id="txtSituacionC" style="width:100px;height:auto;"
+                            disabled="true"
+                            value="#{contribuyente.situacion}" />
+                <h:outputLabel value="#{msj['label.tipo.contribuyente']}"
+                            style="font-weight:bold" />
+                <p:inputText id="txtTipoC" style="width:200px;height:auto;"
+                            disabled="true"
+                            value="#{contribuyente.tipo}" />
+                <h:outputLabel value="#{msj['label.situacion.domicilio']}"
+                            style="font-weight:bold" />
+                <p:inputText id="txtDomicilioC" style="width:250px;height:auto;"
+                            disabled="true"
+                            value="#{contribuyente.situacionDomicilio}" />
+                
+                <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}"
+                            style="font-weight:bold" />
+                <p:inputTextarea id="txtDomFiscalC" style="width:200px;height:auto;"
+                            disabled="true"
+                            value="#{contribuyente.domicilioFiscal}" />
+                <h:outputLabel value="#{msj['label.entidad']}"
+                            style="font-weight:bold" />
+                <p:inputText id="txtEntidadC" style="width:100px;height:auto;"
+                            disabled="true"
+                            value="#{contribuyente.entidad}" />
+                <h:outputLabel value="#{msj['label.actividad.preponderante']}"
+                            style="font-weight:bold" />
+                <p:inputTextarea id="txtActividadC" style="width:200px;height:auto;" disabled="true" value="#{contribuyente.actividadPreponderante}" />
+             </h:panelGrid>       
+             
+             
+    </p:panel>                
+                
+</ui:composition>

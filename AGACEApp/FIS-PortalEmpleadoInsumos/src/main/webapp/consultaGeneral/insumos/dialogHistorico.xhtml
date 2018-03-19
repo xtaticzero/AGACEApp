@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog widgetVar="dlgInsumosRetroalimentados" id="dlgInsumosRetroalimentados" resizable="false"
+              modal="true" width="750px" height="300px" header="#{msj['titulo.historico']}" closable="false" > 
+        <p:spacer height="20px"/>
+        <p:panel id="panelDialogoHistorico" style="width:700px; margin-left:auto; margin-right:auto;">
+            <div id="divIdReg" style="text-align: right!important;">
+                <h:panelGroup style="text-align: center!important;">
+                    <h:outputText value="Id Registro:" style="font-weight:bold;font-size:11px;"/>
+                    <h:outputText value="#{consultaUGInsumosMB.insumosSeleccionado.idRegistro}" style="font-size:11px;"/>
+                    <samp/>
+                </h:panelGroup>  
+            </div>
+            <p:spacer height="10px"/>
+            <div style="overflow-x:scroll; padding-bottom:10px;"> 
+                <p:dataTable id="tablaInsumosRetroalientados" var="retroalimentacion" style="width: 900px"
+                             value="#{consultaUGInsumosMB.insumosSeleccionado.lstRetroalimentacion}"
+                             editable="false" 
+                             emptyMessage="#{msj['label.lista.vacia']}" 
+                             paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                             paginatorPosition="bottom"
+                             rendered="#{consultaUGInsumosMB.insumosSeleccionado.noRetroalimentaciones ne 0}">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{msj['titulo.tabla.retroalimentacion.insumo']}"/>
+                    </f:facet>
+
+                    <p:column headerText="Detalle" width="32" style="font-size:11px;">
+                        <p:rowToggler/>
+                    </p:column>    
+
+                    <p:column headerText="Unidad Administrativa" width="60" style="font-size:11px;">
+                        <h:outputText value="#{retroalimentacion.nombreUnidadAdministrativa}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Subprograma" width="75" style="font-size:11px;">
+                        <h:outputText value="#{retroalimentacion.subprograma.descripcion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Sector" width="60" style="font-size:11px;">
+                        <h:outputText value="#{retroalimentacion.sector.descripcion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Prioridad sugerida" width="45" style="font-size:11px;">
+                        <div align="center">
+                            <h:outputText value="#{retroalimentacion.idPrioridad}"/>
+                        </div>
+                    </p:column>
+                    <p:column headerText="Inicio" width="50" style="font-size:11px;">
+                        <div align="center">
+                            <h:outputText value="#{retroalimentacion.fechaInicioPeriodo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </div>
+                    </p:column>
+                    <p:column headerText="Fin" width="50" style="font-size:11px;">
+                        <div align="center">
+                            <h:outputText value="#{retroalimentacion.fechaFinPeriodo}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </div>
+                    </p:column>
+                    <p:column headerText="Fecha de retroalimentación de datos" width="80" style="font-size:11px;">
+                        <div align="center">
+                            <h:outputText value="#{retroalimentacion.fechaRetroalimentacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </div>
+                    </p:column>
+                    <p:column headerText="Archivos" width="40" style="font-size:11px;">
+                        <div align="center">
+                            <p:outputLabel value="#{retroalimentacion.noDocsRetroalimentacion}" rendered="#{retroalimentacion.noDocsRetroalimentacion eq 0}"/>
+                            <p:commandLink id="cmlkMostrarRetroalimentacion" 
+                                           value="#{retroalimentacion.noDocsRetroalimentacion}"
+                                           action="#{consultaUGInsumosMB.seleccionarRetroalimentacion}"
+                                           ajax="true" 
+                                           immediate="true" 
+                                           process="@this" 
+                                           rendered="#{retroalimentacion.noDocsRetroalimentacion ne 0}"
+                                           update=":form:tablaDocsRetro"                                       
+                                           style="color:blue;" onsuccess="PF('dlgDocsRetro').show()">
+                                <f:setPropertyActionListener value="#{retroalimentacion}"
+                                                             target="#{consultaUGInsumosMB.retroalimentacionSeleccionada}"/>
+                            </p:commandLink>
+                        </div>
+                    </p:column>
+                    <p:column headerText="Solicitud de Retroalimentación" width="70" style="font-size:11px;">
+                        <div align="center">
+                            <p:commandLink id="cmlkMostrarRetroalimentacion1" 
+                                           disabled="#{!(insumosRetroalimentados.noDocsSolicitudRetroalimentacion ne 0)}"
+                                           ajax="true"
+                                           action="#{consultaUGInsumosMB.seleccionarRetroalimentacion}"                                       
+                                           process="@this" 
+                                           update=":form:panelDocSolicitudRetro"
+                                           onsuccess="PF('dlgSolicitudRetro').show()"   >                                    
+                                <h:graphicImage value="/resources/images/document.png" />
+                                <f:setPropertyActionListener value="#{retroalimentacion}"
+                                                             target="#{consultaUGInsumosMB.retroalimentacionSeleccionada}"/>
+                            </p:commandLink>                      
+                        </div>
+                    </p:column>
+                    <p:rowExpansion>
+                        <h:panelGrid id="displayHistorico" columns="2" cellpadding="2" style="width:600px;"
+                                     styleClass=" ui-widget-content grid">
+                            <h:outputText value="Observaciones" style="font-size:11px;"/>
+                            <h:outputText value="#{retroalimentacion.motivoAciace}" style="font-size:11px;"/>
+                        </h:panelGrid>
+                    </p:rowExpansion>
+                </p:dataTable>
+                <p:dataTable id="tablaDocumentosRechazo" var="rechazo" value="#{consultaUGInsumosMB.lstRechazo}"
+                             editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                             rendered="#{consultaUGInsumosMB.insumosSeleccionado.noRechazos ne 0}">
+                    <f:facet name="header">  
+                        #{msj['titulo.tabla.retroalimentacion.no.aprobacion']}
+                    </f:facet>
+                    <p:column headerText="Fecha de No Aprobación" width="80" style="font-size:11px;">
+                        <h:outputText value="#{rechazo.fechaRechazo}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Motivo de No Aprobación" width="350" style="font-size:11px;">
+                        <p:row>
+                            <div style="width:380px;">
+                                #{rechazo.descripcion}
+                            </div>
+                        </p:row>
+                    </p:column>
+                    <p:column headerText="Archivos" width="40" style="text-align: center;font-size:11px;">
+                        <p:commandLink id="cmlkMostrarRechazo" value="#{rechazo.noDocsRechazoInsumo}" ajax="true"
+                                       action="#{consultaUGInsumosMB.seleccionarRechazo}"
+                                       immediate="true"
+                                       process="@this"
+                                       update=":form:panelDialogoDocRechazo"
+                                       onsuccess="PF('dlgDocsRechazos').show();"
+                                       style="color:blue;">
+                            <f:setPropertyActionListener value="#{rechazo}"
+                                                         target="#{consultaUGInsumosMB.rechazoSeleccionado}"/>
+                        </p:commandLink>
+                    </p:column>            
+                </p:dataTable>
+            </div>
+        </p:panel>
+        <h:panelGrid style="width: 100%;">
+            <div style="text-align: right!important;">
+                <h:panelGroup style="text-align: center!important;">
+                    <p:commandButton value="#{msj['btn.cerrar']}" 
+                                     styleClass="ui-confirmdialog-yes"
+                                     onsuccess="PF('dlgInsumosRetroalimentados').hide();"
+                                     process="@this" style="float:right;width:83px;font-size:11px;"
+                                     oncomplete="ocultaMsgAgace('msgs');"/>
+                </h:panelGroup>  
+            </div> 
+        </h:panelGrid>
+    </p:dialog>
+    <p:dialog widgetVar="dlgSolicitudRetro" id="dlgSolicitudRetro" resizable="false"
+              modal="true" width="750px" height="auto" closable="false" >
+        <p:panel id="panelDocSolicitudRetro">
+
+            <div style="text-align: right!important;">
+                <h:panelGroup style="text-align: center!important;">
+                    <h:outputText value="Id Registro:" style="font-weight:bold;font-size:11px;"/>
+                    <h:outputText value="#{consultaUGInsumosMB.insumosSeleccionado.idRegistro}" style="font-size:11px;"/>                    
+                </h:panelGroup>  
+            </div>
+            <p:spacer height="10px"/>
+            <p:panelGrid style="margin-top:10px;width: 100%">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="7" style="font-size:11px;">
+                            <p:outputLabel value="Solicitud de retroalimentción del insumo"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="font-size:11px;">
+                            <h:outputLabel value="Fecha de Solicitud de Retroalimentación"/>                            
+                        </p:column>
+                        <p:column style="font-size:11px;">
+                            <h:outputLabel value="Motivo de retroalimentación"/>
+                        </p:column>
+                        <p:column style="font-size:11px;">
+                            <h:outputLabel value="Archivos"/>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column style="text-align: center; width: 40%;font-size:11px;">
+                        <h:outputText value="#{consultaUGInsumosMB.retroalimentacionSeleccionada.fechaCreacion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column style="text-align: center; width: 40%;font-size:11px;">
+                        <h:outputText value="#{consultaUGInsumosMB.retroalimentacionSeleccionada.motivoSubadministrador}"/>
+                    </p:column>
+                    <p:column style="text-align: center; width: 20%;font-size:11px;">
+                        <p:outputLabel value="#{consultaUGInsumosMB.retroalimentacionSeleccionada.noDocsSolicitudRetroalimentacion}" 
+                                       rendered="#{consultaUGInsumosMB.retroalimentacionSeleccionada.noDocsSolicitudRetroalimentacion eq 0}"/>
+                        <p:commandLink 
+                            value="#{consultaUGInsumosMB.retroalimentacionSeleccionada.noDocsSolicitudRetroalimentacion}" 
+                            rendered="#{consultaUGInsumosMB.retroalimentacionSeleccionada.noDocsSolicitudRetroalimentacion ne 0}" 
+                            ajax="true"
+                            immediate="true"
+                            action="#{consultaUGInsumosMB.seleccionarRetroalimentacion}"
+                            update=":form:dlgSolicitudDocsRetroPanel"
+                            oncomplete="PF('dlgSolicitudDocsRetro').show();"
+                            style="color:blue;"/>
+                    </p:column>
+                </p:row>                
+            </p:panelGrid>
+        </p:panel>
+        <p:panel>
+            <h:panelGrid columns="1" style="text-align: right !important; width: 100%; border:none !important;">
+                <div align="right" style="border:none !important">                    
+                    <p:commandButton  value="#{msj['btn.cerrar']}" 
+                                      styleClass="ui-confirmdialog-yes"
+                                      onsuccess="PF('dlgInsumosRetroalimentados').show();
+                                      PF('dlgSolicitudRetro').hide();"
+                                      process="@this" style="float:right;width:83px;font-size:11px;"
+                                      oncomplete="ocultaMsgAgace('msgs');"/>
+
+                </div>
+            </h:panelGrid>
+        </p:panel>
+    </p:dialog>
+    <p:dialog header="#{msj['titulo.historico']}" widgetVar="dlgDocsRetro" id="dlgDocsRetro" resizable="false"
+              modal="true" width="750px" height="auto" closable="false" >
+        <p:panel id="panelDocumentosRetro">
+            <p:panel>
+                <div style="text-align: right!important;">
+                    <h:panelGroup style="text-align: center!important;">
+                        <h:outputText value="Id Registro:" style="font-weight:bold;font-size:11px;"/>
+                        <h:outputText value="#{consultaUGInsumosMB.insumosSeleccionado.idRegistro}" style="font-size:11px;"/>                    
+                    </h:panelGroup>  
+                </div>
+                <p:spacer height="10px"/>                
+                <p:dataTable id="tablaDocsRetro"   var="documento"
+                             value="#{consultaUGInsumosMB.retroalimentacionSeleccionada.lstDocsRetroalimentacion}" editable="false"
+                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" filterDelay="1000"
+                             style="width: 670px;">
+                    <f:facet name="header">
+                        Archivos cargados
+                    </f:facet>
+                    <p:column headerText="Fecha de carga" width="100" style="font-size:11px;">
+                        <h:outputText value="#{documento.fechaCreacion}">    
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Nombre del archivo" width="300" style="font-size:11px;">
+                        <h:outputText value="#{documento.nombreArchivo}"/>
+                    </p:column>
+                    <p:column headerText="Archivos" width="100" style="font-size:11px;">
+                        <div align="center">
+                            <p:commandButton image="/resources/images/document.png" 
+                                             title="Documento" 
+                                             ajax="false" 
+                                             immediate="true" 
+                                             process="@form" 
+                                             oncomplete="ocultaMsgAgace('msgs');"
+                                             style="padding:0px 5px;">
+                                <f:setPropertyActionListener value="#{documento.nombreArchivo}"
+                                                             target="#{consultaUGInsumosMB.nombreArchivoDescarga}"/>
+                                <f:setPropertyActionListener value="#{documento.rutaArchivo}"
+                                                             target="#{consultaUGInsumosMB.rutaArchivoDescarga}"/>
+                                <p:fileDownload value="#{consultaUGInsumosMB.descargaDocumento}"/>
+                            </p:commandButton>
+                        </div>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            <h:panelGrid columns="1" style="text-align: right !important; width: 100%; border:none !important;">
+                <div align="right">                    
+                    <p:commandButton  value="#{msj['btn.cerrar']}" 
+                                      styleClass="ui-confirmdialog-yes"
+                                      onclick="PF('dlgDocsRetro').hide();"
+                                      process="@this" style="float:right;width:83px;font-size:11px;"
+                                      oncomplete="ocultaMsgAgace('msgs');"/>
+
+                </div>
+            </h:panelGrid>
+        </p:panel>
+    </p:dialog>
+    <p:dialog header="Solicitud de Retroalimentación del insumo" 
+              widgetVar="dlgSolicitudDocsRetro" 
+              id="dlgSolicitudDocsRetro" 
+              resizable="false"
+              modal="true" 
+              closable="false" 
+              width="750px" 
+              height="auto">
+        <p:panel id="dlgSolicitudDocsRetroPanel">
+            <div style="text-align: right!important;">
+                <h:panelGroup style="text-align: center!important;">
+                    <h:outputText value="Id Registro:" style="font-weight:bold;font-size:11px;"/>
+                    <h:outputText value="#{consultaUGInsumosMB.insumosSeleccionado.idRegistro}" style="font-size:11px;"/>                    
+                </h:panelGroup>  
+            </div>
+            <p:spacer height="10px"/>
+
+            <p:dataTable id="tablaDocSolicitudRetro" var="documento"
+                         value="#{consultaUGInsumosMB.retroalimentacionSeleccionada.lstDocsSolicitudRetroalimentacion}" editable="false"
+                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                         paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" filterDelay="1000"
+                         >
+
+                <f:facet name="header">
+                    Solicitud de retroalimentción del insumo
+                </f:facet>     
+                <p:column headerText="Fecha de solicitud de retroalimentación" width="100" style="font-size:11px;">
+                    <div align="center">
+                        <h:outputText value="#{documento.fechaCreacion}">    
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </div>
+                </p:column>
+                <p:column headerText="Nombre del archivo" width="300" style="font-size:11px;">
+                    <h:outputText value="#{documento.nombreArchivo}"/>
+                </p:column>
+                <p:column headerText="Archivos" width="100" style="font-size:11px;">
+                    <div align="center">
+                        <p:commandButton image="/resources/images/document.png" 
+                                         title="Documento" 
+                                         ajax="false" 
+                                         immediate="true" 
+                                         process="@form"                                          
+                                         oncomplete="ocultaMsgAgace('msgs');"
+                                         style="padding:0px 5px;">
+                            <f:setPropertyActionListener value="#{documento.nombreArchivo}"
+                                                         target="#{consultaUGInsumosMB.nombreArchivoDescarga}"/>
+                            <f:setPropertyActionListener value="#{documento.rutaArchivo}"
+                                                         target="#{consultaUGInsumosMB.rutaArchivoDescarga}"/>
+                            <p:fileDownload value="#{consultaUGInsumosMB.descargaDocumento}"/>
+                        </p:commandButton>
+                    </div>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+        <p:panel>
+            <h:panelGrid columns="1" style="text-align: right !important; width: 100%; border:none !important;">
+                <div align="right">                    
+                    <p:commandButton  value="#{msj['btn.cerrar']}" 
+                                      styleClass="ui-confirmdialog-yes"
+                                      onsuccess="PF('dlgSolicitudDocsRetro').hide();"
+                                      process="@this" style="float:right;width:83px;font-size:11px;"/>
+                </div>
+            </h:panelGrid>
+        </p:panel>
+    </p:dialog>
+    <p:dialog widgetVar="dlgDocsRechazos" id="dlgDocsRechazos" resizable="false" modal="true" width="600"
+              height="auto" header="#{msj['titulo.documentos.rechazo']}" closable="false">
+        <p:spacer height="20px"/>
+        <p:panel id="panelDialogoDocRechazo">
+            <p:dataTable id="tablaDocRechazo" var="docRechazo"
+                         value="#{consultaUGInsumosMB.rechazoSeleccionado.lstDocsRechazoInsumo}" editable="false"
+                         emptyMessage="#{msj['label.lista.vacia']}">
+                <f:facet name="header">
+                    #{msj['titulo.tabla.rechazo.cargada']}
+                </f:facet>
+                <p:column headerText="#{msj['label.titulo.fecha.carga']}" styleClass="someClass" width="50" style="font-size:11px;">
+                    <h:outputText id="txtFechaCargaInsumoRechazo" 
+                                  value="#{docRechazo.fechaCreacion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{msj['label.nombre.archivo']}" styleClass="someClass"
+                          style="table-layout:fixed;font-size:11px;" width="150">
+                    <div style="width:150px;">
+                        #{docRechazo.nombreArchivo}
+                    </div>
+                </p:column>
+                <p:column style="width:40px;font-size:11px;" headerText="Archivo" >
+                    <p:commandButton image="/resources/images/document.png" 
+                                     title="Documento" 
+                                     ajax="false" 
+                                     immediate="true" 
+                                     process="@form" 
+                                     oncomplete="ocultaMsgAgace('msgs');"
+                                     style="padding:0px 5px;">
+                        <f:setPropertyActionListener value="#{docRechazo.nombreArchivo}"
+                                                     target="#{consultaUGInsumosMB.nombreArchivoDescarga}"/>
+                        <f:setPropertyActionListener value="#{docRechazo.rutaArchivo}"
+                                                     target="#{consultaUGInsumosMB.rutaArchivoDescarga}"/>
+                        <p:fileDownload value="#{consultaUGInsumosMB.descargaDocumento}"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+            <br/>
+        </p:panel>
+        <p:spacer height="20px"/>
+        <h:panelGroup id="pnlgrpBotonCerrarDocRechazo" layout="block" style="padding:10px;border:none !important;">
+            <p:commandButton id="btnCerrarDocRechazo" value="#{msj['btn.cerrar']}" onsuccess="PF('dlgDocsRechazos').hide(); "
+                             styleClass="ui-confirmdialog-yes" process="@this"
+                             style="float:right;width:83px;font-size:11px;" 
+                             oncomplete="ocultaMsgAgace('msgs');"/>
+        </h:panelGroup>
+    </p:dialog>
+</f:view>

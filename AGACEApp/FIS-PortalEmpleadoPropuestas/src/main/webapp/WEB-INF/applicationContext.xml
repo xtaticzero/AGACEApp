@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:jms="http://www.springframework.org/schema/jms" xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	          http://www.springframework.org/schema/aop
+	          http://www.springframework.org/schema/aop/spring-aop-3.0.xsd          
+	          http://www.springframework.org/schema/context          
+	          http://www.springframework.org/schema/context/spring-context-3.0.xsd          
+	          http://www.springframework.org/schema/tx          
+	          http://www.springframework.org/schema/tx/spring-tx-3.0.xsd          
+	          http://www.springframework.org/schema/util          
+	          http://www.springframework.org/schema/util/spring-util-3.0.xsd          
+	          http://www.springframework.org/schema/task          
+	          http://www.springframework.org/schema/task/spring-task-3.0.xsd 
+	          http://www.springframework.org/schema/jee
+              http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
+    <util:properties id="agace_prop"
+                     location="file:///siat/fece/configuracion/fece.properties" />
+    <import resource="classpath*:agace-daos.xml" />
+    <import resource="classpath*:agace-negocio.xml" />
+    <import resource="/common/scheduled-context.xml" />
+    <context:annotation-config />
+    <aop:aspectj-autoproxy />
+    <context:component-scan base-package="mx.gob.sat.siat" />
+    <!-- Data source para BD agace -->
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="#{agace_prop['aplicacion.jndi']}" />
+        <property name="cache" value="true" />
+        <property name="resourceRef" value="true" />
+        <property name="lookupOnStartup" value="false" />
+        <property name="proxyInterface" value="javax.sql.DataSource" />
+    </bean>
+    <!-- JDBC Template para DB agace -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+            
+    <!-- Transaction Manager para conexion a BD -->
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="find*" read-only="true" />
+            <tx:method name="obtener*" read-only="true" />
+            <tx:method name="buscar*" read-only="true" />
+            <tx:method name="set*" read-only="true" />
+            <tx:method name="search*" read-only="true" />
+            <tx:method name="*" rollback-for="java.lang.Throwable"
+                       propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="businessServicePointcut"
+                      expression="target(mx.gob.sat.siat.base.service.BaseBusinessServices) AND execution(public * *(..))" />
+        <aop:advisor advice-ref="transactionAdvice" pointcut-ref="businessServicePointcut" />
+    </aop:config>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          scope="singleton">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="psJobAGSDao" class="mx.gob.sat.siat.modelo.dao.impl.PsJobAGSDaoImpl" />
+	
+    <!-- BEGIN buzon tributario -->
+	
+    <bean id="buzonMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="mx.gob.sat.siat.buzon.wsdl" />
+    </bean>
+    <bean name="buzonTributarioClient" class="mx.gob.sat.siat.buzon.client.BuzonTributarioClient">
+        <property name="defaultUri" value="${buzon.uri}" />
+        <property name="marshaller" ref="buzonMarshaller" />
+        <property name="unmarshaller" ref="buzonMarshaller" />
+    </bean>
+    <bean name="buzonTributarioService"
+          class="mx.gob.sat.siat.buzon.service.impl.BuzonTributarioServiceImpl">
+        <property name="buzonTributarioClient" ref="buzonTributarioClient" />
+    </bean> 
+    <!-- <bean name="buzonTributarioService" class="mx.gob.sat.siat.buzon.service.impl.BuzonTributarioMockServiceImpl"/> -->
+	 
+    <!-- END buzon tributario -->
+    <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.SimpleStringPBEConfig">
+        <property name="algorithm" value="PBEWithMD5AndDES" />
+        <property name="password" value="Pa55word" />
+    </bean>
+    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+        <property name="config" ref="environmentVariablesConfiguration" />
+    </bean>
+    <bean id="propertyConfigurer"
+          class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+        <constructor-arg ref="configurationEncryptor" />
+        <property name="locations">
+            <list>
+                <value>file:///siat/fece/configuracion/fece.properties</value>
+                <value>file:///siat/fece/configuracion/AGACE_PROPIEDADES.properties</value>
+            </list>
+        </property>
+    </bean>
+    <!-- BEGIN - IDC -->
+    <bean id="idcRepository" 
+          class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"> 
+        <property name="serviceInterface" value="com.softtek.idc.repository.IDCRepository" /> 
+        <property name="wsdlDocumentUrl" value="${idc.wsdl}?wsdl" />
+        <property name="namespaceUri" value="http://www.sat.gob.mx/IdCInterno/wsdl" /> 
+        <property name="serviceName" value="IdCInterno"/> 
+        <property name="portName" value="IdCInternoSOAP"/>
+        <property name="endpointAddress" value="${idc.wsdl}"/>
+    </bean> 
+    <bean id="IDCService" class="com.softtek.idc.service.impl.IDCServiceImpl"> 
+        <property name="idcRepository" ref="idcRepository" /> 
+    </bean>	
+    <!--<bean id="idcService" class="com.softtek.idc.service.impl.IDCMockServiceImpl"/>-->
+    <!-- END - IDC -->
+    <!-- BEGIN MAIL SERVICE -->
+    <bean id="mailServices"
+          class="mx.gob.sat.siat.common.correo.services.impl.MailServicesSunImpl"
+          autowire-candidate="true" >
+    </bean>
+    <!-- END MAIL SERVICE -->
+    <!-- BEGIN sise -->
+
+    <bean id="siseRepository"
+          class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceInterface"
+                  value="mx.gob.sat.siat.sise.repository.SiseRepository" />
+        <property name="wsdlDocumentUrl" value="${sise.wsdl}" />
+        <property name="serviceName" value="WSSise" />
+        <property name="portName" value="WSSiseSoap" />
+    </bean>
+    <bean id="siseService" class="mx.gob.sat.siat.sise.service.impl.SiseServiceImpl">
+        <property name="siseRepository" ref="siseRepository" />
+        <property name="idSistema" value="${sise.sistema}" />
+        <property name="idModulo" value="${sise.modulo}" />
+    </bean> 
+    
+    <!--  <bean id="siseService" class="mx.gob.sat.siat.sise.service.impl.SiseMockServiceImpl"/>  -->
+	
+    <!-- END sise -->
+    <!-- BEGIN Consulta Antecedentes -->
+    <!--  	<bean id="consultaPropuestaOrdenWSEndPoint" 
+            class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"> 
+            <property name="serviceInterface" 
+                    value="mx.gob.sat.siat.feagaff.repository.ConsultaPropuestaOrdenWSEndPoint" /> 
+            <property name="wsdlDocumentUrl" value="${agaff.url}" /> 
+            <property name="serviceName" value="consultaPropuestaOrdenService" /> 
+            <property name="portName" value="ConsultaPropuestaOrdenWSEndPointPort" /> 
+    </bean> 
+    <bean id="consultaPropuestaOrdenWSService" 
+            class="mx.gob.sat.siat.feagatt.service.impl.ConsultaPropuestaOrdenWSServiceImpl"> 
+            <property name="consultaPropuestaOrdenWSEndPoint" ref="consultaPropuestaOrdenWSEndPoint" /> 
+    </bean> -->
+    <bean id="consultaPropuestaOrdenWSService" class="mx.gob.sat.siat.feagatt.service.impl.AgaffServiceImpl"/>
+		
+    <bean id="service1Soap"
+          class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceInterface" value="org.mx.gob.sat.Service1Soap" />
+        <property name="wsdlDocumentUrl" value="${suiefiService.wsdl}" />
+        <property name="serviceName" value="Service1" />
+        <property name="portName" value="Service1Soap" />
+    </bean>
+    <bean id="service1SoapSuiefiService"
+          class="org.mx.gob.sat.service.impl.Service1SoapSuiefiServiceImpl">
+        <property name="service1Soap" ref="service1Soap" />
+    </bean> 
+	
+    <!-- 	<bean id="service1SoapSuiefiService" class="org.mx.gob.sat.service.impl.SuiefiServiceImpl" /> -->
+    <!-- ####### BEGIN BUZON SELLADORA ####### -->
+    <bean id="buzonSelladoraRepository" class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceInterface" value="mx.gob.sat.siat.common.buzonSelladora.repository.BuzonSelladoraRepository" />
+        <property name="wsdlDocumentUrl" value="${selladora.url}" />
+        <property name="serviceName" value="Terminos" />
+        <property name="portName" value="TerminosSoap" />
+    </bean>
+
+    <bean id="buzonSelladoraService" class="mx.gob.sat.siat.common.buzonSelladora.service.impl.BuzonSelladoraServiceImpl">
+        <property name="buzonSelladoraRepository" ref="buzonSelladoraRepository" />
+    </bean> 
+
+    <!--     <bean id="buzonSelladoraService" class="mx.gob.sat.siat.common.buzonSelladora.service.impl.BuzonSelladoraMockServiceImpl"/> -->
+    <!-- ####### END BUZON SELLADORA ####### -->    
+</beans>

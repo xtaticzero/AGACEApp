@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans                             http://www.springframework.org/schema/beans/spring-beans-3.1.xsd                             http://www.springframework.org/schema/tx                             http://www.springframework.org/schema/tx/spring-tx-3.1.xsd                             http://www.springframework.org/schema/util                             http://www.springframework.org/schema/util/spring-util-3.1.xsd                             http://www.springframework.org/schema/context                             http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+    <util:properties id="agace_prop" location="file:///siat/fece/configuracion/fece.properties"/>
+        
+    <!--bean id="utilidadesDao" name="utilidadesDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.common.impl.UtilidadesDaoImpl">
+        <qualifier value="utilidadesDao"/>
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean-->
+    <bean id="fecetContAuditDao" name="fecetContAuditDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.propuestas.impl.FecetContAuditDaoImpl">
+        <qualifier value="fecetContAuditDao"/>
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="reportesDao" name="reportesDao" class="mx.gob.sat.siat.feagace.modelo.dao.common.impl.ReportesDaoImpl">
+        <qualifier value="reportesDao"/>
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+        <bean id="fececTipoEmpleadoDao" name="fececTipoEmpleadoDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.catalogos.roles.impl.FececTipoEmpleadoDaoImpl">
+        <qualifier value="fececTipoEmpleadoDao"/>
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    
+    <bean id="fececCentralDao" name="fececCentralDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.catalogos.propuestas.impl.FececCentralDaoImpl">
+        <qualifier value="fececCentral"/>
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="fececEmpleadoAciaceDao" name="fececEmpleadoAciaceDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.catalogos.propuestas.impl.FececEmpleadoAciaceDaoImpl">
+        <qualifier value="fececEmpleadoAciaceDao"/>
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    
+    <bean id="feceaOperacionesDao" name="feceaOperacionesDao"
+          class="mx.gob.sat.siat.feagace.modelo.dao.catalogos.common.impl.FeceaOperacionesDaoImpl">
+        <qualifier value="feceaOperacionesDao"/>
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+</beans>

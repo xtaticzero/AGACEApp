@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script>
+                $( document ).ready(function() {        	 	
+                    try {
+                        document.getElementById('formOrdenes:regresarBoton').click();
+                    } catch (e) {
+                        console.log("error1: " + e);        	 	
+                    }
+                    
+                    try {
+                        setTimeout(function(){
+                                document.getElementById('formOrdenes:firmadoPromocion').click();
+                                $("#msgExitoGuardarDocs").show("slow").delay( 800 ).hide(1000); 
+                        }, 1500);
+                    } catch (e) {
+                        console.log("error2: " + e);        	 	
+                    }
+                });
+            </script>
+        </h:head>
+        <h:body>
+            <h:form id="formOrdenes" styleClass="panel-principal" enctype="multipart/form-data">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                          resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                <p:panel id="panelOrdenes" styleClass="panel-interno" header="#{msj['titulo.panel.actos.fiscalizacion']}" rendered="#{!compulsaTercerosManagedBean.visualizarCompulsa}" >
+                    <p:messages id="msgExitoGuardarDocs" showDetail="true" globalOnly="true" closable="true" />
+                    <br/>
+                    <h:outputLabel value="#{msj['label.compulsas.tercero']}" style="font-weight:bold;"/>
+                    <p:separator />
+                    <p:spacer height="10px" />
+                    <p:dataTable id="tablaOrdenesAgregadas" var="datos" value="#{compulsaTercerosManagedBean.listaCompulsas}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="15" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom">
+                        <p:column headerText="Número de compulsa"  filterBy="#{datos.cveCompulsa}">
+                            <p:commandLink value="#{datos.cveCompulsa}" action="#{compulsaTercerosManagedBean.configuraCompulsa}" 
+                                    ajax="true" update="@form" style="color:blue;" immediate="true">
+                                <f:setPropertyActionListener value ="#{datos}" target ="#{compulsaTercerosManagedBean.compulsaSeleccion}"/>
+                            </p:commandLink>
+                        </p:column>
+                        
+                        <p:column headerText="#{msj['titulo.tabla.fecha.carga']}:">
+                            <h:outputText value="#{datos.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Compulsa" width="1%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{compulsaTercerosManagedBean.compulsaSeleccion}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{compulsaTercerosManagedBean.archivoCompulsaDescarga}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                                
+                    <p:commandButton rendered="#{compulsaTercerosManagedBean.descargaAcusePromocion}" update=":formOrdenes:firmadoPromocion" style="display:none" ajax="false" value="firmadoPromocion" action="#{compulsaTercerosManagedBean.descargaArchivoPromocion}" id="firmadoPromocion"> 
+                        <p:fileDownload value="#{compulsaTercerosManagedBean.acuseFilePromocion}" />
+                    </p:commandButton>
+                </p:panel>
+                <!--NUEVO COMPLEMENTO!!!-->
+                
+                <p:panel id="panelOrden" styleClass="panel-interno" header="#{msj['titulo.panel.principal.cargar.documentacion']}" 
+                        rendered="#{compulsaTercerosManagedBean.visualizarCompulsa}">
+                    <p:spacer height="20px" width="0px" />
+                    <h:outputText value="#{msj['label.datos.compulsa']}" style="font-weight:bold"/>
+                    <p:separator/>
+                    
+                    <h:panelGrid id="panelDatosContribuyente2" columns="2" border="0" width="100%">
+                        <p:outputLabel value="#{msj['label.numero.compulsa']}" style="font-weight:bold;" />
+                        <p:outputLabel value="#{msj['label.fecha.creacion']}" style="font-weight:bold;"/>
+                       
+                        <p:outputLabel value="#{compulsaTercerosManagedBean.compulsaSeleccion.cveCompulsa}"/>
+                        <p:outputLabel value="#{compulsaTercerosManagedBean.compulsaSeleccion.fechaCarga}" />
+                       
+                    </h:panelGrid>
+                    <p:separator/>
+                    
+                    <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true" />
+                    
+                    <!-- Uploader Adjuntar pruebas y alegatos -->
+                    <p:spacer width="1" height="25"/>
+                    <h:outputText value="#{msj['titulo.flUpLoadCompulsa.adjuntar.documentos']}" style="font-weight:bold;"/>
+                    
+                    <p:fileUpload id="flUpLoadCompulsaTercero"  widgetVar="flUpLoadCompulsaTercero"
+                            fileUploadListener="#{compulsaTercerosManagedBean.handleFileUploadPruebasAlegatos}"
+                            mode="advanced" dragDropSupport="false" multiple="false"
+                            label="#{msj['btn.examinar']}"
+                            cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                            showButtons="true" auto="true" ajax="true"
+                            update="@form msgExitoGuardar"
+                            oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                        
+                    <p:spacer width="1" height="15"/>
+                        
+                    <!-- Tabla de pruebas y alegatos -->
+                    <h:outputText value="#{msj['titulo.tabla.documentos.compulsa.terceros']}" style="font-weight:bold;"/>
+                    
+                    <p:dataTable id="tablaPruebasAlegatos" value="#{compulsaTercerosManagedBean.listaEnviarPruebasAlegatos}" var="pruebasAlegatos" 
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" 
+                                paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})"
+                                paginatorPosition="bottom" >  
+                        <p:column id="hdrFechaEnvio" headerText="#{msj['titulo.columna.tabla.fecha.prueba']}" >
+                            <h:outputText id="txtFechaEnvio" value="#{pruebasAlegatos.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column> 
+                        <p:column id="hdrNombreDocumento" headerText="#{msj['titulo.columna.tabla.nombre.documento']}">
+                            <div style="width:450px;">#{pruebasAlegatos.nombreArchivo}</div>
+                        </p:column>
+                        
+                        <p:column headerText="" style="width:10px">
+                            <p:commandLink value="Descartar" onclick="confirmarDescartarSeleccion.show();"  ajax="true" >
+                                <f:setPropertyActionListener value ="#{pruebasAlegatos}" target ="#{compulsaTercerosManagedBean.documentoSeleccionado}"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>  
+                    
+                     <h:panelGrid columns="1">
+                        <h:outputText value="#{msj['subtitulo.documentacion.pruebas.alegatos']}"/>
+                    </h:panelGrid>
+                    
+                    <!-- Boton Firmar Unico-->
+                    <h:panelGrid columns="2" id="panelEnviarDocumentacion" width="700"
+                    rendered="true">
+                        <p:column rowspan="2">
+                            <p:commandButton value="Firmar" action="#{compulsaTercerosManagedBean.cargandoDatosDocumentacion}" update="@form :formOrdenes" style="float:right;width:80px;"
+                                oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                            <p:commandButton value="Regresar" action="#{compulsaTercerosManagedBean.init}" update="@form :formOrdenes" style="float:right;width:80px;" />
+                        </p:column>
+                    </h:panelGrid>
+                    
+                    <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarDescartarSeleccion"
+                        resizable="false" modal="true" width="315" height="55">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText
+                                value="#{msj['label.confirm.descartar.alegato']}" />
+                        </h:panelGroup>                            
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" onclick="confirmarDescartarSeleccion.hide();"
+                            styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"/>                        
+                        <p:commandButton id="btnDescartarSeleccion" value="#{msj['label.confirm.aceptar']}"
+                            onclick="confirmarDescartarSeleccion.hide();" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                            action="#{compulsaTercerosManagedBean.descartarDocumentoLista}"
+                            process="@this" update="formOrdenes" style="float:right;"
+			    oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                    </p:dialog>              
+                    
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{origenCentralRegionalMB.init}"/>
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+        
+            <h:form id="formCentralRegional" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogContribuyente').show();" onsuccess="PF('statusDialogContribuyente').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogContribuyente" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true"/>
+                <p:panel id="panelSeguimientoInsumo" header="#{msj['label.consulta.propuestas.centrarl']}" styleClass="panel-interno" >
+                    <p:dataTable id="tablaPropuestaFiltro" widgetVar="tablaPropuestaFiltro" currentPageReportTemplate="({currentPage} de {totalPages})" editable="false"
+                             emptyMessage="#{msj['label.lista.vacia']}"  paginator="true"
+                             paginatorPosition="bottom"
+                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}   {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown}                                                      &amp;nbsp; {NextPageLink} {LastPageLink}"
+                             rendered="true" value="#{origenCentralRegionalMB.listaHelper.centralRegDTOs}" var="propuesta"
+                             rows="10" scrollable="true" scrollWidth="97%">
+                        
+                       <p:column width="9">
+                                <p:rowToggler/>
+                            </p:column>
+                            
+                        <p:column headerText="#{msj['column.origen.central.folio']}" style="text-align:center"
+                              filterBy="#{propuesta.propuesta.idRegistro}" width="100" filterStyle="width: 90px;" >
+                              <p:commandLink action="#{origenCentralRegionalMB.consultaContribuyente}"
+                                       value="#{propuesta.propuesta.idRegistro}" ajax="false" style="color:blue;">
+	                                <f:setPropertyActionListener value="#{propuesta.contribuyente.rfc}"
+                                                         target="#{origenCentralRegionalMB.atrributeHelper.rfcSeleccionado}"/>
+                                	<f:setPropertyActionListener value="#{propuesta.propuesta.idRegistro}"
+                                                         target="#{origenCentralRegionalMB.atrributeHelper.folioSeleccionado}"/>
+                                	<f:setPropertyActionListener value="#{propuesta.propuesta.idPropuesta}"
+                                                         target="#{origenCentralRegionalMB.atrributeHelper.idPropuestaSeleccionada}"/>
+                                	<f:setPropertyActionListener value="#{propuesta}"
+                                                         target="#{origenCentralRegionalMB.atrributeHelper.centralRegSeleccionado}"/>
+                            </p:commandLink>                             
+                        </p:column>
+                         
+                                   
+                        <p:column headerText="#{msj['column.origen.central.metodo']}" style="text-align:center" filterBy="#{propuesta.metodo.abreviatura}" filterMatchMode="exact"  width="135" >
+                            <f:facet name="filter">
+            			            <p:selectOneMenu onchange="PF('tablaPropuestaFiltro').filter()" style="width:125px;">
+                                        <f:selectItem id="tipoMetodo"
+                                                       itemLabel="#{msj['combo.item.selecciona.metodo']}" itemValue="#{null}"/>
+                                        <f:selectItems value="#{origenCentralRegionalMB.listaHelper.listaMetodo}"
+                                                       var="metodo" itemLabel="#{metodo}" itemValue="#{metodo}"/>
+                                    </p:selectOneMenu>
+                           </f:facet>
+                           
+                            <h:outputText value="#{propuesta.metodo.abreviatura}" />    
+                        </p:column>
+
+                        <p:column  headerText="#{msj['column.origen.central.presuntiva']}" style="text-align:center" width="130" >
+                          	<h:outputText value="#{propuesta.propuesta.presuntiva}" >
+    	                    	  <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+		                  	</h:outputText>               
+                        </p:column>
+
+                        
+                        <p:column headerText="#{msj['label.encabezado.prioridad']}" style="text-align:center" 
+                        	filterBy="#{propuesta.propuesta.prioridadSugerida}" width="45" filterStyle="width: 35px;">
+                               <h:outputText value="#{propuesta.propuesta.prioridadSugerida}" />                        
+                        </p:column>
+                        
+                        <p:column headerText="#{msj['column.origen.central.subprograma']}" style="text-align:center" width="80" >
+                               <h:outputText value="#{propuesta.subprograma.clave}" />                        
+                        </p:column>
+                        
+                        
+                        <p:column headerText="#{msj['column.origen.central.tipoPropuesta']}" style="text-align:center" width="100" >
+                               <h:outputText value="#{propuesta.tipoPropuesta.descripcion}" />                        
+                        </p:column>
+                        
+               			<p:column headerText="#{msj['label.inicio']}" style="text-align:center"
+                                  filterBy="#{propuesta.propuesta.fechaInicioPeriodo}" filterFunction="#{origenCentralRegionalMB.filtraFecha}" width="70" filterStyle="width: 60px;" >                                       
+                        	<h:outputText value="#{propuesta.propuesta.fechaInicioPeriodo}" >                                    
+                            	<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+               			<p:column headerText="#{msj['label.fin']}" style="text-align:center"
+                                   filterBy="#{propuesta.propuesta.fechaFinPeriodo}"  filterFunction="#{origenCentralRegionalMB.filtraFecha}" width="70" filterStyle="width: 60px;" >                                       
+                        	<h:outputText value="#{propuesta.propuesta.fechaFinPeriodo}" >                                    
+                            	<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        
+               			<p:column headerText="#{msj['column.fecha.comite']}" filterBy="#{propuesta.propuesta.tipoComite}"  filterMatchMode="exact"  style="text-align:center" width="170" >                                       
+                        	<f:facet name="filter">
+            			            <p:selectOneMenu onchange="PF('tablaPropuestaFiltro').filter()" style="width:160px;">
+                                        <f:selectItem id="tipoFechaComite"
+                                                       itemLabel="#{msj['combo.item.selecciona.tipo.fecha']}" itemValue="#{null}"/>                                                       
+                                        <f:selectItems value="#{origenCentralRegionalMB.listaHelper.listaFechasComiteEnum}"
+                                                       var="fechaComite" itemLabel="#{fechaComite.descripcion}" itemValue="#{fechaComite}"/>
+                                    </p:selectOneMenu>
+                           </f:facet>                        	  
+
+                           <h:outputText value="#{propuesta.propuesta.fechaPresentacionRegional != null ? propuesta.propuesta.fechaPresentacionRegional : propuesta.propuesta.fechaInformeRegional}">
+                           		<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+                           </h:outputText>
+                        </p:column>               
+               
+               
+                   <p:rowExpansion>
+                                <p:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                                    
+                                    <h:outputText value="#{msj['label.sector']} "/>
+                                    <h:outputText value="#{propuesta.sector.descripcion}"/>
+                                    <h:outputText value="#{msj['column.origen.central.subprograma']} "/>
+                                    <h:outputText value="#{propuesta.subprograma.clave} - #{propuesta.subprograma.descripcion}"/>
+                                </p:panelGrid>
+                            </p:rowExpansion>
+               
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

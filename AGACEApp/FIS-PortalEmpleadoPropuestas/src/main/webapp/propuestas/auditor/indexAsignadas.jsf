@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" 
+          xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+        <h:head>
+            <title>AGACE</title>
+        </h:head>
+        <h:body>
+            <h:form id="formPropuestas" enctype="multipart/form-data" styleClass="panel-principal">
+                <f:metadata>
+                    <f:event type="preRenderView" listener="#{resumenPropuestasMB.cargaDatos}" />
+                </f:metadata>
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true"/>
+                     
+                  <p:panel id="panelPropuestas" styleClass="panel-interno" header="#{msj['titulo.panel.propuestas.asignadas']}"
+                         rendered="#{resumenPropuestasMB.cpaBooleanHelper.muestraPropuestas}">
+                     <h:outputLabel value="#{msj['label.propuestas.por.analizar']}" style="font-weight:bold;"/>
+                     <p:separator/>
+                    <!-- Resumen de Propuestas-->
+                    <h:panelGrid id="panelResumenPropuestas" width="100%">
+                       <p:dataTable value="#{resumenPropuestasMB.consultarPropAsignadaHelper.resumenPropuestasAsignadas}" 
+                                    var="datos" 
+                                    style="border:thin;width:836;" 
+                                    id="tablaResumenPropuestas">
+                           <p:column style=" border-bottom:1px solid;">
+                              <p:outputLabel id="filaFirmanteAten" value="#{msj['apartado.fila.asignadas.firmante']}"/><br/><br/>
+                              <p:tooltip id="toolTipFirmanteAten" for="filaFirmanteAten" value="#{msj['leyenda.fila.asignadas.firmante']}" />
+                              <p:outputLabel id="filaRetroalimentadas" value="#{msj['apartado.retroalimentadas']}"/> <br/><br/>
+                              <p:tooltip id="toolTipRetro" for="filaRetroalimentadas" value="#{msj['leyenda.retroalimentadas']}" />
+                              <p:outputLabel id="filaFirmanteValid" value="#{msj['apartado.validacion.firmante']}"/> <br/><br/>
+                              <p:tooltip id="toolTipFirmanteValid" for="filaFirmanteValid" value="#{msj['leyenda.validacion.firmante']}" />
+                              <p:outputLabel id="filaEmisionValid" value="#{msj['apartado.validacion.emision']}"/> <br/><br/>
+                              <p:tooltip id="toolTipEmision" for="filaEmisionValid" value="#{msj['leyenda.validacion.emision']}" />
+                              <p:outputLabel id="filaCanceladas" value="#{msj['apartado.canceladas']}"/> <br/><br/>
+                              <p:tooltip id="toolTipCanceladas" for="filaCanceladas" value="#{msj['leyenda.canceladas']}" />
+                              <p:outputLabel id="filaTransferidas" value="#{msj['apartado.transferidas']}"/> <br/><br/>
+                              <p:tooltip id="toolTipTransferidas" for="filaTransferidas" value="#{msj['leyenda.transferidas']}" />
+                              <p:outputLabel id="filaRechazads" value="#{msj['apartado.rechazadas']}"/> <br/><br/>
+                              <p:tooltip id="toolTipRechazadas" for="filaRechazads" value="#{msj['leyenda.rechazadas']}" />
+                              <f:facet name="header">
+                                 <h:outputText id="colApartados" value="#{msj['header.resumen.aparatados']}" title="#{msj['leyenda.resumen.aparatados']}"/>
+                              </f:facet>
+                           </p:column>
+                           <p:tooltip id="toolTipApartados" for="colApartados" value="#{msj['leyenda.resumen.aparatados']}" />
+                           
+                           <p:column style="text-align: center;">
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalAsignadasFirmante}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.asignadaAuditor}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalRetroAtender}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.retroalimentada}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.noAprobadaRetroalimentacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                                                              
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalFirmanteAtender}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.adecuarAuditor}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalEmisionAtender}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.verificacionProcedencia}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalCanceladasAtender}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.noAprobadaCancelacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalTransferidasAtender}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.noAprobadaTransferencia}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>                            
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalRechazadasAtender}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.noAprobadoRechazo}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <f:facet name="header">
+                                 <h:outputText id="colAtender" value="#{msj['header.resumen.atender']}" title="#{msj['leyenda.resumen.atender']}"/>
+                              </f:facet>
+                           </p:column>
+                           
+                           <p:tooltip id="toolTipAtender" for="colAtender" value="#{msj['leyenda.resumen.atender']}" />
+                           
+                           <p:column style="text-align: center">
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalRetroValidacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.retroPendienteValidacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalFirmanteValidacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.pendienteValidacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalEmisionValidacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.enviadaVerificacionProcedencia}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.asignadoSubadministrador}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalCancelacionValidacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.cancelacionPendienteValidacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalTransferenciaValidacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.enviadoAprobarTransferido}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalRechazoValidacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.rechazadaPendienteValidacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <f:facet name="header">
+                                 <h:outputText id="colFirmanteValid" value="#{msj['header.resumen.pendiente.validacion']}" title="#{msj['leyenda.resumen.pendiente.validacion']}"/>
+                              </f:facet>
+                           </p:column>
+                           <p:tooltip id="toolTipFirmanteValid2" for="colFirmanteValid" value="#{msj['leyenda.resumen.pendiente.validacion']}" />
+                           
+                           <p:column style="text-align: center">
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalProgramacionValidacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.registroEnRetroalimentacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinAccion}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <f:facet name="header">
+                                 <h:outputText id="colProgramacionValid" value="#{msj['header.resumen.validacion.programacion']}" title="#{msj['leyenda.resumen.validacion.programacion']}"/>
+                              </f:facet>
+                           </p:column>
+                           <p:tooltip id="toolTipProgramacionValid" for="colProgramacionValid" value="#{msj['leyenda.resumen.validacion.programacion']}" />
+                           
+                           <p:column style="text-align: center">
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalConcluidasCancelacion}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.concluida}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.accionCancelacion}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <h:outputText value="#{msj['resumen.no.aplica']}" style="text-align: center"/>
+                              <br/><br/>
+                              <p:commandLink action="#{resumenPropuestasMB.muestraPropuestas}" value="#{datos.totalConcluidasRechazo}" style="text-align:center;color:blue;">
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.concluida}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta1}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.sinEstatus2}"  
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.estatusPropuesta2}"/>
+                                 <f:setPropertyActionListener value="#{resumenPropuestasMB.cpaEstatusHelper.accionRechazo}" 
+                                                              target="#{consultarPropuestasAsignadasManagedBean.cpaParamHelper.accionPropuesta}"/>
+                              </p:commandLink>
+                              <br/><br/>
+                              <f:facet name="header">
+                                 <h:outputText id="colConluidas" value="#{msj['header.resumen.concluidas']}" title="#{msj['leyenda.resumen.concluidas']}"/>
+                              </f:facet>
+                           </p:column>
+                           <p:tooltip id="toolTipConcluidas" for="colConluidas" value="#{msj['leyenda.resumen.concluidas']}" />
+                       </p:dataTable>
+                   </h:panelGrid>      
+                </p:panel>
+            </h:form>
+            
+            <h:outputScript library="js/" name="agace.js"/>
+
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>

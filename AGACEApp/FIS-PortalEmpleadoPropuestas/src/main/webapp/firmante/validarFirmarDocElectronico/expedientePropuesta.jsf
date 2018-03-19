@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui"
+          xmlns:pe="http://primefaces.org/ui/extensions"  >
+        <h:head>
+            <style>
+                .noBorders tr, .noBorders td {                    
+                    border: none !important;
+                }
+            </style>
+		</h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="formValidarPropuestas">
+            
+                <h:panelGrid border="0" columns="2" width="60%">
+                    <h:outputLabel value="EXPEDIENTE PROPUESTA " style="float:right;font-weight:bold;"/>
+                    <h:outputLabel value="#{expediente.idRegistro}"/>
+                </h:panelGrid>
+                <!-- Datos del contribuyente BD -->
+                    <p:panel id="panelDatosContBD" header="#{msj['lbl.propuestas.datosContribuyente']}" styleClass="panel-interno"
+                             style="width:80%;">                        
+                        <table id="tableDatosContBD" border="0" width="100%" cellpadding="3" cellspacing="2">
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.rfc']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRFC" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.rfc}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.nombreRazonSocial']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtNombre" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.nombre}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.regimen']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.regimen}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.situacion}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.tipoContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.tipo}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.actividadPreponderante']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtActividad" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.actividadPreponderante}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.domicilioFiscalContribuyente']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputTextarea id="txtDomFiscal" cols="40" rows="4" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.domicilioFiscal}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['lbl.propuestas.situacionDomicilio']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.situacionDomicilio}"/></td></tr>
+                                </table>
+                            </td> 
+                          </tr>
+                          <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                      <tr><td><h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/></td></tr>
+                                      <tr><td><p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true" value="#{expediente.contribuyente.entidad}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%"></td> 
+                          </tr>
+                        </table>
+                    </p:panel>
+                    <br/>
+                    <!-- Datos de la propuesta -->
+                    <p:panel id="panelDatosPropuesta" 
+                             header="Detalle de la propuesta" 
+                             styleClass="panel-interno"
+                             style="width:80%;">
+                             
+                                            <!-- Info Nueva-->
+                    
+                    <table id="tableDatosPropuesta" border="0" width="100%" cellpadding="3" cellspacing="2">
+                       <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.metodo.revision']}" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputText id="txtMetodoDesc" style="width:200px;height:auto;" disabled="true" value="#{expediente.propuesta.feceaMetodo.nombre}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputTextarea id="txtSubprogramaDesc" style="width:325px;height:auto;" disabled="true" value="#{expediente.propuesta.fececSubprograma.descripcion}"/></td></tr>
+                                </table>
+                            </td>
+                       </tr>
+                       <tr>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.tipo.propuesta']}" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputText id="txtTipoPropuestaDesc" style="width:200px;height:auto;" disabled="true" value="#{expediente.propuesta.fececTipoPropuesta.descripcion}"/></td></tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0">
+                                  <tr><td><h:outputLabel value="#{msj['label.causa.programacion']}" style="font-weight:bold"/></td></tr>
+                                  <tr><td><p:inputTextarea id="txtCausaProgDesc" style="width:325px;height:auto;" disabled="true" value="#{expediente.propuesta.fececCausaProgramacion.descripcion}"/></td></tr>
+                                </table>
+                            </td>
+                       </tr>
+                    </table>
+                         
+                         <p:panelGrid columns="8" styleClass="noBorders">
+                         	
+                            <h:outputLabel rendered="#{expediente.esOrg}" value="#{msj['label.tipo.revision']}" style="font-weight:bold"/>
+                            <p:inputText rendered="#{expediente.esOrg}" id="txtRevisionDesc" style="width:50px;height:auto;" disabled="true" value="#{expediente.propuesta.fececRevision.descripcion}"/>
+                                        
+						    <h:outputLabel rendered="#{expediente.tipoAccionPropuesta}"  value="#{msj['lbl.propuestas.del']}:" style="font-weight:bold"/>
+	                        <h:outputLabel  rendered="#{!expediente.tipoAccionPropuesta}"  value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold"/>
+                            <p:calendar value="#{expediente.propuesta.fechaInicioPeriodo}" pattern="dd/MM/yyyy" disabled="true" style="width:80px;" />
+                                                            
+                            <h:outputLabel rendered="#{expediente.tipoAccionPropuesta}"  value="#{msj['lbl.propuestas.al']}:" style="font-weight:bold"/>
+                            <h:outputLabel  rendered="#{!expediente.tipoAccionPropuesta}"  value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold"/>
+                    
+                            <p:calendar value="#{expediente.propuesta.fechaFinPeriodo}" pattern="dd/MM/yyyy" disabled="true" style="width:80px;"/>
+                                                            
+                            <p:outputLabel value="Presuntiva ($):" />
+                            <h:outputText value="#{expediente.propuesta.presuntiva}" disabled="true">
+                               <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                            </h:outputText>
+                         </p:panelGrid>                        	     
+                    </p:panel>
+                    <br />
+                    <p:dataTable id="tablaDocumentacionExpediente"
+                                 value="#{expediente.listaDocumentosTabla}"
+                                 var="documento" 
+                                 editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                 rows="10"
+                                 style="width:40%;"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                 paginatorPosition="bottom" >
+                            <f:facet name="header">
+                                    <h:outputLabel value="#{msj['label.propuestas.datos.propuesta.documentos']}" style="font-weight:bold" />
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+                                      style="width:40px;">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}" style="width:100px;margin:auto;">
+                                <div style="margin:auto;">#{documento.nombre}</div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.documento']}" style="width:40px;">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Documento" ajax="true"
+                                                 style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{documento}" target="#{expediente.documentoSeleccionado}" />
+                                        <p:fileDownload contentDisposition="attachment" value="#{expediente.documentoSeleccionDescarga}" />
+                                </h:commandButton>
+                            </p:column>
+                    </p:dataTable>
+                    <br />
+                    <p:commandButton value="#{msj['btn.pantalla.anterior']}" action="#{expediente.regresar}" />
+            </h:form>
+            
+        </h:body>
+        
+    </html>
+</f:view>

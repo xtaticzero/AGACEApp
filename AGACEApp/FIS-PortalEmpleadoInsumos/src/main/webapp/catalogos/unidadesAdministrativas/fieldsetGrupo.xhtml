@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <p:fieldset id="fsGrupo" legend="Grupos Administración" toggleable="true" toggleSpeed="500" collapsed="true">
+            <h:panelGrid id="gridGrupoNew" columns="2" cellpadding="5" border="0">
+                <p:outputLabel value="Central : " />
+                <p:selectBooleanCheckbox value="#{catalogManagerMB.newGrupo.central}"/>
+                <p:outputLabel value="Nombre Grupo: " />
+                <p:inputText id="nomGrupo" value="#{catalogManagerMB.newGrupo.nombre}" onkeypress="return validaAlfaNumericos(event);" style="text-transform: uppercase">
+                    <p:ajax event="blur" update=":formUnidadXGeneral:btnGuardarGrupo"/>
+                </p:inputText>
+                <p:outputLabel value="Descripcion Grupo: " />
+                <p:inputTextarea id="descGrupo" value="#{catalogManagerMB.newGrupo.descripcion}" rows="5" cols="30" counter="display" maxlength="245" counterTemplate="{0} caracteres restantes." autoResize="false" style="width: 300px;;height:auto;font-size:11px;">
+                    <p:ajax event="blur" update=":formUnidadXGeneral:btnGuardarGrupo"/>
+                </p:inputTextarea>
+                <p:spacer/>
+                <h:outputText id="display" />
+
+                <f:facet name="footer">
+                    <p:commandButton id="btnGuardarGrupo"
+                                     value="Guardar Grupo de Administración"
+                                     action="#{catalogManagerMB.addGrupo}"
+                                     icon="ui-icon-circle-plus"
+                                     update=":formUnidadXGeneral:fsGrupo :formUnidadXGeneral:fsGrupoUnidadRegla"
+                                     disabled="#{!catalogManagerMB.flgBtnGuardarGrupo}"/>
+                </f:facet>
+            </h:panelGrid>
+
+            <p:dataTable id="tblGrupo" 
+                         var="grupo" 
+                         value="#{catalogManagerMB.lstGrupos}" 
+                         editable="true" 
+                         style="margin-bottom:20px"
+                         emptyMessage="#{msj['label.lista.vacia']}" 
+                         paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                         currentPageReportTemplate="({currentPage} de {totalPages})"
+                         paginatorPosition="bottom">
+                <f:facet name="header">
+                    Grupos FIS Integral
+                </f:facet>
+
+                <p:ajax event="rowEdit" listener="#{catalogManagerMB.grupOnRowEdit}"/>
+
+                <p:column headerText="CENTRAL" style="width: 55px;text-align: center">
+                    <p:cellEditor>
+                        <f:facet name="output"><p:selectBooleanCheckbox value="#{grupo.central}" disabled="true"/></f:facet>
+                        <f:facet name="input"><p:selectBooleanCheckbox value="#{grupo.central}" disabled="false"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="#{msj['label.catalogo.nombre']}">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{grupo.nombre}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="modelInput" value="#{grupo.nombre}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="#{msj['label.catalogo.descripcion']}">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{grupo.descripcion}" /></f:facet>
+                        <f:facet name="input"><p:inputText value="#{grupo.descripcion}" style="width:100%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column style="width:32px;text-align: center;" headerText="#{msj['label.catalogo.editar']}">
+                    <p:rowEditor />
+                </p:column>
+
+                <p:column style="width:40px;text-align: center" headerText="#{msj['label.catalogo.eliminar']}">
+                    <p:commandButton icon="ui-icon-trash" title="eliminar" action="#{catalogManagerMB.groupOnRowDelete}" update=":formUnidadXGeneral:tblGrupo">
+                        <f:setPropertyActionListener value="#{grupo}" target="#{catalogManagerMB.grupoSeleccionado}"/>
+                        <p:confirm header="#{msj['label.catalogo.confirmacion']}" message="#{msj['label.catalogo.msg.confirmacion']}" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </p:fieldset>
+    </html>
+</f:view>

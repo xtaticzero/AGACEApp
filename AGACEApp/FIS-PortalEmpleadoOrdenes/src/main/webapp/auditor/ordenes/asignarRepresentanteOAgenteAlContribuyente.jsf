@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head></h:head>
+        <h:body>
+            <h:form enctype="multipart/form-data" id="formAsignar" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogAsignar').show();" onsuccess="PF('statusDialogAsignar').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogAsignar" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardarAsignacion" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelAgregaAgenteRep" styleClass="panel-interno"
+                         header="Asignar #{cargarOrdenMB.tipoAsignar}">
+                    <h:panelGrid columns="2" id="panelAsignaAgente" rendered="#{cargarOrdenMB.mostrarDatosAgente}">
+                        <p:column>
+                            <p:outputLabel value="RFC:" style="font-weight:bold;"
+                                           rendered="#{cargarOrdenMB.mostrarDatosAgente}"/>
+                            <p:spacer width="200px" height="1"/>
+                            <br/>
+                            <p:inputText maxlength="13" id="rfcAgenteRep" value="#{cargarOrdenMB.rfcAsignarAgente}"
+                                         rendered="#{cargarOrdenMB.mostrarDatosAgente}"
+                                         onkeypress="if(event.keyCode==13){return false;}" required="false">
+                                <p:ajax update="rfcAgenteRep msgRfcAgente panelAgregaAgenteRep formAsignar txtNomAnAd formAsignar:msgExitoGuardarAsignacion"
+                                        event="blur" listener="#{cargarOrdenMB.buscarRfcAsignar}"/>
+                            </p:inputText>
+                            <p:message id="msgRfcAgente" for="rfcAgenteRep" display="text"/>
+                            <br/><br/>
+                        </p:column>
+                        <p:column>
+                            <p:spacer width="20px" height="1"/>
+                            <p:outputLabel id="txtNomAgn" value="Nombre: " style="font-weight:bold;"
+                                           rendered="#{cargarOrdenMB.mostrarDatosAgente}"/>
+                            <br/>
+                            <p:spacer width="20px" height="1"/>
+                            <p:inputTextarea id="txtNomAnAd" value="#{cargarOrdenMB.nombreAsignarAgente}" cols="80"
+                                          disabled="true" rendered="#{cargarOrdenMB.mostrarDatosAgente}"/>
+                            <br/>
+                            <br/>
+                        </p:column>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" id="panelAsignaRepresentante"
+                                 rendered="#{!cargarOrdenMB.mostrarDatosAgente}">
+                        <p:column>
+                            <p:outputLabel value="RFC:" style="font-weight:bold;"
+                                           rendered="#{!cargarOrdenMB.mostrarDatosAgente}"/>
+                            <p:spacer width="200px" height="1"/>
+                            <br/>
+                            <p:inputText maxlength="13" id="rfcRep" value="#{cargarOrdenMB.rfcAsignarRepresentante}"
+                                         rendered="#{!cargarOrdenMB.mostrarDatosAgente}"
+                                         onkeypress="if(event.keyCode==13){return false;}" required="false">
+                                <p:ajax update="rfcRep msgRfcRep btnAsignar panelAgregaAgenteRep txtNomRepLe formAsignar formAsignar:msgExitoGuardarAsignacion"
+                                        event="blur" listener="#{cargarOrdenMB.buscarRfcAsignar}" />
+                            </p:inputText>
+                            <p:message id="msgRfcRep" for="rfcRep" display="text"/>
+                            <br/>
+                            <br/>
+                        </p:column>
+                        <p:column>              
+                            <p:spacer width="20px" height="1"/>
+                            <p:outputLabel id="txtNomRep" value="Nombre: "
+                                           rendered="#{!cargarOrdenMB.mostrarDatosAgente}" style="font-weight:bold;"/>
+                            <br/>
+                            <p:spacer width="20px" height="1"/>
+                            <p:inputTextarea id="txtNomRepLe" rendered="#{!cargarOrdenMB.mostrarDatosAgente}" cols="80"
+                                           disabled="true" value="#{cargarOrdenMB.nombreAsignarRepresentante}"/>
+                            <br/>
+                            <br/>
+                        </p:column>
+                    </h:panelGrid>
+                    <br/>
+                    <h:panelGrid columns="3" style="float:right;" >
+                        <p:column>
+                            
+                            <p:commandButton value="#{msj['btn.asignar']}" id="btnAsignar" disabled="#{cargarOrdenMB.guardarRepAgente}" 
+                                             onclick="dlgAsignarAgenteRepresentante.show();" />
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="#{msj['btn.limpiar']}" id="btnCancelaAsignaAgente" update="formAsignar msgExitoGuardarAsignacion"
+                                             action="#{cargarOrdenMB.limpiarDatos}" immediate="true" oncomplete="ocultaMsgAgace('msgExitoGuardarAsignacion');">
+                                <p:resetInput target="rfcAgenteRep txtNomAnAd rfcRep formAsignar txtNomRepLe"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Regresar" action="#{cargarOrdenMB.regresarAsignarRepLegalAgtAduanal}"/>
+                        </p:column>
+                    </h:panelGrid>
+                    <br/><br/><br/>
+                    
+                    <p:dialog id="dlgAsignarAgenteRepresentante" widgetVar="dlgAsignarAgenteRepresentante"
+                              header="Confirmación de asignación" closable="false" resizable="false" style="display:none;" >
+                              <br/>
+                              <p:outputLabel value="¿Está seguro que desea asignar este #{cargarOrdenMB.tipoAsignar} al contribuyente?" />
+                              <br/><br/>
+                              <h:panelGrid columns="2" style="float:right;" >
+                                <p:column>
+                                   <p:commandButton value="Aceptar" action="#{cargarOrdenMB.asignarAgenteRepresentante}" update="msgExitoGuardarAsignacion"  
+                                                     onclick="dlgAsignarAgenteRepresentante.hide();" icon="ui-icon-check" oncomplete="ocultaMsgAgace('msgExitoGuardarAsignacion');" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="Cancelar" action="#{cargarOrdenMB.cancelarAsignacion}" 
+                                    onclick="dlgAsignarAgenteRepresentante.hide()"  icon="ui-icon-close" immediate="true" />
+                                </p:column>
+                              </h:panelGrid>
+                              <br/>
+                    </p:dialog>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

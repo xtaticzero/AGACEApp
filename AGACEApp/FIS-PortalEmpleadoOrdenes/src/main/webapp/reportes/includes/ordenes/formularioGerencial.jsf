@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions">
+                
+            <h:panelGrid rendered="#{reporteOrdenesMB.reporteDTOHelper.mostrarFormulario}" id="divFormularioGerencialId" columns="2" border="0" cellpadding="4" cellspacing="4">
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.periodo']}: "/> <h:outputText value=" *" style="color:red"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:calendar id="fechaPeriodoInicioId" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="8" 
+                                    maxdate="#{reporteOrdenesMB.reporteDTOHelper.fechaActual}" value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.fechaInicioPeriodo}" navigator="true">
+                                <p:ajax event="dateSelect" update=":formReportes:fechaPeriodoFinId" listener="#{reporteOrdenesMB.handleDateSelectFechaInicio}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+                            </p:calendar>
+                            <h:outputText value=" "/>
+                            <p:calendar disabled="#{reporteOrdenesMB.reporteDTOHelper.habilitarFechaPeriodoFin}" id="fechaPeriodoFinId" locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true"
+                                    size="8" mindate="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.fechaInicioPeriodo}" maxdate="#{reporteOrdenesMB.reporteDTOHelper.fechaMinima}"
+                                    value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.fechaFinPeriodo}" navigator="true"/>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.rfc']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:inputText id="txtRFC" maxlength="13" value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.rfc}" onkeypress="if(event.keyCode==13){return false;}"></p:inputText>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.metodo']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu id="metodoId" value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.metodoId}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteOrdenesMB.reporteLstHelper.listaMetodos}" var="lista" itemLabel="#{lista.idMetodo} - #{lista.nombre}" itemValue="#{lista.idMetodo}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.estatus']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu style="width:350px;" id="estatusId" value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.estatusId}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteOrdenesMB.reporteLstHelper.listaEstatusOrdenes}" var="lista" itemLabel="#{lista.descripcion}" itemValue="#{lista.idEstatus}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.unidad']}: "/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu disabled="#{reporteOrdenesMB.reporteDTOHelper.habilitarUnidad}" id="araceIdCentral" value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.araceId}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteOrdenesMB.reporteLstHelper.listaUnidad}" var="lista" itemLabel="#{lista.idUnidadAdministrativa} - #{lista.nombre}" itemValue="#{lista.idUnidadAdministrativa}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.firmante']}: " rendered="#{reporteOrdenesMB.reporteDTOHelper.habilitarFirmante}"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu id="firmanteId" value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.firmanteId}" rendered="#{reporteOrdenesMB.reporteDTOHelper.habilitarFirmante}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteOrdenesMB.reporteLstHelper.listaFirmantes}" var="lista" itemLabel="#{lista.rfc} - #{lista.nombre}" itemValue="#{lista.idEmpleado}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{msj['lbl.reporte.columna.auditor']}: " rendered="#{reporteOrdenesMB.reporteDTOHelper.habilitarauditor}" />
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:selectOneMenu style="width:350px;" id="auditorId" value="#{reporteOrdenesMB.reporteDTOHelper.reportesVO.auditorId}" rendered="#{reporteOrdenesMB.reporteDTOHelper.habilitarauditor}">
+                                <f:selectItem itemLabel="#{msj['lbl.reporte.selectbox.seleccione']}" itemValue=""/>
+                                <f:selectItems value="#{reporteOrdenesMB.reporteLstHelper.listaAuditores}" var="lista" itemLabel="#{lista.rfc} - #{lista.nombre}" itemValue="#{lista.idEmpleado}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup>
+                            <p:commandButton ajax="true" update=":formReportes"  value="#{msj['lbl.reporte.columna.btnGenerarReporte']}" action="#{reporteOrdenesMB.generarReporteGerencial}" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
+
+</ui:composition>

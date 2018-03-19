@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+	<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:p="http://primefaces.org/ui">
+<h:head></h:head>
+<h:body>
+	
+                <h:form id="formGenerarRevision" enctype="multipart/form-data" >           
+                    <p:panel id="panelGenerar"
+			style="border-top:none!important;border-top-right-radius:0;border-top-left-radius:0;"
+			styleClass="panel-interno">
+			<h:panelGrid>
+                        	<h:panelGrid border="0" columns="4">
+				<p:spacer width="10" height="1" />
+				<p:spacer width="230" height="1" />
+				<p:spacer width="230" height="1" />
+				<p:spacer width="10" height="1" />
+				
+				<p:spacer width="200" height="1" />
+				<p:spacer width="200" height="1" />
+				<p:spacer width="10" height="1" />
+			</h:panelGrid>
+			<p:separator />
+        
+                           <h:panelGrid columns="6" id="generar" border="0"
+				styleClass="panel-secundario" >   
+				                       
+                        	<p:column rendered="true">
+				<br/>
+				<br/>
+				<br/>
+				<div align="center">
+					<p:commandButton value="#{msj['btn.generarRevision']}"  action="#{cargaDocumentoElectronicoMB.comparaContribuyente}"  
+                                        ajax="true" immediate="true"/>                            
+					<p:spacer width="10" height="1" />
+                                        <p:commandButton value="#{msj['label.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                                 />
+
+					<p:spacer width="10" height="1" />
+				</div>
+                                
+			</p:column>
+                </h:panelGrid>
+                </h:panelGrid>
+                    </p:panel>
+                    <p:dialog header="Información" widgetVar="msgVal" modal="true" resizable="false" draggable="false" closable="false" position="300,200">
+                <h:panelGrid id="panelCin">
+                    <p:outputLabel id="lbVal" value="#{msj['label.esta.seguro.desea.actualizar.idc']}"/>
+                    <h:panelGrid columns="2">
+                        <p:commandButton id="butAceVal" value="Aceptar" onclick="PF('msgVal').hide();" action="#{cargaDocumentoElectronicoMB.consultaContribuyente}" update="@form"/>
+                        <p:commandButton id="butCanVal" value="Cancelar" onclick="PF('msgVal').hide();" />
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+                        <p:dialog header="Información" widgetVar="msgValCon" modal="true" resizable="false" draggable="false" closable="false" position="300,200">
+                <h:panelGrid id="panelCinC">
+                    <p:outputLabel id="lbValC" value="El sistema ha detectado modificaciones en los datos del contribuyente en IdC. ¿Está seguro que desea actualizar la información?"/>
+                    <h:panelGrid columns="2">
+                        <p:commandButton id="butAceValCon" value="Aceptar" onclick="PF('msgValCon').hide();" actionListener="#{verificarProcedenciaMB.aceptarCambioDeContribuyente}" ajax="true" update="@form"/>
+                        <p:commandButton id="butCanValCon" value="Cancelar" onclick="PF('msgValCon').hide();" actionListener="#{verificarProcedenciaMB.cancelarCambioDeContribuyente}" update="@form"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>
+            <p:dialog header="Información" widgetVar="msgValRfcAud" modal="true" resizable="false" draggable="false" closable="false" position="300,200">
+                <h:panelGrid id="panelCinAuditor">
+                    <p:outputLabel id="lbValAuditor" value="El RFC no es de un Auditor"/>
+                    <h:panelGrid columns="2">
+                        <p:commandButton id="butAceValAuditor" value="Aceptar" onclick="PF('msgValRfcAud').hide();" actionListener="#{cargaDocumentoElectronicoMB.redirigirURL}" update="@form"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </p:dialog>    
+                
+                </h:form>
+	
+
+	<h:outputScript library="js/" name="agace.js" />
+
+	<h:outputStylesheet library="css/" name="agace.css" />
+
+        
+</h:body>
+	</html>
+</f:view>

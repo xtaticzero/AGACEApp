@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script type="text/javascript">
+            </script>
+            <style type="text/css">
+               .ui-fileupload-cancel {
+                   display: none;
+               }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="idForm" enctype="multipart/form-data">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                          resizable="false" id="statusDialog" widgetVar="statusDialog">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+            
+                <p:panel id="panelReporte" styleClass="panel-interno" header="#{msj['titulo.panel.carga.documentacion.masiva']}">
+                    <p:panelGrid style="margin: 0 auto; width:95%;" styleClass="noBorders">
+                        <p:row>
+                            <p:column colspan="6">
+                                <p:messages showSummary="true" id="messages" showDetail="true" autoUpdate="true"
+                                            closable="true"/>
+                                
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column rowspan="2" style="text-align:center; font-weight: bold; width:10%;">
+                            </p:column>
+                            <p:column colspan="2" style="text-align:left; font-weight: bold; width:10%;">
+                                <p:outputLabel value="#{msg['titulo.adjuntar.archivo.masiva']}"/>
+                            </p:column>
+                            <p:column style="width:80%;"/>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:fileUpload id="fileUpload" 
+                                              auto="false" 
+                                              disabled="#{cargaDocumentacionMasivaManagedBean.fileHabilitado}" widgetVar="upload"
+                                              oncomplete="ocultaMsgAgace('messages');" process="@this"
+                                              fileUploadListener="#{cargaDocumentacionMasivaManagedBean.upload}" 
+                                              mode="advanced" dragDropSupport="false"
+                                              style="width:90%" label="#{msj['btn.examinar']}" 
+                                              styleClass="upload"
+                                              cancelLabel="Cancelar" uploadLabel="Cargar" 
+                                              multiple="true" 
+                                              update=":idForm:btnGuardar">
+                                     </p:fileUpload>
+                                     
+                                     <p:commandButton id="btnGuardar" disabled="#{cargaDocumentacionMasivaManagedBean.guardarHabilitado}"
+                                                     value="Guardar" update="idForm" process="@form"
+                                                     action="#{cargaDocumentacionMasivaManagedBean.cargaDocumentos}"/>
+                                     <p:commandButton id="btnCancelar" 
+                                                     value="Limpiar" update="idForm" process="@form"
+                                                     action="#{cargaDocumentacionMasivaManagedBean.cancelar}"/>
+                                     <p:commandButton value="Pantalla anterior" onclick="window.history.back();"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4">
+                   
+                                <p:panel rendered="#{cargaDocumentacionMasivaManagedBean.panelVisible}"
+                                         style="border:none; width:90%; margin-left: auto; margin-right: auto;">                                    
+                                    <p:dataTable id="tablaDocumentoMasivo" var="cargaDocumentacionMasivaDto"
+                                                 value="#{cargaDocumentacionMasivaManagedBean.cargaDocHelper.cargaDocumentacionMasivaDtoList}"
+                                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                 paginator="true" rows="10" 
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                                 {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                                 paginatorPosition="bottom">
+                                       <f:facet name="header">Documentos cargados con el Folio:&nbsp;#{cargaDocumentacionMasivaManagedBean.folio}</f:facet>
+                                       <p:column>
+                                            <h:outputText value="#{cargaDocumentacionMasivaDto.row}"/>                                                                                        
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{cargaDocumentacionMasivaDto.nombreDocumento}"/>                                                                                                                                    
+                                        </p:column>
+                                    </p:dataTable>
+                                  <br></br>
+                                    <p:dataTable id="tablaDocumentoMasivoIncorrecto" var="documentoIncorrecto"
+                                                 value="#{cargaDocumentacionMasivaManagedBean.cargaDocHelper.documentosIncorrectos}"
+                                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                 paginator="true" rows="10"
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                                 {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                                 paginatorPosition="bottom">
+                                        <f:facet name="header">Documentos incorrectos</f:facet>
+                                        <p:column>
+                                            <h:outputText value="#{cargaDocumentacionMasivaDto.nombreDocumento}"/>                                                                                                                                    
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+                           </p:column>
+                          </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                    
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

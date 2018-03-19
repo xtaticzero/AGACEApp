@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+
+
+        <h:panelGrid id="cabecera" columns="2" style="width:100% !important; height:100% !important;">
+            <h:outputLabel id="lblContribuyenteTransferida" value="#{msj['lbl.propuestas.datosContribuyente']} "
+                                       style="float:left;font-weight:bold;" rendered="#{validarRetroMB.flgContribuyenteAnterior}" />
+            <p:outputLabel id="lblRegistroPropuestaTransferida" value="#{msj['label.id.registro']}: #{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.idRegistro} "  style="float:right;font-weight:bold;"/>
+        </h:panelGrid>
+        <br/>
+                        
+       <p:panel id="pnlContribuyenteTranferir" style="width:100% !important; height:100% !important;" rendered="#{validarRetroMB.flgContribuyenteAnterior}">            
+            <h:panelGrid border="0" columns="4" width="100%">
+                <p:outputLabel id="lblRFCTranferir" value="#{msj['label.propuetas.validar.retro.detalle.rfc']}" style="font-weight:bold;"/>
+                <p:inputText id="txtRFCTranferir" disabled="true" style="width: 200px!important;"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.rfc}"/>      
+                <h:outputLabel id="lblNombreTranferir"  value="#{msj['label.nombre.razon.social']}: " style="font-weight:bold;"/>    
+                <p:inputTextarea id="txtNombreTranferir" disabled="true" style="width:250px !important;height: 40px!important"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.nombre}"/>
+    
+                <h:outputLabel id="lblRegimenTransferir" value="#{msj['label.regimen']}: " style="font-weight:bold"/>
+                <p:inputText id="txtRegimenTranferir" style="width: 200px!important;" disabled="true"
+                                     value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.regimen}"/>                             
+                <h:outputLabel id="lblSituacionContribuyenteTransferir" value="#{msj['label.situacion.contribuyente']} " style="font-weight:bold;"/>
+                <p:inputTextarea id="txtSituacionContribuyenteTranferir" style="width: 250px !important;height: 30px!important" disabled="true"
+                            value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.situacion}"/>
+                    
+                <h:outputLabel id="lblTipoContribuyenteTranferir" value="#{msj['label.tipo.contribuyente']}: " style="font-weight:bold"/>
+                <p:inputText id="txtTipoContribuyenteTranferir" style="width: 200px!important;height:auto;" disabled="true"
+                                        value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.tipo}"/>
+                <h:outputLabel id="lblSituacionDomicilioTransferir" value="#{msj['label.situacion.domicilio']}: " style="font-weight:bold;"/>
+                <p:inputTextarea id="txtSituacionDomicilioTranferir" disabled="true" style="width:250px !important;height: 30px!important"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.situacionDomicilio}"/>
+                
+                
+                <h:outputLabel id="lblDomicilioFiscalContribuyenteTranferir" value="#{msj['label.domicilio.fiscal.contribuyente']}: " style="font-weight:bold"  />
+                <p:inputTextarea id="txtDomicilioFiscalContribuyenteTranferir" style="width:200px !important;height: 60px!important" disabled="true"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.domicilioFiscal}"/>
+                <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                    <h:outputLabel id="lblEntidadOrigenTranferir" value="#{msj['label.entidad']}: " style="font-weight:bold"/>
+                    <p:inputTextarea id="txtEntidadOrigenTranferir" style="width:100px !important;height:auto;" disabled="true"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.entidad}"/>
+                </h:panelGrid>
+                <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                    <h:outputLabel id="lblActividadPreponderanteTranferir" value="#{msj['label.actividad.preponderante']}: " style="font-weight:bold;"/>
+                    <p:inputTextarea id="txtActividadPreponderanteTranferir" style="width:140px !important;height: 40px!important" disabled="true"
+                                     value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.actividadPreponderante}"/>  
+                </h:panelGrid>
+              
+            </h:panelGrid>
+                    
+        </p:panel>
+        
+        <h:panelGrid id="cabeceraContributenteActual" rendered="#{validarRetroMB.flgContribuyenteActual}"  style="width:100% !important; height:100% !important;">
+            
+            <p:commandButton id="btnActualizarContribuyenteTranferir" value="#{msj['btn.actualizar']}" styleClass="ui-confirmdialog-no" style="float:right;"
+                                                            actionListener="#{validarRetroMB.actualizarContribuyente}" update="formValidaRetroalimentarPropuesta" disabled="#{validarRetroMB.esProcesable}" /> 
+            <h:outputLabel id="lblDatosActualTranferir" value="#{msj['lbl.propuestas.datosContribuyente.actual']} "
+                    style="float:left;font-weight:bold;" />
+        </h:panelGrid>
+
+        <p:panel id="pnlContribuyenteActualTranferir" style="width:100% !important; height:100% !important;" rendered="#{validarRetroMB.flgContribuyenteActual}"  > 
+            <h:panelGrid border="0" columns="4" width="100%">
+                <h:outputLabel id="lblRFCActual" value="#{msj['label.propuetas.validar.retro.detalle.rfc']}" style="font-weight:bold;"/>
+                <p:inputText id="txtRFCActual" disabled="true" style="width: 200px!important;"
+                            value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.rfc}"/>                      
+                <h:outputLabel id="lblNombreActual"  value="#{msj['label.nombre.razon.social']}: " style="font-weight:bold;"/>    
+                <p:inputTextarea id="txtNombreActual" disabled="true" style="width:250px !important;height: 40px!important"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.nombre}"/>
+                                             
+                <h:outputLabel id="lblRegimenActua" value="#{msj['label.regimen']}: " style="font-weight:bold"/>
+                <p:inputText id="txtRegimenActual" style="width: 200px!important;" disabled="true"
+                                     value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.regimen}"/>                
+                <h:outputLabel id="lblSituacionContribuyenteActual" value="#{msj['label.situacion.contribuyente']} " style="font-weight:bold;"/>
+                <p:inputTextarea id="txtSituacionContribuyenteActual" style="width: 250px !important;height: 30px!important" disabled="true"
+                            value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.situacion}"/> 
+                            
+                <h:outputLabel id="lblTipoContribuyenteActual" value="#{msj['label.tipo.contribuyente']}: " style="font-weight:bold"/>
+                <p:inputText id="txtTipoContribuyenteActual" style="width: 200px!important;height:auto;" disabled="true"
+                                        value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.tipo}"/>
+                <h:outputLabel id="lblSituacionDomicilioActual" value="#{msj['label.situacion.domicilio']}: " style="font-weight:bold;"/>
+                <p:inputTextarea id="txtSituacionDomicilioActual" disabled="true" style="width:250px !important;height: 30px!important"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.situacionDomicilio}"/>
+                
+                
+                <h:outputLabel id="lblDomicilioFiscalContribuyenteActual" value="#{msj['label.domicilio.fiscal.contribuyente']}: " style="font-weight:bold"  />
+                <p:inputTextarea id="txtDomicilioFiscalContribuyenteActual" style="width:200px !important;height: 60px!important" disabled="true"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.domicilioFiscal}"/>
+                <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                    <h:outputLabel id="lblEntidadActual" value="#{msj['label.entidad']}: " style="font-weight:bold"/>
+                    <p:inputTextarea id="txtEntidadActual" style="width:100px !important;height:auto;" disabled="true"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.entidad}"/>
+                </h:panelGrid>
+                <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                    <h:outputLabel id="lblActividadPreponderanteActual" value="#{msj['label.actividad.preponderante']}: " style="font-weight:bold;"/>
+                    <p:inputTextarea id="txtActividadPreponderanteActual" style="width:140px !important;height: 40px!important" disabled="true"
+                                     value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteActual.actividadPreponderante}"/>  
+
+                </h:panelGrid>              
+            </h:panelGrid>  
+        </p:panel>
+        
+        <h:panelGrid id="cabeceraContribuyenteAnterior" rendered="#{validarRetroMB.flgContribuyenteActual}">
+            <br/>
+            <br/>
+        
+            <h:outputLabel id="lblDatosContribuyenteAnterior" value="#{msj['lbl.propuestas.datosContribuyente.anterior']} "
+                style="float:left;font-weight:bold;" />
+        </h:panelGrid>
+        
+        <p:panel id="pnlContribuyenteAnteriorTranferir" style="width:100% !important; height:100% !important;"  rendered="#{validarRetroMB.flgContribuyenteActual}">    
+            <h:panelGrid border="0" columns="4" width="100%">
+                <p:outputLabel id="lblRFCAnterior" value="#{msj['label.propuetas.validar.retro.detalle.rfc']}" style="font-weight:bold;"/>
+                <p:inputText id="txtRFCAnterior" disabled="true" style="width: 200px!important;"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.rfc}"/>      
+                <h:outputLabel id="lblNombreAnterior"  value="#{msj['label.nombre.razon.social']}: " style="font-weight:bold;"/>    
+                <p:inputTextarea id="txtNombreAnterior" disabled="true" style="width:250px !important;height: 40px!important"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.nombre}"/>
+                
+                <h:outputLabel id="lblRegimenAnterior" value="#{msj['label.regimen']}: " style="font-weight:bold"/>
+                <p:inputText id="txtRegimenAnterior" style="width: 200px!important;" disabled="true"
+                                     value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.regimen}"/> 
+                <h:outputLabel id="lblSituacionContribuyenteAnterior" value="#{msj['label.situacion.contribuyente']} " style="font-weight:bold;"/>
+                <p:inputTextarea id="txtSituacionContribuyenteAnterior" style="width: 250px !important;height: 30px!important" disabled="true"
+                            value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.situacion}"/>
+                                                        
+                    
+                <h:outputLabel id="lblTipoContribuyenteAnterior" value="#{msj['label.tipo.contribuyente']}: " style="font-weight:bold"/>
+                <p:inputText id="txtTipoContribuyenteAnterior" style="width: 200px!important;height:auto;" disabled="true"
+                                        value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.tipo}"/>                
+                <h:outputLabel id="lblSituacionDomicilioAnterior" value="#{msj['label.situacion.domicilio']}: " style="font-weight:bold;"/>
+                <p:inputTextarea id="txtSituacionDomicilioAnterior" disabled="true" style="width:250px !important;height: 30px!important"
+                             value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.situacionDomicilio}"/>
+                    
+                
+                <h:outputLabel id="lblDomicilioFiscalContribuyenteAnterior" value="#{msj['label.domicilio.fiscal.contribuyente']}: " style="font-weight:bold"  />
+                <p:inputTextarea id="txtDomicilioFiscalContribuyenteAnterior" style="width:200px !important;height: 60px!important" disabled="true"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.domicilioFiscal}"/>    
+                
+                <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                    <h:outputLabel id="lblEntidadAnterior" value="#{msj['label.entidad']}: " style="font-weight:bold"/>
+                    <p:inputTextarea id="txtEntidadAnterior" style="width:100px !important;height:auto;" disabled="true"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.entidad}"/>    
+                </h:panelGrid>
+                <h:panelGrid border="0" columns="2" style="width: 100% !important">
+                    <h:outputLabel id="lblActividadPreponderanteAnterior" value="#{msj['label.actividad.preponderante']}: " style="font-weight:bold;"/>
+                    <p:inputTextarea id="txtActividadPreponderanteAnterior" style="width:140px !important;height: 40px!important" disabled="true"
+                                     value="#{validarRetroMB.validarYRetroalimentarHelper.contribuyenteAnterior.actividadPreponderante}"/>  
+                </h:panelGrid>
+              
+            </h:panelGrid>
+        </p:panel>
+        <br/>
+        <br/>
+
+        <div>
+            <h:outputLabel id="cabeceraDatosPrevios" value="#{msj['lbl.propuestas.datosPreviosPropuesta']} "
+                style="float:left;font-weight:bold;"/>
+            <br/>
+        </div>
+
+        <p:panel id="pnlDatosPreviosPropuestaTranferir" style="width:100% !important; height:100% !important;"  >
+            <h:panelGrid columns="4" border="0" style="width: 100% !important;" >
+                <h:outputLabel id="lblMetodoRevisionTrnsferir" value="#{msj['lbl.propuestas.metodoRevision']}: "
+                            style="font-weight:bold;"/>
+                <p:inputText id="txtMetodoRevisionTrnsferir" value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.feceaMetodo.nombre}"
+                             disabled="true"
+                             style="width:150px !important;"/>
+                 <h:outputLabel id="lblSubprogramaTransferir" value="#{msj['label.nombre.docElect.subprograma']}: "
+                        style="font-weight:bold;"/>
+                 <p:inputTextarea id="txtSubprogramaTransferir" value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.fececSubprograma.descripcion}"
+                             style="width:300px !important;height: 40px!important"
+                             disabled="true"/>
+                        
+                 <h:outputLabel id="lblTipoPropuestaTransferir" value="#{msj['lbl.propuestas.tipoPropuesta']}: "
+                        style="font-weight:bold;"/>
+                 <p:inputTextarea id="txtTipoPropuestaTransferir" value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.fececTipoPropuesta.descripcion}"
+                             disabled="true"
+                             style="width:150px !important;height: 40px!important"/>
+                 <h:outputLabel id="lblCausaProgramacionTransferir" value="#{msj['lbl.propuestas.causaProgramacion']}: "
+                        style="font-weight:bold;"/>
+                 <p:inputTextarea id="txtCausaProgramacionTransferir" value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.fececCausaProgramacion.descripcion}"
+                             style="width:300px !important;height: 40px!important" 
+                             disabled="true"/>
+
+                 <h:outputLabel id="lblTipoRevisionTransferir" value="#{msj['lbl.propuestas.tipoRevision']}: "
+                        style="font-weight:bold;"/>
+                 <p:inputTextarea id="txtTipoRevisionTransferir" value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.fececRevision.descripcion} " 
+                             disabled="true"
+                             style="width:100px !important;"/>
+                 <h:outputLabel id="lblFechaTransferir" rendered="#{validarRetroMB.tipoPropuesta}"  value="#{msj['label.prpuestas.validar.retro.detalle.periodo.propuesto']}" style="font-weight:bold;"  />   
+                 <h:outputLabel id="lblFechaTransferirs" rendered="#{!validarRetroMB.tipoPropuesta}"  value="#{msj['label.operaciones.especifica']}:" style="font-weight:bold;" />
+                 
+                      
+                 <h:panelGrid columns="6" border="0" style="width: 100% !important;">
+                 
+                  
+                  <h:outputLabel id="lblPeriodofinalTransferir" rendered="#{validarRetroMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.del']}: " style="font-weight:bold;"/>
+                      <h:outputLabel  id="lblPeriodofinalTransferirs" rendered="#{!validarRetroMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.del.pedimento']}:"  style="font-weight:bold;"/>
+               
+                     <p:calendar value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.fechaInicioPeriodo}"
+                                locale="es" 
+                                pattern="dd/MM/yyyy" 
+                                showOn="button"
+                                readonlyInput="true" size="7" disabled="true"/>
+                    
+                     <h:outputLabel id="lblPeriodoInicioTransferir" rendered="#{validarRetroMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.al']}: " 
+                        style="font-weight:bold;"/>
+                      <h:outputLabel  id="lblPeriodoInicioTransferirs" rendered="#{!validarRetroMB.tipoPropuesta}"  value="#{msj['lbl.propuestas.al.pedimento']}:" 
+                        style="font-weight:bold;"/>
+                     
+                    
+                    <p:calendar value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.fechaFinPeriodo}"
+                                locale="es" 
+                                pattern="dd/MM/yyyy" 
+                                showOn="button"
+                                readonlyInput="true" size="7" disabled="true"/>
+                 <h:outputLabel id="prioridadTranferir" value="#{msj['label.encabezado.prioridad']}:"
+                        style="font-weight:bold;"/>
+                 <p:selectBooleanCheckbox id="prioridadPropuestaTransferir" name="prioridadPropuesta" ajax="true" disabled="true"
+                                                        value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida == null ? false : validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.prioridad}"/>
+                 </h:panelGrid>         
+            </h:panelGrid>
+        
+            <br/>
+            <br/>
+            <br/>
+
+                    <h:panelGrid id="pnlTablaImpuestos" columns="1" width="100%" border="0" styleClass="panel-secundario">
+                        <p:dataTable id="tablaImpuestosPropuestasTransferir" style="border:none;" var="tablaImpuestosPropuestas"
+                                     value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.lstImpuestos}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}">
+                            <f:facet name="header">
+                                <h:outputLabel value="#{msj['lbl.propuestas.impuestos']}" style="font-weight:bold"/>
+                            </f:facet>
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.impuesto']}"/>
+                                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.monto']}"/>
+                                    <p:column colspan="2" headerText="#{msj['lbl.propuestas.periodo']}"/>                            
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="#{msj['lbl.propuestas.del']}"/>
+                                    <p:column headerText="#{msj['lbl.propuestas.al']}"/>
+                                </p:row>
+                            </p:columnGroup>
+                            
+                            <p:column id="colTipoImpuesto" headerText="#{msj['label.impuesto']}" styleClass="someClass" width="100px">
+                                <h:outputText id="txtTipoImpuesto"
+                                              value="#{tablaImpuestosPropuestas.fececTipoImpuesto.descripcion}"/>
+                            </p:column>
+                            
+                            <p:column id="colMonto" headerText="Monto ($):">
+                                <div align="right">
+                                     <h:outputText value="#{tablaImpuestosPropuestas.monto}">
+                                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                     </h:outputText>                        
+                                </div>    
+                            </p:column>
+                            <p:column id="colPeriodoInicial" headerText="#{msj['label.periodo.del']}" width="50px">
+                                <div align="center">
+                                    <h:outputText id="txtFechaPeriodoInicial"
+                                                  value="#{tablaImpuestosPropuestas.periodoInicial}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </div>
+                            </p:column>
+                            <p:column id="colPeriodoFinal" headerText="#{msj['label.periodo.al']}" width="50px">
+                                <div align="center">
+                                    <h:outputText id="txtFechaPeriodofinal"
+                                                  value="#{tablaImpuestosPropuestas.periodoFinal}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </div>
+                            </p:column>
+                            <p:columnGroup id="colGroupPresuntiva" type="footer">
+                                <p:row>
+                                    <p:column id="unionColPresuntiva" footerText="Presuntiva: " style="text-align:right;"/>
+                                    <p:column id="colPresuntivaTansferir" colspan="1" style="text-align:left;">
+                                        <f:facet name="footer">
+                                            <h:outputText value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.presuntiva}">
+                                               <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                            </h:outputText>
+                                        </f:facet>
+                                    </p:column>
+                                </p:row>
+                            </p:columnGroup>
+                        </p:dataTable>
+                    </h:panelGrid>
+
+                <h:panelGrid columns="1" width="100%" border="0" styleClass="panel-secundario">
+                                            <p:spacer width="1" height="15px"/>
+
+
+                        <p:dataTable id="tablaDocumentacionExpedienteTranferir"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.propuestaTransferida.listaDocumentos}" var="documento"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        
+                        <f:facet name="header">
+                            #{msj[&apos;label.expediente.electronico&apos;]}
+                        </f:facet>
+                        <p:column headerText="#{msj['column.fecha.hora.carga.documento']}"  style="width:150px;">
+                            <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy "/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                            <p:commandLink style="color:blue;" inmediate="true" ajax="false" oncomplete="ocultaMsgAgace('msgs');">
+                                #{documento.nombre}                  
+                                <f:setPropertyActionListener value="#{documento.nombre}" 
+                                                            target="#{validarRetroMB.validarYRetroalimentarHelper.nombreArchivoDescarga}"/>
+                                <f:setPropertyActionListener value="#{documento.rutaArchivo}" 
+                                                            target="#{validarRetroMB.validarYRetroalimentarHelper.rutaArchivoDescarga}"/>                        
+                                <p:fileDownload value="#{validarRetroMB.documentoExpediente}" />
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+            <p:spacer width="0px" height="30px"/>
+            <h:panelGrid columns="4" width="100%">                
+                    <h:outputLabel value="#{msj['tbl.titulo.motivo.transferencia']}: " style="float:right;font-weight:bold;"/>        
+                    <p:inputTextarea id="txtObservacionesTransferir" value="#{validarRetroMB.validarYRetroalimentarHelper.tranferenciaSeleccionada.observaciones}" 
+                             style="width:250px !important;height: 100px!important" disabled="true" 
+                    />
+
+                    <p:spacer width="30px" height="30px"/>
+                    <p:dataTable id="tablaDocumentacionTranferencia"
+                                 value="#{validarRetroMB.validarYRetroalimentarHelper.tranferenciaSeleccionada.lstDocumentos}" var="documentoTransferencia"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="10"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <p:column headerText="#{msj['label.propuestas.propuestas.oficio']}"  style="width:150px;">
+                                <p:commandLink style="color:blue;" inmediate="true" ajax="false" oncomplete="ocultaMsgAgace('msgs');">
+                                    #{documentoTransferencia.nombreArchivo}
+                                    <f:setPropertyActionListener value="#{documentoTransferencia.nombreArchivo}" 
+                                        target="#{validarRetroMB.validarYRetroalimentarHelper.nombreArchivoDescarga}"/>
+                                    <f:setPropertyActionListener value="#{documentoTransferencia.rutaArchivo}" 
+                                        target="#{validarRetroMB.validarYRetroalimentarHelper.rutaArchivoDescarga}"/>                        
+                                    <p:fileDownload value="#{validarRetroMB.documentoExpediente}" />
+                                </p:commandLink>
+                        </p:column>
+                    </p:dataTable>                    
+            </h:panelGrid>
+            
+            <p:spacer width="60px" height="30px"/>
+            <div align="center">
+                <p:commandButton id="btnDlgRegistrar" value="#{msj['btn.registrar']}" styleClass="ui-confirmdialog-no" onclick="PF('dlgConfirmarTranferir').show();"  disabled="#{validarRetroMB.esTransferible}" />
+                <p:commandButton id="btnRegresarTransferida" value="#{msj['btn.pantalla.anterior']}" actionListener="#{validarRetroMB.regresarPanelListas}" update=":formValidaRetroalimentarPropuesta"/>
+            </div>
+            
+            <p:dialog header="Confirmar" widgetVar="dlgConfirmarTranferir" minHeight="40">
+                <h:outputText id="txtDialogoConfirmarTransferir" value="#{msj['label.propuesta.tranferida.dialogo.msj']}" />
+                    <h:panelGrid id="btnPnlGridConfirmar" columns="2">
+                        <p:commandButton id="btnRegistrarTransferida" value="#{msj['btn.aceptar']}" styleClass="ui-confirmdialog-no" actionListener="#{validarRetroMB.registrarTransferida}" 
+                                        update=":formValidaRetroalimentarPropuesta" oncomplete="ocultaMsgAgace('msgs');"/>
+                        <p:commandButton id="btnCancelarTransferida" value="#{msj['btn.cancelar']}" onclick="PF('dlgConfirmarTranferir').hide();" update=":formValidaRetroalimentarPropuesta"/>
+                    </h:panelGrid>
+            </p:dialog>
+
+        </p:panel>
+                
+</f:view>

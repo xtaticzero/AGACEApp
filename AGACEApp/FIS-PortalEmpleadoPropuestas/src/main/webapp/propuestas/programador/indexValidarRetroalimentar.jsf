@@ -1,0 +1,1429 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script type="text/javascript">
+ > function handleLoginRequest(xhr, status, args) {
+                  
+                  if (args.loggedIn) {
+                      jQuery('#dlg').hide();
+                  }
+              }
+            </script>
+        </h:head>
+        <h:body>
+            <h:form id="formValidaRetroPropuesta" enctype="multipart/form-data" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogValRetroPropuesta').show();" onsuccess="PF('statusDialogValRetroPropuesta').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogValRetroPropuesta" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgExitoGuardarValRetroPropuesta" showDetail="true" globalOnly="true" closable="true"/>
+                <p:panel id="panelListasPropuestas" styleClass="panel-interno"
+                         header="#{msj['titulo.panel.validacion.retroalimentacion.propuesta']}"
+                         rendered="#{validarRetroalimentarPropuestaManagedBean.mostrarPanelPrincial}">
+                    <p:fieldset legend="#{msj['titulo.fielset.propuesta.validar']}" toggleable="true" toggleSpeed="500" collapsed="true">
+                        <p:dataTable id="tablaPropuestasValidar" var="datos"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaPropuestasValidar}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.folio']}" style="width:10%">
+                                <p:commandLink value="#{datos.idRegistro}" immediate="true" process="@form"
+                                               update="@form"
+                                               action="#{validarRetroalimentarPropuestaManagedBean.mostrarPropuestaValidar}">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.rfc']}" styleClass="someClass"
+                                      style="width:15%">
+                                <h:outputText value="#{datos.fecetContribuyente.rfc}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.prioridad']}" style="width:5%;">
+                                <div align="center">
+                                    <p:graphicImage rendered="#{datos.prioridad}" value="/resources/images/bandera.png"
+                                                    style="border:0;"/>
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.unidad.admin.atencion']}" style="width:24%">
+                                <h:outputText value="#{datos.fececArace.sede}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.presuntiva']}" style="width:24%">
+                                $
+                                <h:outputText value="#{datos.presuntiva}">
+                                    <f:convertNumber minFractionDigits="2" type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <!-- DETALLE -->
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="#{msj['column.insumo.metodo']}:"/>
+                                    <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                                    <h:outputText value="#{msj['column.subprograma']}:"/>
+                                    <p:outputLabel style="width:10px;height:auto;"
+                                                   value="#{datos.fececSubprograma.clave} - #{datos.fececSubprograma.descripcion}"/>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:fieldset>
+                    <p:fieldset legend="#{msj['titulo.fielset.propuesta.pendientes']}" toggleable="true"
+                                toggleSpeed="500" collapsed="true" >
+                        <p:ajax event="toggle"
+                                listener="#{validarRetroalimentarPropuestaManagedBean.cargarPropuestasPendientesToggle}"
+                                update="tablaPropuestasPendientes"/>
+                        <p:dataTable id="tablaPropuestasPendientes" var="datos"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaPropuestasPendientes}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.folio']}" style="width:10%">
+                                <p:commandLink value="#{datos.idRegistro}" immediate="true" process="@form"
+                                               update="@form"
+                                               action="#{validarRetroalimentarPropuestaManagedBean.mostrarPropuestaPendiente}">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.rfc']}" styleClass="someClass"
+                                      style="width:15%">
+                                <h:outputText value="#{datos.fecetContribuyente.rfc}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.prioridad']}" style="width:5%;">
+                                <div align="center">
+                                    <p:graphicImage rendered="#{datos.prioridad}" value="/resources/images/bandera.png"
+                                                    style="border:0;"/>
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.unidad.admin.atencion']}" style="width:24%">
+                                <h:outputText value="#{datos.fececArace.sede}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.presuntiva']}" style="width:24%">
+                                $
+                                <h:outputText value="#{datos.presuntiva}">
+                                    <f:convertNumber minFractionDigits="2" type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <!-- DETALLE -->
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="#{msj['column.insumo.metodo']}:"/>
+                                    <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                                    <h:outputText value="#{msj['column.subprograma']}:"/>
+                                    <p:outputLabel style="width:10px;height:auto;"
+                                                   value="#{datos.fececSubprograma.clave} - #{datos.fececSubprograma.descripcion}"/>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:fieldset>
+                    <p:fieldset legend="#{msj['titulo.fielset.propuesta.retroalimentar']}" toggleable="true"
+                                toggleSpeed="500" collapsed="true">
+                        <p:ajax event="toggle"
+                                listener="#{validarRetroalimentarPropuestaManagedBean.cargarPropuestasPorRetroalimentarToggle}"
+                                update="tablaPropuestasRetroalimentar"/>
+                        <p:dataTable id="tablaPropuestasRetroalimentar" var="datos"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaPropuestasRetroalimentar}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.folio']}" style="width:10%">
+                                <p:commandLink value="#{datos.idRegistro}" immediate="true" process="@form"
+                                               update="@form"
+                                               action="#{validarRetroalimentarPropuestaManagedBean.mostrarPropuestaRetroalimentar}">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.rfc']}" styleClass="someClass"
+                                      style="width:15%">
+                                <h:outputText value="#{datos.fecetContribuyente.rfc}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.prioridad']}" style="width:5%;">
+                                <div align="center">
+                                    <p:graphicImage rendered="#{datos.prioridad}" value="/resources/images/bandera.png"
+                                                    style="border:0;"/>
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.unidad.admin.atencion']}" style="width:24%">
+                                <h:outputText value="#{datos.fececArace.sede}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.presuntiva']}" style="width:24%">
+                                $
+                                <h:outputText value="#{datos.presuntiva}">
+                                    <f:convertNumber minFractionDigits="2" type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <!-- DETALLE -->
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="#{msj['column.insumo.metodo']}:"/>
+                                    <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                                    <h:outputText value="#{msj['column.subprograma']}:"/>
+                                    <p:outputLabel style="width:10px;height:auto;"
+                                                   value="#{datos.fececSubprograma.clave} - #{datos.fececSubprograma.descripcion}"/>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:fieldset>
+                    <p:fieldset legend="#{msj['titulo.fielset.propuesta.informar.comite']}" toggleable="true"
+                                toggleSpeed="500" collapsed="true">
+                        <p:ajax event="toggle"
+                                listener="#{validarRetroalimentarPropuestaManagedBean.cargarPropuestasPorInformarComiteToggle}"
+                                update="tablaPropuestasInformadasComite"/>
+                        <p:dataTable id="tablaPropuestasInformadasComite" var="datos"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaPropuestasInformadasComite}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.folio']}" style="width:10%">
+                                <p:commandLink value="#{datos.idRegistro}" immediate="true" process="@form"
+                                               update="@form"
+                                               action="#{validarRetroalimentarPropuestaManagedBean.mostrarPropuestaInformeComite}">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.rfc']}" styleClass="someClass"
+                                      style="width:15%">
+                                <h:outputText value="#{datos.fecetContribuyente.rfc}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.prioridad']}" style="width:5%;">
+                                <div align="center">
+                                    <p:graphicImage rendered="#{datos.prioridad}" value="/resources/images/bandera.png"
+                                                    style="border:0;"/>
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.unidad.admin.atencion']}" style="width:24%">
+                                <h:outputText value="#{datos.fececArace.sede}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.presuntiva']}" style="width:24%">
+                                $
+                                <h:outputText value="#{datos.presuntiva}">
+                                    <f:convertNumber minFractionDigits="2" type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <!-- DETALLE -->
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="#{msj['column.insumo.metodo']}:"/>
+                                    <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                                    <h:outputText value="#{msj['column.subprograma']}:"/>
+                                    <p:outputLabel style="width:10px;height:auto;"
+                                                   value="#{datos.fececSubprograma.clave} - #{datos.fececSubprograma.descripcion}"/>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:fieldset>
+                    <p:fieldset legend="#{msj['titulo.fielset.propuesta.tranferida']}" toggleable="true"
+                                toggleSpeed="500" collapsed="true">
+                        <p:ajax event="toggle"
+                                listener="#{validarRetroalimentarPropuestaManagedBean.cargarPropuestasTransferidasToggle}"
+                                update="tablaPropuestasTransferidas"/>
+                        <p:dataTable id="tablaPropuestasTransferidas" var="datos"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaPropuestasTransferidas}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.folio']}" style="width:10%">
+                                <p:commandLink value="#{datos.idRegistro}" immediate="true" process="@form"
+                                               update="@form"
+                                               action="#{validarRetroalimentarPropuestaManagedBean.mostrarPropuestaTranferida}">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.rfc']}" styleClass="someClass"
+                                      style="width:15%">
+                                <h:outputText value="#{datos.fecetContribuyente.rfc}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.insumo.seguimiento.prioridad']}" style="width:5%;">
+                                <div align="center">
+                                    <p:graphicImage rendered="#{datos.prioridad}" value="/resources/images/bandera.png"
+                                                    style="border:0;"/>
+                                </div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.unidad.admin.atencion']}" style="width:24%">
+                                <h:outputText value="#{datos.fececArace.sede}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.presuntiva']}" style="width:24%">
+                                $
+                                <h:outputText value="#{datos.presuntiva}">
+                                    <f:convertNumber minFractionDigits="2" type="number"/>
+                                </h:outputText>
+                            </p:column>
+                            <!-- DETALLE -->
+                            <p:rowExpansion>
+                                <h:panelGrid id="display" columns="2" cellpadding="4"
+                                             styleClass=" ui-widget-content grid" width="100%">
+                                    <h:outputText value="#{msj['column.insumo.metodo']}:"/>
+                                    <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                                    <h:outputText value="#{msj['column.subprograma']}:"/>
+                                    <p:outputLabel style="width:10px;height:auto;"
+                                                   value="#{datos.fececSubprograma.clave} - #{datos.fececSubprograma.descripcion}"/>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:fieldset>
+                </p:panel>
+                <p:panel id="panelValidarPropuesta" styleClass="panel-interno"
+                         header="#{msj['titulo.panel.validacion.retroalimentacion.propuesta']}"
+                         rendered="#{validarRetroalimentarPropuestaManagedBean.mostrarPanelValidar}">
+                    <p:fieldset id="fielsetDetallePropuesta" legend="#{msj['titulo.fielset.detalle.propuesta']}"
+                                toggleable="false" collapsed="false">
+                        <h:panelGrid columns="4" width="100%">
+                            <p:column>
+                                <p:outputLabel value="#{msj['label.rfc.contribuyente.obligatorio']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.rfc}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.nombre}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.regimen}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['column.unidad.admin.atencion']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececArace.nombre}"/>
+                                <br/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{msj['column.insumo.seguimiento.folio']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRegistro}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.actividad.preponderante']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.actividadPreponderante}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.periodo.propuesto']}" style="font-weight:bold;"/>
+                                <h:panelGrid id="panelPeriodoPropuesto" columns="5" cellspacing="0">
+                                    <h:outputLabel value="#{msj['label.del']}:" style="font-weight:bold"/>
+                                    <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaInicioPeriodo}"/>
+                                    <p:spacer width="1" height="1"/>
+                                    <h:outputLabel value="#{msj['label.al']}:" style="font-weight:bold;"/>
+                                    <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaFinPeriodo}"/>
+                                </h:panelGrid>
+                                <br/>
+                                <p:outputLabel value="Fecha de PresentaciÃ³n a ComitÃ©:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaPresentacion}"/>
+                                <br/>
+                            </p:column>
+                        </h:panelGrid>
+                        <p:dataTable id="tablaDocumentacionExpediente"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaDocumentosExpediente}"
+                                     var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                                <div style="width:200px;">
+                                    #{documento.nombre}
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="#{documento.nombre}"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="${documento}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{validarProcedenciaInsumoManagedBean.archivoOficioAnexo}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="4" id="panelEnviarValidacion" width="200" style="float:right;">
+                            <p:commandButton id="btnAprobar" value="#{msj['btn.aprobar']}"
+                                             style="float:right;width:80px;" update="panelContenedorDlg"
+                                             oncomplete="dlg.show();" ajax="true"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.configurarAprobacion}"/>
+                            <p:commandButton id="btnRechazar" value="#{msj['btn.rechazar']}"
+                                             style="float:right;width:80px;" update="panelContenedorDlg"
+                                             oncomplete="dlg.show();" ajax="true"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.configurarRechazo}"/>
+                            <p:commandButton id="btnPendiente" value="#{msj['btn.pendiente']}"
+                                             style="float:right;width:80px;" update="panelContenedorDlg"
+                                             oncomplete="dlg.show();" ajax="true"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.configurarPendiente}"/>
+                            <p:commandButton id="regresarValidar" value="#{msj['btn.regresar']}"
+                                             style="float:right;width:80px;"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.cancelarPanelValidar}" ajax="true"
+                                             update="formValidaRetroPropuesta"/>
+                        </h:panelGrid>
+                    </p:fieldset>
+                </p:panel>
+                <p:panel id="panelRetroalimentarPropuesta" styleClass="panel-interno"
+                         header="#{msj['titulo.panel.validacion.retroalimentacion.propuesta']}"
+                         rendered="#{validarRetroalimentarPropuestaManagedBean.mostrarPanelRetroalimentar}">
+                    <h:panelGrid border="0" columns="4">
+                        <p:spacer width="10" height="1"/>
+                        <p:spacer width="300" height="1"/>
+                        <h:outputLabel value="Ã�rea de Origen de la Propuesta: #{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececArace.sede}"
+                                       style="float:right;font-weight:bold"/>
+                        <p:spacer width="10" height="1"/>
+                        <h:outputLabel value="Datos del Contribuyente." style="float:left;font-weight:bold"/>
+                        <p:spacer width="200" height="1"/>
+                        <h:outputLabel value="Estatus de Contacto: Con Medio de Contacto"
+                                       style="float:right;font-weight:bold"/>
+                        <p:spacer width="10" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="3" id="panelDatosOrden" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Nombre/ RazÃ³n Social:" style="font-weight:bold"/>
+                        <p:inputText id="txtRfc" style="width:150px;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.rfc}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.nombre}"/>
+                        <h:outputLabel value="RÃ©gimen:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="SituaciÃ³n del Contribuyente:" style="font-weight:bold"/>
+                        <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.regimen}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.situacion}"/>
+                        <h:outputLabel value="Tipo de Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                        <p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.tipo}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtActividad" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.actividadPreponderante}"/>
+                        <h:outputLabel value="Domicilio Fiscal del Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="SituaciÃ³n del Domicilio:" style="font-weight:bold"/>
+                        <p:inputTextarea id="txtDomFiscal" style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.domicilioFiscal}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.situacionDomicilio}"/>
+                        <h:outputLabel value="Entidad:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.entidad}"/>
+                    </h:panelGrid>
+                    <br/>
+                    <h:outputLabel value="Datos Previos de la Propuesta." style="font-weight:bold"/>
+                    <p:separator/>
+                    <h:panelGrid columns="7" width="100%" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Causa de ProgramaciÃ³n:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="#{msj['label.encabezado.prioridad']}:" style="font-weight:bold"/>
+                        <p:inputTextarea id="txtSubPrograma" style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececSubprograma.descripcion}"/>
+                        <p:spacer/>
+                        <p:inputTextarea id="txtCausaProgramacion" style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececCausaProgramacion.descripcion}"/>
+                        <p:spacer/>
+                        <h:panelGrid id="panelPeriodoPropuesto2" columns="5">
+                            <h:outputLabel value="Del:" style="font-weight:bold"/>
+                            <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="7" disabled="true"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaInicioPeriodo}"/>
+                            <p:spacer width="1" height="1"/>
+                            <h:outputLabel value="Al:" style="font-weight:bold;"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                        disabled="true"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaFinPeriodo}"/>
+                        </h:panelGrid>
+                        <p:spacer/>
+                        <p:selectBooleanCheckbox id="prioridadInsumo" name="prioridadInsumo" ajax="true" disabled="true"
+                                                 value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta == null ? false : validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.prioridad}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5" width="100%" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="MÃ©todo de RevisiÃ³n:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Tipo de Propuesta:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRevision!=null?'Tipo de RevisiÃ³n:Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â ':'Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â '}"
+                                       style="font-weight:bold"/>
+                        <p:inputTextarea id="txtMetodo" style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.feceaMetodo.nombre}"/>
+                        <p:spacer/>
+                        <p:inputTextarea id="txtTipoPropuesta" style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececTipoPropuesta.descripcion}"/>
+                        <p:spacer/>
+                        <p:inputTextarea id="txtRevision" style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececRevision.descripcion}"
+                                         rendered="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRevision!=null}"/>
+                    </h:panelGrid>
+                    <p:spacer height="15"/>
+                    <h:panelGrid columns="3" border="0">
+                        <h:outputLabel value="Motivo de la Retroalimentacion:" style="font-weight:bold"/>
+                        <h:outputLabel value="Descripcion de la Retroalimentacion:" style="font-weight:bold"/>
+                        <h:outputLabel value="Archivo de la Retroalimentacion:" style="font-weight:bold"/>
+                        <p:inputTextarea id="txtMotivoRetroalimentacion"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.fecetRetroalimentacion.fececMotivo.descripcion}"
+                                         maxlength="600" cols="47" rows="6" disabled="true"/>
+                        <p:inputTextarea id="txtDetalleRetroalimentacion"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.fecetRetroalimentacion.descripcion}"
+                                         maxlength="600" cols="47" rows="6" disabled="true"/>
+                        <p:dataTable id="tablaDocumentoRetroalimentacion" var="documento"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.fecetRetroalimentacion}">
+                            <f:facet name="header">
+                                <h:outputLabel value="Oficio de Retroalimentacion" style="font-weight:bold"/>
+                            </f:facet>
+                            <p:column headerText="Nombre del documento">
+                                <div style="width:200px;">
+                                    #{documento.nombreArchivo}
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{documento.nombreArchivo}" ajax="true"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="${documento}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{validarProcedenciaInsumoManagedBean.archivoOficioAnexo}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <br/>
+                    <h:outputLabel value="Documentos de la Propuesta." style="font-weight:bold"/>
+                    <p:separator/>
+                    <p:messages id="msgExitoDescartarOficioAnexo" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid columns="2" cellpadding="10" width="100%">
+                        <p:fileUpload id="fulAddExpediente"
+                                      fileUploadListener="#{validarRetroalimentarPropuestaManagedBean.cargaArchivoRetroalimentacion}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:290px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentos msgExitoDescartarOficioAnexo"
+                                      oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');"/>
+                        <p:dataTable id="tablaDocumentos" var="documento"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaDocumentosExpediente}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputLabel value="Expedientes ElectrÃ³nicos" style="font-weight:bold"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" width="2%">
+                                <h:outputText id="txtFechaHora" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Nombre del documento">
+                                <div style="width:200px;">
+                                    #{documento.nombre}
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="#{documento.nombre}"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="${documento}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{validarProcedenciaInsumoManagedBean.archivoOficioAnexo}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <p:commandLink value="#{msj['label.descartar']}"
+                                               rendered="#{documento.idDocExpediente==null}"
+                                               action="#{validarRetroalimentarPropuestaManagedBean.descartarDocumentoExpediente}"
+                                               ajax="true" immediate="true"
+                                               update="tablaDocumentos :formValidaRetroPropuesta:msgExitoDescartarOficioAnexo"
+                                               oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');">
+                                    <f:setPropertyActionListener value="#{documento}"
+                                                                 target="#{validarRetroalimentarPropuestaManagedBean.documentoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <p:spacer height="15"/>
+                    <br/>
+                    <h:outputLabel value="Impuestos de la Propuesta." style="font-weight:bold"/>
+                    <p:separator/>
+                    <p:messages id="msgExitoImpuesto" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid columns="6" id="panelImpuestos" width="100%" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="Impuesto:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Monto:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Periodo:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <p:selectOneMenu id="cmbImpuesto"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.idTipoImpuesto}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipoImpuesto']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarRetroalimentarPropuestaManagedBean.listaTipoImpuestos}"
+                                           var="lista" itemLabel="#{lista.abreviatura} - #{lista.descripcion}"
+                                           itemValue="#{lista.idTipoImpuesto}"/>
+                        </p:selectOneMenu>
+                        <p:spacer/>
+                        <p:inputText id="txtMonto"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.monto}"
+                                     converterMessage="Dato invalido, campo numerico. Ejemplo: $99.90"/>
+                        <p:spacer/>
+                        <h:panelGrid id="panelPeriodoImpuesto" columns="5">
+                            <h:outputLabel value="Del:" style="font-weight:bold"/>
+                            <p:calendar id="txtPeriodo" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="7" disabled="false"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.periodoInicial}"/>
+                            <p:spacer/>
+                            <h:outputLabel value="Al:" style="font-weight:bold;"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                        disabled="false"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.periodoFinal}"/>
+                        </h:panelGrid>
+                        <p:commandButton value="Agregar"
+                                         actionListener="#{validarRetroalimentarPropuestaManagedBean.agregarImpuesto}"
+                                         update="panelImpuestos tblImpuestos :formValidaRetroPropuesta:msgExitoImpuesto"
+                                         oncomplete="ocultaMsgAgace('msgExitoImpuesto')"/>
+                        <p:message id="msgImpuesto" for="cmbImpuesto" display="text"/>
+                        <p:spacer/>
+                        <p:message id="msgMonto" for="txtMonto" display="text"/>
+                        <p:spacer/>
+                        <p:message id="msgPeriodo" for="txtPeriodo" display="text"/>
+                    </h:panelGrid>
+                    <p:spacer height="15"/>
+                    <p:dataTable id="tblImpuestos" var="impuesto"
+                                 value="#{validarRetroalimentarPropuestaManagedBean.listaImpuestosPropuesta}"
+                                 emptyMessage="#{msj['label.lista.vacia']}" style="width:100%;">
+                        <f:facet name="header">
+                            <h:outputLabel value="Impuestos" style="font-weight:bold"/>
+                        </f:facet>
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column rowspan="2" headerText="Impuesto"/>
+                                <p:column rowspan="2" headerText="Monto"/>
+                                <p:column colspan="2" headerText="Periodo"/>
+                                <p:column rowspan="2" headerText=""/>
+                            </p:row>
+                            <p:row>
+                                <p:column headerText="Del"/>
+                                <p:column headerText="Al"/>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column>
+                            <h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{impuesto.monto}">
+                                <f:convertNumber type="currency" currencySymbol="$"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="txtFechaInicio" value="#{impuesto.periodoInicial}">
+                                <f:convertDateTime pattern="dd-MM-yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="txtFechaFin" value="#{impuesto.periodoFinal}">
+                                <f:convertDateTime pattern="dd-MM-yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <p:commandLink value="#{msj['label.descartar']}"
+                                           action="#{validarRetroalimentarPropuestaManagedBean.descartarImpuesto}"
+                                           ajax="true" immediate="true"
+                                           update="tblImpuestos :formValidaRetroPropuesta:msgExitoImpuesto"
+                                           oncomplete="ocultaMsgAgace('msgExitoImpuesto');">
+                                <f:setPropertyActionListener value="#{impuesto}"
+                                                             target="#{validarRetroalimentarPropuestaManagedBean.impuestoSeleccionadoDescartar}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column footerText="Presuntiva: " style="text-align:right;font-weight:bold;"/>
+                                <p:column colspan="4" style="text-align:left;">
+                                    <f:facet name="footer">
+                                        <h:outputText value="#{validarRetroalimentarPropuestaManagedBean.sumaTotalPresuntiva}"
+                                                      style="font-weight:bold;">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </f:facet>
+                                </p:column>
+                            </p:row>
+                        </p:columnGroup>
+                    </p:dataTable>
+                    <p:spacer height="15"/>
+                    <h:panelGrid columns="2" id="panelBotones" width="100%">
+                        <p:column rowspan="2">
+                            <p:commandButton id="regresarRetroalimentacion" value="#{msj['btn.regresar']}"
+                                             style="float:right;width:80px;"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.cancelarPanelRetroalimentar}" ajax="true"
+                                             immediate="true" update="formValidaRetroPropuesta"/>
+                            <p:commandButton id="btnRechazarRetroalimentacion" value="#{msj['btn.rechazar']}"
+                                             style="float:right;width:80px;" update="panelContenedorRetroalimentarDlg"
+                                             oncomplete="dlgRetroalimentar.show();" ajax="true"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.configurarRechazo}"/>
+                            <p:commandButton id="btnEnviarRetroalimentacion"
+                                             value="#{msj['btn.enviar.retroalimentacion']}"
+                                             style="float:right;width:150px;" update="panelContenedorRetroalimentarDlg"
+                                             oncomplete="dlgRetroalimentar.show();" ajax="true"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.configurarAprobacion}"/>
+                        </p:column>
+                    </h:panelGrid>
+                </p:panel>
+                <p:panel id="panelPropuestasPendiente" styleClass="panel-interno"
+                         header="#{msj['titulo.panel.validacion.retroalimentacion.propuesta']}"
+                         rendered="#{validarRetroalimentarPropuestaManagedBean.mostrarPanelPropuestaPendiente}">
+                    <p:fieldset id="fielsetDetallePropuestaPendiente"
+                                legend="#{msj['titulo.fielset.detalle.propuesta']}" toggleable="false"
+                                collapsed="false">
+                        <h:panelGrid columns="4" width="100%">
+                            <p:column>
+                                <p:outputLabel value="#{msj['label.rfc.contribuyente.obligatorio']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.rfc}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.nombre}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.regimen}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['column.unidad.admin.atencion']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececArace.nombre}"/>
+                                <br/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{msj['column.insumo.seguimiento.folio']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRegistro}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.actividad.preponderante']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.actividadPreponderante}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.periodo.propuesto']}" style="font-weight:bold;"/>
+                                <h:panelGrid id="panelPeriodoPropuestoPendiente" columns="5" cellspacing="0">
+                                    <h:outputLabel value="#{msj['label.del']}:" style="font-weight:bold"/>
+                                    <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaInicioPeriodo}"/>
+                                    <p:spacer width="1" height="1"/>
+                                    <h:outputLabel value="#{msj['label.al']}:" style="font-weight:bold;"/>
+                                    <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaFinPeriodo}"/>
+                                </h:panelGrid>
+                                <br/>
+                                <p:outputLabel value="Fecha de PresentaciÃ³n a ComitÃ©:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaPresentacion}"/>
+                                <br/>
+                            </p:column>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" id="panelBotonesPendiente" width="200" style="float:right;">
+                            <p:commandButton id="regresarPendiente" value="#{msj['btn.regresar']}"
+                                             style="float:right;width:80px;"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.init}" ajax="true"
+                                             immediate="true" update="formValidaRetroPropuesta"/>
+                        </h:panelGrid>
+                    </p:fieldset>
+                </p:panel>
+                <p:panel id="panelPropuestasInformeComite" styleClass="panel-interno"
+                         header="#{msj['titulo.panel.validacion.retroalimentacion.propuesta']}"
+                         rendered="#{validarRetroalimentarPropuestaManagedBean.mostrarPanelInformeComite}">
+                    <p:fieldset id="fielsetDetallePropuestaInformeComite"
+                                legend="#{msj['titulo.fielset.detalle.propuesta']}" toggleable="false"
+                                collapsed="false">
+                        <h:panelGrid columns="4" width="100%">
+                            <p:column>
+                                <p:outputLabel value="#{msj['label.rfc.contribuyente.obligatorio']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.rfc}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.nombre}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.regimen}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['column.unidad.admin.atencion']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececArace.nombre}"/>
+                                <br/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{msj['column.insumo.seguimiento.folio']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRegistro}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.actividad.preponderante']}:"
+                                               style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.actividadPreponderante}"/>
+                                <br/>
+                                <br/>
+                                <p:outputLabel value="#{msj['label.periodo.propuesto']}" style="font-weight:bold;"/>
+                                <h:panelGrid id="panelPeriodoPropuestoInformeComite" columns="5" cellspacing="0">
+                                    <h:outputLabel value="#{msj['label.del']}:" style="font-weight:bold"/>
+                                    <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaInicioPeriodo}"/>
+                                    <p:spacer width="1" height="1"/>
+                                    <h:outputLabel value="#{msj['label.al']}:" style="font-weight:bold;"/>
+                                    <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaFinPeriodo}"/>
+                                </h:panelGrid>
+                                <br/>
+                                <p:outputLabel value="Fecha de PresentaciÃ³n a ComitÃ©:" style="font-weight:bold;"/>
+                                <br/>
+                                <p:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaPresentacion}"/>
+                                <br/>
+                            </p:column>
+                        </h:panelGrid>
+                        <p:dataTable id="tablaDocumentacionExpedienteInformeComite"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaDocumentosExpediente}"
+                                     var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     paginator="true" rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                                <div style="width:200px;">
+                                    #{documento.nombre}
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="#{documento.nombre}"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="${documento}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{validarProcedenciaInsumoManagedBean.archivoOficioAnexo}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="1" id="panelBotonesInformeComite" width="200" style="float:right;">
+                            <p:commandButton id="regresarInformeComite" value="#{msj['btn.regresar']}"
+                                             style="float:right;width:80px;"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.resetearPanelInformeComite}" ajax="true"
+                                             immediate="true" update="formValidaRetroPropuesta"/>
+                        </h:panelGrid>
+                    </p:fieldset>
+                </p:panel>
+                <p:panel id="panelTransferenciaPropuesta" styleClass="panel-interno"
+                         header="#{msj['titulo.panel.validacion.retroalimentacion.propuesta']}"
+                         rendered="#{validarRetroalimentarPropuestaManagedBean.mostrarPanelTranferidas}">
+                    <h:panelGrid border="0" columns="4">
+                        <p:spacer width="10" height="1"/>
+                        <p:spacer width="300" height="1"/>
+                        <h:outputLabel value="Ã�rea de Origen de la Propuesta: #{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececArace.sede}"
+                                       style="float:right;font-weight:bold"/>
+                        <p:spacer width="10" height="1"/>
+                        <h:outputLabel value="Datos del Contribuyente." style="float:left;font-weight:bold"/>
+                        <p:spacer width="200" height="1"/>
+                        <h:outputLabel value="Estatus de Contacto: Con Medio de Contacto"
+                                       style="float:right;font-weight:bold"/>
+                        <p:spacer width="10" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <h:panelGrid columns="3" id="panelDatosOrdenTransferida" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Nombre/ RazÃ³n Social:" style="font-weight:bold"/>
+                        <p:inputText style="width:150px;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.rfc}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputTextarea style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.nombre}"/>
+                        <h:outputLabel value="RÃ©gimen:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="SituaciÃ³n del Contribuyente:" style="font-weight:bold"/>
+                        <p:inputText style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.regimen}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.situacion}"/>
+                        <h:outputLabel value="Tipo de Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                        <p:inputText style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.tipo}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.actividadPreponderante}"/>
+                        <h:outputLabel value="Domicilio Fiscal del Contribuyente:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="SituaciÃ³n del Domicilio:" style="font-weight:bold"/>
+                        <p:inputTextarea style="width:325px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.domicilioFiscal}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.situacionDomicilio}"/>
+                        <h:outputLabel value="Entidad:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.entidad}"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:commandButton id="actualizarCont" value="#{msj['btn.actualizar']}"
+                                         style="float:right;width:80px;"  
+                                         actionListener="#{validarRetroalimentarPropuestaManagedBean.checkContribuyente}"
+                                         update="formValidaRetroPropuesta"
+                                         ajax="true"/>
+                    </h:panelGrid>
+                    <br/>
+                    <h:outputLabel value="Datos Previos de la Propuesta." style="font-weight:bold"/>
+                    <p:separator/>
+                    <h:panelGrid columns="7" width="100%" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Causa de ProgramaciÃ³n:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="#{msj['label.encabezado.prioridad']}:" style="font-weight:bold"/>
+                        <p:inputTextarea style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececSubprograma.descripcion}"/>
+                        <p:spacer/>
+                        <p:inputTextarea style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececCausaProgramacion.descripcion}"/>
+                        <p:spacer/>
+                        <h:panelGrid id="panelPeriodoPropuestoTransferida" columns="5">
+                            <h:outputLabel value="Del:" style="font-weight:bold"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                        disabled="true"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaInicioPeriodo}"/>
+                            <p:spacer width="1" height="1"/>
+                            <h:outputLabel value="Al:" style="font-weight:bold;"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                        disabled="true"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fechaFinPeriodo}"/>
+                        </h:panelGrid>
+                        <p:spacer/>
+                        <p:selectBooleanCheckbox name="prioridadInsumo" ajax="true" disabled="true"
+                                                 value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta == null ? false : validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.prioridad}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="5" width="100%" border="0" styleClass="panel-secundario">
+                        <h:outputLabel value="MÃ©todo de RevisiÃ³n:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Tipo de Propuesta:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRevision!=null?'Tipo de RevisiÃ³n:Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â ':'Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â '}"
+                                       style="font-weight:bold"/>
+                        <p:inputTextarea style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.feceaMetodo.nombre}"/>
+                        <p:spacer/>
+                        <p:inputTextarea style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececTipoPropuesta.descripcion}"/>
+                        <p:spacer/>
+                        <p:inputTextarea style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fececRevision.descripcion}"
+                                         rendered="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRevision!=null}"/>
+                    </h:panelGrid>
+                    <p:spacer height="15"/>
+                    <h:panelGrid columns="2" border="0" width="100%">
+                        <h:outputLabel value="Observaciones de la Transferencia:" style="font-weight:bold"/>
+                        <h:outputLabel value="Archivo de la Transferencia:" style="font-weight:bold"/>
+                        <p:inputTextarea id="txtDetalleTransferida"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.fecetTransferencia.observaciones}"
+                                         maxlength="600" cols="47" rows="6" disabled="true"/>
+                        <p:dataTable id="tablaDocumentoTransferida" var="documento"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.fecetTransferencia}">
+                            <f:facet name="header">
+                                <h:outputLabel value="Oficio de Retroalimentacion" style="font-weight:bold"/>
+                            </f:facet>
+                            <p:column headerText="Nombre del documento">
+                                <div style="width:200px;">
+                                    #{documento.nombreArchivo}
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{documento.nombreArchivo}" ajax="true"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="${documento}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{validarProcedenciaInsumoManagedBean.archivoOficioAnexo}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <br/>
+                    <h:outputLabel value="Documentos de la Propuesta." style="font-weight:bold"/>
+                    <p:separator/>
+                    <p:messages id="msgExitoDescartarOficioAnexoTransferida" showDetail="true" globalOnly="true"
+                                closable="true"/>
+                    <h:panelGrid columns="2" cellpadding="10" width="100%">
+                        <p:fileUpload id="fulAddExpedienteTransferida"
+                                      fileUploadListener="#{validarRetroalimentarPropuestaManagedBean.cargaArchivoRetroalimentacion}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" style="width:290px;"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      showButtons="true" auto="true" ajax="true"
+                                      update="tablaDocumentosTransferida msgExitoDescartarOficioAnexoTransferida"
+                                      oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexoTransferida');"/>
+                        <p:dataTable id="tablaDocumentosTransferida" var="documento"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaDocumentosExpediente}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     rows="5"
+                                     paginatorTemplate="PÃ¡gina: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a pÃ¡gina: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <h:outputLabel value="Expedientes ElectrÃ³nicos" style="font-weight:bold"/>
+                            </f:facet>
+                            <p:column headerText="Fecha" width="2%">
+                                <h:outputText id="txtFechaHora" value="#{documento.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Nombre del documento">
+                                <div style="width:200px;">
+                                    #{documento.nombre}
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png" title="#{documento.nombre}"
+                                                     ajax="true" style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="${documento}"
+                                                                     target="#{validarProcedenciaInsumoManagedBean.vpInsumoDTOHelper.documentoSeleccionado}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{validarProcedenciaInsumoManagedBean.archivoOficioAnexo}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column>
+                            <p:column width="1%">
+                                <p:commandLink value="#{msj['label.descartar']}"
+                                               rendered="#{documento.idDocExpediente==null}"
+                                               action="#{validarRetroalimentarPropuestaManagedBean.descartarDocumentoExpediente}"
+                                               ajax="true" immediate="true"
+                                               update="tablaDocumentosTransferida :formValidaRetroPropuesta:msgExitoDescartarOficioAnexoTransferida"
+                                               oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexoTransferida');">
+                                    <f:setPropertyActionListener value="#{documento}"
+                                                                 target="#{validarRetroalimentarPropuestaManagedBean.documentoSeleccionado}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <p:spacer height="15"/>
+                    <br/>
+                    <h:outputLabel value="Impuestos de la Propuesta." style="font-weight:bold"/>
+                    <p:separator/>
+                    <p:messages id="msgExitoImpuestoTransferida" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid columns="6" id="panelImpuestosTransferida" width="100%" border="0"
+                                 styleClass="panel-secundario" rendered="false">
+                        <h:outputLabel value="Impuesto:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Monto:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <h:outputLabel value="Periodo:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <p:selectOneMenu id="cmbImpuestoTransferida"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.idTipoImpuesto}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.tipoImpuesto']}" itemValue="-1"/>
+                            <f:selectItems value="#{validarRetroalimentarPropuestaManagedBean.listaTipoImpuestos}"
+                                           var="lista" itemLabel="#{lista.abreviatura} - #{lista.descripcion}"
+                                           itemValue="#{lista.idTipoImpuesto}"/>
+                        </p:selectOneMenu>
+                        <p:spacer/>
+                        <p:inputText id="txtMontoTransferida"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.monto}"
+                                     converterMessage="Dato invalido, campo numerico. Ejemplo: $99.90"/>
+                        <p:spacer/>
+                        <h:panelGrid id="panelPeriodoImpuestoTransferida" columns="5">
+                            <h:outputLabel value="Del:" style="font-weight:bold"/>
+                            <p:calendar id="txtPeriodoTransferida" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                        readonlyInput="true" size="7" disabled="false"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.periodoInicial}"/>
+                            <p:spacer/>
+                            <h:outputLabel value="Al:" style="font-weight:bold;"/>
+                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+                                        disabled="false"
+                                        value="#{validarRetroalimentarPropuestaManagedBean.impuestoPorAgregar.periodoFinal}"/>
+                        </h:panelGrid>
+                        <p:commandButton value="Agregar"
+                                         actionListener="#{validarRetroalimentarPropuestaManagedBean.agregarImpuesto}"
+                                         update="panelImpuestosTransferida tblImpuestosTransferida :formValidaRetroPropuesta:msgExitoImpuesto"
+                                         oncomplete="ocultaMsgAgace('msgExitoImpuesto')"/>
+                        <p:message id="msgImpuestoTransferida" for="cmbImpuestoTransferida" display="text"/>
+                        <p:spacer/>
+                        <p:message id="msgMontoTransferida" for="txtMontoTransferida" display="text"/>
+                        <p:spacer/>
+                        <p:message id="msgPeriodoTransferida" for="txtPeriodoTransferida" display="text"/>
+                    </h:panelGrid>
+                    <p:spacer height="15"/>
+                    <p:dataTable id="tblImpuestosTransferida" var="impuesto"
+                                 value="#{validarRetroalimentarPropuestaManagedBean.listaImpuestosPropuesta}"
+                                 emptyMessage="#{msj['label.lista.vacia']}" style="width:100%;">
+                        <f:facet name="header">
+                            <h:outputLabel value="Impuestos" style="font-weight:bold"/>
+                        </f:facet>
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column rowspan="2" headerText="Impuesto"/>
+                                <p:column rowspan="2" headerText="Monto"/>
+                                <p:column colspan="2" headerText="Periodo"/>
+                            </p:row>
+                            <p:row>
+                                <p:column headerText="Del"/>
+                                <p:column headerText="Al"/>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column>
+                            <h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{impuesto.monto}">
+                                <f:convertNumber type="currency" currencySymbol="$"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="txtFechaInicio" value="#{impuesto.periodoInicial}">
+                                <f:convertDateTime pattern="dd-MM-yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="txtFechaFin" value="#{impuesto.periodoFinal}">
+                                <f:convertDateTime pattern="dd-MM-yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column footerText="Presuntiva: " style="text-align:right;font-weight:bold;"/>
+                                <p:column colspan="4" style="text-align:left;">
+                                    <f:facet name="footer">
+                                        <h:outputText value="#{validarRetroalimentarPropuestaManagedBean.sumaTotalPresuntiva}"
+                                                      style="font-weight:bold;">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </f:facet>
+                                </p:column>
+                            </p:row>
+                        </p:columnGroup>
+                    </p:dataTable>
+                    <p:spacer height="15"/>
+                    <h:panelGrid columns="2" id="panelBotonesTransferida" width="100%">
+                        <p:column rowspan="2">
+                            <p:commandButton id="regresarTransferida" value="#{msj['btn.regresar']}"
+                                             style="float:right;width:80px;"
+                                             action="#{validarRetroalimentarPropuestaManagedBean.cancelarPanelTransferidas}" ajax="true"
+                                             immediate="true" update="formValidaRetroPropuesta"/>
+                            <p:commandButton id="btnRegistrarTransferencia" value="#{msj['btn.registrar']}"
+                                             style="float:right;width:80px;" update="panelContenedorRetroalimentarDlg"
+                                             oncomplete="dlgRegistrarTransferencia.show();" ajax="true"/>
+                        </p:column>
+                    </h:panelGrid>
+                </p:panel>
+                <p:dialog id="dlg" header="#{msj['titulo.ventana.validar.propuesta']}" widgetVar="dlg" showEffect="clip"
+                          hideEffect="clip" modal="true" resizable="false" width="430" closable="false">
+                    <h:panelGroup id="panelContenedorDlg" layout="block" style="padding:5px;">
+                        <p:outputLabel value="Fecha de validacion:" style="font-weight:bold;">&nbsp;</p:outputLabel>
+                        <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.fechaValidacion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputLabel>
+                        <p:separator/>
+                        <h:outputText value="Seguro que desea aprobar la propuesta #{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idPropuesta}?"
+                                      rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==1}"/>
+                        <h:outputText value="Seguro que desea rechazar la propuesta #{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idPropuesta}?"
+                                      rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"/>
+                        <h:outputText value="Seguro que desea dejar pendiente la propuesta #{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idPropuesta}?"
+                                      rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==3}"/>
+                        <h:panelGrid columns="2" cellpadding="5"
+                                     rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones!=1}">
+                            <p:outputLabel value="#{msj['label.motivo.rechazo']}:"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"
+                                           style="font-weight:bold;"/>
+                            <p:fileUpload id="fulMinutaRechazo"
+                                          fileUploadListener="#{validarRetroalimentarPropuestaManagedBean.cargaArchivoRechazo}"
+                                          mode="advanced" dragDropSupport="false" multiple="false" style="width:290px;"
+                                          label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos"
+                                          uploadLabel="Guardar" showButtons="true" auto="true" ajax="true"
+                                          partialSubmit="true"
+                                          update="tablaDocumentoRechazo msgExitoGuardarValRetroPropuesta"
+                                          oncomplete="ocultaMsgAgace('msgExitoGuardarValRetroPropuesta');"
+                                          rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"/>
+                            <p:outputLabel value="#{msj['label.observaciones']}:"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==3}"
+                                           style="font-weight:bold;"/>
+                            <p:inputTextarea id="txtObservaciones" style="width:200px;height:auto;"
+                                             rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==3}"
+                                             value="#{validarRetroalimentarPropuestaManagedBean.observaciones}"
+                                             maxlength="255"/>
+                        </h:panelGrid>
+                        <p:dataTable id="tablaDocumentoRechazo"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaDocumentoRechazo}"
+                                     var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{documento.fechaRechazo}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}">
+                                <div style="width:200px;">
+                                    #{documento.nombreArchivo}
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.cancelar']}" icon="ui-icon-close" style="float:right" ajax="true" update="txtObservaciones"
+                                     onclick="dlg.hide();" action="#{validarRetroalimentarPropuestaManagedBean.cancelarDocRechObservaciones}"/>
+                    <p:commandButton id="btnAceptarValidacion" value="#{msj['btn.enviar']}" icon="ui-icon-check"
+                                     style="float:right;width:80px;"
+                                     action="#{validarRetroalimentarPropuestaManagedBean.procesarValidarPropuesta}"
+                                     update="@form" ajax="true"
+                                     oncomplete="ocultaMsgAgace('msgExitoGuardarValRetroPropuesta');dlg.hide();"/>
+                </p:dialog>
+                <p:dialog id="dlgRetroalimentar" header="#{msj['titulo.ventana.retroalimentar.propuesta']}"
+                          widgetVar="dlgRetroalimentar" showEffect="clip" hideEffect="clip" modal="true"
+                          resizable="false" width="430" closable="false">
+                    <h:panelGroup id="panelContenedorRetroalimentarDlg" layout="block" style="padding:5px;">
+                        <h:panelGrid columns="5" width="100%">
+                            <p:outputLabel value="Fecha de rechazo:" style="font-weight:bold;"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}">&nbsp;</p:outputLabel>
+                            <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.fechaValidacion}"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                            <p:outputLabel rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p:outputLabel>
+                            <p:outputLabel value="Folio:" style="font-weight:bold;"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}">&nbsp;</p:outputLabel>
+                            <h:outputLabel value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idRegistro}"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                        </h:panelGrid>
+                        <p:separator rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"/>
+                        <h:outputText value="Seguro que desea enviar la retroalimentacion de la propuesta #{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idPropuesta}?"
+                                      rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==1}"/>
+                        <h:outputText value="Seguro que desea rechazar la retroalimentacion del registro #{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.idPropuesta}?"
+                                      rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"/>
+                        <h:panelGrid columns="2" cellpadding="5"
+                                     rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones!=1}">
+                            <p:outputLabel value="#{msj['label.motivo.rechazo']}:"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"
+                                           style="font-weight:bold;"/>
+                            <p:fileUpload id="fulMinutaRechazoRetroalimentacion"
+                                          fileUploadListener="#{validarRetroalimentarPropuestaManagedBean.cargaArchivoRechazoRetroalimentacion}"
+                                          mode="advanced" dragDropSupport="false" multiple="false" style="width:290px;"
+                                          label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos"
+                                          uploadLabel="Guardar" showButtons="true" auto="true" ajax="true"
+                                          partialSubmit="true"
+                                          update="tablaDocumentoRechazoRetroalimentacion msgExitoDescartarOficioAnexo"
+                                          oncomplete="ocultaMsgAgace('msgExitoDescartarOficioAnexo');"
+                                          rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"/>
+                        </h:panelGrid>
+                        <p:dataTable id="tablaDocumentoRechazoRetroalimentacion"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.listaDocumentoRechazoRetroalimentar}"
+                                     var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                     rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.oficio.anexos&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px">
+                                <h:outputText value="#{documento.fechaRechazo}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="#{msj['column.expediente']}">
+                                <div style="width:200px;">
+                                    #{documento.nombreArchivo}
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                        <h:panelGrid columns="2" cellpadding="5"
+                                     rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones!=1}">
+                            <p:outputLabel value="#{msj['label.observaciones']}:"
+                                           rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"
+                                           style="font-weight:bold;"/>
+                            <p:inputTextarea id="txtObservacionesRetroalimentacion" style="width:200px;height:auto;"
+                                             rendered="#{validarRetroalimentarPropuestaManagedBean.accionBotones==2}"
+                                             value="#{validarRetroalimentarPropuestaManagedBean.observaciones}"
+                                             maxlength="255"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.cancelar']}" icon="ui-icon-close" style="float:right" ajax="true" update="txtObservacionesRetroalimentacion"
+                                     onclick="dlgRetroalimentar.hide();" action="#{validarRetroalimentarPropuestaManagedBean.cancelarDocRechAliObservacion}"/>
+                    <p:commandButton id="btnAceptarRetroalimentacion" value="#{msj['btn.enviar']}" icon="ui-icon-check"
+                                     style="float:right;width:80px;"
+                                     action="#{validarRetroalimentarPropuestaManagedBean.procesarRetroalimentarPropuesta}"
+                                     update="@form"
+                                     oncomplete="ocultaMsgAgace('msgExitoGuardarValRetroPropuesta');dlgRetroalimentar.hide() ;"/>
+                </p:dialog>
+                <p:dialog id="dlgRegistrarTransferencia" header="#{msj['titulo.ventana.retroalimentar.propuesta']}"
+                          widgetVar="dlgRegistrarTransferencia" showEffect="clip" hideEffect="clip" modal="true"
+                          resizable="false" width="430" closable="false">
+                    <h:panelGroup id="panelContenedorTransferenciaDlg" layout="block" style="padding:5px;">
+                        <h:outputText value="Esta seguro que desea registrar la propuesta transferida?"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.cancelar']}" icon="ui-icon-close" style="float:right"
+                                     onclick="dlgRegistrarTransferencia.hide();"/>
+                    <p:commandButton id="btnAceptarTransferencia" value="#{msj['btn.enviar']}" icon="ui-icon-check"
+                                     style="float:right;width:80px;"
+                                     action="#{validarRetroalimentarPropuestaManagedBean.procesarTransferenciaPropuesta}"
+                                     update="@form"
+                                     oncomplete="ocultaMsgAgace('msgExitoGuardarValRetroPropuesta');"/>
+                </p:dialog>
+                 <p:dialog id="dlgMensajeContribuyente" header="#{msj['titulo.ventana.actualizar.contribuyente']}"
+                          widgetVar="dlgMensajeContribuyente" showEffect="clip" hideEffect="clip" modal="true"
+                          resizable="false" width="430" closable="false">
+                    <h:panelGroup id="panelMensajeDlg" layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.info.actualizar.contribuyente']}:"/>
+                    </h:panelGroup>                    
+                   <p:commandButton id="btnContribuyenteAceptar" value="#{msj['btn.aceptar']}" icon="ui-icon-check" style="float:right"
+                                     onclick="dlgMensajeContribuyente.hide();"/>
+                </p:dialog>
+                <p:dialog id="dlgActualizarContribuyente" header="#{msj['titulo.ventana.actualizar.contribuyente']}"
+                          widgetVar="dlgActualizarContribuyente" showEffect="clip" hideEffect="clip" modal="true"
+                          resizable="false" closable="false">
+                    <h:panelGrid columns="3" id="panelContribuyente" border="0" styleClass="panel-secundario">
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="ACTUAL" style="font-weight:bold;align:center"/>
+                        <h:outputLabel value="NUEVO" style="font-weight:bold;align:center"/>
+                        <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                        <p:inputText style="width:120px;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.rfc}"/>
+                        <p:inputText style="width:120px;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.rfc}"/>
+                        <h:outputLabel value="Nombre/ RazÃ³n Social:" style="font-weight:bold"/>
+                        <p:inputTextarea style="width:250px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.nombre}"/>
+                        <p:inputTextarea style="width:250px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.nombre}"/>
+                        <h:outputLabel value="RÃ©gimen:" style="font-weight:bold"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.regimen}"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.regimen}"/>
+                        <h:outputLabel value="SituaciÃ³n del Contribuyente:" style="font-weight:bold"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.situacion}"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.situacion}"/>
+                        <h:outputLabel value="Tipo de Contribuyente:" style="font-weight:bold"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.tipo}"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.tipo}"/>
+                        <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.actividadPreponderante}"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.actividadPreponderante}"/>
+                        <h:outputLabel value="Domicilio Fiscal del Contribuyente:" style="font-weight:bold"/>
+                        <p:inputTextarea style="width:250px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.domicilioFiscal}"/>
+                        <p:inputTextarea style="width:250px;height:auto;" disabled="true"
+                                         value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.domicilioFiscal}"/>
+                        <h:outputLabel value="SituaciÃ³n del Domicilio:" style="font-weight:bold"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.situacionDomicilio}"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.situacionDomicilio}"/>
+                        <h:outputLabel value="Entidad:" style="font-weight:bold"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.seleccionPropuesta.fecetContribuyente.entidad}"/>
+                        <p:inputText style="width:250px;height:auto;" disabled="true"
+                                     value="#{validarRetroalimentarPropuestaManagedBean.contribuyenteIDC.entidad}"/>
+                    </h:panelGrid>
+                    <p:commandButton value="#{msj['btn.cancelar']}" icon="ui-icon-close" style="float:right"
+                                     onclick="dlgActualizarContribuyente.hide();"/>
+                    <p:commandButton id="btnActualizar" value="#{msj['btn.actualizar']}" icon="ui-icon-check"
+                                     style="float:right" actionListener="#{validarRetroalimentarPropuestaManagedBean.actualizaContribuyente}"
+                                     oncomplete="dlgActualizarContribuyente.hide();"
+                                         update="formValidaRetroPropuesta"/>
+                </p:dialog>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

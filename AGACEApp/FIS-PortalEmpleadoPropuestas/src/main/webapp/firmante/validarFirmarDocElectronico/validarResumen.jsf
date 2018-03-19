@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" 
+        xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+    	<h:head></h:head>
+    	<h:body>
+			<h:form styleClass="panel-principal" id="formPrincipal">
+				<p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+				<p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+				<p:panel id="panelContadorResumen" header="#{validarFirmarDoctoMB.estatusActual.descGrid}" styleClass="panel-interno">
+					<p:messages id="msgExitoArchivos" showDetail="true" globalOnly="true" closable="true"/>
+					<p:spacer width="60" height="20px;"/>
+                    <p:dataTable value="#{validarFirmarDoctoMB.registrosResumen}" var="propuesta"
+                                  scrollWidth="100px"  style="border:thin;width:836;" emptyMessage="#{msj['label.lista.vacia']}"
+                                  id="tablaOrdenesRechVerif"
+                                  paginator="true" paginatorPosition="bottom"
+                                  rows="10" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}   {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}">
+                        <p:column headerText="#{msj['label.ordenes.id.registro']}">
+                            <p:outputLabel value="#{propuesta.idRegistro}" />
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.rfc.contribuyente']}">
+                            <p:commandLink action="#{validarFirmarDoctoMB.consultarRfc}" 
+                                    value="#{propuesta.fecetContribuyente.rfc}" rendered="#{validarFirmarDoctoMB.estatusActual.link}" >
+                                <f:setPropertyActionListener value="${propuesta}" target="#{validarFirmarDoctoMB.propuestaActual}"/>
+                            </p:commandLink>
+                             <p:outputLabel value="#{propuesta.fecetContribuyente.rfc}" rendered="#{!validarFirmarDoctoMB.estatusActual.link}" />
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.prioridad']}">
+                            <div align="center">
+                            	<p:outputLabel value="#{propuesta.prioridadSugerida}" />       
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.metodo']}">
+                            <p:outputLabel value="#{propuesta.feceaMetodo.abreviatura}" />
+                        </p:column>
+                        <p:column headerText="#{msj['label.ordenes.presuntiva']}">
+                             <h:outputText value="#{propuesta.presuntiva}" >
+                         <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                         </h:outputText>
+                      </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+                    <h:panelGrid style="width:100%">
+	                    <div style="float:right; width:120px;">
+							<p:commandButton value="#{msj['btn.pantalla.anterior']}" action="indexValidarFirmarOrdenes?faces-redirect=true"/>
+						</div>
+					</h:panelGrid>
+				</p:panel>
+	        </h:form>
+	   		<h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+       </h:body>
+	</html>
+</f:view>

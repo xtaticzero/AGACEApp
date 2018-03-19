@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script type="text/javascript">
+              function start() {
+                  statusDialog.show();
+              }
+
+              function stop() {
+                  statusDialog.hide();
+              }
+              function startFile() {
+                  PF('statusDialog').show();
+              }
+
+              function stopFile() {
+                 PF('statusDialog').hide();
+              }
+            </script>
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="idForm" enctype="multipart/form-data">
+                <p:poll interval="50" listener="#{cargaMasivaPropuestasManagedBean.mantenerSesion}"/>
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>               
+                <p:panel id="panelReporte" styleClass="panel-interno" header="Carga Masiva de Propuestas">
+                    <p:panelGrid style="margin: 0 auto; width:95%;" styleClass="noBorders">
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:messages showSummary="true" id="messages" showDetail="true" autoUpdate="true"
+                                            closable="true"/>
+                            </p:column>
+                        </p:row>
+                        
+                         <p:row>
+                            <p:column>
+                                <p:commandLink value="#{msj['label.formato.carga']}"                                  
+                                    style="color:#0170b7;" ajax="false">
+                                    <p:fileDownload value="#{cargaMasivaPropuestasManagedBean.download}" contentDisposition="attachment"/>
+                                    <f:param name="documentosDescargas" value="#{msj['param.formato.propuesta']}"/>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column colspan="2">
+                            
+                            </p:column>
+                            <p:column>
+                                <p:commandLink style="color:#0170b7;" ajax="false" action="indexCargaDocumentacionMasiva?faces-redirect=true"
+                                    value="#{msj['titulo.panel.carga.documentacion.masiva']}"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column rowspan="2" style="text-align:center; font-weight: bold; width:25%;">
+                                
+                            </p:column>
+                            <p:column colspan="2" style="text-align:center; font-weight: bold; width:30%;">
+                                <p:outputLabel value="#{msj['titulo.adjuntar.formato']}"/>
+                            </p:column>
+                            <p:column style="width:45%;"/>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:panel id="archivoPanel" style="border-style: none !important">
+                                    <p:fileUpload id="fulExpediente" update="idForm:panelBotones, archivoPanel"                                                   
+                                                  rendered="#{cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.fileHabilitado}"
+                                                  fileUploadListener="#{cargaMasivaPropuestasManagedBean.cargaArchivoPropuestasMasivas}"
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:350px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar" showButtons="true"
+                                                  auto="true" ajax="true" partialSubmit="true"
+                                                  oncomplete="ocultaMsgAgace('messages');"/>
+                                    <h:outputText value="#{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.nombreArchivo}" 
+                                        rendered="#{!cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.fileHabilitado}"/>
+                                </p:panel>
+                            </p:column>
+                        </p:row>
+                         <p:row>
+                            <p:column>
+                                <p:outputLabel value="#{msj['label.folio.carga']}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:inputText ajax="false" id="txtFolioCargaDoc" maxlength="14"
+                                             value="#{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.folioCargaDoc}"/>
+                            </p:column>
+                            <p:column>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4">
+                                <p:accordionPanel activeIndex="#{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.indiceActivoInicial}" 
+                                    rendered="#{cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.accordionPanelVisible}">
+                                <p:ajax event="tabChange" listener="#{cargaMasivaPropuestasManagedBean.onTabChange}" update=":idForm"/>                                
+                                <p:tab title="Registros correctos: #{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.registrosCorrectos}">                                
+                                <p:panel style="border:none; width:490px;"
+                                    rendered="#{cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.panelVisibleCorrectos}">
+                                    <p:panelGrid id="panelResumen" width="100%">                                        
+                                            <p:row>                                                
+                                                <p:column  width="30%">
+                                                    <h:outputText value="#{msj['column.id']}"/>
+                                                </p:column  >
+                                                <p:column width="30%">
+                                                    <h:outputText value="#{msj['column.total']}"/>
+                                                    </p:column>
+                                                <p:column  width="40%"> 
+                                                    <h:outputText value="#{msj['column.fechaCarga']}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column> 
+                                                    <h:outputText value="#{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.folioResultado}"/>
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.contadorCorrectos}"/>
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.fechaActual}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+                                                    </h:outputText>                                                
+                                                </p:column>
+                                            </p:row>
+                                    </p:panelGrid>
+                                </p:panel>              
+                                <p:panel style="border:none;">                                           
+                                    <p:commandButton onclick="PrimeFaces.monitorDownload(startFile, stopFile)" value="Exportar PDF" ajax="false"
+                                        actionListener="#{cargaMasivaPropuestasManagedBean.obtenerPDF}">
+                                        <p:fileDownload value="#{cargaMasivaPropuestasManagedBean.pdfPropuestasCorrectas}"/>
+                                    </p:commandButton>
+                                    </p:panel>
+                                     <p:panel style="border:none;">   
+                                    <p:commandButton onclick="PrimeFaces.monitorDownload(startFile, stopFile)" value="Exportar Excel" ajax="false"
+                                        actionListener="#{cargaMasivaPropuestasManagedBean.obtenerXls}">
+                                        <p:fileDownload value="#{cargaMasivaPropuestasManagedBean.pdfPropuestasCorrectas}"/>
+                                    </p:commandButton>
+                                </p:panel>                                                                          
+                                <p:panel style="border:none; width:500px; margin-left: auto; margin-right: auto;"
+                                         rendered="#{!cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.panelVisibleCorrectos}">
+                                         <p:outputLabel value="No existen registros correctos"/>
+                                </p:panel>
+                                </p:tab>
+                                <p:tab title="Registros incorrectos: #{cargaMasivaPropuestasManagedBean.cargaMasivaAttributeHelper.registrosErroneos}">                                
+                                <p:panel style="border:none; width:500px;" rendered="#{cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.panelVisibleErroneos}">
+                                    <p:dataTable id="tablaPropuestasError" var="propuesta"
+                                                 value="#{cargaMasivaPropuestasManagedBean.cargaMasivaPropuestaIncorrecta}"
+                                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                 paginator="true" rows="10"
+                                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                 {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                                 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                                 paginatorPosition="bottom" rowKey="">
+                                        <f:facet name="header">Registros incorrectos de la carga masiva de propuestas</f:facet>
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column headerText="Renglon" width="50px"/>
+                                                <p:column headerText="Columna" width="70px"/>
+                                                <p:column headerText="Incidencia" width="100px"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                        <p:column headerText="Renglon">
+                                            <f:facet name="header">
+                                                <h:outputText value="Renglon"/>
+                                            </f:facet>
+                                            <h:outputText value="#{propuesta.row + 1}"/>
+                                        </p:column>
+                                        <p:column headerText="Columna">
+                                            <f:facet name="header">
+                                                <h:outputText value="Columna"/>
+                                            </f:facet>
+                                            <h:outputText value="#{propuesta.cell + 1}"/>
+                                        </p:column>
+                                        <p:column headerText="Incidencia">
+                                            <f:facet name="header">
+                                                <h:outputText value="Incidencia"/>
+                                            </f:facet>
+                                            <h:outputText value="#{propuesta.descripcionError}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:panel style="border:none; text-align:right">                                        
+                                        <h:commandButton value="Exportar">                                            
+                                            <p:dataExporter type="xls" target="tablaPropuestasError" fileName="errores" />
+                                        </h:commandButton>
+                                    </p:panel>
+                                </p:panel>
+                                <p:panel style="border:none; width:500px; margin-left: auto; margin-right: auto;"
+                                         rendered="#{!cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.panelVisibleErroneos}">
+                                         <p:outputLabel value="No existen registros erroneos"/>
+                                </p:panel>
+                                </p:tab>
+                                </p:accordionPanel>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="4" style="text-align:center;">
+                                <p:panel style="border:none; text-align:right" id="panelBotones">
+                                    <p:commandButton value="Validar Información" update="idForm"
+                                                     actionListener="#{cargaMasivaPropuestasManagedBean.getPropuestasXLS}"
+                                                     oncomplete="ocultaMsgAgace('messages');" 
+                                                     disabled="#{!cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.validaInformacionHabilitado}"/>
+                                    <p:commandButton value="Limpiar" update="idForm"
+                                                     action="#{cargaMasivaPropuestasManagedBean.cancelar}"                                                     
+                                                     rendered="#{!cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.botonRegresarVisible}"/>
+                                    <p:commandButton value="Pantalla Anterior" update="idForm"
+                                                     action="#{cargaMasivaPropuestasManagedBean.cancelar}"
+                                                     rendered="#{cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.botonRegresarVisible}"/>
+                                </p:panel>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                     <p:dialog modal="true" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                          resizable="false" id="statusDialog" widgetVar="statusDialog">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                </p:panel>   
+                <p:panel id="panelConfirmacion" style="border-style: none !important">
+                    <p:confirmDialog id="dialogoConfirmacion"  
+                    message="Está a punto de generar el Registro Masivo Propuestas, ¿Está seguro de realizar dicha función?, El proceso puede tardar unos minutos…"
+                    showEffect="fade" hideEffect="fade" widgetVar="dialogoConfirmacion"
+                    rendered="#{cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.panelConfirmacionVisible}" 
+                    visible="#{cargaMasivaPropuestasManagedBean.cargaValidaBooleanHelper.panelConfirmacionVisible}">
+                        <p:commandButton value="Continuar" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                            onclick="PF('dialogoConfirmacion').hide();realizaCarga();"/>
+                        <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" 
+                        onclick="PF('dialogoConfirmacion').hide();"/>
+                    </p:confirmDialog>
+                </p:panel>
+                <p:remoteCommand name="realizaCarga" update="idForm" actionListener="#{cargaMasivaPropuestasManagedBean.procesaExito}"/>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

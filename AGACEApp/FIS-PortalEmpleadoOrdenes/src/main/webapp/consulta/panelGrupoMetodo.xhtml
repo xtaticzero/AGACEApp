@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions" >
+    <p:panel styleClass="panel-subinterno-consulta" 
+             header="#{msj['label.ordenes.asignadas']}"
+             id="panelXGrupoMetodo"
+             rendered="#{consultaAdminOrdenesMB.consultaOrdenesHelper.flgMostrarTlbMetodo}">
+
+        <p:dataTable value="#{consultaAdminOrdenesMB.detalleMetodo}" var="metodoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}">
+            <f:facet name="header">
+                <h:outputLabel value="#{msj['label.ordenes.asignadas']}" style="font-weight:bold"/>
+            </f:facet>
+            <p:column headerText="#{msj['label.metodo']}">
+                <h:outputText value="#{metodoEntry.key.descripcion}" />
+            </p:column>
+            <p:column headerText="#{msj['label.total']}" style="text-align:center;">
+                <h:outputText value="#{metodoEntry.value}" rendered="#{metodoEntry.value eq 0}"/>
+                <p:commandLink value="#{metodoEntry.value}"
+                               action="#{consultaAdminOrdenesMB.consultarOrdenesXMetodo}"
+                               ajax="true" 
+                               immediate="true" 
+                               update=":formConsultaEjecutivaOrdenes "
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{metodoEntry.value ne 0}">
+                    <f:setPropertyActionListener value="#{metodoEntry}"
+                                                 target="#{consultaAdminOrdenesMB.consultaOrdenesHelper.metodoSeleccionado}" />
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column footerText="#{msj['label.todos.metodos']}" style="text-align:center;"/>
+                    <p:column style="text-align:center;" rendered="#{consultaAdminOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXMetodo eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXMetodo}"/>
+                        </f:facet>                                        
+                    </p:column>                                    
+                    <p:column style="text-align:center;" rendered="#{consultaAdminOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXMetodo ne 0}">
+                        <f:facet name="footer">
+                            <p:commandLink value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.totalXMetodo}"
+                                           action="#{consultaAdminOrdenesMB.consultarOrdenesXMetodo}"
+                                           ajax="true" immediate="true" update=":formConsultaEjecutivaOrdenes "
+                                           style="color: blue; text-decoration: underline;">
+                            </p:commandLink>
+                        </f:facet>
+                    </p:column>
+                </p:row>
+            </p:columnGroup>
+        </p:dataTable>
+        <p:separator/>
+        <p:dataTable value="#{consultaAdminOrdenesMB.detalleSemaforo}" var="semaforoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}">
+            <f:facet name="header">
+                <h:outputLabel value="#{msj['label.ordenes.asignadas']}" style="font-weight:bold"/>
+            </f:facet>
+            <p:column headerText="#{msj['label.semaforo']}">
+                <p:graphicImage value="/resources/images/#{semaforoEntry.key.textoImagenSemaforo}-16x16.png" style="border:0"/>
+                <p:outputLabel value="#{semaforoEntry.key.nombre}" />
+            </p:column>
+            <p:column headerText="Total" style="text-align:center;" >
+                <h:outputText value="#{semaforoEntry.value}" rendered="#{semaforoEntry.value eq 0}"/>
+                <p:commandLink value="#{semaforoEntry.value}"
+                               action="#{consultaAdminOrdenesMB.consultarXSemaforo}"
+                               ajax="true" immediate="true" update=":formConsultaEjecutivaOrdenes "
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{semaforoEntry.value ne 0}">
+                    <f:setPropertyActionListener value="#{semaforoEntry}"
+                                                 target="#{consultaAdminOrdenesMB.consultaOrdenesHelper.semaforoSeleccionado}" />
+                </p:commandLink>
+            </p:column>                            
+        </p:dataTable>
+        <p:separator/>
+        <p:panel  header="#{msj['label.cifras']}" >
+            <p:panelGrid styleClass="noBorders">
+            	<p:row>
+            		<p:column width="30%">
+            		</p:column>
+            		<p:column style="text-align: right;" width="50%">
+            			<p:outputLabel value=" Tipo de Cifra: " />
+            			<p:selectOneMenu id="origen" value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.cifraSeleccionada}"
+                                         style="width: 257px !important;">
+                            <f:selectItem itemLabel="Todas" itemValue="" />
+                            <f:selectItems value="#{consultaAdminOrdenesMB.lstTipoCifras}" var="cifra"
+                                           itemLabel="#{cifra.descripcion}"
+                                           itemValue="#{cifra}"/>
+                            <p:ajax event="change" process="@form" update=":formConsultaEjecutivaOrdenes"/>
+                        </p:selectOneMenu>
+            		</p:column>
+            	</p:row>
+            	<p:row>
+            		<p:column width="30%">
+            		</p:column>
+            		<p:column width="50%">
+            			<p:outputLabel value=" Cantidad: De: " />
+            			<pe:inputNumber id="txtMontoDe" value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.cifraDesde}" decimalSeparator="." 
+            				thousandSeparator="," maxValue="999999999999" required="false" style="width:100px" decimalPlaces="0" >
+            				<p:ajax event="change" process="@form" update=":formConsultaEjecutivaOrdenes"/>
+            			</pe:inputNumber>
+            			<p:outputLabel value=" Hasta: " />
+            			<pe:inputNumber id="txtMontoHasta" value="#{consultaAdminOrdenesMB.consultaOrdenesHelper.cifraHasta}" decimalSeparator="." 
+            				thousandSeparator="," maxValue="999999999999" required="false" style="width:100px" decimalPlaces="0" >
+            				<p:ajax event="change" process="@form" update=":formConsultaEjecutivaOrdenes"/>
+            			</pe:inputNumber>
+            		</p:column>
+            	</p:row>
+                <p:row>
+                	<p:column width="30%">
+            		</p:column>
+                    <p:column  width="50%">
+                        <p:commandButton id="btnCifras" value="Consultar" 
+                                         action="#{consultaAdminOrdenesMB.consultarCifras}" 
+                                         ajax="true" 
+                                         immediate="true"
+                                         update=":formConsultaEjecutivaOrdenes "/>
+                    </p:column>                
+                </p:row>
+            </p:panelGrid>             
+        </p:panel>
+        <p:separator/>
+        <h:panelGrid columns="1" style="text-align: right ! important; width: 100%;">
+            <h:panelGroup>
+                <p:commandButton value="#{msj['btn.pantalla.anterior']}" 
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaAdminOrdenesMB.mostrarPanelUnidadesDesahogo}"
+                                 update=":formConsultaEjecutivaOrdenes "
+                                 rendered="#{consultaAdminOrdenesMB.consultaOrdenesHelper.consultaOrdenesBO.isAcppce}"/>
+            </h:panelGroup> 
+        </h:panelGrid>
+    </p:panel>
+</f:view>

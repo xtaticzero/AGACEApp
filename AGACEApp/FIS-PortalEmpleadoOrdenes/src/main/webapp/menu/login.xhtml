@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+        xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <h:head/>
+        <h:body>
+            <h:form id="formLogin" enctype="multipart/form-data" styleClass="panel-principal">
+                <p:panel id="panelDowload" header="LOGIN"
+                         style="margin-left:auto;                          margin-right:auto;                          width: 800px;">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="RFC Empleado:"/>
+                        <p:autoComplete id="txtRFC" value="#{loginMB.userRfc}" maxlength="15"
+                                        completeMethod="#{loginMB.autocompletarRFC}">
+                            <p:ajax event="blur" listener="#{loginMB.validaFirma}" update=":formLogin"/>
+                        </p:autoComplete>
+                        <p:outputLabel value="Pantallas"/>
+                        <p:selectOneMenu id="cmbUls" value="#{loginMB.url}" style="width:250px !important">
+                            <f:selectItem itemLabel="Select One" itemValue=""/>
+                            <f:selectItems value="#{loginMB.urlsValues}" var="url" 
+                                           itemValue="#{url.url}" itemLabel="#{url.etiqueta}"/>
+                            <p:ajax event="change" listener="#{loginMB.validaFirma}" update=":formLogin"/>
+                        </p:selectOneMenu>
+                        <p:commandButton actionListener="#{loginMB.subirRfcASession}" ajax="false" inmemediate="true"
+                                         value="FIRMAR" disabled="#{loginMB.seFirmo}"/>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+        </h:body>
+    </html>
+</f:view>

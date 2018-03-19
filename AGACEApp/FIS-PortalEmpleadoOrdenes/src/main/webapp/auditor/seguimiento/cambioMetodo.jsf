@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head/>
+        <h:body>
+            <h:form id="formCompulsaTercero" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogCompTercero').show();" onsuccess="PF('statusDialogCompTercero').hide();""/>
+                <p:dialog modal="true" widgetVar="statusDialogCompTercero" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                <p:messages id="msgExitoGuardar" showDetail="true" globalOnly="true" closable="true"/>
+                <p:panel id="panelCompulsaTerceros" header="Compulsa con Terceros" styleClass="panel-interno">
+                    <h:panelGrid id="panelDatosContribuyente" columns="3" border="0" width="100%">
+                        <p:column>
+                            <p:outputLabel value="#{msj['label.numero.orden']}" style="font-weight:bold;"/>
+                            <br/>
+                            <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.cveOrden}"/>
+                            <br/>
+                            <br/>
+                            <p:outputLabel value="#{msj['label.id.registro']}" style="font-weight:bold;"/>
+                            <br/>
+                            <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.cveRegistro}"/>
+                            <br/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{msj['label.metodo']}" style="font-weight:bold;"/>
+                            <br/>
+                            <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.feceaMetodo.nombre}"/>
+                            <br/>
+                            <br/>
+                            <p:outputLabel value="#{msj['label.rfc.contribuyente']}" style="font-weight:bold;"/>
+                            <br/>
+                            <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.rfcContribuyente}"/>
+                            <br/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{msj['label.plazo.concluir.revision.dias']}"
+                                           style="font-weight:bold;"/>
+                            <br/>
+                            <p:outputLabel value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.plazoConcluirRevision}"/>
+                            <br/>
+                            <br/>
+                            <p:outputLabel value="#{msj['label.nombre.contribuyente']}" style="font-weight:bold;"/>
+                            <br/>
+                            <div style="width:370px">
+                                <p:outputLabel style="height:auto;" id="txtNombre" value="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.nombreContribuyente}"/>
+                            </div>
+                        </p:column>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    
+                     <h:panelGrid id="cambioMetodoUCA" columns="3" style="font-weight:bold">
+                        <p:outputLabel value="Metodo *:" style="font-weight:bold"/>
+                        <p:spacer/>
+                        <p:spacer/>
+                        
+                        <p:spacer/>
+                        <p:spacer/>
+                        <p:spacer/>
+                        
+                        <h:panelGrid id="panelInputTextCompulsaORG" columns="2">
+                            <p:selectOneMenu id="cmbMetodo" value="#{documentacionOrdenMB.idMetodo}" >
+                                <f:selectItem itemLabel="Selecciona método" itemValue="-1"/>
+                                <f:selectItems value="#{documentacionOrdenMB.listaMetodos}" var="lista" itemLabel="#{lista.nombre}"
+                                               itemValue="#{lista.idMetodo}"/>
+                                <p:ajax update="cambioMetodoUCA"
+                                    event="change" listener="#{documentacionOrdenMB.mostrarSeleccionMetodo}"/>
+                            </p:selectOneMenu>
+                            
+                            <p:selectOneMenu id="cmbInicialesGabinete" value="#{documentacionOrdenMB.seleccionGabinete}"
+                                    rendered="#{documentacionOrdenMB.metodoGabinete}">
+                                <f:selectItem itemLabel="Selecciona submétodo" itemValue="-1"/>
+                                <f:selectItems value="#{documentacionOrdenMB.listaGabinetes}" var="lista" 
+                                        itemLabel="#{lista.descripcion}" itemValue="#{lista.idRevision}"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:spacer/>
+                        <p:spacer/>
+                        
+                        <p:message id="msgMetodo" for="cmbMetodo" display="text"/>
+                        <p:spacer/>
+                        <p:spacer/>
+                    </h:panelGrid>
+                    
+                    <p:spacer height="8"/>
+                    
+                    <p:panelGrid id="compulsaTerDocsORG">
+                       <p:row>
+                            <p:column style="width:40%;border:1px solid #ffffff;">
+                                <p:selectOneListbox id="selectCompulsaTerceroORG" style="width:100%;"
+                                                    value="#{documentacionOrdenMB.tipoDocCambioMetodo}">
+                                    <p:ajax listener="#{documentacionOrdenMB.cambiarValorCambioMetodo}" update="msgExitoGuardar @form"/>
+                                    <f:selectItem itemLabel="Carga de Oficio de Cambio de Metodo *" itemValue="cambioMetodo"/>
+                                    <f:selectItem itemLabel="Carga de Oficio de la Órden *" itemValue="ordenCambioMetodo"/>
+                                </p:selectOneListbox>
+                            </p:column>
+                            <p:column style="width:60%;border:1px solid #ffffff;">
+                                <p:fileUpload id="ulfCompulsaTercerosORG" styleClass="fileUploadRequerido"
+                                              fileUploadListener="#{documentacionOrdenMB.cargaArchivoCambioMetodo}"
+                                              mode="advanced" dragDropSupport="false" multiple="false"
+                                              style="width:400px;" label="#{msj['btn.examinar']}"
+                                              cancelLabel="Cancelar todos" uploadLabel="Guardar" showButtons="true" 
+                                              auto="true" ajax="true"
+                                              update="msgExitoGuardar selectCompulsaTerceroORG tablaCompulsaTerceros"
+                                              />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    
+                    <p:spacer height="10px" />
+                    
+                    <p:dataTable id="tablaCompulsaTerceros" 
+                            value="#{documentacionOrdenMB.tablaCambioMetodo}" var="tablaCompulsaCargada" 
+                            editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                            rendered="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.idSegReq==null}">  
+                        <p:column id="txtFechaCargaSegCarta" headerText="#{msj['titulo.tabla.fecha.carga.documentos.cambio.metodo']}" >
+                            <h:outputText id="txtFechaCargaPromocion" 
+                                value="#{tablaCompulsaCargada.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column> 
+                        <p:column id="hdrNombreDocumento" headerText="#{msj['titulo.tabla.nombre.carga.documentos.cambio.metodo']}">
+                            <div style="width:450px;">#{tablaCompulsaCargada.nombreArchivo}</div>
+                        </p:column>
+                    </p:dataTable>
+                    
+                    <h:panelGrid columns="2" id="panelBotonGuardar" width="700">
+                        <p:column rowspan="2">
+                           
+                            <p:commandButton value="Pantalla anterior" action="indexDocumentacion?faces-redirect=true" style="float:right;width:80px;" ajax="true" />
+                            
+                            <p:commandButton value="Guardar" ajax="true"
+                                                 disabled="#{documentacionOrdenMB.dtoHelper.ordenSeleccionada.idCompTercero==null}"
+                                                 id="btnGuardarCompulsaTerceroORG" style="float:right;"
+                                                 action="#{documentacionOrdenMB.guardarDocsCambioMetodo}"
+                                                 update="@form"/>
+                        </p:column>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

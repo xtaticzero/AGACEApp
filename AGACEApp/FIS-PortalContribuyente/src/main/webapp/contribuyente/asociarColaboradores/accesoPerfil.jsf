@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{accesoPerfilManagedBean.init}" />
+        </f:metadata>
+        <h:head></h:head>
+        <h:body>
+            <h:form id="formAccesoPerfil" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelAccessoLoggeo" style="border-bottom-right-radius:0;border-bottom-left-radius:0;">
+                    <f:facet name="header">
+                        Tipo de Perfil
+                    </f:facet>
+                    <br/>
+                    <h:outputLabel value="Seleccione el perfil que desea acceder: " style="font-weight:bold"/>
+                    <p:separator/>
+                    <h:panelGrid border="0" columns="1">
+                        <p:selectOneMenu id="cmbPerfil" value="#{accesoPerfilManagedBean.idTipoAsociado}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.perfil']}" itemValue="-1"/>
+                            <f:selectItems value="#{accesoPerfilManagedBean.listaTipoAsociado}" var="lista"
+                                           style="font:red;" itemLabel="#{lista.nombre}"
+                                           itemValue="#{lista.idTipoAsociado}" itemDescription="#{lista.descripcion}"/>
+                            <p:ajax update="panelAccessoLoggeo" event="change"
+                                    listener="#{accesoPerfilManagedBean.llenaComboPerfilRfc}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="500" height="1" rendered="#{accesoPerfilManagedBean.mostrarComboPerfilRfc}"/>
+                        <p:selectOneMenu id="labelPerfilRFC" value="#{accesoPerfilManagedBean.rfcPerfilContribuyente}"
+                                         rendered="#{accesoPerfilManagedBean.mostrarComboPerfilRfc}"
+                                         style="width:160px;">
+                            <f:selectItem itemLabel="#{msj['combo.item.selecciona.rfc']}" itemValue="-1"/>
+                            <f:selectItems value="#{accesoPerfilManagedBean.listaRfcContribuyente}" var="lista"
+                                           style="font:red;" itemLabel="#{lista}" itemValue="#{lista}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="500" height="1" rendered="#{!accesoPerfilManagedBean.mostrarComboPerfilRfc}"/>
+                        <p:spacer width="500" height="1" rendered="#{accesoPerfilManagedBean.mostrarComboPerfilRfc}"/>
+                        <p:commandButton value="Continuar " action="#{accesoPerfilManagedBean.enviaPerfil}" update="@form"
+                                         styleClass="ui-confirmdialog-no"/>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

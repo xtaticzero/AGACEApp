@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+                
+        <p:panel id="panelPreviosPropuesta">
+            <h:panelGrid width="100%">
+                <h:outputLabel value="#{msj['separador.panel.datos.previos.propuesta']}"
+                        style="float:left;font-weight:bold" />
+                <p:separator />
+                <h:panelGrid columns="4" width="100%">
+                    <h:outputLabel value="#{msj['label.nombre.docElect.unidad']}" style="float:left;font-weight:bold"  />
+                    <p:inputText id="txtArace" style="width:200px;height:auto;" disabled="true" value="#{datoPropuesta.arace}" />
+                    <h:outputLabel value="#{msj['label.nombre.docElect.metodo.revision']}" style="float:left;font-weight:bold"  />
+                    <p:inputText id="txtRevision" style="width:200px;height:auto;" disabled="true" value="#{datoPropuesta.revision}" />
+                    <h:outputLabel value="#{msj['label.nombre.docElect.subprograma']}" style="font-weight:bold" />
+                    <p:inputTextarea id="txtSubprograma" style="width:300px;height:auto;"  disabled="true" value="#{datoPropuesta.subprograma}"/>
+                    <h:outputLabel value="#{msj['label.docElect.tipo.propuesta']}" style="font-weight:bold" />
+                    <p:inputText id="txtPropuesta" style="width:200px;height:auto;" disabled="true" value="#{datoPropuesta.tipoPropuesta}" />
+                    <h:outputLabel value="#{msj['label.docElect.causa.programacion']}" style="font-weight:bold" />
+                    <p:inputTextarea id="txtProgramacion" style="width:300px;height:auto;" disabled="true" value="#{datoPropuesta.programacion}" />
+                    <h:outputLabel value="#{msj['label.docElect.tipo.revision']}" style="font-weight:bold" />
+                    <p:inputText id="txtTipoRevision" style="width:200px;height:auto;" disabled="true" value="#{datoPropuesta.tipoRevision}" />
+                    <h:outputLabel value="#{msj['label.nombre.docElect.sector']}:" style="font-weight:bold" />
+                       <p:inputText id="txtTipoSector" style="width:200px;height:auto;" disabled="true" value="#{datoPropuesta.sector}" />
+                     
+                  
+                        
+                        
+                        
+                        
+                                   <h:outputLabel rendered="#{datoPropuesta.visibleInfo}" id="fechaPresentacionComiteId" value="#{datoPropuesta.presentacionComite}:" style="font-weight:bold"/>
+                                            <p:calendar rendered="#{datoPropuesta.visibleInfo}"  disabled="true" id="txtFechaPresentacion" locale="es" pattern="dd/MM/yyyy" 
+                                                readonlyInput="true" size="8" style="width:200px;height:auto;"
+                                                value="#{datoPropuesta.fechaPresentacion}" navigator="true"/>
+                        
+                        
+                               <h:outputLabel rendered="#{!datoPropuesta.visibleInfo}" value="#{datoPropuesta.informacionComite}:" style="font-weight:bold"/>
+                                  <p:calendar rendered="#{!datoPropuesta.visibleInfo}" disabled="true" id="txtFechaInformacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+                                                    readonlyInput="true" size="8" style="width:200px;height:auto;"
+                                                    value="#{datoPropuesta.fechaInforme}" navigator="true"/>
+                        
+                        
+                           
+                  
+               
+                     <h:outputLabel  rendered="#{datoPropuesta.tipoActivoPropuesta}" value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold" />
+                     <h:outputLabel  rendered="#{!datoPropuesta.tipoActivoPropuesta}" value="#{msj['label.operaciones.especifica']}:" style="font-weight:bold" />
+                    <h:panelGrid columns="6" width="100%">
+                        <h:outputLabel rendered="#{datoPropuesta.tipoActivoPropuesta}"  value="#{msj['lbl.propuestas.del']}:" style="font-weight:bold"/>
+                        <h:outputLabel  rendered="#{!datoPropuesta.tipoActivoPropuesta}"  value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold"/>
+                          
+                        <p:inputText id="txtInicioPropuesta" style="width:70px;height:auto;" disabled="true" value="#{datoPropuesta.periodoInicioPropuesta}" />
+                          <h:outputLabel rendered="#{datoPropuesta.tipoActivoPropuesta}"  value="#{msj['lbl.propuestas.al']}:" style="font-weight:bold"/>
+                        <h:outputLabel  rendered="#{!datoPropuesta.tipoActivoPropuesta}"  value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold"/>
+                        <p:inputText id="txtFinPropuesta" style="width:70px;height:auto;" disabled="true" value="#{datoPropuesta.periodoFinPropuesa}" />
+                        <h:outputLabel value="#{msj['label.docElect.prioridad']}:" style="font-weight:bold" />
+                         <p:inputText id="txtPrioridad" style="width:15px;height:auto;" disabled="true" value="#{datoPropuesta.prioridadSugerida}" />
+                        
+                      </h:panelGrid> 
+                </h:panelGrid>
+                
+                <h:panelGrid columns="2">
+                        <p:dataTable value="#{datoPropuesta.listaImpuestos}" var="impuesto" style="width:100%" emptyMessage="#{msj['label.lista.vacia']}">
+                            <f:facet name="header">
+                                <p:outputLabel value="Impuestos"/>
+                            </f:facet>
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column rowspan="2"  headerText="Impuesto" style="width:150px;"/>
+                                    <p:column colspan="1" headerText="Concepto" style="width:300px;"/> 
+                                    <p:column rowspan="1" headerText="Monto ($)" style="width:100px;"/>
+                                   
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column style="width:50px;">
+                                <p:outputLabel value="#{impuesto.descripcion}"/>
+                            </p:column>
+                            <p:column style="width:50px;">
+                                <p:outputLabel value="#{impuesto.concepto}"/>
+                            </p:column>
+                            <p:column style="width:10px;">
+                                <div align="right">
+                                <h:outputText value="#{impuesto.monto}">
+                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                                </h:outputText>
+                                </div>
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:row>
+                                    <p:column footerText="" />
+                                    <p:column style="text-align:right" footerText="Presuntiva:"/>
+                                    <p:column footerText="#{verificarProcedenciaMB.verificarProcedenciaHelper.adicionalContribuyente.presuntiva}" style="text-align:right;"/>
+                                  
+                                </p:row>
+                            </p:columnGroup>
+                        </p:dataTable>
+                        <p:dataTable id="tablaDocumentacionExpediente" value="#{datoPropuesta.listaDocumentosTabla}"
+                                 var="doc" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 style="width:100%;" paginatorPosition="bottom">
+                            <f:facet name="header">
+                                    <h:outputLabel value="#{msj['label.propuestas.datos.propuesta.documentos']}" style="font-weight:bold" />
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+                                      style="width:60px;">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{doc.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}" style="width:160px;margin:auto;">
+                                <div>#{doc.nombre}</div>
+                            </p:column>
+                            <p:column headerText="#{msj['column.documento']}" style="width:60px;">
+                                
+                                <h:commandButton image="/resources/images/document.png"
+                                        title="Documento" ajax="true"
+                                        style="float:left;padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{doc}"
+                                                target="#{verificarProcedenciaMB.docSeleccionado}" />
+                                        <p:fileDownload contentDisposition="attachment"
+                                                value="#{verificarProcedenciaMB.docSeleccionadoDescarga}" />
+                                </h:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                      
+                </h:panelGrid>
+            
+        </h:panelGrid>
+    </p:panel>                
+                
+                
+                
+                
+</ui:composition>

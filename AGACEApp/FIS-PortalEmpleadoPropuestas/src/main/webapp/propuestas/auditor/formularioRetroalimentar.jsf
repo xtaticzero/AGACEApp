@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions" >
+   
+  
+   <h:panelGrid id="panelEncabezadoRetroalimentar" columns="5">
+                        <h:outputText value="#{msj['label.fecha.retroalimentar']}: " style="font-weight:bold;"/>
+                        <h:outputText value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.fechaCargaArchivo}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                        <p:spacer width="60" height="1"/>
+                        <h:outputText value="#{msj['label.registro']}: " style="font-weight:bold;"/>
+                        <h:outputText value="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.labelRegistro}"/>
+                    </h:panelGrid>
+                    <br/>
+                    <h:panelGrid columns="4" width="380">
+                        <p:outputLabel value="#{msj['label.motivo.retro.asiganda']}" style="font-weight:bold;"/>
+                        <p:outputLabel value=" *" style="color:red;"/>
+                        <p:outputLabel value=" :"/>
+                        <p:selectOneMenu id="cmbRetroalimentacion"
+                                         value="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.idRetroalimentacionSeleccionado}"
+                                         style="width:200px;">
+                            <f:selectItem itemLabel="Selecciona un motivo" itemValue="-1"/>
+                            <f:selectItems value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.motivosRetroalimentacion}"
+                                           var="listaMotivoRetro" itemLabel="#{listaMotivoRetro.descripcion}"
+                                           itemValue="#{listaMotivoRetro.idMotivo}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <!-- Panel retroalimentar propuesta -->
+                     <p:spacer width="10px" height="17px"/>
+                    <p:outputLabel value="#{msj['label.adjuntar.documento']}" style="font-weight:bold;"/>
+                    <p:outputLabel value=" *" style="color:red;"/>
+                    <p:outputLabel value=" :"/>
+                    <h:panelGrid columns="1" cellpadding="10" width="500">
+                        <p:fileUpload id="flUpLoadDocRetroalimentacion" widgetVar="flUpRetroalimentar"
+                                      fileUploadListener="#{consultarPropuestasAsignadasManagedBean.handleFileUploadRetroalimentar}"
+                                      mode="advanced" dragDropSupport="false" multiple="false"
+                                      label="#{msj['btn.examinar']}" cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                      update="tablaDocRetroalimentar :formPropuestas:msgExitoGuardar" showButtons="true"
+                                      auto="true" ajax="true" oncomplete="ocultaMsgAgace('msgExitoGuardar');"/>
+                        <p:dataTable id="tablaDocRetroalimentar" style="width:500px" var="tablaRetroalimentarCargada"
+                                     value="#{consultarPropuestasAsignadasManagedBean.consultarPropAsignadaHelper.listaRetroalimentar}"
+                                     editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true"
+                                     paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj['header.retro.documento']}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" styleClass="someClass" width="100px">
+                                <h:outputText id="txtFechaCargaRetroalimentar"
+                                              value="#{tablaRetroalimentarCargada.fechaRetroalimentacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column id="hdrNombreRechazo" headerText="Documento">
+                                <div style="width:200px;">
+                                    <p:commandLink value="#{tablaRetroalimentarCargada.nombreArchivo}" style="color:blue;" ajax="false" update=":formPropuestas @form">
+                                        <f:setPropertyActionListener value="#{tablaRetroalimentarCargada.archivo}"    
+                                                                     target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.archivoDescargableIS}" />                             
+                                        <f:setPropertyActionListener value="#{tablaRetroalimentarCargada.nombreArchivo}"
+                                                                     target="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.nombreArchivoDescarga}" />
+                                        <p:fileDownload value="#{consultarPropuestasAsignadasManagedBean.documentoDescarga}" />
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+                            <p:column>
+                                <p:commandLink style="color:blue;margin:auto;" value="#{msj['label.confirm.eliminar']}"
+                                               action="#{consultarPropuestasAsignadasManagedBean.descartarDocRetroaliemntar}" 
+                                               ajax="true" immediate="true" update="tablaDocRetroalimentar :formPropuestas:msgExitoGuardar">
+                                    <f:setPropertyActionListener value="#{tablaRetroalimentarCargada}"
+                                                                 target="#{consultarPropuestasAsignadasManagedBean.cpaDtoHelper.docRetroalimentarSeleccionado}" />
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                    <p:spacer width="10px" height="17px"/>
+                    <p:outputLabel value="Detalle" style="font-weight:bold;"/>
+                    <p:outputLabel value=" *" style="color:red;"/>
+                    <p:outputLabel value=" :"/>
+                    <h:panelGrid columns="1" cellpadding="10" width="500">
+                        <p:inputTextarea id="txtDescripcionRetroalimentacion" style="width:100%;height:70px;"
+                                         value="#{consultarPropuestasAsignadasManagedBean.cpaStringHelper.descripcionRetroalimentar}"
+                                         maxlength="400"/>
+                    </h:panelGrid>
+                    <p:spacer width="1" height="15"/>
+                    <h:panelGrid id="panelBotonesRetroalimentar" columns="2" layout="block" style="margin:auto">
+                        <p:commandButton id="btnRetroalimentarPropuesta" value="#{msj['label.confirm.aceptar']}"
+                                         action="#{consultarPropuestasAsignadasManagedBean.validarRetroalimentarPropuesta}"
+                                         styleClass="ui-confirmdialog-yes" style="float:right;" update=":formPropuestas @form"
+                                         ajax="true" oncomplete="ocultaMsgAgace('msgExitoGuardar');"
+                                         partialSubmit="true"/>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}"
+                                         action="#{consultarPropuestasAsignadasManagedBean.regresaDetalle}"
+                                         styleClass="ui-confirmdialog-no" style="float:right;"
+                                         update=":formPropuestas @form"/>
+                    </h:panelGrid>
+  
+</ui:composition>

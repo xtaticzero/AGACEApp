@@ -1,0 +1,613 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{detalleOrdenManagedBean.init}"/>
+        </f:metadata>
+        <h:head>
+            <script>
+             
+            </script>
+        </h:head>
+        <h:body>
+            <h:form id="formAsociar" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogSeg').show();" onsuccess="PF('statusDialogSeg').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogSeg" header="#{msj['titulo.panel.espere']}"
+                          draggable="false" closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                <p:panel id="panelContribuyenteOrdenes"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" styleClass="panel-principal"
+                         header="Órdenes" rendered="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.monstrarPanelOrdenes}">
+                    <p:panel styleClass="panel-secundario"
+                             rendered="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.mostrarDatosApoderadoLegal}">
+                        <h:panelGrid border="0" columns="4">
+                            <h:outputLabel value="Apoderado Legal." style="float:right;font-weight:bold"/>
+                            <p:spacer width="500" height="1"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid columns="2" id="panelDatosApoderadoLegal" border="0" styleClass="panel-secundario">
+                            <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                            <p:inputText id="labelApoderadoRFC" style="width:300px;"
+                                         value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.rfc}"
+                                         disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.deshabilitarCampos}"/>
+                            
+                            <h:outputLabel value="Nombre/ Razón Social:" style="font-weight:bold"/>
+                            <p:inputText style="width:300px;"
+                                         value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.nombre}"
+                                         disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.deshabilitarCampos}"/>
+                            
+                            <h:outputLabel value="E-mail:" style="font-weight:bold"/>
+                            <p:inputText style="width:300px;"
+                                         value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.correo}"
+                                         disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.deshabilitarCorreo}"/>
+                            <p:spacer width="50" height="1"/>
+                            <p:spacer width="50" height="1"/>
+                            <h:outputLabel value="Medios de Contacto:" style="font-weight:bold"/>
+                            <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.medioContactoBoolean}"
+                                                     disabled="true"/>
+                            <p:spacer width="50" height="1"/>
+                            <p:spacer width="50" height="1"/>
+                            <h:outputLabel value="Ordenes sin Apoderado Legal:" style="font-weight:bold"/>
+                            <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.sinColaborador}"
+                                                     disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalVO.deshabilitarSinColaborador}">
+                                <p:ajax update="@form"
+                                        listener="#{detalleOrdenManagedBean.validaSinApoderadoLegal}"/>
+                            </p:selectBooleanCheckbox>
+                            <p:spacer width="50" height="1"/>
+                            <p:spacer width="50" height="1"/>
+                        </h:panelGrid>
+                    </p:panel>
+                    <br/>
+                    <br/>
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Órdenes" style="float:right;font-weight:bold"/>
+                        <p:spacer width="500" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:dataTable id="tablaOrdenes" var="datos" value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.ordenes}"
+                                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <p:column headerText="Detalle" width="7%" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>                        
+                        <p:column headerText="Número de orden">
+                          <h:outputText value="#{datos.numeroOrden}"/>
+                           </p:column>
+                           <p:column headerText="Nombre método">
+                            <h:outputText value="#{datos.feceaMetodo.nombre}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.fecha.notificacion']}:">
+                            <h:outputText value="#{datos.fechaNotifCont}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>                      
+                       
+                        
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="Plazo para Concluir la Revision :"/>
+                                <h:outputText value="#{datos.diasRestantesPlazo}"/>
+                                <h:outputText value="Estatus :"/>
+                                <h:outputText value="#{datos.fececEstatus.descripcion}"/>
+                                <h:outputText value="Documento :"/>
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.ordenSeleccionDescarga}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoOrdenSeleccionDescarga}"/>
+                                </h:commandButton>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+                   
+                </p:panel>
+                <p:panel id="panelAsociarColaboradoresOrden"
+                         style="border-bottom-right-radius:0;border-bottom-left-radius:0;" styleClass="panel-principal"
+                         header="Detalle Orden"
+                         rendered="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.mostrarPanelOrdenAsociarColaboradores}">
+                    <h:panelGrid border="0" columns="5">
+                        <h:outputLabel value="Número Orden: " style="float:left;font-weight:bold"/>
+                        <h:outputLabel value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.ordenes.numeroOrden}"
+                                       style="float:left;font-weight:bold"/>
+                        <p:spacer width="400" height="1"/>
+                        <h:outputLabel value="Metodo: " style="float:right;font-weight:bold"/>
+                        <h:outputLabel value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.ordenes.feceaMetodo.nombre}"
+                                       style="float:left;font-weight:bold"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <br/>
+                    <br/>
+                    <p:accordionPanel multiple="true">
+                        <p:tab title="Datos del Contribuyente">
+                            <h:panelGrid columns="3" id="panelDatosContribuyente" border="0"
+                                         styleClass="panel-secundario">
+                                <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Nombre/ Razón Social:" style="font-weight:bold"/>
+                                <p:inputText id="txtRfc" style="width:150px;" disabled="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.rfc}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                                                 value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.nombre}"/>
+                                <p:message id="msgRFC" for="txtRfc" display="text"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value=" " style="font-weight:bold"/>
+                                <h:outputLabel value="Régimen:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Situación del Contribuyente:" style="font-weight:bold"/>
+                                <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.regimen}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputText id="txtSituacion" style="width:325px;height:auto;" disabled="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.situacion}"/>
+                                <h:outputLabel value="Tipo de Contribuyente:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Actividad Preponderante:" style="font-weight:bold"/>
+                                <p:inputText id="txtTipo" style="width:325px;height:auto;" disabled="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.tipo}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputText id="txtActividad" style="width:325px;height:auto;" disabled="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.actividadPreponderante}"/>
+                                <h:outputLabel value="Domicilio Fiscal del Contribuyente:" style="font-weight:bold"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Situación del Domicilio:" style="font-weight:bold"/>
+                                <p:inputTextarea id="txtDomFiscal" style="width:325px;height:auto;" disabled="true"
+                                                 value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.domicilioFiscal}"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:inputText id="txtDomicilio" style="width:325px;height:auto;" disabled="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.situacionDomicilio}"/>
+                                <h:outputLabel value="Entidad:" style="font-weight:bold"/>
+                                 <p:spacer width="50" height="1"/>
+                                  <p:spacer width="50" height="1"/>
+                                  <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.entidad}"/>
+                            </h:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>
+              
+                    <p:accordionPanel multiple="true">
+                        <p:tab title="Representante Legal">
+                            <h:panelGrid columns="2" id="panelDatosRepresentanteLegal" border="0"
+                                         styleClass="panel-secundario">
+                                         
+                                <p:spacer width="50" height="1"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.deshabilitarCampos}"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.rfc}"/>
+                               
+        
+                                <h:outputLabel value="Nombre:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.nombre}"
+                                             disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.deshabilitarCampos}"/>
+                               
+                                <h:outputLabel value="E-mail:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.deshabilitarCorreo}"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.correo}"/>
+                                
+                                <h:outputLabel value="Medios de Contacto:" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.medioContactoBoolean}"
+                                                         disabled="true"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Orden sin Representante L.:" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.sinColaborador}"
+                                disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.representanteLegalVO.deshabilitarSinColaborador}">
+                                    <p:ajax update="@form"
+                                            listener="#{detalleOrdenManagedBean.validaSinRepresentanteLegal}"/>
+                                </p:selectBooleanCheckbox>
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Apoderado Legal del Representante Legal">
+                            <h:panelGrid columns="2" id="panelDatosALRL" border="0" styleClass="panel-secundario">
+                                <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.rfc}"
+                                             disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.deshabilitarCampos}"/>
+                                
+                                <h:outputLabel value="Nombre:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.nombre}"
+                                             disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.deshabilitarCampos}"/>
+                                
+                                <h:outputLabel value="E-mail:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.correo}"
+                                             disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.deshabilitarCorreo}"/>
+                                <p:spacer width="50" height="1"/>                                
+                                <p:spacer width="50" height="1"/> 
+                                <h:outputLabel value="Medios de Contacto:" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.medioContactoBoolean}"
+                                                         disabled="true"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Orden sin Apoderado L. R.L.:" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.sinColaborador}"
+                                disabled="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.apoderadoLegalRLVO.deshabilitarSinColaborador}">
+                                    <p:ajax update="@form"
+                                            listener="#{detalleOrdenManagedBean.validaSinApoderadoLegalRL}"/>
+                                </p:selectBooleanCheckbox>
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Agente Aduanal"  rendered="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.mostrarDatosAgenteAduanal}">
+                            <h:panelGrid columns="2" id="panelDatosAA" border="0" styleClass="panel-secundario">
+                                <h:outputLabel value="RFC:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{detalleOrdenManagedBean.agenteAduanalVO.rfc}"
+                                             disabled="#{detalleOrdenManagedBean.agenteAduanalVO.deshabilitarCampos}"/>
+                                
+                                <h:outputLabel value="Nombre:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{detalleOrdenManagedBean.agenteAduanalVO.nombre}"
+                                             disabled="#{detalleOrdenManagedBean.agenteAduanalVO.deshabilitarCampos}"/>
+                                
+                                <h:outputLabel value="E-mail:" style="font-weight:bold"/>
+                                <p:inputText style="width:300px;"
+                                             value="#{detalleOrdenManagedBean.agenteAduanalVO.correo}"
+                                             disabled="#{detalleOrdenManagedBean.agenteAduanalVO.deshabilitarCorreo}"/>
+                                <p:spacer width="50" height="1"/>
+                                
+                                <h:outputLabel value="Medios de Contacto:" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.agenteAduanalVO.medioContactoBoolean}"
+                                                         disabled="true"/>
+                                <p:spacer width="50" height="1"/>
+                                <p:spacer width="50" height="1"/>
+                                <h:outputLabel value="Ordenes sin Agente Aduanal:" style="font-weight:bold"/>
+                                <p:selectBooleanCheckbox value="#{detalleOrdenManagedBean.agenteAduanalVO.sinColaborador}"
+                                disabled="#{detalleOrdenManagedBean.agenteAduanalVO.deshabilitarSinColaborador}">
+                                    <p:ajax update="@form"
+                                            listener="#{detalleOrdenManagedBean.validaSinAgenteAduanal}"/>
+                                </p:selectBooleanCheckbox>
+                            </h:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>
+                    <br/>
+                    <br/>
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Historial de Documentación" style="float:right;font-weight:bold"/>
+                        <p:spacer width="495" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:dataTable id="tablaPromociones" var="datos"
+                                 value="#{detalleOrdenManagedBean.detalleOrdenLstHelper.listaPromociones}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <p:column headerText="#{msj['column.label.detalle']}" style="width:35px">
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">
+                            #{datos.idPromocion}
+                        </p:column>
+                        <p:column headerText="#{msj['label.fecha.envio.promocion']}" style="width:80px">
+                            <h:outputLabel value="#{datos.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png" title="#{datos.nombreArchivo}"
+                                                 ajax="true" style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.promocionSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoDescargaPromocion}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+                            #{datos.descripcionTipoPromocion}
+                        </p:column>
+                        <p:column headerText="#{msj['label.pruebas.alegatos']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{detalleOrdenManagedBean.getPruebasAlegatosPromocion}"
+                                               value="#{datos.contadorPruebasAlegatos}" style="color:#0170b7;"
+                                               ajax="true" immediate="true"
+                                                onclick="PF('dlgDocEnviada').show();" update=":formAsociar:tablaPruebasAlegatos :formAsociar:txtIdPromocion :formAsociar:txtFechaEnvio">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.promocionSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.promocionSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoSelecciondaDescargaAcuse}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="Extemporanea" style="width:70px">
+                            <div align="center">
+                                <p:graphicImage value="/resources/images/#{datos.extemporanea==1?'ok':'cancel'}.png"
+                                                style="border:0"/>
+                            </div>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="#{msj['label.presentada.por']} :"/>
+                                <h:outputText value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.contribuyente.nombre}"/>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <br/>
+                   
+                                     
+                    <br/>
+                     
+                    
+                     <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Oficios Orden" style="float:right;font-weight:bold"/>
+                        <p:spacer width="570" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:dataTable id="tablaOficios" var="datos"
+                                 value="#{detalleOrdenManagedBean.detalleOrdenLstHelper.listaOficiosFirmados}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <f:facet name="header">OFICIOS</f:facet>
+                       <p:column headerText="#{msj['column.label.id.oficio']}">
+                            <p:commandLink value="#{datos.idOficio}"
+                                           action="#{detalleOrdenManagedBean.cargaOficioSeleccionado}" rendered="#{datos.mostrarIdOficio}" 
+                                           ajax="true" update="@form" style="color:blue;">
+                                <f:setPropertyActionListener value="#{datos}"
+                                                             target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.oficioSeleccionado}"/>
+                            </p:commandLink>
+                        </p:column>                       
+                        <p:column headerText="#{msj['column.label.tipo.oficio']}" style="width:150px">#{datos.fecetTipoOficio.nombre}</p:column>
+                        <p:column headerText="#{msj['column.label.oficio']}" style="width:50px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="#{datos.nombreArchivo}" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.oficioSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoDescargaOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                         <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Acuse" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.oficioSeleccionado}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoDescargaOficioAcuse}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.fecha.notificacion']}" style="width:70px">
+                            <h:outputLabel value="#{datos.fechaNotifCont}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.fecha.firma']}" style="width:70px">
+                            <h:outputLabel value="#{datos.fechaFirma}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.oficios.dependientes']}" style="width:70px">
+                            <div align="center">
+                                <p:commandLink action="#{documentacionOrdenMB.getPruebasAlegatosPromocion}"
+                                               value="#{documentacion.totalOficiosDependientes}" style="color:#0170b7;"
+                                               ajax="true"  immediate="true"
+                                               >
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.promocionSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column> 
+                    </p:dataTable>
+                    <br/>
+                    <h:panelGrid border="0" columns="4">
+                        <h:outputLabel value="Prórrogas Orden" style="float:right;font-weight:bold"/>
+                        <p:spacer width="570" height="1"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:dataTable id="tablaProrrogas" var="datos"
+                                 value="#{detalleOrdenManagedBean.detalleOrdenLstHelper.listaProrroga}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        <f:facet name="header">PRORROGAS</f:facet>
+                       
+                        <p:column headerText="#{msj['label.id.prorroga']}" style="width:35px">
+                            #{datos.idProrrogaOrden}
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:80px">
+                            <h:outputLabel value="#{datos.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputLabel>
+                        </p:column>
+                        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.prorrogaOrdenSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoSelecciondaDescargaAcuseProrroga}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{detalleOrdenManagedBean.getDocsProrrogasOrden}"
+                                               value="#{datos.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocProrrogaEnviada').show();" update=":formAsociar:tablaDocsProrrogaOrden :formAsociar:txtIdProrroga :formAsociar:txtProrrogaFechaEnvio">
+                                    <f:setPropertyActionListener value="#{datos}"
+                                                                 target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.prorrogaOrdenSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+                            #{datos.descripcionEstado}
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.documento.resolucion.prorroga']}" style="width:80px">
+                            
+                        </p:column>
+                        
+                    </p:dataTable>
+                    <br/>
+                  
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p:commandButton value="Regresar" styleClass="ui-confirmdialog-no" 
+                                     update="@form" action="#{detalleOrdenManagedBean.regresa}" style="float:right;width:80px;" ajax="true" immediate="true"/>
+                    <br/>
+                    <br/>
+                </p:panel>
+                
+                
+                <p:dialog widgetVar="dlgDocEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="ID Promoción"/>
+                                <p:inputText id="txtIdPromocion" style="width:50px;" readonly="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.idPromocionSeleccionada}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.fechaEnvioPromocionSeleccionada}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaPruebasAlegatos" var="docs"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenLstHelper.listaPruebasAlegatos}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">#{docs.idAlegato}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="" style="width:35px">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.pruebaAlegatoSeleccionada}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoDescargaPruebasAlegatos}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgDocProrrogaEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="ID Prorroga"/>
+                                <p:inputText id="txtIdProrroga" style="width:50px;" readonly="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.idProrrogaOrdenSeleccionada}"/>
+                                <h:outputLabel value="Fecha de Envio Prorroga"/>
+                                <p:inputText id="txtProrrogaFechaEnvio" style="width:80px;" readonly="true"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.fechaEnvioProrrogaOrdenSeleccionada}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaDocsProrrogaOrden" var="docs"
+                                             value="#{detalleOrdenManagedBean.detalleOrdenLstHelper.listaDocsProrrogaOrden}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prorroga']}" style="width:60px">#{docs.idProrrogaOrden}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="" style="width:35px">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{detalleOrdenManagedBean.detalleOrdenDtoHelper.docProrrogaOrdenSeleccionado}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoDescargaDocProrrogaOrdenSeleccionado}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarAsociado" resizable="false"
+                          modal="true" width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.asociado']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.no']}" onclick="PF('confirmarAsociado').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"                                    
+                                     style="float:right;"></p:commandButton>
+                    <p:commandButton value="#{msj['btn.si']}" onclick="PF('asociadoConfirmado').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{detalleOrdenManagedBean.confirmarAsociado}" 
+                                     style="float:right;"></p:commandButton>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="asociadoConfirmado" resizable="false" modal="true"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.asociado.ok']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('asociadoConfirmado').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form"/>
+                </p:dialog>
+                 <p:dialog header="#{msj['label.aviso.header']}" widgetVar="acuseCreado" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.acuse']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('acuseCreado').hide();"
+                                    action="#{detalleOrdenManagedBean.cargaPromociones}"   ajax="false"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form">
+                                     <p:fileDownload 
+                                     value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoDescargaAcuse}" />
+                                     </p:commandButton>
+                </p:dialog>
+                <p:dialog header="#{msj['label.aviso.header']}" widgetVar="acuseProrrogaCreado" resizable="false" modal="true" closable="false"
+                          width="300" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['label.confirm.acuse']}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('acuseProrrogaCreado').hide();"
+                                    action="#{detalleOrdenManagedBean.cargaProrrogas}"   ajax="false"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-check" style="float:right;" update="@form">
+                                     <p:fileDownload 
+                                     value="#{detalleOrdenManagedBean.detalleOrdenStreamedHelper.archivoDescargaAcuseProrroga}" />
+                                     </p:commandButton>
+                </p:dialog>
+                
+            </h:form>             
+            <h:outputScript library="js/" name="agace.js"/>             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

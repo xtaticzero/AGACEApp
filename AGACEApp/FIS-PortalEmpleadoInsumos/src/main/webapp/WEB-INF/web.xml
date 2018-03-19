@@ -1,0 +1,146 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+    <!-- Spring -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>feceInsumos</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.enableRestoreView11Compatibility</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <!-- LOG4J -->
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>file:///siat/log4j/FECE_Empleado_Insumos.xml</param-value>
+    </context-param>
+    <!-- Configuracion de la aplicacion -->
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    <!-- PROPIEDADES APP -->
+    <context-param>
+        <param-name>AGACE_APP</param-name>
+        <param-value>file:/siat/fece/configuracion/AGACE_PROPIEDADES.properties</param-value>
+    </context-param>
+    <listener>
+        <listener-class>mx.gob.sat.siat.feagace.vista.util.AgaceConfigListener</listener-class>
+    </listener>
+    <!-- Faces -->
+    <context-param>
+        <param-name>develop</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>satgris</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
+        <param-value>*.jsf;*.xhtml</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <filter>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+        <init-param>
+            <param-name>thresholdSize</param-name>
+            <param-value>1049000000</param-value>
+        </init-param>
+        <init-param>
+            <param-name>uploadDirectory</param-name>
+            <param-value>/Users/local/temp</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    <filter>
+        <filter-name>Character Encoding Filter</filter-name>
+        <filter-class>mx.gob.sat.siat.feagace.vista.util.CharacterEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Character Encoding Filter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    <!-- Session Filter -->
+    <filter>
+        <filter-name>EmpleadoSessionFilter</filter-name>
+        <filter-class>mx.gob.sat.siat.base.filter.EmpleadoSessionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EmpleadoSessionFilter</filter-name>
+        <url-pattern>*.jsf</url-pattern>
+    </filter-mapping>
+    <session-config>
+        <session-timeout>15</session-timeout>
+    </session-config>
+    <mime-mapping>
+        <extension>gif</extension>
+        <mime-type>image/gif</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jpe</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jpg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>png</extension>
+        <mime-type>image/png</mime-type>
+    </mime-mapping>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/applicationContext.xml
+        </param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+    <!-- Coherence -->
+<!--    <context-param>
+        <param-name>coherence-scopecontroller-class</param-name>
+        <param-value>com.tangosol.coherence.servlet.AbstractHttpSessionCollection$GlobalScopeController</param-value>
+    </context-param>
+    <context-param>
+        <param-name>coherence-session-strict-spec</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>coherence-session-member-locking</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>coherence-sticky-sessions</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>coherence-distributioncontroller-class</param-name>
+        <param-value> mx.gob.sat.siat.controlador.impl.CustomSessionDistributionController </param-value>
+    </context-param> -->
+</web-app>

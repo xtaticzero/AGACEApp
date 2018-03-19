@@ -1,0 +1,1126 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{documentacionOficioMB.init}"/>
+        </f:metadata>
+        <h:head/>
+        <h:body>
+        
+            <h:form id="formDocumentacionOficio" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogOficioDocs').show();" onsuccess="PF('statusDialogOficioDocs').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogOficioDocs" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                <p:panel id="panelDocumentacionOficio" header="#{msj['titulo.panel.documentacion.oficio']}" styleClass="panel-interno">
+                    <h:panelGrid id="panelDatosContribuyente" columns="3" border="0" width="100%">
+                        <ui:include src="/auditor/seguimiento/componentes/datosGeneralOrden.jsf"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:dataTable id="tablaDocumentacionRequeridaOficio" var="documentacion"
+                                 value="#{documentacionOficioMB.listaPromociones}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                        
+                        <f:facet name="header">
+                            #{msj['titulo.tabla.documentacion.requerida.pruebas.alegatos']}
+                        </f:facet>
+                        <p:column headerText="#{msj['column.label.detalle']}" style="width:35px" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">#{documentacion.idPromocionOficio}</p:column>
+                        <p:column headerText="#{msj['label.fecha.envio.promocion']}" style="width:80px">
+                            <h:outputLabel value="#{documentacion.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </p:column>                       
+                        <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="#{documentacion.nombreArchivo}" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{documentacionOficioMB.promocionSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionOficioMB.archivoDescargaPromocionOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+                            #{documentacion.descripcionTipoPromocion}
+                        </p:column>
+                         <p:column headerText="#{msj['label.pruebas.alegatos']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{documentacionOficioMB.getPruebasAlegatosPromocion}"
+                                               value="#{documentacion.contadorPruebasAlegatos}" style="color:#0170b7;"
+                                               oncomplete="PF('dlgDocEnviada').show();"
+                                               update=":formDocumentacionOficio:txtIdPromocion :formDocumentacionOficio:panelDocumentosPromocion 
+                                               :formDocumentacionOficio:txtFechaEnvio :formDocumentacionOficio:tablaPruebasAlegatos">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{documentacionOficioMB.promocionSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                 <!--         <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Acuse" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;" rendered="#{documentacion.nombreAcuse!=null}">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{documentacionOficioMB.promocionSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionOficioMB.archivoDescargaAcuse}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column> -->
+                        <p:column headerText="#{msj['titulo.tabla.documentacion.extemporanea']}" style="width:70px">
+                            <div align="center">
+                                <p:graphicImage value="/resources/images/#{documentacion.extemporanea==1?'ok':'cancel'}.png" style="border:0"/>
+                            </div>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="#{msj['label.presentada.por']} :"/>
+                                <h:outputText value="#{documentacion.idAsociadoCarga == null ? documentacionOrdenMB.dtoHelper.ordenSeleccionada.fecetContribuyente.nombre : documentacion.asociado.nombre}"/>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>                            
+                    <!-- Inicio de bloque de Prorrogas -->
+                    <br/>
+                    <p:separator rendered="false"/>                    
+                    <p:panel id="pnlProrroga"  style="border:none; width:100%;padding:none;" rendered="#{documentacionOficioMB.prorrogaVisible}" styleClass="panel-interno">
+                        <p:messages id="msgProrroga" showDetail="true" globalOnly="true" closable="true"/>
+                        <p:dataTable id="tablaProrroga" var="documentacion" 
+                                     value="#{documentacionOficioMB.listaProrroga}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                            <f:facet name="header">
+                                #{msj[&apos;titulo.tabla.validacion.prorroga&apos;]}
+                            </f:facet>
+                            <p:column headerText="#{msj['column.label.detalle']}" style="width:35px" >
+                                <p:column>
+                                    <p:rowToggler/>
+                                </p:column>
+                            </p:column>
+                            <p:column headerText="#{msj['label.id.prorroga']}" style="width:50px">#{documentacion.idProrrogaOficio}</p:column>
+                            <p:column headerText="#{msj['label.fecha.envio.prorroga']}" style="width:80px">
+                                <h:outputLabel value="#{documentacion.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputLabel>
+                            </p:column>
+                      <!--        <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                                <div align="center">
+                                    <h:commandButton image="/resources/images/document.png"
+                                                     title="#{documentacion.nombreAcuse}" ajax="true" immediate="true"
+                                                     style="padding:0px 5px;">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                                     target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                        <p:fileDownload contentDisposition="attachment"
+                                                        value="#{documentacionOficioMB.archivoDescargaProrroga}"/>
+                                    </h:commandButton>
+                                </div>
+                            </p:column> -->
+                           
+                            <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:80px">
+                                <div align="center">
+                                    <p:commandLink action="#{documentacionOficioMB.getDocumentacionProrrogaContribuyente}"
+                                                   value="#{documentacion.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                                   ajax="true" onclick="PF('dlgDocProrrogaContOficio').show();" immediate="true"
+                                                   update=":formDocumentacionOficio:panelDocContProrroga">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                                     target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+                            
+                            <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+                                <p:outputLabel value="#{documentacion.fececEstatus.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="#{msj['column.label.prorroga.acciones']}" style="width:100px">
+                                <div align="center">
+                                    <p:commandLink value="#{msj['label.aprobar']}"
+                                                      onclick="PF('confirmarAutorizarProrrogaAuditor').show();limpiarAnexosResolucionProrroga();"
+                                                     style="padding:0px 5px;color:#0170b7;" immediate="true">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                    </p:commandLink>
+                                    <p:commandLink value="#{msj['label.rechazar']}"
+                                                      onclick="PF('confirmarRechazarProrrogaAuditor').show();limpiarAnexosResolucionProrroga();"
+                                                     style="padding:0px 5px;color:#0170b7;" immediate="true">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                    </p:commandLink>
+                                </div>
+                            </p:column>
+                            <p:rowExpansion>
+                                <h:panelGrid columns="2" cellpadding="4" style="width:auto;"
+                                             styleClass=" ui-widget-content grid">
+                                    <h:outputText value="#{msj['column.label.motivo.rechazo']} :"/>
+                                    <h:outputText value="#{documentacion.fecetFlujoProrrogaOficio.justificacionFirmante}"/>
+                                    <h:outputText value="#{msj['column.label.documentos.rechazo']} :"/>
+                                    <p:commandLink action="#{documentacionOficioMB.getDocumentacionRechazoProrroga}"
+                                                   value="#{documentacion.totalDocumentosRechazo}" style="color:#0170b7;"
+                                                   ajax="true" onclick="PF('dlgAnexosRechazoProrrogaOficio').show();"
+                                                   update=":formDocumentacionOficio:panelAnexosProrrogaOficio :formDocumentacionOficio:tablaAnexosProrroga"
+                                                   immediate="true" disabled="#{documentacion.fecetFlujoProrrogaOficio.idFlujoProrrogaOficio == null}">
+                                        <f:setPropertyActionListener value="#{documentacion}"
+                                                                     target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                    </p:commandLink>
+                                </h:panelGrid>
+                            </p:rowExpansion>
+                            
+                        </p:dataTable>   
+                    </p:panel>
+                    <p:remoteCommand name="limpiarAnexosResolucionProrroga" 
+                    update=":formDocumentacionOficio:tablaProrrogaAprobadaResolucion
+                    			:formDocumentacionOficio:tablaProrrogaAprobada
+                    			:formDocumentacionOficio:tablaProrrogaRechazadaResolucion
+                    			:formDocumentacionOficio:tablaProrrogaRechazada"
+                    		actionListener="#{documentacionOficioMB.limpiarAnexosResolucionProrroga}" />
+                    <!-- Fin de bloque de prorrogas -->
+                    
+                    <!-- Inicio de bloque de Carga Documentacion Compulsa Internacional-->
+                    <p:panel id="pnlDocCompInternacional"  style=" width:100%;padding:none;" 
+                    	rendered="#{documentacionOficioMB.sinMediosCompulsa   or
+                    	documentacionOficioMB.oficioSeleccionado.fecetTipoOficio.idTipoOficio == 2 or 
+                    	documentacionOficioMB.oficioSeleccionado.fecetTipoOficio.idTipoOficio == 8 or 
+                    	documentacionOficioMB.oficioSeleccionado.fecetTipoOficio.idTipoOficio == 18 or 
+                    	documentacionOficioMB.oficioSeleccionado.fecetTipoOficio.idTipoOficio == 16 or
+                    	documentacionOficioMB.oficioSeleccionado.fecetTipoOficio.agrupador.idAgrupadorOficios == 3}">
+                        <p:separator rendered="true"/>
+                        <p:outputLabel value="Documentación Requerida" style="font-weight:bold;"/>
+                        <br/>
+                        <br/>
+                        <p:messages id="msgGeneral" showDetail="false" globalOnly="true" closable="true"/>
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['label.adjuntar.promocion']}"/>
+                        </h:panelGroup>
+                        <p:fileUpload id="flUpPromo" widgetVar="flUpPromo"
+                                      fileUploadListener="#{documentacionOficioMB.handleFileUploadPromocion}"
+                                      mode="advanced" dragDropSupport="false" multiple="false" sizeLimit="4196000"
+                                      label="Examinar" style="width:300px;"
+                                      invalidSizeMessage="Error al cargar el archivo, no debe exceder los 4MB" auto="true"
+                                      update="msgGeneral tablaPromocionCargada"
+                                      invalidFileMessage="Archivo inválido, Solo se aceptan archivos docx, pdf y xlsx"
+                                      allowTypes="/(\.|\/)(pdf|docx|xlsx)$/"
+                                      oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                        
+                        <p:spacer width="1" height="25"/>
+                        <h:outputText value="#{msj['titulo.tabla.promocion']}" style="font-weight:bold;"/>
+                        <p:dataTable id="tablaPromocionCargada" var="tablaPromocionCargada"
+                                     value="#{documentacionOficioMB.listaPromocionesOficioCargadas}" editable="false"
+                                     emptyMessage="#{msj['label.lista.vacia']}">
+                            <p:column headerText="#{msj['titulo.tabla.promocion.fecha']}" styleClass="someClass"  width="50%">
+                                <h:outputText id="txtFechaCargaPromocion" value="#{tablaPromocionCargada.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                      <!--        <p:column headerText="#{msj['titulo.tabla.promocion.nombre.archivo']}" styleClass="someClass"
+                                      style="table-layout:fixed"  width="75%">
+                                <div style="width:95%;">
+                                    #{tablaPromocionCargada.nombreArchivo}
+                                </div>
+                            </p:column> -->
+                           <p:column headerText="#{msj['column.label.archivo']}" width="33%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{tablaPromocionCargada}"
+                                                                 target="#{documentacionOficioMB.promocionOficioSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionOficioMB.promocionOficioSeleccionadaDescarga}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="#{msj['btn.eliminar.promocion']}" action="#{documentacionOficioMB.limpiarPromocion}"
+                                         update="@form" style="float:right;"/>
+                        <br/>
+                        <br/>
+                        
+                        <h:panelGrid id="panelPruebasAlegatos" border="0" columns="1">
+                            <h:panelGroup id="tituloPruebas" layout="block" style="padding:5px;">
+                                <h:outputText value="Adjuntar Documentación Requerida" 
+                                	rendered="#{documentacionOficioMB.oficioSeleccionado.fecetTipoOficio.agrupador.idAgrupadorOficios != 3}"/>
+                                <h:outputText value="Pruebas y alegatos" 
+                                	rendered="#{documentacionOficioMB.oficioSeleccionado.fecetTipoOficio.agrupador.idAgrupadorOficios == 3}"/>
+                            </h:panelGroup>
+                            <p:fileUpload id="flUpPruebas" widgetVar="flUpPruebas"
+                                          fileUploadListener="#{documentacionOficioMB.handleFileUploadPruebasAlegatos}"
+                                          mode="advanced" dragDropSupport="false" multiple="false" sizeLimit="4196000"
+                                          label="Examinar" style="width:300px;"
+                                          invalidSizeMessage="Error al cargar el archivo, no debe exceder los 4MB"
+                                          invalidFileMessage="Archivo inválido, Solo se aceptan archivos docx, pdf y xlsx"
+                                          auto="true" update="msgGeneral tablaPruebasAlegatosCargada"
+                                          allowTypes="/(\.|\/)(pdf|docx|xlsx)$/"
+                                          oncomplete="ocultaMsgAgace('msgGeneral');"/>
+                            <br/>
+                            <h:outputText value="Documentaci&oacute;n requerida/Pruebas y alegatos por enviar" style="font-weight:bold;" />
+                            <p:dataTable id="tablaPruebasAlegatosCargada" var="tablaPruebasAlegatosCargada"
+                                         value="#{documentacionOficioMB.listaPruebasAlegatosOficioCargadas}" editable="false"
+                                         emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" 
+                                                    currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">  
+                                <p:column headerText="#{msj['titulo.tabla.promocion.fecha']}" styleClass="someClass"  width="33%">                                
+                                    <h:outputText id="txtFechaCargaPruebasAlegatos"
+                                                  value="#{tablaPruebasAlegatosCargada.fechaCarga}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                 <!--                <p:column headerText="#{msj['titulo.tabla.promocion.nombre.archivo']}"
+                                          styleClass="someClass" style="table-layout:fixed"  width="60%">
+                                    <div style="width:95%;">
+                                        #{tablaPruebasAlegatosCargada.nombreArchivo}
+                                    </div>
+                                </p:column>  -->
+                                <p:column headerText="#{msj['column.label.archivo']}" width="33%">
+                            <div align="center">
+                                <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                            style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{tablaPruebasAlegatosCargada}"
+                                                                 target="#{documentacionOficioMB.pruebaAlegatoSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionOficioMB.pruebaOficioSeleccionadaDescarga}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                                <p:column  width="33%">
+                                  <div align="center">
+                                    <p:commandLink value="Eliminar"
+                                                   action="#{documentacionOficioMB.descartarPruebaLista}" ajax="true"
+                                                   update="@form" style="color:blue;" immediate="true">
+                                        <f:setPropertyActionListener value="#{tablaPruebasAlegatosCargada}"
+                                                                     target="#{documentacionOficioMB.pruebaAlegatoSeleccionada}"/>
+                                    </p:commandLink>
+                                    </div>
+                                </p:column>
+                            </p:dataTable>
+                        
+                            <br/>
+                            
+                            <!-- Modificaciones DOSR -->
+                            <p:commandButton value="Guardar Documentos" 
+                                            action="#{documentacionOficioMB.cargandoDatosDocumentacion}"
+                                            style="float:right;" 
+                                            oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');" 
+                                            update=":formDocumentacionOficio:msgGeneral :formDocumentacionOficio:pnlDocCompInternacional :formDocumentacionOficio:tablaDocumentacionRequeridaOficio"/>
+                        </h:panelGrid>
+                    </p:panel>
+                    <!-- Fin de bloque de Carga Documentacion Compulsa Internacional -->
+                    
+                    <p:messages id="msgExitoGuardarDocs" showDetail="true" globalOnly="true" closable="true"/>
+                    
+                    <p:messages id="msgExitoGuardarOficio" showDetail="false" globalOnly="false" closable="true"/>
+                    
+                    <p:panel id="pnlTabs"  style="border:none; width:100%;padding:none;" rendered="#{documentacionOficioMB.visualizarTabAvisoContribuyente}">
+                        <p:separator/>
+                        <p:outputLabel value="Oficios" style="font-weight:bold;"/>
+                        <p:spacer width="60" height="10"/>
+                        <p:tabView id="panelTabsDocumentos" effect="fade" effectDuration="normal">
+                            
+                            <p:tab id="tabMulta" title="#{msj['tab.multa']}">
+                                <p:tabView orientation="left">
+                                    <p:tab title="#{msj['label.oficio.multa']} *">
+                                        <h:panelGrid id="panelOficioMulta" columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.oficio.multa']} *:"/>                                            
+                                            <p:fileUpload id="fulOficioMulta"                                                  
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:310px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  partialSubmit="true"
+                                                  update="tablaDocumentoOficioMulta, :formDocumentacionOficio:msgExitoGuardarDocs"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"
+                                                  fileUploadListener="#{documentacionOficioMB.cargaOficioMulta}"/>
+                                        </h:panelGrid>                                        
+                                        <h:panelGrid id="panelDocumentoMulta" cellpadding="5">
+                                            <p:dataTable id="tablaDocumentoOficioMulta" 
+                                                     	 var="oficio" 
+                                                    	 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                    	 value="#{documentacionOficioMB.listaOfMulta}">  
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                                    <div style="width:450px;">#{oficio.nombreArchivo}</div>
+                                                </p:column>
+                                                 <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+					                                <div align="center">
+					                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+					                                                     style="padding:0px 5px;">
+					                                        <f:setPropertyActionListener value="#{oficio}"
+					                                                                     target="#{documentacionOficioMB.oficioSeleccionado}"/>
+					                                        <p:fileDownload contentDisposition="attachment"
+					                                                        value="#{documentacionOficioMB.oficioSeleccionDescarga}"/>
+					                                    </h:commandButton>
+					                                </div>
+					                            </p:column>
+                                                <p:column width="10%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+		                                               action="#{documentacionOficioMB.limpiarMulta}" ajax="true"
+		                                               immediate="true" update="@form"></p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>                                        
+                                        <h:panelGrid id="panelAnexosMulta" columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.anexos']}"/>                                            
+                                            <p:fileUpload id="fulAnexosMulta"                                                  
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:310px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  partialSubmit="true"
+                                                  update="panelAnexosDocumentoMulta, :formDocumentacionOficio:msgExitoGuardarDocs"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"
+                                                  fileUploadListener="#{documentacionOficioMB.cargaAnexosOficioMulta}"/>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelAnexosDocumentoMulta" cellpadding="5">
+                                            <p:dataTable id="tablaAnexosDocumentoOficioMulta" 
+                                                         var="anexo" 
+                                                    	 editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                                    	 value="#{documentacionOficioMB.listaAnexosMulta}">  
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                                    <div style="width:450px;">#{anexo.nombreArchivo}</div>
+                                                </p:column>
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+					                                <div align="center">
+					                                    <h:commandButton ajax="true" image="/resources/images/document.png"
+					                                                     style="padding:0px 5px;">
+					                                        <f:setPropertyActionListener value="#{anexo}"
+					                                                                     target="#{documentacionOficioMB.anexoSeleccionado}"/>
+					                                        <p:fileDownload contentDisposition="attachment"
+					                                                        value="#{documentacionOficioMB.anexoSeleccionDescarga}"/>
+					                                    </h:commandButton>
+					                                </div>
+					                            </p:column>
+                                                <p:column width="10%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                                                   action="#{documentacionOficioMB.eliminarAnexoOficioMulta}" ajax="true"
+                                                                   immediate="true" update="@form">
+                                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                                        target="#{documentacionOficioMB.anexoSeleccionado}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+										<p:commandButton value="#{msj['btn.guardar']}" action="#{documentacionOficioMB.guardarOficioMulta}" 
+                                                        style="float:right;width:80px;" ajax="true" immediate="true" update="@form" 
+                                                        oncomplete="ocultaMsgAgace('msgExitoGuardarOficio');" />
+                                    </p:tab>
+                                </p:tabView>
+                            </p:tab>
+                            
+                            <p:tab id="tabAvisoContribuyente" title="#{msj['tab.aviso.contribuyente']}">
+                                <p:tabView orientation="left">
+                                    <p:tab title="#{msj['label.oficio.aviso.contribuyente']}*">
+                                        <h:panelGrid id="panelOficioAvisoContribuyentePruebasDesahogo" 
+                                        		columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.oficio.aviso.contribuyente']} *:"/>
+                                            
+                                            <p:fileUpload id="fulOficioAvisoContribuyentePruebasDesahogo"
+                                                  fileUploadListener="#{documentacionOficioMB.cargaOficioAvisoContribuyente}"
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:310px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  update="tablaDocumentoOficioAvisoContribuyentePruebasDesahogo :formDocumentacionOficio:msgExitoGuardarDocs" immediate="true"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelDocumentoAvisoContribuyentePruebasDesahogo" cellpadding="5">
+                                            <p:dataTable id="tablaDocumentoOficioAvisoContribuyentePruebasDesahogo" 
+                                                    value="#{documentacionOficioMB.listaOfAvisoContribuyente}" var="oficio" 
+                                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}">  
+                                                <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%" >
+                                                    #{oficio.nombreArchivo}
+                                                </p:column> 
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                                    <div align="center">
+                                                        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                                    style="padding:0px 5px;">
+                                                            <f:setPropertyActionListener value="#{oficio}"
+                                                                                         target="#{documentacionOficioMB.oficioSeleccionado}"/>
+                                                            <p:fileDownload contentDisposition="attachment"
+                                                                            value="#{documentacionOficioMB.oficioSeleccionDescarga}"/>
+                                                        </h:commandButton>
+                                                    </div>
+                                                </p:column>
+                                                <p:column width="11%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                                                   action="#{documentacionOficioMB.limpiarAvisoContribuyente}" ajax="true"
+                                                                   immediate="true" update="@form">
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelAnexosAvisoContribuyentePruebasDesahogo" columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.anexos']}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+                                            
+                                            <p:fileUpload id="fulAnexosAvisoContribuyentePruebasDesahogo"
+                                                  fileUploadListener="#{documentacionOficioMB.cargaAnexosAvisoContribuyente}"
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:310px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  update="tablaAnexosDocumentoOficioAvisoContribuyentePruebasDesahogo :formDocumentacionOficio:msgExitoGuardarDocs" immediate="true"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelAnexosDocumentoAvisoContribuyentePruebasDesahogo" cellpadding="5">
+                                            <p:dataTable id="tablaAnexosDocumentoOficioAvisoContribuyentePruebasDesahogo" 
+                                                    value="#{documentacionOficioMB.listaAnexosAvisoContribuyente}" var="anexo" 
+                                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass">  
+                                                <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%" >
+                                                    #{anexo.nombreArchivo}
+                                                </p:column> 
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                                    <div align="center">
+                                                        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                                    style="padding:0px 5px;">
+                                                            <f:setPropertyActionListener value="#{anexo}"
+                                                                                         target="#{documentacionOficioMB.anexoSeleccionado}"/>
+                                                            <p:fileDownload contentDisposition="attachment"
+                                                                            value="#{documentacionOficioMB.anexoSeleccionDescarga}"/>
+                                                        </h:commandButton>
+                                                    </div>
+                                                </p:column>
+                                                <p:column width="12%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                                                   action="#{documentacionOficioMB.eliminarAnexoOficioAvisoContribuyente}" ajax="true"
+                                                                   immediate="true" update="@form">
+                                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                                        target="#{documentacionOficioMB.anexoSeleccionado}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                            
+                                            <p:commandButton value="#{msj['btn.guardar']}" action="#{documentacionOficioMB.guardarAvisoContribuyente}" 
+                                                        style="float:right;width:80px;" ajax="true" immediate="true" update="@form" 
+                                                        oncomplete="ocultaMsgAgace('msgExitoGuardarOficio');" />
+                                        </h:panelGrid>
+                                    </p:tab>
+                                </p:tabView>
+                            </p:tab>
+                        </p:tabView>
+                    
+                        <p:spacer height="20" />
+                    </p:panel>
+                    
+                    <p:separator rendered="#{documentacionOficioMB.prorrogaVisible}"/>
+                    <p:outputLabel value="Historicos" style="font-weight:bold;" rendered="#{documentacionOficioMB.prorrogaVisible}"/>
+                    <p:panel id="panelProrrogasAntecedentes" rendered="#{documentacionOficioMB.prorrogaVisible}">
+                        <p:dataTable id="tablaHistoricoProrrogas" var="documentacion"
+                                 value="#{documentacionOficioMB.listaProrrogaHistorico}" editable="false"
+                                 emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                 
+                        <f:facet name="header">
+                            #{msj[&apos;titulo.tabla.historico.prorroga&apos;]}
+                        </f:facet>
+                                 
+                        <p:column headerText="#{msj['column.label.detalle']}" style="width:35px" >
+                            <p:column>
+                                <p:rowToggler/>
+                            </p:column>
+                        </p:column>
+                        <p:column headerText="#{msj['label.id.prorroga']}" style="width:35px" >#{documentacion.idProrrogaOficio}</p:column>
+                        <p:column headerText="#{msj['column.label.fecha.solicitud']}" style="width:80px">
+                            <h:outputLabel value="#{documentacion.fechaCarga}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputLabel>
+                        </p:column>
+                 <!--         <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Acuse" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionOficioMB.archivoDescargaAcuseProrrogaOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>-->
+                        <p:column headerText="#{msj['column.label.documentacion.contribuyente']}" style="width:80px">
+                            <div align="center">
+                                <p:commandLink action="#{documentacionOficioMB.getDocumentacionProrrogaContribuyente}"
+                                               value="#{documentacion.totalDocumentosContribuyente}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgDocProrrogaContOficio').show();" immediate="true"
+                                               update=":formDocumentacionOficio:panelDocContProrroga">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.estatus']}" style="width:120px">
+                            #{documentacion.fececEstatus.descripcion}
+                        </p:column>
+                        <p:column headerText="#{msj['column.label.documento.resolucion.prorroga']}" style="width:80px">
+                            <div align="center">
+                                <h:commandButton image="/resources/images/document.png"
+                                                 title="Acuse" ajax="true" immediate="true"
+                                                 style="padding:0px 5px;">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                    <p:fileDownload contentDisposition="attachment"
+                                                    value="#{documentacionOficioMB.archivoDescargaResolucionProrrogaOficio}"/>
+                                </h:commandButton>
+                            </div>
+                        </p:column>
+                        <p:rowExpansion>
+                            <h:panelGrid columns="2" cellpadding="4" style="width:auto;"
+                                         styleClass=" ui-widget-content grid">
+                                <h:outputText value="#{msj['column.label.justificacion']} :"/>
+                                <h:outputText value="#{documentacion.fecetFlujoProrrogaOficio.justificacion}"/>
+                                
+                                <h:outputText value="#{msj['column.label.anexos.resolucion.prorroga']} :"/>
+                                <p:commandLink action="#{documentacionOficioMB.getAnexosProrrogaOficio}"
+                                               value="#{documentacion.totalDocumentosRechazo}" style="color:#0170b7;"
+                                               ajax="true" onclick="PF('dlgAnexosProrrogaOficio').show();" immediate="true" 
+                                               update=":formDocumentacionOficio:tablaAnexosProrrogaOficio">
+                                    <f:setPropertyActionListener value="#{documentacion}"
+                                                                 target="#{documentacionOficioMB.prorrogaOficioSeleccionada}"/>
+                                </p:commandLink>
+                            </h:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable> 
+                    </p:panel>
+                    <h:panelGrid id="panelDocumentosPromocion" >
+                        <p:dialog widgetVar="dlgDocEnviada" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto" id="dialogoDocumentacion"
+                              rendered="#{documentacionOficioMB.panelDocumentacionVisible}" 
+                              visible="#{documentacionOficioMB.panelDocumentacionVisible}" >
+                        <p:ajax event="close" update="panelDocumentosPromocion" listener="#{documentacionOficioMB.cierraVentana}" />
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="Id Promoción"/>
+                                <p:inputText id="txtIdPromocion" style="width:50px;" readonly="true"
+                                             value="#{documentacionOficioMB.promocionSeleccionada.idPromocionOficio}"/>
+                                <h:outputLabel value="Fecha de Envio Promoción"/>
+                                <p:inputText id="txtFechaEnvio" style="width:80px;" readonly="true"
+                                             value="#{documentacionOficioMB.promocionSeleccionada.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaPruebasAlegatos" var="docs"
+                                             value="#{documentacionOficioMB.listaPruebasAlegatos}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.id.prueba.alegato']}" style="width:60px">#{docs.idAlegatoOficio}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="" style="width:35px">
+                                        <h:commandButton image="/resources/images/document.png"
+                                                         title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                         style="float:left;padding:0px 5px;">
+                                            <f:setPropertyActionListener value="#{docs}"
+                                                                         target="#{documentacionOficioMB.pruebaAlegatoSeleccionada}"/>
+                                            <p:fileDownload contentDisposition="attachment"
+                                                            value="#{documentacionOficioMB.archivoDescargaPruebasAlegatos}"/>
+                                        </h:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    </h:panelGrid>
+                    
+                    <p:dialog id="confirmarAutorizarProrrogaAuditor" header="#{msj['titulo.dialog.motivo.aceptacion.prorroga']}" resizable="false"
+                              width="800" widgetVar="confirmarAutorizarProrrogaAuditor" showEffect="clip" hideEffect="clip"
+                              closable="false" modal="true" closeOnEscape="false" axis="y">
+                        <div align="left">
+                        <p:panelGrid width="100%" styleClass="noBorders">
+                        <p:row>
+                        	<p:column colspan="2">
+	                        	<p:messages id="messagesProrrogaAprobada" showDetail="false" closable="true" globalOnly="true"/>
+	                        	<p:messages id="messagesProrrogaAprobadaError" showDetail="false" closable="true"  for="msgProrrogaAprobadaError" />
+	                        </p:column>
+	                    </p:row>
+	                    <p:row>
+                        	<p:column>                                                       
+	                            <h:outputText value="#{msj['label.adjuntar.oficio']} :"/>
+	                            <br/> 
+	                            <p:fileUpload fileUploadListener="#{documentacionOficioMB.cargaResolucionProrrogaOficio}" 
+	                                            mode="advanced" dragDropSupport="false" multiple="r" label="#{msj['btn.examinar']}" 
+	                                            cancelLabel="Cancelar todos" uploadLabel="Guardar" showButtons="true" auto="true" ajax="true" 
+	                                            update="tablaProrrogaAprobadaResolucion, messagesProrrogaAprobada" 
+	                                            immediate="true" 
+	                                            sizeLimit="4194304" 
+	                                            allowTypes="/(\.|\/)(docx)$/" 
+	                                            invalidSizeMessage="#{msj['file.upload.archivo.grande']}"
+	                                            invalidFileMessage="#{msj['file.upload.archivo.invalido.word']}"
+	                                            oncomplete="ocultaMsgAgace('messagesProrrogaAprobada');
+	                                            ocultaMsgAgace('messagesProrrogaAprobadaError');"/>                                                          
+	                            <br/>                                                          
+	                            <p:dataTable id="tablaProrrogaAprobadaResolucion" emptyMessage="#{msj['label.lista.vacia']}" 
+	                            	value="#{documentacionOficioMB.listaResolucionProrrogaOficio}" var="prorrogaAprobada">
+	                            	<f:facet name="header">
+								        <h:outputText value="#{msj['label.tabla.oficio']} :"/>
+								    </f:facet>
+	                                <p:column headerText="#{msj['label.nombre.archivo']}" width="80%">
+	                                    #{prorrogaAprobada.nombreArchivo}
+	                                </p:column>
+	                                <p:column width="20%">
+	                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;" 
+	                                    action="#{documentacionOficioMB.eliminarResolucionProrrogaOficio}" 
+	                                    ajax="true" immediate="true" update="tablaProrrogaAprobadaResolucion :formDocumentacionOficio:messagesProrrogaAprobada">
+	                                        <f:setPropertyActionListener value="#{prorrogaAprobada}" 
+	                                        target="#{documentacionOficioMB.anexoProrrogaOficioSeleccionado}"/>
+	                                    </p:commandLink>
+	                                </p:column>
+	                            </p:dataTable>                            
+                            </p:column>                            
+                        	<p:column>                    
+	                            <h:outputText value="#{msj['label.adjuntar.anexos']} :"/>                            
+	                            <br/>                            
+	                            <p:fileUpload 
+	                                      fileUploadListener="#{documentacionOficioMB.cargaAnexosProrrogaOficio}"
+	                                      mode="advanced" dragDropSupport="false" multiple="r"
+	                                      label="#{msj['btn.examinar']}"
+	                                      cancelLabel="Cancelar todos" uploadLabel="Guardar"
+	                                      showButtons="true" auto="true" ajax="true"
+	                                      update="tablaProrrogaAprobada, messagesProrrogaAprobada" immediate="true"
+	                                      oncomplete="ocultaMsgAgace('messagesProrrogaAprobada');
+	                                      ocultaMsgAgace('messagesProrrogaAprobadaError');"/>	                             	                            
+	                            <br/>	                             
+	                            <p:dataTable id="tablaProrrogaAprobada" emptyMessage="#{msj['label.lista.vacia']}"
+	                                         value="#{documentacionOficioMB.listaAnexosProrrogaOficio}"
+	                                         var="prorrogaAprobada"
+	                                         paginator="true"
+	                                         rows="5"
+                         					 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    			{PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                			 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                			 paginatorPosition="bottom"
+                         					 rowsPerPageTemplate="5,10,15">
+                         			<f:facet name="header">
+								        <h:outputText value="#{msj['label.tabla.anexos']} :"/>
+								    </f:facet>
+	                                <p:column headerText="#{msj['label.nombre.archivo']}" width="80%">
+	                                    #{prorrogaAprobada.nombreArchivo}
+	                                </p:column>
+	                                <p:column width="20%">
+	                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+	                                                   action="#{documentacionOficioMB.eliminarAnexoProrrogaOficio}" ajax="true"
+	                                                   immediate="true" update="tablaProrrogaAprobada :formDocumentacionOficio:messagesProrrogaAprobada">
+	                                        <f:setPropertyActionListener value="#{prorrogaAprobada}"
+	                                                                     target="#{documentacionOficioMB.anexoProrrogaOficioSeleccionado}"/>
+	                                    </p:commandLink>
+	                                </p:column>
+	                            </p:dataTable>                                                         
+                             </p:column>                            
+                        </p:row>   
+                        <p:row>
+                        	<p:column colspan="2"> 
+                            	<p:outputLabel value="#{msj['label.motivo.aceptacion.prorroga']}:" style="float:left;font-weight:bold;"/><br/>                          
+                            	<p:inputTextarea rows="4" cols="100" value="#{documentacionOficioMB.fecetFlujoProrrogaOficio.justificacion}"
+                                             maxlength="400"/>
+                        	</p:column>                            
+                        </p:row> 
+                        </p:panelGrid> 
+                        </div>
+                        <br/>
+                        <h:panelGrid columns="2" style="float:right;" width="2">
+                            <p:commandButton value="#{msj['btn.enviar']}" icon="ui-icon-check" onclick="PF('confirmarAprobarProrroga').show();" />
+                            <p:commandButton value="Cancelar" ajax="true" onclick="PF('confirmarAutorizarProrrogaAuditor').hide();"
+                                             style="float:rigth;" immediate="true" />
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarRechazarProrrogaAuditor" 
+                              resizable="false" modal="true" width="315" height="55" >
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['label.confirm.rechazar.prorroga']}"/>
+                        </h:panelGroup>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" immediate="true"
+                                         onclick="PF('confirmarRechazarProrrogaAuditor').hide();" styleClass="ui-confirmdialog-no"
+                                         icon="ui-icon-close" style="float:right;"/>
+                        <p:commandButton id="btnRechazar" value="#{msj['label.confirm.aceptar']}"
+                                         onclick="PF('confirmarRechazarProrrogaAuditor').hide();" styleClass="ui-confirmdialog-yes"
+                                         icon="ui-icon-check" action="#{documentacionOrdenMB.rechazarProrroga}"
+                                         style="float:right;" ajax="true" immediate="true"
+                                         oncomplete="ocultaMsgAgace('msgProrrogaOficio');" />
+                    </p:dialog> 
+
+                    <p:dialog id="confirmarRechazarProrrogaAuditor" header="#{msj['titulo.dialog.motivo.rechazo.prorroga']}" resizable="false"
+                              width="800" widgetVar="confirmarRechazarProrrogaAuditor" showEffect="clip" hideEffect="clip"
+                              closable="false" modal="true" closeOnEscape="false" axis="y">
+                        <div align="left">
+                        <p:panelGrid width="100%" styleClass="noBorders">
+                        <p:row>
+                        	<p:column colspan="2">
+	                        	<p:messages id="messagesProrrogaRechazada" showDetail="false" closable="true" globalOnly="true"/>
+	                        	<p:messages id="messagesProrrogaRechazadaError" showDetail="false" closable="true"  for="msgProrrogaRechazadaError" />
+	                        </p:column>
+	                   	</p:row>
+	                   	<p:row>
+                        	<p:column>                         	
+	                            <h:outputText value="#{msj['label.adjuntar.oficio']} :"/>
+	                            <br/> 
+	                            <p:fileUpload fileUploadListener="#{documentacionOficioMB.cargaResolucionProrrogaOficioRechazo}" 
+	                                        mode="advanced" dragDropSupport="false" multiple="r" label="#{msj['btn.examinar']}" 
+	                                        cancelLabel="Cancelar todos" uploadLabel="Guardar" showButtons="true" auto="true" ajax="true" 
+	                                        update="tablaProrrogaRechazadaResolucion, messagesProrrogaRechazada" immediate="true" 
+	                                        sizeLimit="4194304" 
+	                                        allowTypes="/(\.|\/)(docx)$/" 
+	                                        invalidFileMessage="#{msj['file.upload.archivo.invalido.word']}"
+	                                        invalidSizeMessage="#{msj['file.upload.archivo.grande']}"
+	                                        oncomplete="ocultaMsgAgace('messagesProrrogaRechazada');
+	                                        ocultaMsgAgace('messagesProrrogaRechazadaError');"
+	                                        />                                                         
+	                            <br/>
+	                            <p:dataTable id="tablaProrrogaRechazadaResolucion" emptyMessage="#{msj['label.lista.vacia']}" 
+	                            	value="#{documentacionOficioMB.listaResolucionProrrogaOficioRechazo}" var="prorrogaRechazada">
+	                            	<f:facet name="header">
+								        <h:outputText value="#{msj['label.tabla.oficio']} :"/>
+								    </f:facet>
+	                                <p:column headerText="#{msj['label.nombre.archivo']}" width="80%">
+	                                    #{prorrogaRechazada.nombreArchivo}
+	                                </p:column>
+	                                <p:column width="20%">
+	                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;" 
+	                                    action="#{documentacionOficioMB.eliminarResolucionProrrogaOficioRechazo}" 
+	                                    ajax="true" immediate="true" update="tablaProrrogaRechazadaResolucion :formDocumentacionOficio:messagesProrrogaRechazada">
+	                                        <f:setPropertyActionListener value="#{prorrogaRechazada}" 
+	                                        target="#{documentacionOficioMB.anexoProrrogaOficioSeleccionadoRechazo}"/>
+	                                    </p:commandLink>
+	                                </p:column>
+	                            </p:dataTable>
+                            </p:column>                            
+                        	<p:column>                            
+	                            <h:outputText value="#{msj['label.adjuntar.anexos']} :"/>                            
+	                            <br/>                           
+	                            <p:fileUpload 
+	                                      fileUploadListener="#{documentacionOficioMB.cargaAnexosProrrogaOficioRechazo}"
+	                                      mode="advanced" dragDropSupport="false" multiple="r"
+	                                      label="#{msj['btn.examinar']}"
+	                                      cancelLabel="Cancelar todos" uploadLabel="Guardar"
+	                                      showButtons="true" auto="true" ajax="true"
+	                                      update="tablaProrrogaRechazada, messagesProrrogaRechazada" immediate="true"
+	                                      oncomplete="ocultaMsgAgace('messagesProrrogaRechazada');
+	                                      ocultaMsgAgace('messagesProrrogaRechazadaError');"/>                                                         
+	                            <br/>                                                                                      
+	                            <p:dataTable id="tablaProrrogaRechazada" emptyMessage="#{msj['label.lista.vacia']}"
+	                                         value="#{documentacionOficioMB.listaAnexosProrrogaOficioRechazo}"
+	                                         var="prorrogaRechazada"
+	                                         paginator="true"
+	                                         rows="5"
+                         					 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}
+                                    			{PreviousPageLink} &nbsp; Ir a página: {JumpToPageDropdown} &nbsp; {NextPageLink} {LastPageLink}"
+                                			 currentPageReportTemplate="({currentPage} de {totalPages})"
+                                			 paginatorPosition="bottom"
+                         					 rowsPerPageTemplate="5,10,15">
+                         			<f:facet name="header">
+								        <h:outputText value="#{msj['label.tabla.anexos']} :"/>
+								    </f:facet>
+	                                <p:column headerText="#{msj['label.nombre.archivo']}" width="80%">
+	                                    #{prorrogaRechazada.nombreArchivo}
+	                                </p:column>
+	                                <p:column width="20%">
+	                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+	                                                   action="#{documentacionOficioMB.eliminarAnexoProrrogaOficioRechazo}" ajax="true"
+	                                                   immediate="true" update=":formDocumentacionOficio:tablaProrrogaRechazada :formDocumentacionOficio:messagesProrrogaRechazada">
+	                                        <f:setPropertyActionListener value="#{prorrogaRechazada}"
+	                                                                     target="#{documentacionOficioMB.anexoProrrogaOficioSeleccionadoRechazo}"/>
+	                                    </p:commandLink>
+	                                </p:column>
+	                            </p:dataTable>                                                        
+                            </p:column>                            
+                        </p:row>   
+                        <p:row>
+                        	<p:column colspan="2">  
+                            	<p:outputLabel value="#{msj['label.motivo.rechazo.prorroga']}:" style="float:left;font-weight:bold;"/><br/>                             
+                            	<p:inputTextarea rows="4" cols="100" value="#{documentacionOficioMB.fecetFlujoProrrogaOficioRechazo.justificacion}"
+                                             maxlength="400"/>
+                        	</p:column>                            
+                        </p:row> 
+                        </p:panelGrid>
+                        </div>
+                        <br/>
+                        <h:panelGrid columns="2" style="float:right;" width="2">
+                            <p:commandButton value="#{msj['btn.enviar']}" icon="ui-icon-check" onclick="PF('confirmarRechazarProrroga').show();" />
+                            <p:commandButton value="Cancelar" ajax="true" onclick="PF('confirmarRechazarProrrogaAuditor').hide();"
+                                             style="float:rigth;" immediate="true" />
+                        </h:panelGrid>
+                    </p:dialog>
+                    
+                    <p:dialog widgetVar="dlgAnexosProrrogaOficio" header="#{msj['titulo.dlg.informacion.anexos']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelGrpAnexosProrrogaOficio" layout="block" style="padding:5px;">
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaAnexosProrrogaOficio" var="docs"
+                                             value="#{documentacionOficioMB.listaAnexosProrrogaOficio}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['label.fecha.creacion']}" style="width:60px">
+                                        <h:outputLabel value="#{docs.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="#{msj['label.documento']}" style="width:35px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                             style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}"
+                                                                             target="#{documentacionOficioMB.anexoProrrogaOficioSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{documentacionOficioMB.archivoDescargaAnexoProrrogaOficio}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    
+                    <p:dialog widgetVar="dlgDocProrrogaContOficio" header="#{msj['titulo.documentos.enviados']}" resizable="false"
+                              modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelDocContProrroga" layout="block" style="padding:5px;">
+                            <h:panelGrid columns="4" width="100%">
+                                <h:outputLabel value="#{msj['label.id.prorroga']}"/>
+                                <p:inputText id="txtIdProrrogaOficio" style="width:50px;" readonly="true"
+                                             value="#{documentacionOficioMB.prorrogaOficioSeleccionada.idProrrogaOficio}"/>
+                                <h:outputLabel value="Fecha de Envío Prórroga"/>
+                                <p:inputText id="txtFechaCargaProrrogaOficio" style="width:80px;" readonly="true"
+                                             value="#{documentacionOficioMB.prorrogaOficioSeleccionada.fechaCarga}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaDocumentosProrrogaContribuyente" var="docs"
+                                             value="#{documentacionOficioMB.listaDocumentosProrroga}" editable="false"
+                                             emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                             paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                             currentPageReportTemplate="({currentPage} de {totalPages})"
+                                             paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.label.id.documento']}" style="width:60px">#{docs.idDocProrrogaOficio}</p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">#{docs.nombreArchivo}</p:column>
+                                    <p:column headerText="" style="width:25px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png"
+                                                             title="#{docs.nombreArchivo}" ajax="true" immediate="true"
+                                                             style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}"
+                                                                             target="#{documentacionOficioMB.documentacionProrrogaOficioSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment"
+                                                                value="#{documentacionOficioMB.archivoDescargaDocumentacionProrroga}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    
+                    <p:dialog widgetVar="dlgAnexosRechazoProrrogaOficio" header="#{msj['titulo.documentos.enviados']}" resizable="false" modal="true" width="515" height="auto">
+                        <h:panelGroup id="panelAnexosProrrogaOficio" layout="block" style="padding:5px;">
+                            <h:panelGrid border="1" width="100%">
+                                <p:dataTable id="tablaAnexosProrroga" var="docs" value="#{documentacionOficioMB.listaDocumentosRechazoProrroga}" 
+                                	editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" 
+                                	paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                             
+                                	{PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" 
+                                	currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+                                    <p:column headerText="#{msj['column.label.id.documento']}" style="width:60px">
+                                        #{docs.idAnexosProrrogaOficio}
+                                    </p:column>
+                                    <p:column headerText="#{msj['label.nombre.documento']}" style="width:110px">
+                                        #{docs.nombreArchivo}
+                                    </p:column>
+                                    <p:column headerText="" style="width:25px">
+                                        <div align="center">
+                                            <h:commandButton image="/resources/images/document.png" title="#{docs.nombreArchivo}" ajax="true" immediate="true" style="padding:0px 5px;">
+                                                <f:setPropertyActionListener value="#{docs}" target="#{documentacionOficioMB.anexoProrrogaOficioSeleccionado}"/>
+                                                <p:fileDownload contentDisposition="attachment" value="#{documentacionOficioMB.archivoAnexoProrrogaOficio}"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:dialog>
+                    
+                    <!-- CONFIRMS -->
+                    
+                    <p:dialog widgetVar="confirmarAprobarProrroga" header="#{msj['label.confirm.header']}"
+                              resizable="false" modal="true" width="400" visible="false">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['confirm.guardar.oficio']}" />
+                        </h:panelGroup>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" immediate="true"
+                                         onclick="PF('confirmarAprobarProrroga').hide();"
+                                         styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"/>
+                        <p:commandButton value="#{msj['label.confirm.aceptar']}"                                         
+                                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         action="#{documentacionOficioMB.guardarFlujoProrrogaAprobada}" process="@this"
+                                         style="float:right;" immediate="true"
+                                         update="formDocumentacionOficio:pnlProrroga :formDocumentacionOficio:messagesProrrogaAprobada
+                                         :formDocumentacionOficio:messagesProrrogaAprobadaError
+                                         :formDocumentacionOficio:panelProrrogasAntecedentes"
+                                         oncomplete="ocultaMsgAgace('msgProrroga');ocultaMsgAgace('messagesProrrogaAprobada');
+                                         ocultaMsgAgace('messagesProrrogaAprobadaError');" />
+                    </p:dialog>
+                    
+                    <p:dialog widgetVar="confirmarRechazarProrroga" header="#{msj['label.confirm.header']}"
+                              resizable="false" modal="true" width="400" visible="false">
+                        <h:panelGroup layout="block" style="padding:5px;">
+                            <h:outputText value="#{msj['confirm.guardar.oficio']}" />
+                        </h:panelGroup>
+                        <p:commandButton value="#{msj['label.confirm.cancelar']}" immediate="true"
+                                         onclick="PF('confirmarRechazarProrroga').hide();"
+                                         styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"/>
+                        <p:commandButton value="#{msj['label.confirm.aceptar']}"                                         
+                                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                         action="#{documentacionOficioMB.guardarFlujoProrrogaRechazada}" process="@this"
+                                         style="float:right;" immediate="true"
+                                         update="formDocumentacionOficio:pnlProrroga :formDocumentacionOficio:messagesProrrogaRechazada
+                                         :formDocumentacionOficio:messagesProrrogaRechazadaError
+                                         :formDocumentacionOficio:panelProrrogasAntecedentes"
+                                         oncomplete="ocultaMsgAgace('msgProrroga');ocultaMsgAgace('messagesProrrogaRechazada');
+                                         ocultaMsgAgace('messagesProrrogaRechazadaError');" />
+                    </p:dialog>
+                    
+                    <p:dialog widgetVar="dlgPapelTrabajoOficioEliminado" header="#{msj['titulo.papel.trabajo.eliminar']}" resizable="false" modal="true" width="400" height="auto"
+								closable="false">					  
+						<h:outputText  value="#{msj['lbl.eliminar.papel.trabajo']}"/>
+						
+					    <h:panelGrid columns="4" >
+					    	<p:spacer width="100px" height="40px"/>
+						    <p:commandButton id="idEliminarPapelTrabajoOficio" value="#{msj['label.confirm.aceptar']}"  
+		                             		oncomplete="ocultaMsgAgace('messagesPapelesTrabajoIdOficio');"
+	                    					action="#{documentacionOficioMB.eliminarPapelTrabajoOficio}" 
+	                    					update="messagesPapelesTrabajoIdOficio tblPapelTrabajo btnGuardarPapel"
+	                    					onclick="PF('dlgPapelTrabajoOficioEliminado').hide();"
+	                    					 />
+							<p:spacer width="25px" height="20px"/>	                   
+		                    <p:commandButton value="#{msj['label.confirm.cancelar']}"
+											onclick="PF('dlgPapelTrabajoOficioEliminado').hide();"
+											styleClass="ui-confirmdialog-no" style="float:right;"  />
+						</h:panelGrid>	                    
+					</p:dialog>
+                    
+                    
+                    
+                    <p:messages id="messagesPapelesTrabajoIdOficio" showDetail="true"
+						closable="true" for="msgPapelesTrabajoIdOficio" />
+                    <p:spacer width="50px" height="20px"/>
+					<p:panel>                    
+
+					
+						<p:outputLabel value="#{msj['titulo.panel.papeles.trabajo']}"
+							style="font-weight:bold;" />
+						<p:spacer width="50px" height="20px" />
+						<p:outputLabel value="#{msj['label.fecha.carga.documento']}: "
+							style="font-weight:bold;" />
+						<p:outputLabel
+							value="#{documentacionOficioMB.fechaCargaPapelTrabajo}"
+							style="font-weight:bold;">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+						<p:separator />
+				
+						<p:outputLabel value="Adjuntar Papeles de trabajo:" />
+						<p:spacer width="50px" height="20px" />
+						
+				
+						<h:panelGrid columns="3">
+							<h:panelGrid columns="1">
+								<p:fileUpload  widgetVar="flUpPapelOficio"
+									style="width:180px;"
+									fileUploadListener="#{documentacionOficioMB.fileUploadPapelesTrabajoOficio}"
+									mode="advanced" dragDropSupport="false" multiple="false"
+									label="#{msj['btn.examinar']}"
+									cancelLabel="Cancelar todos" uploadLabel="Guardar"
+									showButtons="true" auto="true"
+									update="messagesPapelesTrabajoIdOficio tblPapelTrabajo btnGuardarPapel"
+									oncomplete="ocultaMsgAgace('messagesPapelesTrabajoIdOficio');"
+									ajax="true" />
+							</h:panelGrid>
+							<p:column>
+								<p:dataTable id="tblPapelTrabajo" style="border:none;"
+									value="#{documentacionOficioMB.listaPapelesTrabajoOficio}"
+									editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+									paginator="true" rows="5" var="papeles"
+									paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   
+									#{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+									currentPageReportTemplate="({currentPage} de {totalPages})"
+									paginatorPosition="bottom">
+									<f:facet name="header">
+					                                   #{msj['titulo.panel.papeles.trabajo']}
+					                </f:facet>
+									<p:column headerText="#{msj['column.fecha.hora.carga.documento']}"
+										width="25%">
+										<div align="center">
+											<h:outputText 
+												value="#{papeles.papelesTrabajo.fechaCreacion}">
+												<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX"
+													timeZone="America/Mexico_City" />
+											</h:outputText>
+										</div>
+									</p:column>
+									<p:column headerText="#{msj['column.nombre.documento.trabajo']}"
+										width="50%">
+										<h:outputText value="#{papeles.papelesTrabajo.nombreArchivo}" />
+									</p:column>
+									<p:column headerText="#{msj['column.archivo.trabajo']}" width="10%">
+										<div align="center">
+											<h:commandButton image="/resources/images/document.png"
+												title="Documento" ajax="true" style="padding:0px 5px;">
+												<f:setPropertyActionListener value="#{papeles}"
+													target="#{documentacionOficioMB.papelTrabajoSeleccionado}" />
+												<p:fileDownload contentDisposition="attachment"
+													value="#{documentacionOficioMB.archivoDescargaPapelTrabajo}" />
+											</h:commandButton>
+										</div>
+									</p:column>
+									<p:column width="15%">
+										<p:commandLink value="#{msj['column.eliminar.asignada']}"
+											style="color:blue;" ajax="true"  rendered="#{papeles.isEliminar}" onclick="PF('dlgPapelTrabajoOficioEliminado').show();" >
+																						  
+											<f:setPropertyActionListener value="#{papeles}"
+												target="#{documentacionOficioMB.papelTrabajoSeleccionado}" />
+										</p:commandLink>
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</h:panelGrid>
+				
+						<h:panelGrid columns="2">
+							<p:spacer width="400px" height="20px" />
+							<p:commandButton id="btnGuardarPapel"
+								value="#{msj['btn.guardar.papeles']}"
+								disabled="#{documentacionOficioMB.numeroDocumentoPapelTrabajoOficio==0}"
+								action="#{documentacionOficioMB.guardarPapeleTrabajoOficio}"
+								update="messagesPapelesTrabajoIdOficio tblPapelTrabajo btnGuardarPapel" />									
+						</h:panelGrid>
+    
+					</p:panel>
+                    
+                    
+                    <h:panelGrid columns="2" id="panelBotones" width="700">
+                        <p:column rowspan="2">
+                            <p:commandButton value="Pantalla anterior" action="documentacionOrden" actionListener="#{documentacionOficioMB.limpiaFormulario}" style="float:right;" update="@form"/>
+                        </p:column>
+                    </h:panelGrid>
+                    
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

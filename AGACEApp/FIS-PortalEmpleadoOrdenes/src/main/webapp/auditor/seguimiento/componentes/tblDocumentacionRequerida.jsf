@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core" xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+    <p:dataTable id="tablaDocumentacionRequerida" var="documentacion" value="#{documentacionOrdenMB.lstHelper.listaPromociones}"
+                 editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                     {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+        <f:facet name="header">
+            #{msj[&apos;titulo.tabla.documentacion.requerida.pruebas.alegatos&apos;]}
+        </f:facet>
+        <p:column headerText="#{msj['column.label.detalle']}" style="width:35px">
+            <p:column>
+                <p:rowToggler/>
+            </p:column>
+        </p:column>
+        <p:column headerText="#{msj['label.id.promocion']}" style="width:50px">
+            #{documentacion.idPromocion}
+        </p:column>
+        <p:column headerText="#{msj['label.fecha.envio.promocion']}" style="width:80px">
+            <h:outputLabel value="#{documentacion.fechaCarga}">
+                <f:convertDateTime pattern="dd/MM/yyyy"/>
+            </h:outputLabel>
+        </p:column>
+        <p:column headerText="#{msj['label.promocion']}" style="width:50px">
+            <div align="center">
+                <h:commandButton image="/resources/images/document.png" title="#{documentacion.nombreArchivo}"
+                                 ajax="true" immediate="true" style="padding:0px 5px;">
+                    <f:setPropertyActionListener value="#{documentacion}"
+                                                 target="#{documentacionOrdenMB.dtoHelper.promocionSeleccionada}"/>
+                    <p:fileDownload contentDisposition="attachment"
+                                    value="#{documentacionOrdenMB.archivoDescargaPromocion}"/>
+                </h:commandButton>
+            </div>
+        </p:column>
+        <p:column headerText="#{msj['label.tipo.promocion']}" style="width:130px">
+            #{documentacion.descripcionTipoPromocion}
+        </p:column>
+        <p:column headerText="#{msj['label.pruebas.alegatos']}" style="width:80px">
+            <div align="center">
+                <p:commandLink action="#{documentacionOrdenMB.getPruebasAlegatosPromocion}"
+                               value="#{documentacion.contadorPruebasAlegatos}" style="color:#0170b7;" ajax="true"
+                               onclick="PF('dlgDocEnviada').show();" immediate="true"
+                               update=":formDocumentacionOrden:txtIdPromocion :formDocumentacionOrden:txtFechaEnvio :formDocumentacionOrden:tablaPruebasAlegatos">
+                    <f:setPropertyActionListener value="#{documentacion}"
+                                                 target="#{documentacionOrdenMB.dtoHelper.promocionSeleccionada}"/>
+                </p:commandLink>
+            </div>
+        </p:column>
+     <!--     <p:column headerText="#{msj['label.acuse.recepcion.sello.digital']}" style="width:110px">
+            <div align="center">
+                <h:commandButton image="/resources/images/document.png" title="Acuse" ajax="true" immediate="true"
+                                 style="padding:0px 5px;">
+                    <f:setPropertyActionListener value="#{documentacion}"
+                                                 target="#{documentacionOrdenMB.dtoHelper.promocionSeleccionada}"/>
+                    <p:fileDownload contentDisposition="attachment"
+                                    value="#{documentacionOrdenMB.archivoDescargaAcusePromocion}"/>
+                </h:commandButton>
+            </div>
+        </p:column> -->
+        <p:column headerText="#{msj['consultar.tablepromocion.extemporaneo']}" style="width:70px">
+            <div align="center">
+                <p:graphicImage value="/resources/images/#{documentacion.extemporanea==1?'ok':'cancel'}.png"
+                                style="border:0"/>
+            </div>
+        </p:column>
+        <p:rowExpansion>
+            <h:panelGrid id="display" columns="2" cellpadding="4" style="width:auto;"
+                         styleClass=" ui-widget-content grid">
+                <h:outputText value="#{msj['label.presentada.por']}"/>
+                <h:outputText value="#{documentacion.idAsociadoCarga == null ? documentacionOrdenMB.dtoHelper.ordenSeleccionada.fecetContribuyente.nombre : documentacion.asociado.nombre}"/>
+            </h:panelGrid>
+        </p:rowExpansion>
+    </p:dataTable>
+</f:view>

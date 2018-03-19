@@ -1,0 +1,962 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" 
+        xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+    	<h:head></h:head>
+    	<h:body>
+			<h:form styleClass="panel-principal" id="formPrincipal">
+				<p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+				<p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+				<p:panel id="panelPropuesta" styleClass="panel-interno" header="#{msj['titulo.panel.detalle.propuesta']}" style="width:820px;">
+					<p:messages id="msgExitoGeneral" showDetail="true" globalOnly="true" closable="true"/>
+                    <h:panelGrid id="panelCabeceraContribuyente" columns="3" border="0">
+                        <p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}" style="font-weight:bold;"/>
+                        <p:spacer width="470" height="10"/>
+                        <p:outputLabel value="Id Registro: #{validarFirmarDoctoMB.propuestaActual.idRegistro}" style="font-weight:bold;"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <h:panelGrid id="panelInputContribuyente" columns="3">
+                        <h:outputLabel value="#{msj['label.rfc.contribuyente']}" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+                        <h:panelGrid id="panelBuscarContribuyente" columns="1">
+                            <p:inputText ajax="false" id="txtRFC" maxlength="15" disabled="true"
+                                         value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.rfc}"/>
+                        </h:panelGrid>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true" 
+                        	value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.nombre}"/>
+                        <h:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.situacion.contribuyente']}:" style="font-weight:bold;"/>
+                        <p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.regimen}"/>
+                        <p:spacer width="50" height="15px"/>
+                        <p:inputText id="txtSituacionContribuyente" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.situacion}"/>
+                        <h:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        
+                        <h:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/> 
+                        <p:inputText id="txtTipoContribuyente" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.tipo}"/>
+                        <p:spacer width="50" height="15px"/>
+                        
+                        <p:inputText id="txtSituacionDomicilio" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.situacionDomicilio}"/> 
+                        <h:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:"
+                                       style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <h:outputLabel value="#{msj['label.actividad.preponderante']}:" style="font-weight:bold;"/> 
+                        <p:inputTextarea id="txtDomicilioFiscalContribuyente" style="width:325px;height:auto;"
+                                         disabled="true"
+                                         value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.domicilioFiscal}"/>
+                        <p:spacer width="50" height="15px"/>
+                        <p:inputText id="txtActividadPreponderante" style="width:325px;height:auto;" disabled="true" 
+                                     value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.actividadPreponderante}"/> 
+                        <h:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:spacer width="50" height="1"/>
+                        <p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                                     value="#{validarFirmarDoctoMB.propuestaActual.fecetContribuyente.entidad}"/>
+                        <p:spacer width="50" height="15px"/>
+                        <p:spacer width="50" height="1"/>
+                    </h:panelGrid>
+                    <p:spacer width="0px" height="25px"/>
+                    <p:outputLabel value="#{msj['separador.panel.datos.propuesta']}" style="font-weight:bold;"/>
+                    <p:separator/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:panelGrid id="panelInformacionPropuesta" styleClass="noBorders" style="width:100%"
+						cellpadding="10" >
+                    	<p:row>
+							<p:column>
+								<h:outputLabel value="#{msj['column.unidad.admin.atencion']}"
+									style="font-weight:bold" />
+							</p:column>
+							<p:column>
+								<h:outputLabel value="#{msj['label.metodo']}"
+									style="font-weight:bold" />
+							</p:column>
+							<p:column>
+								<h:outputLabel value="#{msj['label.causa.programacion']}"
+									style="font-weight:bold;" />
+							</p:column>
+							<p:column>
+								<h:outputLabel value="#{msj['column.origen.central.tipoPropuesta']}"
+									style="font-weight:bold;" />
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								<p:inputTextarea id="txtUnidadAdministrativa" style="width:155px;height:auto;" disabled="true" cols="15"
+                                         value="#{validarFirmarDoctoMB.propuestaActual.unidadAdministrativa.nombre}"/>
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="txtMetodo" style="width:155px;height:auto;" cols="15" disabled="true"
+                                         value="#{validarFirmarDoctoMB.propuestaActual.feceaMetodo.abreviatura}"/>
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="txtCausaProgramacion" style="width:145px;height:auto;" disabled="true"
+                                         value="#{validarFirmarDoctoMB.propuestaActual.fececCausaProgramacion.descripcion}"/>
+							</p:column>
+							<p:column>
+								<p:inputTextarea id="txtTipoPropuesta" style="width:160px;height:auto;" disabled="true"
+                                         value="#{validarFirmarDoctoMB.propuestaActual.fececTipoPropuesta.descripcion}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column>
+								 <h:outputLabel value="#{msj['label.subprograma']}:" style="font-weight:bold"/>
+							</p:column>
+							<p:column>
+								 <h:outputLabel value="#{msj['label.sector']}:" style="font-weight:bold"/>
+							</p:column>
+							<p:column>
+								 <h:outputLabel value="#{msj['label.encabezado.prioridad']}:" style="font-weight:bold"/>
+							</p:column>
+							<p:column rendered="#{validarFirmarDoctoMB.propuestaActual.feceaMetodo.abreviatura == 'ORG'}">
+								 <h:outputLabel value="#{msj['label.tipo.revision.validar']}" style="font-weight:bold"/>
+							</p:column>
+						</p:row>
+                    	<p:row>
+							<p:column>
+								 <p:inputTextarea id="txtSubprograma" name="prioridadInsumo" style="width:155px;height:60px;"
+                                                 value="#{validarFirmarDoctoMB.propuestaActual.fececSubprograma.descripcion}"
+                                                 disabled="true"/>
+							</p:column>
+							<p:column>
+								 <p:inputTextarea id="txtSector" name="prioridadInsumo" style="width:155px;height:auto;" cols="15"
+                                                 value="#{validarFirmarDoctoMB.propuestaActual.fececSector.descripcion}"
+                                                 disabled="true"/>
+							</p:column>
+							<p:column>
+								 <p:inputText id="textPrioridad" name="prioridadInsumo" ajax="true"
+                                                 value="#{validarFirmarDoctoMB.propuestaActual.prioridadSugerida}"
+                                                 disabled="true"/>
+							</p:column>
+							<p:column>
+								 <p:inputText id="textRevision" name="prioridadInsumo" ajax="true"
+                                                 value="#{validarFirmarDoctoMB.propuestaActual.fececRevision.descripcion}"
+                                                 disabled="true" rendered="#{validarFirmarDoctoMB.propuestaActual.feceaMetodo.abreviatura == 'ORG'}"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:outputLabel value="#{msj['lbl.pedimento']}:" style="font-weight:bold;" rendered="#{validarFirmarDoctoMB.propuestaActual.fececTipoPropuesta.idTipoPropuesta == 1}"/>
+								<h:outputLabel value="#{msj['label.periodo.propuesto']}:" style="font-weight:bold;" rendered="#{validarFirmarDoctoMB.propuestaActual.fececTipoPropuesta.idTipoPropuesta == 2}"/>
+							</p:column>
+							<p:column>
+								<h:outputLabel value="#{validarFirmarDoctoMB.propuestaActual.tipoComite.descripcion}:" style="font-weight:bold"/>
+							</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="2">
+								<h:panelGrid id="panelPeriodoPropuesto" columns="5">
+		                            <h:outputLabel value="#{msj['lbl.propuestas.del.pedimento']}:" style="font-weight:bold" rendered="#{validarFirmarDoctoMB.propuestaActual.fececTipoPropuesta.idTipoPropuesta == 1}"/>
+		                            <h:outputLabel value="#{msj['label.inicio']}:" style="font-weight:bold" rendered="#{validarFirmarDoctoMB.propuestaActual.fececTipoPropuesta.idTipoPropuesta == 2}"/>
+		                            <p:calendar id="txtFechaInicial" locale="es" pattern="dd/MM/yyyy" showOn="button"
+		                                        readonlyInput="true" size="7" disabled="true"
+		                                        value="#{validarFirmarDoctoMB.propuestaActual.fechaInicioPeriodo}"/>
+		                            <p:spacer width="1" height="1"/>
+		                            <h:outputLabel value="#{msj['lbl.propuestas.al.pedimento']}:" style="font-weight:bold" rendered="#{validarFirmarDoctoMB.propuestaActual.fececTipoPropuesta.idTipoPropuesta == 1}"/>
+		                            <h:outputLabel value="#{msj['label.fin']}:" style="font-weight:bold" rendered="#{validarFirmarDoctoMB.propuestaActual.fececTipoPropuesta.idTipoPropuesta == 2}"/>
+		                            <p:calendar locale="es" pattern="dd/MM/yyyy" showOn="button" readonlyInput="true" size="7"
+		                                        disabled="true"
+		                                        value="#{validarFirmarDoctoMB.propuestaActual.fechaFinPeriodo}"/>
+		                        </h:panelGrid>
+							</p:column>
+							<p:column>
+								<p:calendar id="txtFechaPresentacion" locale="es" pattern="dd/MM/yyyy" showOn="button"
+		                                        readonlyInput="true" size="7" disabled="true"
+		                                        value="#{validarFirmarDoctoMB.propuestaActual.fechaInicioPeriodo}" rendered="#{validarFirmarDoctoMB.propuestaActual.fechaPresentacion != null}"/>
+								<p:calendar id="txtFechaInforme" locale="es" pattern="dd/MM/yyyy" showOn="button"
+		                                        readonlyInput="true" size="7" disabled="true"
+		                                        value="#{validarFirmarDoctoMB.propuestaActual.fechaInicioPeriodo}" rendered="#{validarFirmarDoctoMB.propuestaActual.fechaInforme != null}"/>
+							</p:column>
+						</p:row>
+                    </p:panelGrid>
+                    <p:spacer width="1" height="10px"/>
+                     <!-- tabla de expedientes -->
+                    <p:dataTable id="tablaDocumentacionExpediente" value="#{validarFirmarDoctoMB.propuestaActual.listaDocumentos}" 
+                            var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom" style="width:70%"> 
+                        <f:facet name="header">#{msj['label.expediente.electronico']}</f:facet>  
+                        <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" width="100px" style="width:40%">
+                            <h:outputText id="txtFechaCargaExpediente" value="#{documento.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column> 
+                        <p:column id="hdrNombreDocumento" headerText="#{msj['column.expediente']}" style="width:50%">
+                        	#{documento.nombre}
+                        </p:column>
+                        <p:column style="width:10%">
+                        	<div style="text-align:center; width:90%">
+	                        	<h:commandButton image="/resources/images/document.png" title="#{documento.nombre}" ajax="false">
+	                        		<f:setPropertyActionListener value="${documento}" target="#{validarFirmarDoctoMB.expendieteActual}"/>
+	                            	<p:fileDownload contentDisposition="attachment"
+	                                                value="#{validarFirmarDoctoMB.expedienteDescarga}"/>
+	                        	</h:commandButton>
+	                        </div>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer width="1" height="20px"/>
+                    <!-- Tabla de Impuestos -->
+                    <p:dataTable id="tablaImpuestosPropuestas" style="width:70%"
+                                var="impuesto" value="#{validarFirmarDoctoMB.propuestaActual.lstImpuestos}"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                 paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+						<f:facet name="header">#{msj['label.impuestos']}</f:facet>  
+                        <p:column headerText="Impuesto" styleClass="someClass" width="100px">
+                            <h:outputText id="txtImpuestoDesc" value="#{impuesto.fececTipoImpuesto.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Concepto" styleClass="someClass" width="100px">
+                            <h:outputText id="txtConceptoDesc" value="#{impuesto.fececConcepto.descripcion}"/>
+                        </p:column>
+                        <p:column id="hdrMonto" headerText="#{msj['label.monto']} ($):">
+                            <div style="width:90%;text-align:right">
+                               	<h:outputText  value="#{impuesto.monto}" >
+                         			<f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+                         		</h:outputText>
+                         	</div>
+                 		</p:column>
+                 		<p:columnGroup type="footer">
+							<p:row>
+								<p:column colspan="1" />
+								<p:column footerText="#{msj['label.presuntiva']}" style="text-align:center;font-weight: bold;" />
+								<p:column style="text-align:center;">
+									<f:facet name="footer">
+										<div style="width:90%;text-align:right">
+											<h:outputText value="#{validarFirmarDoctoMB.propuestaActual.presuntiva}" >
+												<f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+											</h:outputText>
+										</div>
+									</f:facet>
+								</p:column>
+					        </p:row>
+					    </p:columnGroup>
+                    </p:dataTable>
+                    <!-- Tabla de cancelacion -->
+                    <p:spacer width="1" height="20px"/>
+                    <p:dataTable id="tablaCancelacionPropuestas" style="width:100%"
+                                var="cancelacion" value="#{validarFirmarDoctoMB.registrosCancelacion}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"
+                                rendered="#{validarFirmarDoctoMB.mostrarCancelacion}">
+						<f:facet name="header">#{msj['titulo.label.justificacion.cancelacion']}</f:facet>
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width:14%">
+                            <h:outputText id="txtFechaCancelacion" value="#{cancelacion.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column>   
+                        <p:column headerText="#{msj['label.causa.cancelacion']}" styleClass="someClass" style="width:32%">
+                            <h:outputText id="txtCausaCancelacion" value="#{cancelacion.fececMotivo.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.observaciones']}" styleClass="someClass" style="width:33%">
+                            <h:outputText id="txtObservacionesCancelacion" value="#{cancelacion.observaciones}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.documento.cancelacion']}" styleClass="someClass" style="width:21%">
+                        	<div style="text-align:center; width:90%">
+	                        	<p:commandLink action="#{validarFirmarDoctoMB.consultarDoctoCancelacion}" 
+	                                    value="#{cancelacion.totalDocumentos}" ajax="true" update=":formPrincipal:dialogoDocumentos :formPrincipal:panelDocumentos">
+	                                <f:setPropertyActionListener value="${cancelacion}" target="#{validarFirmarDoctoMB.cancelacionActual}"/>
+	                            </p:commandLink>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                    <!-- Tabla de rechazo -->
+                    <p:spacer width="1" height="20px"/>
+                    <p:dataTable id="tablaRechazoPropuestas" style="width:100%"
+                                var="rechazo" value="#{validarFirmarDoctoMB.registrosRechazo}"
+                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"
+                                rendered="#{validarFirmarDoctoMB.mostrarRechazo}">
+						<f:facet name="header">#{msj['titulo.label.oficio.rechazo']}</f:facet>
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width:14%">
+                            <h:outputText id="txtFechaCancelacion" value="#{rechazo.fechaRechazo}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column>   
+                        <p:column headerText="#{msj['label.causa.rechazo']}" styleClass="someClass" style="width:32%">
+                            <h:outputText id="txtCausaCancelacion" value="#{rechazo.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.observaciones']}" styleClass="someClass" style="width:33%">
+                            <h:outputText id="txtObservacionesCancelacion" value="#{rechazo.observaciones}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.documento.rechazo']}" styleClass="someClass" style="width:21%">
+                        	<div style="text-align:center; width:90%">
+	                        	<p:commandLink action="#{validarFirmarDoctoMB.consultarDoctoRechazo}" 
+	                                    value="#{rechazo.contador}" ajax="true" update=":formPrincipal:dialogoDocumentos :formPrincipal:panelDocumentos">
+	                                <f:setPropertyActionListener value="${rechazo}" target="#{validarFirmarDoctoMB.rechazoActual}"/>
+	                            </p:commandLink>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer width="1" height="20px"/>
+	                <!-- Transferencias -->
+	                <p:dataTable id="tablaTransferenciasPropuestas" style="width:100%"
+	                                var="transferencia" value="#{validarFirmarDoctoMB.registrosTransferencia}"
+	                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+	                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+	                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"
+	                                rendered="#{validarFirmarDoctoMB.mostrarTransferidas}">
+						<f:facet name="header">#{msj['label.titulo.transferencia']}</f:facet>
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width:14%">
+                            <h:outputText id="txtFechaTransferencia" value="#{transferencia.fechaTraspaso}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column>   
+                        <p:column headerText="#{msj['label.observaciones']}" styleClass="someClass" style="width:32%">
+                            <h:outputText id="txtObservacionesTransferencia" value="#{transferencia.observaciones}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.unidad.transferir']}" styleClass="someClass" style="width:33%">
+                            <h:outputText id="txtUATransferencia" value="#{transferencia.fececUnidadAdministrativa.nombre}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.documento.transferencia']}" styleClass="someClass" style="width:21%">
+                        	<div style="text-align:center; width:90%">
+	                        	<p:commandLink action="#{validarFirmarDoctoMB.consultarDoctoTransferencia}" 
+	                                    value="#{transferencia.totalDocumentos}" ajax="true" update=":formPrincipal:dialogoDocumentos :formPrincipal:panelDocumentos">
+	                                <f:setPropertyActionListener value="${transferencia}" target="#{validarFirmarDoctoMB.transferenciaActual}"/>
+	                            </p:commandLink>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer width="1" height="20px"/>
+	                <!-- Retroalimentacion -->
+	                <p:dataTable id="tablaRetroalimentacionPropuestas" style="width:100%"
+	                                var="retroalimentacion" value="#{validarFirmarDoctoMB.registrosRetroalimentacion}"
+	                                editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+	                                paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+	                                currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom"
+	                                rendered="#{validarFirmarDoctoMB.mostrarRetroalimetadas}">
+						<f:facet name="header">#{msj['label.titulo.retro.validar']}</f:facet>
+						<p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width:14%">
+                            <h:outputText id="txtFechaRetro" value="#{retroalimentacion.fechaCreacion}">
+                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+                            </h:outputText>
+                        </p:column>   
+                        <p:column headerText="#{msj['label.motivo.validar']}" styleClass="someClass" style="width:32%">
+                            <h:outputText id="txtObservacionesRetro" value="#{retroalimentacion.motivo}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['column.detalle']}" styleClass="someClass" style="width:33%">
+                            <h:outputText id="txtDetalleRetro" value="#{retroalimentacion.detalle}"/>
+                        </p:column>
+                        <p:column headerText="#{msj['label.documento.retro.validar']}" styleClass="someClass" style="width:21%">
+                        	<div style="text-align:center; width:90%">
+	                        	<p:commandLink action="#{validarFirmarDoctoMB.consultarDoctoRetroalimentacion}" 
+	                                    value="#{retroalimentacion.totalDocumentos}" ajax="true" update=":formPrincipal:dialogoDocumentos :formPrincipal:panelDocumentos">
+	                                <f:setPropertyActionListener value="${retroalimentacion}" target="#{validarFirmarDoctoMB.retroActual}"/>
+	                            </p:commandLink>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                   	<p:spacer width="1" height="20px"/>
+                   	<h:panelGrid columns="1" id="panelBotones" style="width:90%">
+                        <p:column rowspan="4">
+                            <div align="center">
+                            	<p:spacer width="3px" height="1px"/>
+                                <p:commandButton id="btnAceptar"
+                                                 value="#{validarFirmarDoctoMB.estatusActual.btnAceptar}"
+                                                 action="#{validarFirmarDoctoMB.iniciaAceptarProceso}"
+                                                 update=":formPrincipal:confirmarProceso"/>
+								<p:spacer width="3px" height="1px"/>
+								<p:commandButton id="btnRechazar"
+                                                 value="#{validarFirmarDoctoMB.estatusActual.btnCancelar}"
+                                                 action="#{validarFirmarDoctoMB.iniciaRechazarProceso}"
+                                                 update=":formPrincipal:rechazarProceso"/>
+                            </div>
+                        </p:column>
+                    </h:panelGrid>
+                    
+                    <!-- Historico de Acciones -->
+                    <p:spacer width="1" height="20px"/>
+                    <p:fieldset id="tolgateAcciones" widgetVar="tolgateAcciones" legend="Historial de acciones de la propuesta"
+				                toggleable="true" toggleSpeed="500" collapsed="true">
+				                
+				       <p:ajax event="toggle" listener="#{validarFirmarDoctoMB.handleToggleAcciones}" update="tablaHistorialAcciones" />
+				                
+				       <p:dataTable id="tablaHistorialAcciones" var="accion"
+					                value="#{validarFirmarDoctoMB.listaHistoricoAccion}"
+					                editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					                paginator="true" rows="5"
+					                paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					                currentPageReportTemplate="({currentPage} de {totalPages})"
+					                paginatorPosition="bottom">
+					                
+					      <f:facet name="header">#{msj['label.titulo.historial.acciones']}</f:facet>
+					      <p:column headerText="#{msj['column.fecha.hora.carga.documento']}">
+						     <div align="center">
+							      <h:outputText value="#{accion.fechaHora}">
+								     <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+							      </h:outputText>
+						     </div>
+					      </p:column>
+					      <p:column headerText="#{msj['label.observaciones.asignada']}">
+						     <div align="center">
+							    <h:outputText value="#{accion.observaciones}" /> 
+						     </div>
+					      </p:column>
+					      <p:column headerText="#{msj['label.causa.historial']}">
+						     <div align="center">
+							    <h:outputText value="#{accion.fececMotivo.descripcion}" /> 
+						     </div>
+					      </p:column>
+					      <p:column headerText="#{msj['label.accion.historial']}">
+						     <div align="center">
+							    <h:outputText value="#{accion.fececAccionesFuncionario.descripcion}" /> 
+						     </div>
+					      </p:column>
+					      <p:column headerText="#{msj['label.usuario.accion.historial']}">
+						     <h:outputText value="#{accion.empleadoDto.nombreCompleto} (  #{accion.descripcionTipoEmpleado} )" />
+					      </p:column>
+					      <p:column headerText="#{msj['label.documento']}">
+						     <div align="center">
+                                <p:commandLink value="#{accion.numeroDocumentos}" ajax="true"
+								               action="#{validarFirmarDoctoMB.obtenerDocumentosHistoricoAccion}"
+								               immediate="true"
+								               update=":formPrincipal:dialogoDocumentos :formPrincipal:panelDocumentos"
+								               style="color:#0170b7;"
+								               rendered="#{accion.numeroDocumentos != -1}">
+								    <f:setPropertyActionListener value="#{accion}" immediate="true"
+									                             target="#{validarFirmarDoctoMB.historicoAccion}" />
+							    </p:commandLink>
+
+							    <h:outputText value="N/A" rendered="#{accion.numeroDocumentos == -1}" />
+						     </div>
+					     </p:column>     
+					   </p:dataTable>         
+				                
+				    </p:fieldset>
+				    
+				    <!-- Historico de Retroalimentacion -->
+				    <p:spacer width="1" height="20px"/>
+				    <p:fieldset id="tolgateRetro" widgetVar="tolgateRetro" legend="#{msj['btn.historico.retroalimentacion']}"
+				                toggleable="true" toggleSpeed="500" collapsed="true">
+				                
+				       <p:ajax event="toggle" listener="#{validarFirmarDoctoMB.handleToggleRetrolimentacion}"
+					           update="tablaHistoricoRetroalimentacion" />
+				                
+				       <p:panel id="pnlHistoricoRetro" header="#{msj['titulo.historico']}">
+					      <h:panelGrid columns="2" width="100%">
+						  <p:spacer width="530" height="1" />
+						     <h:outputText value="#{msj['label.registro']}: #{validarFirmarDoctoMB.propuestaActual.idRegistro}"
+							               style="font-weight:bold;" />
+					      </h:panelGrid>
+					      
+					      <p:dataTable id="tablaHistoricoRetroalimentacion" var="retroalimentacion"
+						               value="#{validarFirmarDoctoMB.listaHistoricoRetroalimentar}"
+						               editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5"
+						               paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+						               currentPageReportTemplate="({currentPage} de {totalPages})"
+						               paginatorPosition="bottom">
+						               
+						     <f:facet name="header">#{msj['label.titulo.historial.retroalimentacion']}</f:facet>
+						     <p:column headerText="Detalle" width="32">
+							    <p:rowToggler />
+						     </p:column>
+						     
+						     <p:column headerText="#{msj['column.propuestas.por.validar.prioridad']}" width="50">
+							    <div align="center">
+								   <h:outputText value="#{retroalimentacion.prioridadSugerida}" /> 
+							    </div>
+						     </p:column>
+						     
+						     <p:column headerText="#{msj['column.inicio']}" width="55">
+							    <div align="center">
+								   <h:outputText value="#{retroalimentacion.fechaInicioPeriodo}">
+									  <f:convertDateTime pattern="dd/MM/yyyy" />
+								   </h:outputText>
+							    </div>
+						     </p:column>
+						     
+						     <p:column headerText="#{msj['column.fin']}" width="55">
+							    <div align="center">
+								   <h:outputText value="#{retroalimentacion.fechaFinPeriodo}">
+									  <f:convertDateTime pattern="dd/MM/yyyy" />
+								   </h:outputText>
+							    </div>
+						     </p:column>
+						     
+						     <p:column headerText="#{msj['column.asignadas.tipo.propuesta']}" width="70">
+							    <div align="center">
+								   <h:outputText value="#{retroalimentacion.fececTipoPropuesta.descripcion}">
+									  <f:convertDateTime pattern="dd/MM/yyyy" />
+								   </h:outputText>
+							    </div>
+						     </p:column>
+						     
+						     <p:column headerText="#{msj['column.propuestas.por.validar.fecha.atencion']}" width="80">
+							    <div align="center">
+								   <h:outputText value="#{retroalimentacion.fechaCreacion}">
+									  <f:convertDateTime pattern="dd/MM/yyyy" />
+								   </h:outputText>
+							    </div>
+						     </p:column>
+						     
+						     <p:column headerText="#{msj['label.impuesto.historial.retroalimentacion']}" width="70">
+							    <div align="center">
+								   <p:commandLink value="#{msj['label.titulo.ver.impuesto']}" ajax="true"
+								                  action="#{validarFirmarDoctoMB.obtenerImpuestosRetro}"
+									              immediate="true" update=":formPrincipal:pnlImpuestoHistorico"
+									              style="color:#0170b7;">
+									   <f:setPropertyActionListener value="#{retroalimentacion}" immediate="true"
+										                            target="#{validarFirmarDoctoMB.solicitudRetroalimentacion}" />           
+								   </p:commandLink>
+							    </div>
+						     </p:column>
+						     
+						     <p:column width="55">
+							    <f:facet name="header">
+                                   <h:outputText id="idNotaInformativa" value="#{msj['label.historico.nota.informativa']}" title="#{msj['toltip.nota.informativa']}"/>
+                                </f:facet>
+							    <div align="center">
+								   <p:commandLink ajax="true"
+								                  value="#{retroalimentacion.numeroDocRetroalimentacion}"
+								                  action="#{validarFirmarDoctoMB.obtenerDocumentosRetroalimentados}"
+									              immediate="true" update=":formPrincipal:pnlDocumentoHistorcio"
+									              style="color:#0170b7;">
+									  <f:setPropertyActionListener value="#{retroalimentacion}" immediate="true"
+										                           target="#{validarFirmarDoctoMB.solicitudRetroalimentacion}" /> 
+								   </p:commandLink>
+							    </div>
+						     </p:column>
+						     
+						     <p:tooltip id="toolTipNotaInf" for="idNotaInformativa" value="#{msj['toltip.nota.informativa']}" />
+						     
+						     <p:column headerText="#{msj['label.prpuestas.validar.retro.solicitud']}" width="80">
+							    <div align="center">
+								    <p:commandLink inmediate="true" width="120"
+								                   action="#{validarFirmarDoctoMB.obtenerSolictudRetroalimentacion}"
+									               update=":formPrincipal:idHistoricoRetroalimentacion">
+									   <h:graphicImage ajax="true" value="/resources/images/document.png" />
+									   <f:setPropertyActionListener value="#{retroalimentacion}"
+										                            target="#{validarFirmarDoctoMB.solicitudRetroalimentacion}" />
+								    </p:commandLink>
+							    </div>
+						     </p:column>
+						     
+						     <p:rowExpansion>
+							    <h:panelGrid id="displayHistorico" columns="2" cellpadding="10" style="width:600px;" styleClass=" ui-widget-content grid">
+								<h:outputText value="#{msj['label.metodo']}"/>
+								<h:outputText value="#{retroalimentacion.feceaMetodo.abreviatura}" />
+								<h:outputText value="#{msj['label.causa.programacion']}" />
+								<h:outputText value="#{retroalimentacion.fececCausaProgramacion.descripcion}" />
+								<h:outputText value="#{msj['column.origen.central.subprograma']}" />
+                                <h:outputText value="#{retroalimentacion.fececSubprograma.clave} - #{retroalimentacion.fececSubprograma.descripcion}" />
+								<h:outputText value="#{msj['column.propuestas.por.validar.sector']}" />
+                                <h:outputText value="#{retroalimentacion.fececSector.descripcion}" />
+								<h:outputText value="#{msj['label.seguimiento.motivo.retroalimentacion']}" />
+                                <h:outputText value="#{retroalimentacion.fececMotivo.descripcion}" />
+							</h:panelGrid>
+						</p:rowExpansion>
+						     
+						  </p:dataTable>
+					      
+					   </p:panel>
+				                
+				    </p:fieldset>
+				    
+				    
+				    <!-- Historico de Documento Orden y Oficios -->
+				    <p:spacer width="1" height="20px"/>
+				    <p:fieldset id="tolgateOrden" widgetVar="tolgateOrden" legend="Historial de documento orden" toggleable="true"
+				                toggleSpeed="500" collapsed="true">
+				       <p:ajax event="toggle" listener="#{validarFirmarDoctoMB.handleToggleExpedienteOrden}"
+					           update=":formPrincipal:tablaHistoricoOrden :formPrincipal:tablaHistoricoOrdenOficio"/>
+				                
+				       <p:dataTable id="tablaHistoricoOrden" var="documentoOrden"
+					                value="#{validarFirmarDoctoMB.listaHistorialOrden}"
+					                editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					                paginator="true" rows="5"
+					                paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					                currentPageReportTemplate="({currentPage} de {totalPages})"
+					                paginatorPosition="bottom">
+					                
+					      <f:facet name="header">#{msj['label.propuestas.doctos.orden']}</f:facet>
+
+					      <p:column headerText="#{msj['column.fechaHora.orden']}" styleClass="someClass" style="width:80px;">
+						     <div align="center">
+							     <h:outputText value="#{documentoOrden.fechaHora}" style="width:80px;">
+								    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es_MX" timeZone="America/Mexico_City" />
+							     </h:outputText> 
+						     </div>
+					      </p:column>
+					      
+					      <p:column headerText="#{msj['column.asignadas.expediente']}" style="width:130px;margin:auto;">
+						     <div align="center">
+							    <h:outputText value="#{documentoOrden.nombreArchivo}" />
+						     </div>
+					      </p:column>
+					      
+					      <p:column headerText="#{msj['label.encabezado.documento']}" style="width:50px;">
+						     <div align="center">
+							    <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true" style="padding:0px 5px;">
+							       <f:setPropertyActionListener value="#{documentoOrden.rutaArchivo}"
+									                            target="#{validarFirmarDoctoMB.rutaArchivo}" />
+								   <f:setPropertyActionListener value="#{documentoOrden.nombreArchivo}"
+									                            target="#{validarFirmarDoctoMB.nombreArchivo}" />
+								   <p:fileDownload contentDisposition="attachment" value="#{validarFirmarDoctoMB.descargaOrden}" />
+							    </h:commandButton>
+						     </div>
+					      </p:column>
+					      
+					      <p:column headerText="#{msj['label.usuario.accion.historial']}" style="width:130px;margin:auto;">
+						     <div align="center">
+							    <h:outputText value="#{documentoOrden.descripcionEmpleado}" />
+						     </div>
+					      </p:column>          
+					   </p:dataTable>
+					   
+					   <br/>
+				       <br/>
+				       
+				       <p:dataTable id="tablaHistoricoOrdenOficio"
+					                value="#{validarFirmarDoctoMB.listaHistorialOficio}"
+					                var="docOficio" editable="false" emptyMessage="#{msj['label.lista.vacia']}" rows="5"
+					                paginator="true"
+					                paginatorTemplate="#{msj['btn.pagina']}: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   #{msj['btn.ir.a.pagina']}: {JumpToPageDropdown}  {NextPageLink} {LastPageLink}"
+					                currentPageReportTemplate="({currentPage} de {totalPages})"
+					                paginatorPosition="bottom">
+					                
+					      <f:facet name="header">
+						     <h:outputLabel value="Oficios" style="font-weight:bold" />
+					      </f:facet>
+					      
+					      <p:column headerText="#{msj['column.fecha.hora.carga.documento']}" style="width:80px;">
+						     <div align="center">
+							     <h:outputText value="#{docOficio.fechaHora}">
+								    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="es_MX" timeZone="America/Mexico_City" />
+							     </h:outputText>
+						     </div>
+					      </p:column>
+					      <p:column headerText="#{msj['column.label.oficio']}" style="width:130px;margin:auto;">
+						     <div align="center">
+							     <h:outputText value="#{docOficio.nombreArchivo}" />
+						     </div>
+					      </p:column>
+					      <p:column headerText="#{msj['label.encabezado.documento']}" style="width:50px;">
+						     <div align="center">
+							    <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true" style="padding:0px 5px;">
+							       <f:setPropertyActionListener value="#{docOficio.rutaArchivo}"
+									                            target="#{validarFirmarDoctoMB.rutaArchivo}" />
+								   <f:setPropertyActionListener value="#{docOficio.nombreArchivo}"
+									                            target="#{validarFirmarDoctoMB.nombreArchivo}" />
+								   <p:fileDownload contentDisposition="attachment" value="#{consultarPropuestasAsignadasManagedBean.descargaOrden}" />
+							    </h:commandButton>
+						     </div>
+					      </p:column>
+                          <p:column headerText="#{msj['label.usuario.accion.historial']}" style="width:130px;margin:auto;">
+						     <div align="center">
+							     <h:outputText value="#{docOficio.descripcionEmpleado}" />
+						     </div>
+					      </p:column>     
+					   </p:dataTable>
+				    </p:fieldset>
+				    
+				    <p:spacer width="1" height="50px"/>
+				    <p:commandButton value="#{msj['btn.pantalla.anterior']}" action="#{validarFirmarDoctoMB.redireccionar}"/>
+				    
+                </p:panel>
+                <!-- Dialogos -->
+				<!--Dialogo de archivos -->
+                <p:dialog id="dialogoDocumentos" widgetVar="dialogoDocumentos" resizable="false"	
+					modal="false" width="700" visible="false" closable="false">
+					
+					    <f:facet name="header"> #{validarFirmarDoctoMB.labelHeader}</f:facet>
+					
+					<p:panel id="panelDocumentos">
+						<p:messages id="msgExitoArchivos" showDetail="true" globalOnly="true" closable="true"/>
+						<p:dataTable id="tablaRetroalimentacionArchivos" var="documento" value="#{validarFirmarDoctoMB.listDocumentos}"
+							editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="5" 
+							paginatorTemplate="P&aacute;gina: {CurrentPageReport} {FirstPageLink} {PreviousPageLink} Ir a p&aacute;gina: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">
+							<f:facet name="header">
+							   Archivos cargados
+							</f:facet>
+							<p:column headerText="Fecha de carga" width="100">
+								<h:outputText value="#{documento.fechaCreacion}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Nombre del archivo" width="300">
+								<h:outputText value="#{documento.nombre}" />
+							</p:column>
+							<p:column headerText="Archivo" width="100">
+								<div align="center">
+									<h:commandButton image="/resources/images/document.png" title="#{documento.nombre}" ajax="true" process="@this" update="dialogoDocumentos">
+										<f:setPropertyActionListener value="#{documento}" target="#{validarFirmarDoctoMB.documentoActual}" />
+										<p:fileDownload contentDisposition="attachment" value="#{validarFirmarDoctoMB.documentoDescarga}" />
+									</h:commandButton>
+								</div>
+							</p:column>
+						</p:dataTable>
+						<p:spacer width="500" height="30" />
+						<p:commandButton id="cerrar" value="Cerrar" onclick="PF('dialogoDocumentos').hide();" style="width:80px;" ajax="true"/>
+					</p:panel>
+				</p:dialog>
+				<p:dialog header="#{msj['label.confirm.header']}"
+					id="confirmarProceso" widgetVar="confirmarProceso" resizable="false"
+					modal="false" width="400" visible="false">
+					<h:panelGroup layout="block" style="padding:5px;">
+						<h:outputText value="#{validarFirmarDoctoMB.estatusActual.opcion.msgAceptar1}#{validarFirmarDoctoMB.propuestaActual.idRegistro}#{validarFirmarDoctoMB.estatusActual.opcion.msgAceptar2}"/>
+					</h:panelGroup>
+					<p:commandButton id="btnAceptar1" value="#{msj['label.confirm.aceptar']}"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						onclick="PF('confirmarProceso').hide();"
+						update=":formPrincipal:confirmarFinal"
+						action="#{validarFirmarDoctoMB.aceptarProceso}"
+						style="float:right;" />
+					<p:commandButton id="btnCancelar1" value="#{msj['label.confirm.cancelar']}"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+						onclick="PF('confirmarProceso').hide();"
+						style="float:right;" />
+				</p:dialog>
+				
+				<p:dialog header="#{msj['label.confirm.header']}"
+					id="rechazarProceso" widgetVar="rechazarProceso" resizable="false"
+					modal="false" width="400" visible="false">
+					<h:panelGroup layout="block" style="padding:5px;">
+						<h:outputText value="#{validarFirmarDoctoMB.estatusActual.opcion.msgCancelar1}#{validarFirmarDoctoMB.propuestaActual.idRegistro}#{validarFirmarDoctoMB.estatusActual.opcion.msgCancelar2}"/>
+					</h:panelGroup>
+					<p:commandButton id="btnAceptar2" value="#{msj['label.confirm.aceptar']}"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						onclick="PF('rechazarProceso').hide();"
+						update=":formPrincipal:dialogNoAprobacion"
+						action="#{validarFirmarDoctoMB.rechazarProceso}"
+						style="float:right;" />
+					<p:commandButton id="btnCancelar2" value="#{msj['label.confirm.cancelar']}"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+						onclick="PF('rechazarProceso').hide();"
+						style="float:right;" />
+				</p:dialog>
+				
+				<p:dialog header="#{msj['label.confirm.header']}"
+					id="confirmarFinal" widgetVar="confirmarFinal" resizable="false"
+					modal="true" width="400" visible="false" closable="false">
+					<h:panelGroup layout="block" style="padding:5px;">
+						<p:messages id="msgExitoFinal" showDetail="true" globalOnly="true" closable="false"/>
+					</h:panelGroup>
+					<p:commandButton id="btnAceptaConfirmFinal" value="#{msj['label.confirm.aceptar']}"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+						action="#{validarFirmarDoctoMB.redireccionar}"
+						style="float:right;" />
+				</p:dialog>
+				
+				 <p:dialog header="#{msj['label.observaciones']}" widgetVar="dialogNoAprobacion" id="dialogNoAprobacion" resizable="false" modal="false" 
+				 	width="400" height="250"  visible="false">
+                	<p:panelGrid width="100%" styleClass="noBorders">
+                		<p:row>
+                			<p:column colspan="4">
+	           					<p:messages id="msgExitoNoAprobar" showDetail="true" globalOnly="true" closable="true"/>
+	                		</p:column>
+	                	</p:row>
+                		<p:row>
+                			<p:column style="width:45%">
+                				#{msj['label.fecha.no.aprobacion']}:
+                			</p:column>
+                			<p:column style="width:10%">
+                				<h:outputText id="txtFechaNoAprobacion"  value="#{validarFirmarDoctoMB.fechaNoAprobacion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                				
+                			</p:column>
+                			<p:column style="width:35%">
+                				#{msj['label.id.registro']}:
+                			</p:column>
+                			<p:column style="width:10%">
+                				#{validarFirmarDoctoMB.propuestaActual.idRegistro}
+                			</p:column>
+                		</p:row>
+                		<p:row>
+                			<p:column colspan="4">
+                				#{msj['label.observaciones']}*:
+                			</p:column>
+                		</p:row>
+                		<p:row>
+                			<p:column colspan="4">
+                				<p:inputTextarea id="txtMotivoRetro" value="#{validarFirmarDoctoMB.observaciones}" maxlength="400" style="width:97%;height:70px" cols="15" autoResize="false" ajax="true" immediate="true"/>
+                			</p:column>
+                		</p:row>
+                		<p:row>
+                			<p:column colspan="4" style="text-align:center;">
+			                    <p:commandButton id="btnNoAprobacion" value="#{validarFirmarDoctoMB.estatusActual.btnCancelar}"  
+			                    	action="#{validarFirmarDoctoMB.rechazarProcesoAceptar}"
+			                    	update=":formPrincipal:dialogNoAprobacion :formPrincipal:confirmarFinal"
+                                    styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                    ajax="true"/>
+								<p:spacer width="10px"/>
+               					<p:commandButton value="Cancelar" onclick="PF('dialogNoAprobacion').hide();" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                			</p:column>
+                		</p:row>
+                	</p:panelGrid>
+                </p:dialog>
+                                
+                <!-- Dialogo de Historico de Impuestos -->
+                <p:dialog header="#{msj['label.impuestos']}" widgetVar="dlgHistoricoImpuestosRetro" resizable="false" modal="true" width="700" closable="false">
+                   <p:panel id="pnlImpuestoHistorico">
+				      <p:dataTable id="tablaImpuestoHistorico" var="impuesto"
+					               value="#{validarFirmarDoctoMB.listaImpuestos}"
+					               editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+					               paginator="true" rows="15"
+					               paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					               currentPageReportTemplate="({currentPage} de {totalPages})"
+					               paginatorPosition="bottom" filterDelay="1000">
+					     
+					     <f:facet name="header">#{msj['label.impuestos']}</f:facet>
+					     
+					     <p:column headerText="#{msj['label.impuesto']}" width="150">
+						    <h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}" />
+					     </p:column>
+					     
+					     <p:column headerText="#{msj['lbl.propuestas.concepto']}" width="150">
+						    <h:outputText value="#{impuesto.fececConcepto.descripcion}" />
+					     </p:column>
+
+					     <p:column headerText="#{msj['label.monto']}" width="150" style="text-align:center;">
+						    <h:outputText value="#{impuesto.monto}">
+						       <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+						    </h:outputText>   
+					     </p:column>
+					     
+					     <p:columnGroup type="footer">
+						    <p:row>
+							   <p:column colspan="1" />
+							   <p:column footerText="#{msj['label.presuntiva']}" style="text-align:center; font-weight: bold;" />
+							   <p:column style="text-align:center;">
+								  <f:facet name="footer">
+									 <h:outputText value="#{validarFirmarDoctoMB.presuntiva}">
+										<f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX" />
+									 </h:outputText>
+								  </f:facet>
+							   </p:column>
+						    </p:row>
+					     </p:columnGroup>
+					  </p:dataTable>
+					  <br/>
+					  <h:outputLabel value="#{validarFirmarDoctoMB.propuestaActual.tipoComite.descripcion}:" style="font-weight:bold"/>
+					  <br/>
+					  <p.spacer width="20px" height="20px"/>
+					  <p:calendar id="txtFechaPresentacion2" locale="es" pattern="dd/MM/yyyy" showOn="button"
+		                          readonlyInput="true" size="7" disabled="true"
+		                          value="#{validarFirmarDoctoMB.propuestaActual.fechaInicioPeriodo}" rendered="#{validarFirmarDoctoMB.propuestaActual.fechaPresentacion != null}"/>
+					  <p:calendar id="txtFechaInforme2" locale="es" pattern="dd/MM/yyyy" showOn="button"
+		                          readonlyInput="true" size="7" disabled="true"
+		                          value="#{validarFirmarDoctoMB.propuestaActual.fechaInicioPeriodo}" rendered="#{validarFirmarDoctoMB.propuestaActual.fechaInforme != null}"/>
+					  
+					  <div align="right">
+					     <p:spacer width="1" height="30" />
+					     <p:commandButton id="cerrarImpuesto" value="Cerrar" onclick="PF('dlgHistoricoImpuestosRetro').hide();"
+						                  style="width:80px;" ajax="true" />
+				      </div>
+                  </p:panel>
+                </p:dialog>
+                
+                <!-- Dialogo de documentos de retroalimentacion -->
+                <p:dialog header="#{msj['titulo.historico']}" widgetVar="dlgHistoricoDocumentacionRetro" resizable="false" modal="true" width="700" closable="false">
+                   <p:panel id="pnlDocumentoHistorcio">
+				      <p:dataTable id="tablaDocumentacionArchivos" var="documento" value="#{validarFirmarDoctoMB.listaDocumentos}"
+					               editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+				 	               paginator="true" rows="15"
+					               paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					               currentPageReportTemplate="({currentPage} de {totalPages})"
+					               paginatorPosition="bottom" filterDelay="1000">
+					     
+					     <f:facet name="header">#{msj['label.titulo.archivos.cargados']}</f:facet>
+
+					     <p:column headerText="#{msj['label.titulo.fecha.carga']}" width="90">
+						    <div align="center">
+							    <h:outputText value="#{documento.fechaCreacion}">
+								   <f:convertDateTime pattern="dd/MM/yyyy" />
+							    </h:outputText>
+						    </div>
+					     </p:column>
+					     <p:column headerText="#{msj['label.nombre.archivo.historico']}" width="400">
+						    <div align="center">
+							   <h:outputText value="#{documento.nombreArchivo}" />
+						    </div>
+					     </p:column>
+					     
+					     <p:column headerText="#{msj['label.encabezado.documento']}" width="90">
+						    <h:commandButton image="/resources/images/document.png" title="Documento" ajax="true" style="padding:0px 5px;">
+							   <f:setPropertyActionListener value="#{documento.rutaArchivo}"
+								                            target="#{validarFirmarDoctoMB.rutaArchivo}" />
+							   <f:setPropertyActionListener value="#{documento.nombreArchivo}"
+								                            target="#{validarFirmarDoctoMB.nombreArchivo}" />
+							<p:fileDownload contentDisposition="attachment" value="#{validarFirmarDoctoMB.descargaOrden}" />
+						</h:commandButton>
+					</p:column>
+					     
+                       </p:dataTable>
+                       <div align="right">
+					       <p:spacer width="1" height="30" />
+					          <p:commandButton id="cerrarDocumento" value="Cerrar" onclick="PF('dlgHistoricoDocumentacionRetro').hide();" style="width:80px;" ajax="true" />
+				       </div>    
+                   </p:panel>
+                </p:dialog>
+                
+                <!-- Dialogo de Solicitud de Retroalimentacion -->
+                <p:dialog header="#{msj['label.titulo.historico.retroalimentaciones']}" widgetVar="dlgHistoricoRetroalimentacion" resizable="false"
+			              modal="true" closable="false" width="700">
+                   <p:panel id="idHistoricoRetroalimentacion">
+                      <h:panelGrid columns="2" width="100%">
+					     <p:spacer width="500" height="1" />
+					     <h:outputText value="#{msj['label.registro']}: #{validarFirmarDoctoMB.propuestaActual.idRegistro}"
+						               style="font-weight:bold;" />
+				      </h:panelGrid>
+				      <p:dataTable id="tablaRetroalimentacionArchivos2" var="solicitud" value="#{validarFirmarDoctoMB.listaSolicitudRetroalimentacion}"
+					               editable="false" emptyMessage="#{msj['label.lista.vacia']}" paginator="true" rows="15"
+					               paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink} {PreviousPageLink}   Ir a página: {JumpToPageDropdown}   {NextPageLink} {LastPageLink}"
+					               currentPageReportTemplate="({currentPage} de {totalPages})"
+					               paginatorPosition="bottom" filterDelay="1000">
+					     <f:facet name="header">#{msj['label.titulo.retroalimentacion']}</f:facet>
+					     <p:column headerText="#{msj['titulo.label.fecha.solicitud']}" width="90">
+						    <div align="center">
+							   <h:outputText value="#{solicitud.fechaCreacion}">
+								  <f:convertDateTime pattern="dd/MM/yyyy" />
+							   </h:outputText>
+						    </div>
+					     </p:column>
+					     <p:column headerText="#{msj['label.motivo.retro.asiganda']}" width="380">
+						    <h:outputText value="#{solicitud.fececMotivo.descripcion}" />
+					     </p:column>
+					     
+					     
+					    <p:column headerText="Archivos" width="50">
+						<div align="center">
+							<p:commandLink value="#{solicitud.numeroDocRetroalimentacion}" ajax="true"
+								action="#{validarFirmarDoctoMB.obtenerDocumentosRetroalimentacion}"
+								immediate="true" update=":formPrincipal:pnlDocumentoHistorcio"
+								style="color:#0170b7;">
+								<f:setPropertyActionListener value="#{solicitud}"
+									immediate="true"
+									target="#{validarFirmarDoctoMB.solicitudRetroalimentacion}" />
+							</p:commandLink>
+						</div>
+					</p:column>
+					     
+					  </p:dataTable>
+					  <div align="right">
+				         <p:spacer width="1" height="30" />
+					     <p:commandButton id="cerrarSolicitud" value="Cerrar" onclick="PF('dlgHistoricoRetroalimentacion').hide();"
+						                  style="width:80px;" ajax="true" />
+				      </div>   
+                   </p:panel>
+               </p:dialog>
+	        </h:form>
+	   		<h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+       </h:body>
+	</html>
+</f:view>

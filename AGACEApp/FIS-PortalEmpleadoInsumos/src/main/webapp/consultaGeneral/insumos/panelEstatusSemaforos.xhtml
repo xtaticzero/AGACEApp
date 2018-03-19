@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelXEstatusSemaforo" style="width:80% !important;padding: 0;" 
+    	rendered="#{consultaUGInsumosMB.helper.esVisiblePanelEstatus}">
+		<f:facet name="header"> 
+           <h:outputText value="#{msj['label.consulta.general.detalle.insumos.panel.resumen.titulo']}"/>
+        </f:facet>         
+        <p:dataTable value="#{consultaUGInsumosMB.resumenSet}" var="estatusEntry" 
+                     emptyMessage="#{msj['label.lista.vacia']}" >
+            <f:facet name="header"> 
+	            <h:outputLabel value="#{msj['label.consulta.general.detalle.insumos.tabla.estatus.titulo']}" style="font-weight:bold"/>	            
+	        </f:facet>
+            <p:column headerText="Estatus" style="font-size:70%;">
+                <h:outputText value="#{estatusEntry.key.descripcion}" />
+            </p:column>
+            <p:column headerText="Total" style="text-align: right;font-size:70%;">
+                <h:outputText value="#{estatusEntry.value}" rendered="#{estatusEntry.value eq 0}"/>    
+                <p:commandLink id="consultarXEstatus"
+                               value="#{estatusEntry.value}"
+                               action="#{consultaUGInsumosMB.consultarXEstatus}"
+                               ajax="true" immediate="true"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{estatusEntry.value ne 0}" update=":form:panelPrincipal">
+                    <f:setPropertyActionListener value="#{estatusEntry}"
+                                                 target="#{consultaUGInsumosMB.estatusSeleccionados}" />
+					<f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="-1" />                                                 
+                </p:commandLink>            
+            </p:column>       
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="Todos los estatus" style="text-align:center;font-size:70%;" />
+                    <p:column style="text-align:right;font-size:70%;" rendered="#{consultaUGInsumosMB.totalEstatus eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaUGInsumosMB.totalEstatus}"/>
+                        </f:facet>                                        
+                    </p:column>
+                    <p:column style="text-align:right;font-size:70%;" rendered="#{consultaUGInsumosMB.totalEstatus ne 0}">  
+                    	<f:facet name="footer">		                      
+                    		<p:outputLabel value="#{consultaUGInsumosMB.totalEstatus}" rendered="#{estatusEntry.value eq 0}"/>     
+                    		<p:commandLink id="consultarXEstatusTotal"
+                               value="#{consultaUGInsumosMB.totalEstatus}"
+                               action="#{consultaUGInsumosMB.consultarXEstatus}"
+                               ajax="true" immediate="true"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{consultaUGInsumosMB.totalEstatus ne 0}" update=":form:panelPrincipal">
+                    			<f:setPropertyActionListener value="#{null}"
+                                                 target="#{consultaUGInsumosMB.estatusSeleccionados}" />           
+                               <f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="0" />
+                               </p:commandLink>
+                    	</f:facet>                                                           
+                    </p:column>                                                        
+                </p:row>
+            </p:columnGroup>     
+        </p:dataTable>
+        <p:separator/>         
+        <p:dataTable value="#{consultaUGInsumosMB.resumenSemaforoSet}" var="semaforoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}" >
+            <f:facet name="header"> 
+	            <h:outputLabel value="#{msj['label.semaforos']}" style="font-weight:bold;"/>
+	        </f:facet>
+            <p:column headerText="#{msj['label.semaforos']}" style="font-size:70%;">
+                <p:graphicImage value="/resources/images/#{semaforoEntry.key.textoImagenSemaforo}-16x16.png" style="border:0" title="#{semaforoEntry.key.descripcionSemaforoInsumos}"/>
+                <p:outputLabel value="#{semaforoEntry.key.nombre}" />
+            </p:column>
+            <p:column headerText="Total" style="text-align: right;font-size:70%;">
+                <h:outputText value="#{semaforoEntry.value}" rendered="#{semaforoEntry.value eq 0}"/>
+                <p:commandLink id="consultarXEstatusOSemaforoTotal"
+                               value="#{semaforoEntry.value}"
+                               action="#{consultaUGInsumosMB.consultarXSemaforo}"
+                               ajax="true" immediate="true"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{semaforoEntry.value ne 0}" update=":form:panelPrincipal">
+                    <f:setPropertyActionListener value="#{semaforoEntry}"
+                                                 target="#{consultaUGInsumosMB.semaforoSeleccionado}" />
+					<f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="0" />                                                 
+                </p:commandLink>
+            </p:column>
+              <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="Insumos Totales" style="text-align:center;font-size:70%;"/>
+                    <p:column style="text-align:right;font-size:70%;" rendered="#{consultaUGInsumosMB.totalSemaforo eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaUGInsumosMB.totalSemaforo}"/>
+                        </f:facet>                                        
+                    </p:column>
+                    <p:column style="text-align:right;font-size:70%;" rendered="#{consultaUGInsumosMB.totalSemaforo ne 0}">    
+                    	<f:facet name="footer">		                    
+                    		<p:outputLabel value="#{consultaUGInsumosMB.totalSemaforo}" rendered="#{semaforoEntry.value eq 0}"/> 
+                    		<p:commandLink id="consultarXEstatusOSemaforo"
+                               value="#{consultaUGInsumosMB.totalSemaforo}"
+                               action="#{consultaUGInsumosMB.totalSemaforoDetalleCentral}"
+                               ajax="true" immediate="true"
+                               process="@form"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{consultaUGInsumosMB.totalSemaforo ne 0}" update=":form:panelPrincipal">
+                               <f:setPropertyActionListener target="#{consultaUGInsumosMB.numeroSemaforo}" value="0" />
+                            </p:commandLink>          
+                    	</f:facet>                                                     
+                    </p:column>                                    
+                </p:row>
+            </p:columnGroup>                                                                   
+        </p:dataTable>         
+        <p:separator/>
+        <p:panel header="Plazo para concluir">
+            <p:panelGrid styleClass="noBorders">
+                <p:row>
+                    <p:column style="text-align: right;" width="50%">
+                        <p:selectOneMenu id="origen" value="#{consultaUGInsumosMB.plazoSeleccionado}"
+                                         style="width: 350px !important;">
+                            <p:ajax event="valueChange" process="@this" listener="#{consultaUGInsumosMB.valueChangePlazo}" 
+            					update="btnPlazo"/>
+                            <f:selectItem itemLabel="Seleccione el plazo para concluir deseado" itemValue="-2" />
+                            <f:selectItems value="#{consultaUGInsumosMB.lstPalzosParaConcluir}" 
+                                           var="plazo"
+                                           itemLabel="#{plazo.descripcion}"
+                                           itemValue="#{plazo.valor}"/>                            
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column style="text-align: left;" width="50%">
+                        <p:commandButton id="btnPlazo" value="Consultar" 
+                                         action="#{consultaUGInsumosMB.consultarXPlazoSeleccionado}"   
+                                         ajax="false" immediate="true"                                                                             
+                                         disabled="#{!consultaUGInsumosMB.helper.muestraBtnRegresaEstatus}"
+                                         update=":form:panelPrincipal"
+                                         process="@this"/>
+                    </p:column>                
+                </p:row>
+            </p:panelGrid>             
+        </p:panel>   
+        <p:panelGrid styleClass="noBorders" style="width: 100%">
+        	<p:row>
+        		<p:column>
+			  		<p:commandButton style="float: right;" 
+			  			value="Pantalla Anterior" action="#{consultaUGInsumosMB.pantallaAnteriorEstatus}" immediate="true" process="@this"
+			  			update="panelPrincipal"/>
+			  	</p:column>    
+			</p:row>
+		</p:panelGrid>
+    </p:panel>
+</f:view>

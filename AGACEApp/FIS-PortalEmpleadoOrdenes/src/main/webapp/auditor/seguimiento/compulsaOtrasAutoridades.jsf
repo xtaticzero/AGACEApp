@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{compulsasManagedBean.init}"/>
+        </f:metadata>
+        <h:head/>
+        <h:body>
+            <h:form id="formCompulsaTercero" styleClass="panel-principal">
+                <p:ajaxStatus onstart="PF('statusDialogCompTercero').show();" onsuccess="PF('statusDialogCompTercero').hide();"/>
+                <p:dialog modal="true" widgetVar="statusDialogCompTercero" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                
+                <p:panel id="panelCompulsaTerceros" header="Compulsa Otras Autoridades" styleClass="panel-interno">                  
+                    <h:panelGrid id="panelDatosContribuyente" columns="3" border="0" width="100%">
+                        <ui:include src="/auditor/seguimiento/componentes/datosGeneralOrden.jsf"/>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:spacer width="60" height="5px;"/>
+                    <p:panel id="pnlTabs"  style="border:none; width:100%;padding:none;">
+                        <p:separator><b>Oficios</b></p:separator>
+                        <p:messages id="msgExitoGuardarDocs" showDetail="true" globalOnly="true" closable="true"/>
+                        <p:spacer width="60" height="10"/>
+                        
+                        <p:tabView id="panelTabsDocumentos" effect="fade" effectDuration="normal">
+                            <p:tab id="tabCompulsaTerceros" title="#{msj['tab.otras.autoridades']}">
+                                <h:outputText value="#{msj['lbl.autoridad.compulsada']} "/>
+                            	<p:inputText id="txtNombreAutoridadCompulsada" style="width:200px;"
+                                         value="#{compulsasManagedBean.autoridadCompulsada}">
+                                	<p:ajax />
+                                </p:inputText>
+                                <p:spacer width="600" height="20px;"/>
+           						
+                                <p:tabView orientation="left">
+                                    <p:tab title="#{msj['label.oficio.otras.autoridades']}*">
+                                        <h:panelGrid id="panelOficioCompulsaTercero" columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.oficio.otras.autoridades']} *:"/>
+                                            
+                                            <p:fileUpload id="fulOficioCompulsaTercero"
+                                                  fileUploadListener="#{compulsasManagedBean.cargaOficioCompulsaTercero}"
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:300px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  update="tablaDocumentoOficioCompulsaTercero :formCompulsaTercero:msgExitoGuardarDocs" immediate="true"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelDocumentoCompulsaTercero" cellpadding="5">
+                                            <p:dataTable id="tablaDocumentoOficioCompulsaTercero" 
+                                                    value="#{compulsasManagedBean.listaOfCompulsaTercero}" var="oficio" 
+                                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}">  
+                                                <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%" >
+                                                    #{oficio.nombreArchivo}
+                                                </p:column> 
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                                    <div align="center">
+                                                        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                                    style="padding:0px 5px;">
+                                                            <f:setPropertyActionListener value="#{oficio}"
+                                                                                         target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                                            <p:fileDownload contentDisposition="attachment"
+                                                                            value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                                        </h:commandButton>
+                                                    </div>
+                                                </p:column>
+                                                <p:column width="11%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                                                   action="#{compulsasManagedBean.limpiarCompulsaTercero}" ajax="true"
+                                                                   immediate="true" update="@form">
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelAnexosCompulsaTercero" columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.anexos']}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+                                            
+                                            <p:fileUpload id="fulAnexosCompulsaTercero"
+                                                  fileUploadListener="#{compulsasManagedBean.cargaAnexosCompulsaTercero}"
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:310px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  update="tablaAnexosDocumentoOficioCompulsaTercero :formCompulsaTercero:msgExitoGuardarDocs" immediate="true"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelAnexosDocumentoCompulsaTercero" cellpadding="5">
+                                            <p:dataTable id="tablaAnexosDocumentoOficioCompulsaTercero" 
+                                                    value="#{compulsasManagedBean.listaAnexosCompulsaTercero}" var="anexo" 
+                                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                                    paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" 
+                                                    currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">  
+                                                <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%" >
+                                                    #{anexo.nombreArchivo}
+                                                </p:column> 
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                                    <div align="center">
+                                                        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                                    style="padding:0px 5px;">
+                                                            <f:setPropertyActionListener value="#{anexo}"
+                                                                                         target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                                            <p:fileDownload contentDisposition="attachment"
+                                                                            value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                                        </h:commandButton>
+                                                    </div>
+                                                </p:column>
+                                                <p:column width="12%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                                                   action="#{compulsasManagedBean.eliminarAnexoOficioCompulsaTercero}" ajax="true"
+                                                                   immediate="true" update="@form">
+                                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                                        target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                            
+                                            <h:panelGrid columns="2" style="float:right;" border="0">
+                                                <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfCompulsaTercero').show();"
+                                                            style="float:right;width:80px;" ajax="true" immediate="true" />
+                                                <p:commandButton value="#{msj['btn.limpiar']}" action="#{compulsasManagedBean.limpiarDocumentacionCompulsaTercero}"
+                                                            style="float:right;width:80px;" ajax="true" immediate="true" update=":formCompulsaTercero:msgExitoGuardarDocs :formCompulsaTercero:pnlTabs" />
+                                            </h:panelGrid>
+                                            
+                                        </h:panelGrid>
+                                    </p:tab>
+                                    
+                                    <p:tab title="#{msj['label.oficio.aviso.contribuyente']}">
+                                        <h:panelGrid id="panelOficioAvisoContribuyenteCompulsaTercero" columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.oficio.aviso.contribuyente']} *:"/>
+                                            
+                                            <p:fileUpload id="fulOficioAvisoContribuyenteCompulsaTercero"
+                                                  fileUploadListener="#{documentacionOrdenMB.cargaOficioAvisoContribuyente}"
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:310px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  update="tablaDocumentoOficioAvisoContribuyenteCompulsaTercero :formCompulsaTercero:msgExitoGuardarDocs" immediate="true"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelDocumentoAvisoContribuyenteCompulsaTercero" cellpadding="5">
+                                            <p:dataTable id="tablaDocumentoOficioAvisoContribuyenteCompulsaTercero" 
+                                                    value="#{documentacionOrdenMB.lstOficioHelper.listaOfAvisoContribuyente}" var="oficio" 
+                                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}">  
+                                                <p:column headerText="#{msj['column.label.nombre.documento']}" width="50%" >
+                                                    #{oficio.nombreArchivo}
+                                                </p:column> 
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="40%">
+                                                    <div align="center">
+                                                        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                                    style="padding:0px 5px;" immediate="true">
+                                                            <f:setPropertyActionListener value="#{oficio}"
+                                                                                         target="#{documentacionOrdenMB.dtoHelper.oficioSeleccionado}"/>
+                                                            <p:fileDownload contentDisposition="attachment"
+                                                                            value="#{documentacionOrdenMB.oficioSeleccionDescarga}"/>
+                                                        </h:commandButton>
+                                                    </div>
+                                                </p:column>
+                                                <p:column width="11%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                                                   action="#{documentacionOrdenMB.limpiarAvisoContribuyente}" ajax="true"
+                                                                   immediate="true" update="@form">
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelAnexosAvisoContribuyenteCompulsaTercero" columns="2" cellpadding="5" border="0" width="100%">
+                                            <h:outputText value="#{msj['label.anexos']}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/>
+                                            
+                                            <p:fileUpload id="fulAnexosAvisoContribuyenteCompulsaTercero"
+                                                  fileUploadListener="#{documentacionOrdenMB.cargaAnexosAvisoContribuyente}"
+                                                  mode="advanced" dragDropSupport="false" multiple="false"
+                                                  style="width:310px;" label="#{msj['btn.examinar']}"
+                                                  cancelLabel="Cancelar todos" uploadLabel="Guardar"
+                                                  showButtons="true" auto="true" ajax="true"
+                                                  update="tablaAnexosDocumentoOficioAvisoContribuyenteCompulsaTercero :formCompulsaTercero:msgExitoGuardarDocs" immediate="true"
+                                                  oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');"/>
+                                        </h:panelGrid>
+                                        
+                                        <h:panelGrid id="panelAnexosDocumentoAvisoContribuyenteCompulsaTercero" cellpadding="5">
+                                            <p:dataTable id="tablaAnexosDocumentoOficioAvisoContribuyenteCompulsaTercero" 
+                                                    value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosAvisoContribuyente}" var="anexo" 
+                                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}" styleClass="someClass"
+                                                    paginator="true" rows="5" paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}                                     
+                                                    {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}" 
+                                                    currentPageReportTemplate="({currentPage} de {totalPages})" paginatorPosition="bottom">  
+                                                <p:column headerText="#{msj['column.label.nombre.documento']}" width="48%" >
+                                                    #{anexo.nombreArchivo}
+                                                </p:column> 
+                                                <p:column headerText="#{msj['column.label.archivo']}" width="38%">
+                                                    <div align="center">
+                                                        <h:commandButton ajax="true" image="/resources/images/document.png" 
+                                                                    style="padding:0px 5px;" immediate="true">
+                                                            <f:setPropertyActionListener value="#{anexo}"
+                                                                                         target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                                            <p:fileDownload contentDisposition="attachment"
+                                                                            value="#{documentacionOrdenMB.anexoSeleccionDescarga}"/>
+                                                        </h:commandButton>
+                                                    </div>
+                                                </p:column>
+                                                <p:column width="12%">
+                                                    <p:commandLink value="#{msj['btn.eliminar']}" style="color:blue;"
+                                                                   action="#{documentacionOrdenMB.eliminarAnexoOficioAvisoContribuyente}" ajax="true"
+                                                                   immediate="true" update="@form">
+                                                        <f:setPropertyActionListener value="#{anexo}"
+                                                                                        target="#{documentacionOrdenMB.dtoHelper.anexoSeleccionado}"/>
+                                                    </p:commandLink>
+                                                </p:column>
+                                            </p:dataTable>
+                                            
+                                            <h:panelGrid columns="2" style="float:right;" border="0">
+                                                <p:commandButton value="#{msj['btn.guardar']}" onclick="PF('confirmarOfCompulsaTercero').show();"
+                                                            style="float:right;width:80px;" ajax="true" immediate="true" />
+                                                <p:commandButton value="#{msj['btn.limpiar']}" action="#{documentacionOrdenMB.limpiarDocumentacionAvisoContribuyente}"
+                                                            style="float:right;width:80px;" ajax="true" immediate="true" update=":formCompulsaTercero:msgExitoGuardarDocs :formCompulsaTercero:pnlTabs" />
+                                            </h:panelGrid>
+                                        </h:panelGrid>
+                                    </p:tab>
+                                </p:tabView>
+                            </p:tab>
+                        </p:tabView>
+
+						<p:spacer width="50px" height="20px"/>
+				        <p:messages id="messagesPapelesTrabajoOficio" showDetail="true"
+							closable="true" for="msgPapelesTrabajoOficio" />
+				        <p:fieldset id ="fltCompulsaOtrasAutoridades" widgetVar="fltCompulsaOtrasAutoridades"
+				        			legend="#{msj['fieldeset.papeles.trabajo']}" toggleable="true" toggleSpeed="500" collapsed="true">
+							<p:ajax event="toggle" listener="#{compulsasManagedBean.handleTogglePapelTrabajoOficio}" update="fltCompulsaOtrasAutoridades" />								
+							<ui:include src="/auditor/seguimiento/componentes/tblPapelTrabajoCompulsas.jsf"/>																			
+			            </p:fieldset>                    
+                    </p:panel>
+                                    
+                    <h:panelGrid columns="1" id="panelBotonesFinal" width="700">
+                        <p:column rowspan="2">
+                           
+                            <p:commandButton value="Pantalla Anterior" action="documentacionOrden" actionListener="#{documentacionOrdenMB.limpiaFormulario}" style="float:right;" ajax="true" immediate="true" />
+                        </p:column>
+                    </h:panelGrid>
+                                    
+                </p:panel>
+                
+                <p:dialog widgetVar="confirmarOfCompulsaTercero" header="#{msj['label.confirm.header']}"
+                          resizable="false" modal="true" width="400" visible="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{msj['confirm.guardar.oficio']}" />
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.cancelar']}" immediate="true"
+                                     onclick="PF('confirmarOfCompulsaTercero').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"/>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}"
+                                     onclick="PF('confirmarOfCompulsaTercero').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{compulsasManagedBean.guardarCompulsaOtrasAutoridades}" process="@this"
+                                     style="float:right;" immediate="true"
+                                     update="@form"
+                                     oncomplete="ocultaMsgAgace('msgExitoGuardarDocs');">
+                        <f:setPropertyActionListener value="#{documentacionOrdenMB.streamedHelper.ofAvisoContribuyente}" target="#{compulsasManagedBean.ofAvisoContribuyente}"/>
+                        <f:setPropertyActionListener value="#{documentacionOrdenMB.lstOficioHelper.listaOfAvisoContribuyente}" target="#{compulsasManagedBean.listaOfAvisoContribuyente}"/>
+                        <f:setPropertyActionListener value="#{documentacionOrdenMB.lstOficioAnexoHelper.listaAnexosAvisoContribuyente}" target="#{compulsasManagedBean.listaAnexosAvisoContribuyente}"/>
+                    </p:commandButton>
+                </p:dialog>
+                
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarValidacion" resizable="false"
+                          modal="true" width="400" visible="false">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{compulsasManagedBean.mensajeValidacion}" escape="false"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="PF('confirmarValidacion').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;"/>
+                </p:dialog>
+                
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="confirmarMediosContacto" resizable="false"
+                          modal="true" width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{compulsasManagedBean.mensajeValidacion}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.no']}" onclick="PF('confirmarMediosContacto').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                     action="#{compulsasManagedBean.inhabilitaEmailColaborador}"
+                                     style="float:right;" update="@form"></p:commandButton>
+                    <p:commandButton value="#{msj['btn.si']}" onclick="PF('confirmarMediosContacto').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{compulsasManagedBean.habilitaEmailColaborador}" update="@form"
+                                     style="float:right;"></p:commandButton>
+                </p:dialog>
+                
+                <p:dialog header="#{msj['label.confirm.header']}" widgetVar="noIdc" resizable="false" modal="true"
+                          width="400" height="80">
+                    <h:panelGroup layout="block" style="padding:5px;">
+                        <h:outputText value="#{asociarColaboradoresManagedBean.mensajeValidacion}"/>
+                    </h:panelGroup>
+                    <p:commandButton value="#{msj['btn.no']}" onclick="PF('noIdc').hide();"
+                                     styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                     action="#{asociarColaboradoresManagedBean.nuevaBusquedaColaborador}"
+                                     style="float:right;" update="@form"></p:commandButton>
+                    <p:commandButton value="#{msj['btn.si']}" onclick="PF('noIdc').hide();"
+                                     styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                                     action="#{asociarColaboradoresManagedBean.habilitaCamposColaborador}"
+                                     update="@form" style="float:right;"></p:commandButton>
+                </p:dialog>
+                
+                <p:dialog widgetVar="dlgPapelTrabajoOficioEliminado" header="#{msj['titulo.papel.trabajo.eliminar']}" resizable="false" modal="true" width="400" height="auto"
+								closable="false">					  
+						<h:outputText  value="#{msj['lbl.eliminar.papel.trabajo']}"/>
+						
+					    <h:panelGrid columns="4" >
+					    	<p:spacer width="100px" height="40px"/>
+						    <p:commandButton id="idEliminarPapelTrabajoOficio" value="#{msj['label.confirm.aceptar']}"  
+		                             		oncomplete="ocultaMsgAgace('messagesPapelesTrabajoOficio');"
+	                    					action="#{compulsasManagedBean.eliminarPapelTrabajoOficio}" 
+	                    					update="@form" 
+	                    					 onclick="PF('dlgPapelTrabajoOficioEliminado').hide();"
+	                    					 />
+							<p:spacer width="25px" height="20px"/>	                   
+		                    <p:commandButton value="#{msj['label.confirm.cancelar']}"
+											onclick="PF('dlgPapelTrabajoOficioEliminado').hide();"
+											styleClass="ui-confirmdialog-no" style="float:right;"  />
+						</h:panelGrid>	                    
+					</p:dialog>
+                
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

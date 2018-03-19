@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script type="text/javascript">  
+                function start() {  
+                    statusDialog.show();  
+                }  
+    
+                function stop() {  
+                    statusDialog.hide();  
+                }  
+            </script> 
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="idForm">
+                <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                <p:dialog modal="true" header="#{msj['titulo.panel.espere']}" draggable="false" closable="false"
+                          resizable="false" id="statusDialog" widgetVar="statusDialog">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="panelReporte" styleClass="panel-interno" header="Generar Reporte">
+                    <p:panelGrid style="margin: 0 auto; width:95%;" styleClass="noBorders">
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">
+                                <p:outputLabel for="cmbMetodo" value="Método"/>
+                            </p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:selectOneMenu id="cmbMetodo" value="#{reporteManagedBean.metodoSeleccionado}">
+                                    <f:selectItem itemLabel="Selecciona Método" itemValue="-1"/>
+                                    <f:selectItems value="#{reporteManagedBean.listaMetodos}" var="lista"
+                                                   itemLabel="#{lista.nombre}" itemValue="#{lista.idMetodo}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">&Aacute;rea emisora:</p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:selectOneMenu value="#{reporteManagedBean.areaEmisora}" id="cmbAreaEmisora">
+                                    <f:selectItem itemLabel="Seleccione Área emisora" itemValue="-1"/>
+                                    <f:selectItems value="#{reporteManagedBean.listaArace}" var="lista"
+                                                   itemLabel="#{lista.nombre}" itemValue="#{lista.idArace}"/>
+                                    <p:ajax event="change" immediate="true"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">Estatus de la orden:</p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                <p:column style="text-align:left; width:60%;">
+                                    <p:selectOneMenu value="#{reporteManagedBean.estatus}" immediate="true"
+                                                     id="estatusOrden">
+                                        <f:selectItem itemLabel="Seleccione Estatus de la Orden" itemValue="-1"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style="text-align:right; font-weight: bold; width:40%;">Rango de Fechas:</p:column>
+                            <p:column style="width: 20px;"/>
+                            <p:column style="text-align:left; width:60%;">
+                                De:
+                                <p:calendar locale="es" showOn="button" id="rangoInferior"
+                                            value="#{reporteManagedBean.rangoInferior}" style="width: 300px"
+                                            immediate="true" readonlyInput="true" pattern="dd/MM/yyyy" maxlength="10"></p:calendar>
+                                A:
+                                <p:calendar locale="es" showOn="button" id="rangoSuperior"
+                                            value="#{reporteManagedBean.rangoSuperior}" style="width: 300px"
+                                            immediate="true" readonlyInput="true" pattern="dd/MM/yyyy" maxlength="10"></p:calendar>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column></p:column>
+                            <p:column></p:column>
+                            <p:column>
+                                <p:messages showSummary="false" id="messages" showDetail="true" autoUpdate="true"
+                                            closable="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3" style="text-align:center;">
+                                <p:commandButton value="Buscar" update="idForm"
+                                                 action="#{reporteManagedBean.consultaEjecutivo}"
+                                                 oncomplete="ocultaMsgAgace('messages');"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panel style="border:none">
+                        <p:barChart showDatatip="false" rendered="#{reporteManagedBean.visibleGrafica}" animate="true"
+                                    value="#{reporteManagedBean.valoresGraficaEjecutivo}" xaxisLabel="Tipo de ordenes"
+                                    yaxisLabel="Número de órdenes"/>
+                    </p:panel>
+                    <p:panel style="text-align:right; border:none;">
+                        <p:commandButton onclick="PrimeFaces.monitorDownload(start, stop)" rendered="#{reporteManagedBean.visibleGrafica}"
+                                         value="Exportar" ajax="false" icon="ui-icon-arrowthick-1-s">
+                            <p:fileDownload contentDisposition="attachment" value="#{reporteManagedBean.pdfEjecutivo}"/>
+                        </p:commandButton>
+                    </p:panel>
+                </p:panel>
+            </h:form>
+             
+            <h:outputScript library="js/" name="agace.js"/>
+             
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

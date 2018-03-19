@@ -1,0 +1,67 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-3.2.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee-3.2.xsd">
+    
+    <tx:annotation-driven/>
+    <context:component-scan base-package="mx.gob.sat.siat.ws.empleado"/>
+    
+    <bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.SimpleStringPBEConfig">
+        <property name="algorithm" value="PBEWithMD5AndDES" />
+        <property name="password" value="Pa55word" />
+    </bean>
+
+    <bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+        <property name="config" ref="environmentVariablesConfiguration" />
+    </bean>
+
+    <bean id="propertyConfigurer"
+          class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+        <constructor-arg ref="configurationEncryptor" />
+        <property name="locations">
+            <list>
+                <value>classpath:config.properties</value>                
+            </list>
+        </property>
+    </bean>
+
+<!--    <bean id="handlerResolver" class="mx.gob.sat.siat.ws.empleado.client.log.DefaultHandlerResolver">
+        <property name="handlerList">
+            <list>
+                <bean class="mx.gob.sat.siat.ws.empleado.client.log.ServiceLogHandler" />
+            </list>
+        </property>
+    </bean>-->
+    
+    <!-- BEGIN EMPLEADO UNIFICADO-->
+<!--    <bean id="empleadoClientRepository"
+          class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceInterface"
+                  value="mx.gob.sat.siat.ws.empleado.repository.EmpleadoClientRepository" />
+        <property name="wsdlDocumentUrl" value="${empleadoServiceUnificado.wsdl}"/>
+        <property name="serviceName" value="ServicioEmpleado" />
+        <property name="portName" value="BasicHttpBinding_IServicioEmpleado" />
+        <property name="handlerResolver" ref="handlerResolver"/>
+    </bean>       -->
+    <bean id="empleadoClientRepository"
+          class="org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean">
+        <property name="serviceInterface"
+                  value="mx.gob.sat.siat.ws.empleado.repository.EmpleadoClientRepository" />
+        <property name="wsdlDocumentUrl" value="${empleadoServiceUnificado.wsdl}"/>
+        <property name="serviceName" value="ServicioEmpleado" />
+        <property name="portName" value="BasicHttpBinding_IServicioEmpleado" />        
+    </bean>       
+</beans>

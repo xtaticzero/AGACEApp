@@ -1,0 +1,345 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script type="text/javascript">
+	    		function soloNumerosPunto(evt){
+	                if(window.event){
+	                    keynum = evt.keyCode;
+	                }else{
+	                    keynum = evt.which;
+	                }
+	                if(!(48>keynum || keynum>57) || (keynum==8||keynum==0||keynum== 46)){
+	                    return true;
+	                }else{
+	                    return false;
+	                }
+	            }
+	    		function changeValueObservacionesCobradas() {
+	    			var valor = document.getElementById('observacionesCobradasHidden').value;
+	    			document.getElementById('formCifras:acordeonCifras:observacionesCobradas').value = valor;
+	    		}
+	    		function changeValueObservacionesVirtuales() {
+	    			var valor = document.getElementById('observacionesVirtualesHidden').value;
+	    			document.getElementById('formCifras:acordeonCifras:observacionesVirtuales').value = valor;
+	    		}
+	    		function changeValueObservacionesLiquidadas() {
+	    			var valor = document.getElementById('observacionesLiquidadasHidden').value;
+	    			document.getElementById('formCifras:acordeonCifras:observacionesLiquidadas').value = valor;
+	    		}
+    		</script>
+    		<style type="text/css">
+			    .icono {
+			        background-image:url("../../resources/images/document.png") !important;
+			    }
+			    span.ui-button:hover {
+		        	width: 80px !important;
+		       	}
+		       	.ui-selectonemenu-items-wrapper {
+		       	    width: 650px !important;
+		       	}
+			</style>
+        </h:head>
+        <h:body>            
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+            <h:form id="formCifras" styleClass="panel-principal">
+            <p:panel id="panelPrincipalCifras" header="#{msj['label.cifras.panel']}" styleClass="panel-interno">
+            	<br/>
+            	<br/>	             
+	            <p:dataTable id="encabezadoCifras" value="#{cifrasManagedBean.totalCifras}" var="totalCifras"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}" style="width:80% !important;">
+                   	<f:facet name="header">
+                   		<h:outputText value="#{msj['label.cifras.resumen.titulo']}"/>
+                   	</f:facet>     
+                	<p:column headerText="#{msj['label.cifras.resumen.columna1']}" width="50%">
+                        <h:outputText value="#{totalCifras.descripcionTipo}"/>
+                    </p:column>
+                    <p:column headerText="#{msj['label.cifras.resumen.columna2']}" width="50%">
+                        <div style="text-align:right">
+	                        $<h:outputText value="#{totalCifras.montoCifra}">
+	                        	<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+	                        </h:outputText>
+	                    </div>
+                    </p:column> 
+                    <p:columnGroup type="footer">
+		               <p:row>
+				            <p:column style="text-align:right" footerText="Cifras Totales:"/>
+				            <p:column style="text-align:right">
+				            	<f:facet name="footer">				            	
+					                $<h:outputText value="#{cifrasManagedBean.totalEncabezado}" >
+					                    <f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+					                </h:outputText>
+				                </f:facet>
+				            </p:column>
+			            </p:row>
+		            </p:columnGroup>                               
+                </p:dataTable>
+	            <br/>
+	            <br/>
+	            <br/>
+	            <br/> 
+	            <p:accordionPanel id="acordeonCifras" activeIndex="-1" widgetVar="acordeonCifras">
+	            	<p:ajax event="tabChange" listener="#{cifrasManagedBean.onTabChange}" update="@form" process="@this" immediate="true"/>  
+	            	<p:tab title="#{msj['label.cifras.resumen.cobradas']}">
+	            		<h:panelGroup id="cifrasCobradasPanel" 
+	            			rendered="#{cifrasManagedBean.cifrasAttributeHelper.panelCifrasCobradasVisible}">
+	            			<ui:include src="/auditor/cifras/cifrasCobradas.xhtml"/>
+	            		</h:panelGroup> 
+	            	</p:tab>	  
+	            	<p:tab title="#{msj['label.cifras.resumen.virtuales']}">
+	            		<h:panelGroup id="cifrasVirtualesPanel" 
+	            			rendered="#{cifrasManagedBean.cifrasAttributeHelper.panelCifrasVirtualesVisible}">
+	            			<ui:include src="/auditor/cifras/cifrasVirtuales.xhtml"/>
+	            		</h:panelGroup>
+	            	</p:tab>
+	            	<p:tab title="#{msj['label.cifras.resumen.liquidadas']}">
+	            		<h:panelGroup id="cifrasLiquidadasPanel" 
+	            			rendered="#{cifrasManagedBean.cifrasAttributeHelper.panelCifrasLiquidadasVisible}">
+	            			<ui:include src="/auditor/cifras/cifrasLiquidadas.xhtml"/>
+	            		</h:panelGroup>
+	            	</p:tab>          	
+	            </p:accordionPanel>   	                     
+            </p:panel>
+            <br/>
+            <p:commandButton value="Pantalla Anterior" action="../seguimiento/documentacionOrden.jsf?faces-redirect=true" ajax="true" immediate="true"/>
+            <p:panel id="confirmarActualizacion" style="width:100% !important;border-style: none !important">
+	            <p:dialog header="#{msj['label.confirm.header']}" resizable="false" modal="true" width="400" id="confirmarActualizacionDialogo"
+	            	rendered="#{cifrasManagedBean.cifrasAttributeHelper.existeCifra}" visible="#{cifrasManagedBean.cifrasAttributeHelper.existeCifra}" 
+	            	widgetVar="confirmarActualizacionDialogoWidget" closable="false">
+	                <h:panelGroup layout="block" style="padding:5px;">
+	                    <h:outputText value="#{msj['label.cifras.confirmacion.actualizacion']}"/>
+	                </h:panelGroup>
+	                <p:commandButton value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"
+	                	onclick="cancelarActualizarCifraRC();PF('confirmarActualizacionDialogoWidget').hide();"/>
+	                <p:commandButton value="#{msj['label.confirm.aceptar']}"  styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;"
+	                	onclick="actualizarCifraRC();PF('confirmarActualizacionDialogoWidget').hide();"/>
+	            </p:dialog>
+	        </p:panel>
+	        <p:panel id="confirmarELiminarArchivo" style="width:100% !important;border-style: none !important">
+	            <p:dialog header="#{msj['label.confirm.header']}" resizable="false" modal="true" width="400" 
+	            	widgetVar="confirmarELiminarArchivoWidget" closable="false">
+	                <h:panelGroup layout="block" style="padding:5px;">
+	                    <h:outputText value="#{msj['titulo.cifras.confirmacion.eliminar.archivo']}"/>
+	                </h:panelGroup>
+	                <p:commandButton value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"
+	                	onclick="PF('confirmarELiminarArchivoWidget').hide();"/>
+	                <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="eliminarDocumentoRC()"
+	                	styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;" oncomplete="PF('confirmarELiminarArchivoWidget').hide();"/>
+	            </p:dialog>		            
+	        </p:panel>
+	        <p:panel id="confirmarAgregarCifra" style="width:100% !important;border-style: none !important">
+	            <p:dialog header="#{msj['label.confirm.header']}" resizable="false" modal="true" width="400" 
+	            	widgetVar="confirmarAgregarCifraWidget" closable="false">
+	                <h:panelGroup layout="block" style="padding:5px;">
+	                    <h:outputText value="#{msj['titulo.cifras.confirmacion.agregar.cifra']}"/>
+	                </h:panelGroup>
+	                <p:commandButton value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"
+	                	onclick="PF('confirmarAgregarCifraWidget').hide();"/>
+	                <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="agregaCifraRC()"
+	                	styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;" oncomplete="PF('confirmarAgregarCifraWidget').hide();"/>
+	            </p:dialog>		            
+	        </p:panel>	      	    
+	        <p:panel id="confirmarGuardarCifra" style="width:100% !important;border-style: none !important">
+	            <p:dialog header="#{msj['label.confirm.header']}" resizable="false" modal="true" width="400" 
+	            	widgetVar="confirmarGuardarCifraWidget" closable="false">
+	                <h:panelGroup layout="block" style="padding:5px;">
+	                    <h:outputText value="#{msj['titulo.cifras.confirmacion.guardar.cifra']}"/>
+	                </h:panelGroup>
+	                <p:commandButton value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"
+	                	onclick="PF('confirmarGuardarCifraWidget').hide();"/>
+	                <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="guardarCifraRC()"
+	                	styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;" oncomplete="PF('confirmarGuardarCifraWidget').hide();"/>
+	            </p:dialog>		            
+	        </p:panel>
+	         <p:panel id="confirmarActualizarCifra" style="width:100% !important;border-style: none !important">
+	            <p:dialog header="#{msj['label.confirm.header']}" resizable="false" modal="true" width="400" 
+	            	widgetVar="confirmarActualizarCifraWidget" closable="false">
+	                <h:panelGroup layout="block" style="padding:5px;">
+	                    <h:outputText value="#{msj['titulo.cifras.confirmacion.actualizar.cifra']}"/>
+	                </h:panelGroup>
+	                <p:commandButton value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"
+	                	onclick="PF('confirmarActualizarCifraWidget').hide();"/>
+	                <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="confirmarActualizarCifraRC()"
+	                	styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;" oncomplete="PF('confirmarGuardarCifraWidget').hide();"/>
+	            </p:dialog>		            
+	        </p:panel> 
+	       	<p:panel id="confirmarEliminarCifra" style="width:100% !important;border-style: none !important">
+	            <p:dialog header="#{msj['label.confirm.header']}" resizable="false" modal="true" width="400" 
+	            	widgetVar="confirmarEliminarCifraWidget" closable="false">
+	                <h:panelGroup layout="block" style="padding:5px;">
+	                    <h:outputText value="#{msj['titulo.cifras.confirmacion.eliminar.cifra']}"/>
+	                </h:panelGroup>
+	                <p:commandButton value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"
+	                	onclick="PF('confirmarEliminarCifraWidget').hide();"/>
+	                <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="confirmarEliminarCifraRC()"
+	                	styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;" oncomplete="PF('confirmarEliminarCifraWidget').hide();"/>
+	            </p:dialog>		            
+	        </p:panel>  
+	        <p:panel id="confirmarEliminarImpuesto" style="width:100% !important;border-style: none !important">
+	            <p:dialog header="#{msj['label.confirm.header']}" resizable="false" modal="true" width="400" 
+	            	widgetVar="confirmarEliminarImpuestoWidget" closable="false">
+	                <h:panelGroup layout="block" style="padding:5px;">
+	                    <h:outputText value="#{msj['titulo.cifras.confirmacion.eliminar.impuesto']}"/>
+	                </h:panelGroup>
+	                <p:commandButton value="#{msj['label.confirm.cancelar']}" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float:right;"
+	                	onclick="PF('confirmarEliminarImpuestoWidget').hide();"/>
+	                <p:commandButton value="#{msj['label.confirm.aceptar']}" onclick="confirmarEliminarImpuestoRC()"
+	                	styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float:right;" oncomplete="PF('confirmarEliminarImpuestoWidget').hide();"/>
+	            </p:dialog>		            
+	        </p:panel>    	        
+	        <p:dialog resizable="false" modal="true" header="Detalle de Impuestos" style="height:auto;" width="800" scrollable="true"
+           		widgetVar="detalleImpuestoPanelWidget" id="detalleImpuestoPanel" closable="false" >
+           		<p:dataTable id="listaDetalleCifra" value="#{cifrasManagedBean.impuestosDetalle}" var="detalle" 
+           			editable="false" emptyMessage="#{msj['label.lista.vacia']}" style="width:100% !important;" tableStyle="width:auto">
+                   	<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.impuesto']}">
+      					<p:outputLabel value="#{detalle.impuestoConcepto.impuesto.descripcion}"/>
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.concepto']}">
+      					<p:outputLabel value="#{detalle.impuestoConcepto.concepto.descripcion}"/>
+      				</p:column>  
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.derivado']}">
+      					<p:outputLabel value="#{detalle.derivaAntecedente == 1 ? 'SI' : 'NO'}"/>
+      				</p:column>  
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.fecha']}">
+      					<h:outputText value="#{detalle.fechaPago}">
+           						<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+           				</h:outputText>
+      				</p:column>   
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.importe']}">
+      					$<h:outputText value="#{detalle.importe}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>
+           			</p:column>
+           			<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.actualizaciones']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.actualizacionesVisible}">
+      					$<h:outputText value="#{detalle.actualizaciones}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.multas']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.multasVisible}">
+      					$<h:outputText value="#{detalle.multas}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.recargos']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.recargosVisible}">
+      					$<h:outputText value="#{detalle.recargos}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.total']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.totalVisible}">
+      					$<h:outputText value="#{detalle.total}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.parcialidadVisible}">
+      					<h:outputText value="#{detalle.parcialidad.idParcialidadHistorico 
+           							== Constantes.BIG_DECIMAL_CERO ? 'NO' : 'SI'}"/>          				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades.periodicidad']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.parcialidadVisible}">
+      					<h:outputText value="#{detalle.parcialidad.idParcialidadHistorico 
+           							== Constantes.BIG_DECIMAL_CERO ? 'N/A' : detalle.parcialidad.tipoParcialidad.tipoParcialidad}"/>       				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades.numero']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.parcialidadVisible}">
+      					<h:outputText value="#{detalle.parcialidad.idParcialidadHistorico 
+           							== Constantes.BIG_DECIMAL_CERO ? 'N/A' : detalle.parcialidad.numeroParcialidades}"/>     				
+      				</p:column>      				
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades.monto']}" 
+           				rendered="#{cifrasManagedBean.columnaDetalleHelper.parcialidadVisible}">      					
+       					<h:outputText  value="$" rendered="#{detalle.parcialidad.idParcialidadHistorico != Constantes.BIG_DECIMAL_CERO}"/>      					
+       					<h:outputText value="#{detalle.parcialidad.montoTotal}" 
+       							rendered="#{detalle.parcialidad.idParcialidadHistorico != Constantes.BIG_DECIMAL_CERO}">
+       						<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+       					</h:outputText>  
+       					<h:outputText  value="N/A" rendered="#{detalle.parcialidad.idParcialidadHistorico == Constantes.BIG_DECIMAL_CERO}"/> 							
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.archivos']}">      					
+       					<p:commandButton icon="icono" onclick="PF('detalleDocumentoPanelWidget').show();" 
+           						process="@this" immediate="true" update=":formCifras:tablaDocumentosDetalle">
+           						<f:setPropertyActionListener value="#{detalle}" 
+                                        	target="#{cifrasManagedBean.impuestoSeleccionado}"/>
+           				</p:commandButton>		
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.observaciones']}"> 
+      					<h:outputText value="#{detalle.observaciones}"/>     					       						
+      				</p:column>
+               </p:dataTable>  
+               <br/>         		
+           	<p:commandButton value="Cerrar" onclick="PF('detalleImpuestoPanelWidget').hide();" process="@this" immediate="true" style="float: right;"/>       
+           </p:dialog>
+           <p:dialog header="#{msj['titulo.panel.cifras.documentos']}" resizable="false" modal="true" 
+           		widgetVar="detalleDocumentoPanelWidget" id="detalleDocumentoPanel" closable="false" width="400">
+           		<p:dataTable id="tablaDocumentosDetalle" value="#{cifrasManagedBean.impuestoSeleccionado.listaDocumentosCifra}" 
+           			var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}">                                                   
+                      <p:column headerText="#{msj['column.label.fecha.documento']}" width="25%" styleClass="panel-principal">   
+                      	<h:outputText value="#{documento.fechaCreacion}">
+					  		<f:convertDateTime type="date" pattern="dd/MM/yyyy hh:mm"/>
+						</h:outputText>                          
+                      </p:column>
+                      <p:column headerText="#{msj['column.label.nombre.documento']}" width="40%" styleClass="panel-principal">
+                          <h:outputText value="#{documento.nombre}"/>
+                      </p:column>
+                      <p:column headerText="#{msj['column.label.archivo']}" width="15%" styleClass="panel-principal">
+                          <div align="center">
+                              <h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 5px;"
+                               process="@this" immediate="true">
+                                  <f:setPropertyActionListener value="#{documento}"
+                                  	target="#{cifrasManagedBean.cifrasAttributeHelper.documentoSeleccionado}"/>
+                                  <p:fileDownload contentDisposition="attachment" 
+                                  	value="#{cifrasManagedBean.archivoPromocionDescarga}"/>
+                              </h:commandButton>
+                          </div>
+                      </p:column>                   
+               </p:dataTable>  
+               <br/>
+               <p:commandButton value="Cerrar" onclick="PF('detalleDocumentoPanelWidget').hide();" process="@this" immediate="true" style="float: right;"/>       
+           </p:dialog>           
+            <p:dialog resizable="false" modal="true" header="#{msj['btn.historico']}"
+           		widgetVar="cifraHistoricoPanelWidget" id="cifraHistoricoPanel" closable="false">
+            <p:dataTable id="tablaCifrasHistorico"
+                                    value="#{cifrasManagedBean.listaEncabezadoCifrasHistorico}" 
+                                    var="cifra"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                    selection="#{cifrasManagedBean.encabezadoCifraHistoricoSeleccionada}" rowKey="#{cifra}"
+                                    widgetVar="tablaHistoricoCifrasWidget" style="width:400px !important;">                            
+                           <p:column headerText="#{msj['titulo.cifras.tabla.resumen.cifras']}" width="50%" >
+                           		<h:outputText value="#{cifra.tipoCifra.descripcion}"/>
+                           </p:column>                          
+                           <p:column headerText="Impuestos" width="18%">
+                           		<p:commandLink value="Impuestos" style="color:blue;" action="#{cifrasManagedBean.mostrarDetalleHistorico}" 
+	                           		process="@this" immediate="true" oncomplete="PF('detalleImpuestoPanelWidget').show();" 
+	                           			update=":formCifras:detalleImpuestoPanel :formCifras:tablaDocumentosDetalle">
+                               		<f:setPropertyActionListener value="#{cifra}" 
+                                        	target="#{cifrasManagedBean.encabezadoCifraHistoricoSeleccionada}"/>
+								</p:commandLink>                                         
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.resumen.total']}" width="22%" style="text-align:right">
+                               $<h:outputText value="#{cifra.total}">
+                               		 <f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+                               </h:outputText>
+                           </p:column>                                  
+                   </p:dataTable>
+                   <br/>
+                   <p:commandButton value="Cerrar" onclick="PF('cifraHistoricoPanelWidget').hide();" process="@this" immediate="true" style="float: right;"/>
+              </p:dialog>
+	        <p:remoteCommand name="eliminarDocumentoRC" update=":formCifras:acordeonCifras:tablaDocumentos :formCifras:acordeonCifras:tablaDocumentos1 
+	        :formCifras:acordeonCifras:tablaDocumentos2" 
+	        	actionListener="#{cifrasManagedBean.eliminarDocumento}" process="@this" immediate="true"/>
+	        <p:remoteCommand name="agregaCifraRC" update="@form" 
+	        	actionListener="#{cifrasManagedBean.agregarCifra}"/> 
+	        <p:remoteCommand name="guardarCifraRC" actionListener="#{cifrasManagedBean.insertarCifras}" update="@form" process="@this" immediate="true"/>
+	        <p:remoteCommand name="actualizarCifraRC" actionListener="#{cifrasManagedBean.cargarDatos}" update="@form" process="@this" immediate="true"/>
+	        <p:remoteCommand name="cancelarActualizarCifraRC" actionListener="#{cifrasManagedBean.cancelarActualizarCifra}" update="@form" process="@this" immediate="true"/>
+	        <p:remoteCommand name="confirmarActualizarCifraRC" actionListener="#{cifrasManagedBean.actualizarCifra}" update="@form" process="@this" immediate="true"/>   	                  
+	        <p:remoteCommand name="confirmarEliminarCifraRC" actionListener="#{cifrasManagedBean.eliminarCifra}" update="@form" process="@this" immediate="true"/>
+	        <p:remoteCommand name="confirmarEliminarImpuestoRC" actionListener="#{cifrasManagedBean.eliminarImpuesto}" update="@form" process="@this" immediate="true"/>
+            </h:form>         
+        </h:body>
+    </html>
+</f:view>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel styleClass="panel-subinterno-insumos" 
+             id="panelXUnidadAdmin"
+             rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.flgMostrarUnidadesDesahogo}">
+        <f:facet name="header"> 
+            <h:outputLabel rendered="#{!consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE}" value="Insumos Asignados" style="font-weight:bold"/>
+            <h:outputLabel rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and !consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}" value="Insumos" style="font-weight:bold"/>
+        </f:facet>
+        <p:panelGrid styleClass="noBorders" rendered="#{!consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.isAciace}">
+            <p:row>
+                <p:column style="text-align: right;" width="50%">
+                    <p:selectOneMenu id="comboUnidadesDesahogo" 
+                                     value="#{consultaAdminInsumosMB.consultaInsumosHelper.idUnidadAdminSeleccionada}">
+                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.seleccione']}" itemValue="#{null}" />
+                        <f:selectItems value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.lstUnidadesAdministrativasDesahogo}"                                                  
+                                       var="unidadAdmin" 
+                                       itemValue="#{unidadAdmin.idArace}" itemLabel="#{unidadAdmin.nombre}"/>
+                        <p:ajax event="change" process="@form"/>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column style="text-align: left;" width="50%">
+                    <p:commandButton id="consultarXUnidadAdminSeleccionada"
+                    				 value="Consultar" 
+                                     action="#{consultaAdminInsumosMB.consultarXUnidadAdminSeleccionada}" 
+                                     immediate="true"
+                                     update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"/>
+                </p:column>                
+            </p:row>
+        </p:panelGrid>
+        <p:panelGrid id="panelACPPCECentral" styleClass="noBorders" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.centralACPPCE and !consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.administradorACPPCE}">
+            <p:row>
+                <p:column style="text-align: right;" width="50%">
+                	<p:selectOneRadio id="opcionesACPPCE" value="#{consultaAdminInsumosMB.consultaInsumosHelper.opcionSelccionada}" layout="custom">
+			            <f:selectItems value="#{consultaAdminInsumosMB.consultaInsumosHelper.opciones}"                                                  
+                                       var="opcion" 
+                                       itemValue="#{opcion}" itemLabel="#{opcion.descripcion}"/>
+                    	<p:ajax event="valueChange" process="@form" update="@form"/>
+			        </p:selectOneRadio>
+			        <h:panelGrid columns="3" cellpadding="5" style="text-align:left">
+			            <p:radioButton id="opt1" for="opcionesACPPCE" itemIndex="0" />
+			            <h:outputLabel for="opt1" value="Insumos registrados" />
+			            <p:selectOneMenu id="comboUnidadesDesahogoACPPCE" 
+                                     value="#{consultaAdminInsumosMB.consultaInsumosHelper.idUnidadAdminSeleccionada}"
+                                     disabled="#{consultaAdminInsumosMB.consultaInsumosHelper.opcionSelccionada eq null or consultaAdminInsumosMB.consultaInsumosHelper.opcionSelccionada.id eq 2}">
+	                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.seleccione']}" itemValue="#{null}" />
+	                        <f:selectItems value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.lstUnidadesAdministrativasDesahogo}"                                                  
+	                                       var="unidadAdmin" 
+	                                       itemValue="#{unidadAdmin.idArace}" itemLabel="#{unidadAdmin.nombre}" />
+	                        <p:ajax event="change" process="@form" update="@form"/>
+	                    </p:selectOneMenu>
+	                    <p:radioButton id="opt2" for="opcionesACPPCE" itemIndex="1" />
+			            <h:outputLabel for="opt2" value="Insumos asignados a ésta Unidad Administrativa" />
+			        </h:panelGrid>
+                </p:column>
+                <p:column style="text-align: left;" width="50%">
+                    <p:commandButton id="consultaCentralACPPCE"
+                    				 value="Consultar" 
+                                     action="#{consultaAdminInsumosMB.consultaCentralACPPCE}" 
+                                     immediate="true"
+                                     update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"/>
+                </p:column>                
+            </p:row>
+        </p:panelGrid>
+		<p:panelGrid styleClass="noBorders" rendered="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.administradorACPPCE}">
+            <p:row>
+                <p:column style="text-align: right;" width="50%">
+                    <p:selectOneMenu id="comboUnidadesDesahogoAdmin" 
+                                     value="#{consultaAdminInsumosMB.consultaInsumosHelper.idUnidadAdminSeleccionada}">
+                        <f:selectItem itemLabel="#{msj['label.propuetas.combo.item.seleccione']}" itemValue="#{null}" />
+                        <f:selectItems value="#{consultaAdminInsumosMB.consultaInsumosHelper.consultaInsumosBO.lstUnidadesAdministrativasDesahogo}"                                                  
+                                       var="unidadAdmin" 
+                                       itemValue="#{unidadAdmin.idArace}" itemLabel="#{unidadAdmin.nombre}"/>
+                        <p:ajax event="change" process="@form"/>
+                    </p:selectOneMenu>
+                </p:column>
+                <p:column style="text-align: left;" width="50%">
+                    <p:commandButton id="consultaCentralACPPCEAdmin"
+                    				 value="Consultar" 
+                                     action="#{consultaAdminInsumosMB.consultaCentralACPPCE}" 
+                                     immediate="true"
+                                     update=":formConsultaXEstatusCentral :formConsultaXEstatusCentral:panaelLstInsumo"/>
+                </p:column>                
+            </p:row>
+        </p:panelGrid>        
+    </p:panel>            
+</f:view>

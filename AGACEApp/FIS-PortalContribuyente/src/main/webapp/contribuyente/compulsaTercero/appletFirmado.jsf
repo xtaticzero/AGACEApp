@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html">
+    <html xmlns:p="http://primefaces.org/ui">
+        <h:head>
+            <script>
+              function writeCertificadoAppletValue(rfc12, numCertificado, jsonFirmado) {
+              	  document.getElementById('firmaElectronicaForm:contentApplet').style.display = "none";
+              	  statusDialog.show();
+                  setInput(rfc12, numCertificado, jsonFirmado);
+              }
+
+              function setInput(rfc12, numCertificado, jsonFirmado) {
+                        document.getElementById('firmaElectronicaForm:estado').value = false;
+                        document.getElementById('firmaElectronicaForm:rfc12').value = rfc12;
+                        document.getElementById('firmaElectronicaForm:numCertificado').value = numCertificado;
+                        document.getElementById('firmaElectronicaForm:jsonFirmado').value = jsonFirmado; 
+                        document.getElementById('firmaElectronicaForm:regresar').click(); 
+              }
+            </script>
+        </h:head>
+        <h:body>
+            <h:form styleClass="panel-principal" id="firmaElectronicaForm">
+                <p:growl id="msgExitoGuardar" showDetail="true" sticky="false" globalOnly="true"/>
+                <p:dialog modal="true" widgetVar="statusDialog" header="#{msj['titulo.panel.espere']}" draggable="false"
+                          closable="false" resizable="false">
+                    <p:graphicImage value="/resources/images/ajaxloadingbar.gif"/>
+                </p:dialog>
+                <p:panel id="contentApplet" header="#{msj['titulo.panel.firmado.ordenes']}">
+                    <applet archive="#{compulsaTercerosManagedBean.contextoJarFirmante}"
+                            code="mx.gob.sat.siat.firmado.view.FirmaApplet" title="AppletFirma?version=20140416"
+                            width="100%" height="200px">
+                        <param name="RFC" value="#{compulsaTercerosManagedBean.rfcLogueado}"/>
+                        <param name="CADENAS" value="#{compulsaTercerosManagedBean.listaCadenas}"/>
+                    </applet>
+                    <h:inputHidden value="#{compulsaTercerosManagedBean.estadoRegresa}" id="estado"/>
+                    <h:inputHidden value="#{compulsaTercerosManagedBean.rfc12}" id="rfc12"/>
+                    <h:inputHidden value="#{compulsaTercerosManagedBean.numCertificado}" id="numCertificado"/>
+                    <h:inputHidden value="#{compulsaTercerosManagedBean.jsonFirmado}" id="jsonFirmado"/>
+                    <br/>
+                    <h:panelGrid columns="2" style="float:right">
+                        <p:column style="float:right">
+                            <p:commandButton value="Continuar" id="regresar" style="display:none;" update="@form"
+                                             action="#{compulsaTercerosManagedBean.guardarDocumentacion}"/>
+                        </p:column>
+                    </h:panelGrid>
+                    <br/>                    
+                    <br/>
+                    <br/>
+                </p:panel>
+            </h:form>
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+        </h:body>
+    </html>
+</f:view>

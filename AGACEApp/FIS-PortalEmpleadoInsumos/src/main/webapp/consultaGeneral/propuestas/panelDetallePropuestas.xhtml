@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelDetallePropuesta" 
+             styleClass="panel-interno" 
+             header="#{msj['titulo.panel.detalle.propuesta']}" 
+             rendered="#{consultaUGPropuestasMB.helper.flgMostrarPnlPropuesta}">
+        
+            <p:outputLabel value="#{msj['separador.panel.datos.contribuyente']}" style="font-weight:bold;"/>
+            <p:spacer width="470" height="10"/>
+            <p:outputLabel value="Id Registro: #{consultaUGPropuestasMB.propuestaSeleccionada.idRegistro}" style="font-weight:bold;"/>
+            <p:spacer width="470" height="20"/>
+            <p:panelGrid id="panelInputContribuyente" columns="3" width="100%" styleClass="noBorders">
+            	<p:outputLabel value="#{msj['label.rfc.contribuyente']}"
+                           style="font-weight:bold;"/>
+            	<p:spacer width="50" height="1"/>
+            	<p:outputLabel value="#{msj['label.nombre.razon.social']}:" style="font-weight:bold;"/>
+            	
+                	<p:inputText id="txtRFC" maxlength="15" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.rfc}"
+                             style="width:325px;height:auto;"/>                                
+            	
+            	<p:spacer width="50" height="1"/>
+            	<p:inputTextarea id="txtNombre" style="width:325px;height:auto;" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.nombre}"/>
+            	<p:outputLabel value="#{msj['label.regimen']}:" style="font-weight:bold"/>
+            	<p:spacer width="50" height="1"/>
+            	<p:outputLabel value="#{msj['label.situacion.contribuyente']}:" style="font-weight:bold;"/>
+            	<p:inputText id="txtRegimen" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.regimen}"/>
+            	<p:spacer width="50" height="15px"/>
+            	<p:inputText id="txtSituacionContribuyente" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.situacion}"/>
+            	<p:outputLabel value="#{msj['label.tipo.contribuyente']}:" style="font-weight:bold"/>
+            	<p:spacer width="50" height="1"/>
+
+            	<p:outputLabel value="#{msj['label.situacion.domicilio']}:" style="font-weight:bold;"/> 
+            	<p:inputText id="txtTipoContribuyente" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.tipo}"/>
+            	<p:spacer width="50" height="15px"/>
+
+            	<p:inputText id="txtSituacionDomicilio" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.situacionDomicilio}"/> 
+            	<p:outputLabel value="#{msj['label.domicilio.fiscal.contribuyente']}:"
+                           style="font-weight:bold"/>
+            	<p:spacer width="50" height="1"/>
+            	<p:outputLabel value="#{msj['label.actividad.preponderante']}:" style="font-weight:bold;"/> 
+            	<p:inputTextarea id="txtDomicilioFiscalContribuyente" style="width:325px;height:auto;"
+                             disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.domicilioFiscal}"/>
+            	<p:spacer width="50" height="15px"/>
+            	<p:inputText id="txtActividadPreponderante" style="width:325px;height:auto;" disabled="true" 
+                         value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.actividadPreponderante}"/> 
+            	<p:outputLabel value="#{msj['label.entidad']}:" style="font-weight:bold"/>
+            	<p:spacer width="50" height="1"/>
+            	<p:spacer width="50" height="1"/>
+            	<p:inputText id="txtEntidad" style="width:325px;height:auto;" disabled="true"
+                         value="#{consultaUGPropuestasMB.propuestaSeleccionada.fecetContribuyente.entidad}"/>
+            	<p:spacer width="50" height="15px"/>
+            	<p:spacer width="50" height="1"/>
+        	</p:panelGrid>
+        	
+        	<p:spacer width="0" height="30"/>        
+        	<p:outputLabel value="#{msj['separador.panel.datos.previos.propuesta']}" style="font-weight:bold;"/>                            
+        	<p:separator/>
+        	<p:spacer width="0" height="20"/>
+        	<p:panelGrid columns="4" border="0" style="width: 100% !important;" styleClass="noBorders">
+            	<p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.unidad.admon']}" 
+                           style="font-weight:bold" />
+            	<p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.metodo.revision']}:" 
+                           style="font-weight:bold"/>
+            	<p:outputLabel value="#{msj['label.causa.programacion']}" 
+                           style="font-weight:bold"/>            
+            	<p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.tipo.propuesta']}" 
+                           style="font-weight:bold"/>
+
+            	<p:inputTextarea id="txtUnidad" 
+                             style="width:140px !important;height: 40px!important; overflow:auto;" 
+                             disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fececArace.nombre}"/>
+            	<p:inputTextarea id="txtMetodo" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.feceaMetodo.nombre}" />
+            	<p:inputTextarea id="txtCausa2" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fececCausaProgramacion.descripcion}" />
+            	<p:inputTextarea id="txtPropuesta" 
+                             style="width:140px !important;height: 40px!important; overflow:auto;" 
+                             disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fececTipoPropuesta.descripcion}"/>
+            	<p:spacer width="50" height="1" />
+            	<p:spacer width="50" height="1" />
+            	<p:spacer width="50" height="1" />
+            	<p:spacer width="50" height="1" />            
+
+            	<p:outputLabel value="#{msj['label.propuetas.validar.retro.detalle.subprograma']}:" 
+                           style="font-weight:bold"/>
+            	<p:outputLabel value="#{msj['lbl.propuestas.sector']}:" 
+                           style="font-weight:bold"/>
+            	<p:outputLabel value="#{msj['column.propuestas.por.validar.prioridad']}:" 
+                           style="font-weight:bold"/>
+            
+            	<p:outputLabel value="#{msj['label.operaciones.especificas']}:" 
+                           style="font-weight:bold" rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 1}"/>
+            	<p:outputLabel value="#{msj['label.docElect.propuesta']}:" 
+                           style="font-weight:bold" rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 2}"/>
+
+
+            	<p:inputTextarea id="txtSubprograma" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fececSubprograma.descripcion}"/>
+            	<p:inputTextarea id="txtSector" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fececSector.descripcion}" />
+            	<p:inputTextarea id="txtPrioridad" style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.prioridadSugerida}"/>
+
+            	<p:panelGrid columns="2" border="0" style="width: 100% !important;" styleClass="noBorders">
+                	<p:outputLabel value="#{msj['lbl.propuestas.del.pedimento']}" 
+                               style="font-weight:bold" rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 1}"/>
+                	<p:outputLabel value="#{msj['lbl.propuestas.al.pedimento']}"
+                               style="font-weight:bold" rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 1}"/>
+                	<p:outputLabel value="#{msj['label.docElect.inicio']}" 
+                               style="font-weight:bold" rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 2}"/>
+                	<p:outputLabel value="#{msj['label.docElect.Fin']}"
+                               style="font-weight:bold" rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fececTipoPropuesta.idTipoPropuesta eq 2}"/>
+                	<p:calendar id="txtFechaInicial" value="#{consultaUGPropuestasMB.propuestaSeleccionada.fechaInicioPeriodo}" 
+                            disabled="true"
+                            locale="es" 
+                            pattern="dd/MM/yyyy" 
+                            showOn="button"
+                            navigator="true"
+                            readonlyInput="true" size="7">
+                	</p:calendar>
+                	<p:calendar id="txtFechaFinal" value="#{consultaUGPropuestasMB.propuestaSeleccionada.fechaFinPeriodo}" 
+                            disabled="true"
+                            locale="es" 
+                            pattern="dd/MM/yyyy" 
+                            showOn="button"
+                            navigator="true"
+                            readonlyInput="true" size="7" >
+                	</p:calendar>
+            	</p:panelGrid>
+            	<p:spacer/>
+            	<p:spacer/>
+            	<p:spacer/>
+            	<p:spacer/>
+            	<p:outputLabel value="#{consultaUGPropuestasMB.propuestaSeleccionada.tipoComite.descripcion}" style="font-weight:bold"/>
+            	<p:outputLabel value="#{msj['label.docElect.tipo.revision']}" style="font-weight:bold" rendered="#{consultaAdminPropuestasMB.esORG}"/>
+            	<p:spacer rendered="#{!consultaAdminPropuestasMB.esORG}"/>            
+            	<p:spacer/>
+            	<p:spacer/>
+            	<p:calendar value="#{consultaUGPropuestasMB.propuestaSeleccionada.fechaInforme}"
+                        rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fechaInforme ne null}"
+                        disabled="true"
+                        locale="es" 
+                        pattern="dd/MM/yyyy" 
+                        showOn="button"
+                        navigator="true"
+                        readonlyInput="true" size="7" >
+            	</p:calendar>
+            	<p:calendar  value="#{consultaUGPropuestasMB.propuestaSeleccionada.fechaPresentacion}"
+                         rendered="#{consultaUGPropuestasMB.propuestaSeleccionada.fechaPresentacion ne null}"
+                         disabled="true"
+                         locale="es" 
+                         pattern="dd/MM/yyyy" 
+                         showOn="button"
+                         navigator="true"
+                         readonlyInput="true" size="7" >
+            	</p:calendar>
+            	<p:inputTextarea style="width:140px !important;height: 40px!important; overflow:auto;" disabled="true"
+                             value="#{consultaUGPropuestasMB.propuestaSeleccionada.fececRevision.descripcion}" rendered="#{consultaAdminPropuestasMB.esORG}"/>
+
+        	</p:panelGrid>
+
+	        <p:spacer height="10"/>
+    	    <p:dataTable var="archivo" 
+                     value="#{consultaUGPropuestasMB.propuestaSeleccionada.listaDocumentos}" 
+                     emptyMessage="#{msj['label.lista.vacia']}"
+                     paginator="true"
+                     rows="5"
+                     paginatorTemplate="Página: {CurrentPageReport} {FirstPageLink}  {PreviousPageLink} &amp;nbsp; Ir a página: {JumpToPageDropdown} &amp;nbsp; {NextPageLink} {LastPageLink}"
+                     currentPageReportTemplate="({currentPage} de {totalPages})"
+                     paginatorPosition="bottom">
+	            <f:facet name="header" style="font-size:small;">
+	                <p:outputLabel value="#{msj['label.prpuestas.validar.retro.detalle.tbl.heder']}"/>
+	            </f:facet>
+	            <p:column headerText="#{msj['lbl.propuestas.fecha']}" style="font-size:70%;">
+	                <h:outputText value="#{archivo.fechaCreacion}">
+	                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="es_MX" timeZone="America/Mexico_City"/>
+	                </h:outputText>
+	            </p:column>
+	            <p:column headerText="#{msj['column.expediente']}" style="font-size:70%;">
+	                <p:commandLink process="@this" 
+	                               update="@form"
+	                               disabled="false"
+	                               immediate="true"
+	                               ajax="false"
+	                               oncomplete="ocultaMsgAgace('msgNotificacion');">
+	                    <h:outputText value="#{archivo.nombre}" style="color:blue"/>
+	                    <f:setPropertyActionListener value="#{archivo.nombre}" 
+	                                                 target="#{consultaUGPropuestasMB.nombreArchivoDescarga}"/>
+	                    <f:setPropertyActionListener value="#{archivo.rutaArchivo}" 
+	                                                 target="#{consultaUGPropuestasMB.rutaArchivoDescarga}"/>
+	                    <p:fileDownload value="#{consultaUGPropuestasMB.descargaDocumento}" /> 
+	                </p:commandLink>
+	            </p:column>
+	        </p:dataTable>
+	        <p:spacer height="10"/>
+	        <p:dataTable id="tblImpuestos" var="impuesto"  
+	                     value="#{consultaUGPropuestasMB.propuestaSeleccionada.lstImpuestos}"
+	                     emptyMessage="#{msj['label.lista.vacia']}" style="width:100%;">
+	            <f:facet name="header" style="font-size:70%;">
+	                <h:outputLabel value="#{msj['lbl.propuestas.datos.impuestos']}" style="font-weight:bold"/>
+	            </f:facet>
+	            <p:columnGroup type="header" >
+	                <p:row>
+	                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.impuesto']}" style="font-size:70%;"/>
+	                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.concepto']}" style="font-size:70%;"/>
+	                    <p:column rowspan="2" headerText="#{msj['lbl.propuestas.monto']}" style="font-size:70%;"/>                    
+	                </p:row>
+	            </p:columnGroup>
+	            <p:column style="font-size:70%;">
+	                <h:outputText value="#{impuesto.fececTipoImpuesto.descripcion}"/>
+	            </p:column>
+	            <p:column style="font-size:70%;">
+	                <h:outputText id="txtConcepto"
+	                              value="#{impuesto.fececConcepto.descripcion}"/>
+	            </p:column>
+	
+	            <p:column style="font-size:70%;">
+	                <div align="right">
+	                    <h:outputText value="#{impuesto.monto}" style="text-align:right">
+	                        <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+	                    </h:outputText>
+	                </div>
+	            </p:column>
+	            <p:columnGroup type="footer">
+	                <p:row>
+	                    <p:column colspan="2" footerText="#{msj['lbl.propuestas.presuntiva']}: " style="text-align:right;font-size:70%;"/>
+	                    <p:column colspan="1" style="text-align:left;font-size:70%;">
+	                        <f:facet name="footer">
+	                            <div align="right">
+	                                <h:outputText value="#{consultaUGPropuestasMB.propuestaSeleccionada.presuntiva}" style="text-align:right !important;">
+	                                    <f:convertNumber currencySymbol="$" currencyCode="MXN" type="currency" locale="es_MX"/>
+	                                </h:outputText>
+	                            </div>
+	                        </f:facet>
+	                    </p:column>                    
+	                </p:row>
+	            </p:columnGroup>
+	        </p:dataTable>
+        <p:separator/>
+        <p:panelGrid columns="1" style="width: 100%; text-align: right;"  styleClass="noBorders">
+            <p:column colspan="3">
+                <div align="right">
+                    <p:commandButton value="#{msj['btn.pantalla.anterior']}" 
+                                     ajax="false" 
+                                     immediate="true"
+                                     action="#{consultaUGPropuestasMB.regresarDeDetallePropuestas}"
+                                     update="@form"/>                    
+                </div>
+            </p:column>
+        </p:panelGrid>
+        
+        <p:separator/>
+    </p:panel>
+</f:view>

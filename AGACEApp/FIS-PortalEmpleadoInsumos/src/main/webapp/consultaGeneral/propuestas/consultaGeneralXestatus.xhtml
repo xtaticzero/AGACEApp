@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+        
+	<p:panel styleClass="panel-interno-insumos" 
+	             header="#{msj['label.titulo.consulta.ejecutiva.propuestas.asignadas']}"
+	             id="panelXGrupoEstatus"
+	             rendered="#{consultaUGPropuestasMB.helper.flgMostrarTlbCategorias}">
+	             
+		<p:dataTable value="#{consultaUGPropuestasMB.detalleEstatus}" var="estatusEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}"  >
+	            <f:facet name="header">
+	                <h:outputLabel value="#{msj['label.titulo.consulta.ejecutiva.propuestas.asignadas']}" style="font-weight:bold"/>
+	            </f:facet>
+	            <p:column>
+	               <f:facet name="header">
+	                   <h:outputText value="Estatus" style="font-size:70%"/>
+	               </f:facet>
+	                <h:outputText value="#{estatusEntry.key.descripcion}" style="font-size:70%"/>
+	            </p:column>
+	            <p:column headerText="#{msj['label.titulo.consulta.ejecutiva.propuestas.total']}" style="text-align: right;font-size:70%;">
+	                <h:outputText value="#{estatusEntry.value}" rendered="#{estatusEntry.value eq 0}" />
+	                <p:commandLink id="consultarXGupoEstatusSeleccionado"
+	                			   value="#{estatusEntry.value}"
+	                               action="#{consultaUGPropuestasMB.consultarXGupoEstatusSeleccionado}"
+	                               ajax="true" 
+	                               immediate="true" 
+	                               update="@form"
+	                               process="@form"
+	                               style="color: blue; text-decoration: underline;"
+	                               rendered="#{estatusEntry.value ne 0}">
+	                    <f:setPropertyActionListener value="#{estatusEntry.key}"
+	                                                 target="#{consultaUGPropuestasMB.helper.grupoEstatusSeleccionado}" />
+	                </p:commandLink>
+	            </p:column>
+	            <p:columnGroup type="footer">
+	                <p:row>
+	                    <p:column  footerText="#{msj['label.titulo.consulta.ejecutiva.propuestas.totales']}" style="text-align:center;font-size:70%;"/>
+	                    <p:column style="text-align:right;font-size:70%;" rendered="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEstatus eq 0}">
+	                        <f:facet name="footer">
+	                            <p:outputLabel value="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEstatus}"/>
+	                        </f:facet>                                        
+	                    </p:column>                                    
+	                    <p:column style="text-align:right;font-size:70%;" rendered="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEstatus ne 0}" >
+	                        <f:facet name="footer">
+	                            <p:commandLink id="consultarTotalGeneral"
+	                            			   value="#{consultaUGPropuestasMB.consultaPropuestasBO.totalXEstatus}"
+	                                           action="#{consultaUGPropuestasMB.consultaGeneralTotal}"
+	                                           ajax="false" immediate="true" 
+	                                           updte="@form"
+	                                           style="color: blue; text-decoration: underline;">
+	                                           
+	                            </p:commandLink>
+	                        </f:facet>
+	                    </p:column>
+	                </p:row>
+	            </p:columnGroup>
+	        </p:dataTable>
+    		
+        <p:panelGrid columns="1" style="text-align: right ! important; width: 100%;">
+            <h:panelGroup>
+                <p:commandButton value="#{msj['btn.pantalla.anterior']}" 
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaUGPropuestasMB.regresarMenu}"
+                                 update="@form"
+                                 style="float: right;"
+                                 />
+            </h:panelGroup> 
+        </p:panelGrid>
+	
+	</p:panel>
+</f:view>

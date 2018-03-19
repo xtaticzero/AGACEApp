@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="panelXSubordinado" styleClass="panel-subinterno-propuestas" 
+             rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.flgMostrarTlbSubordinados}">
+
+        <p:dataTable value="#{consultaAdminPropuestasMB.detalleEmpleado}" var="empleadoEntry"
+                     emptyMessage="#{msj['label.lista.vacia']}">
+            <f:facet name="header">
+                <h:outputLabel value="#{msj['label.titulo.consulta.ejecutiva.propuestas.asignadas']}" style="font-weight:bold"/>
+            </f:facet>
+            <p:column headerText="#{msj['label.titulo.consulta.ejecutiva.propuestas.subadministradores']}" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.programacion}">
+                <h:outputText value="#{empleadoEntry.key.nombreCompleto}" />
+            </p:column>
+            <p:column headerText="#{msj['label.titulo.consulta.ejecutiva.propuestas.auditores']}" rendered="#{!consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.programacion}">
+                <h:outputText value="#{empleadoEntry.key.nombreCompleto}" />
+            </p:column>
+            <p:column headerText="#{msj['label.titulo.consulta.ejecutiva.propuestas.total']}" style="text-align: right;">
+                <h:outputText value="#{empleadoEntry.value}" rendered="#{empleadoEntry.value eq 0}"/>
+                <p:commandLink id="consultarXEmpleadoSeleccionado"
+                			   value="#{empleadoEntry.value}"
+                               ajax="true" immediate="true" update=":formConsultaEjecutivaPropuestas :formConsultaEjecutivaPropuestas:panelXSubordinado"
+                               action="#{consultaAdminPropuestasMB.consultarXEmpleadoSeleccionado}"
+                               style="color: blue; text-decoration: underline;"
+                               rendered="#{empleadoEntry.value ne 0}">
+                    <f:setPropertyActionListener value="#{empleadoEntry}"
+                                                 target="#{consultaAdminPropuestasMB.consultaPropuestasHelper.empleadoSeleccionado}" />
+                </p:commandLink>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <p:column  footerText="#{msj['label.titulo.consulta.ejecutiva.propuestas.totales']}" style="text-align:center;"/>
+                    <p:column style="text-align:right;" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.totalXEmpleados eq 0}">
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.totalXEmpleados}"/>
+                        </f:facet>                                        
+                    </p:column>                                    
+                    <p:column style="text-align:right;" rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.totalXEmpleados ne 0}">
+                        <f:facet name="footer">
+                            <p:commandLink value="#{consultaAdminPropuestasMB.consultaPropuestasHelper.consultaPropuestasBO.totalXEmpleados}"
+                                           action="#{consultaAdminPropuestasMB.consultarTotalEmpleados}"
+                                           ajax="true" immediate="true" update=":formConsultaEjecutivaPropuestas :formConsultaEjecutivaPropuestas:panelXSubordinado"
+                                           style="color: blue; text-decoration: underline;">
+                            </p:commandLink>
+                        </f:facet>
+                    </p:column>
+                </p:row>
+            </p:columnGroup> 
+        </p:dataTable>
+        <p:separator/>
+        <h:panelGrid columns="1" style="text-align: right ! important; width: 100%;">
+            <h:panelGroup>
+                <p:commandButton value="#{msj['btn.pantalla.anterior']}"
+                                 rendered="#{!consultaAdminPropuestasMB.consultaPropuestasHelper.flgRegresarASubordinado}"
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaAdminPropuestasMB.mostrarPanelXCategorias}"
+                                 update=":formConsultaEjecutivaPropuestas"/>
+                <p:commandButton value="#{msj['btn.pantalla.anterior']}"
+                                 rendered="#{consultaAdminPropuestasMB.consultaPropuestasHelper.flgRegresarASubordinado}"
+                                 ajax="false" 
+                                 immediate="true"
+                                 action="#{consultaAdminPropuestasMB.regresarNivelDeEmpleado}"
+                                 update=":formConsultaEjecutivaPropuestas"/>
+            </h:panelGroup> 
+        </h:panelGrid>
+    </p:panel>      
+</f:view>

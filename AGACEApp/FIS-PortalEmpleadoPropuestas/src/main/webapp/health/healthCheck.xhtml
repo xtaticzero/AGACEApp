@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:head>
+		<style type="text/css">
+.headerGrid tr,.headerGrid td {
+	border: none;
+}
+</style>
+	</h:head>
+
+	<h:body>
+		<p:ajaxStatus onstart="statusDialog.show();"
+			onsuccess="statusDialog.hide();" />
+		<p:dialog modal="true" widgetVar="statusDialog" resizable="false"
+			header="#{msg['common.estatus.procesando']}" draggable="false"
+			closable="false">
+			<p:graphicImage value="/resources/images/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:outputLabel value="#{version['version.build']}" />
+		<h:form id="mainForm">
+			<p:panel header="Validación de servicios AGACE">
+
+				<p:accordionPanel style="width:1000px ;">
+					
+					<p:tab title="Correo Electrónico">
+						<p:panelGrid id="banderaCorreoId" columns="2" styleClass="headerGrid">
+							<h:column>
+								<h:outputText value="Correo Electrónico (to): " />
+							</h:column>
+							<h:column>
+								<p:inputText id="correoId" value="#{healthCheckController.correo}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+							</h:column>
+							<h:column>
+								<p:graphicImage value="/resources/images/error.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk == false}">
+								</p:graphicImage>
+								<p:graphicImage value="/resources/images/success.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk}">
+								</p:graphicImage>
+							</h:column>
+							<h:column>
+								<p:commandButton value="Validar"
+									action="#{healthCheckController.validarMail}"
+									update="banderaCorreoId respuestaConsola" />
+							</h:column>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="IDC">
+						<p:panelGrid id="banderaIDCId" columns="2" styleClass="headerGrid">
+							<h:column>
+								<h:outputText value="RFC: " />
+							</h:column>
+							<h:column>
+								<p:inputText id="rfcId" value="#{healthCheckController.rfc}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+							</h:column>
+							<h:column>
+								<p:graphicImage value="/resources/images/error.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk == false}">
+								</p:graphicImage>
+								<p:graphicImage value="/resources/images/success.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk}">
+								</p:graphicImage>
+							</h:column>
+							<h:column>
+								<p:commandButton value="Validar"
+									action="#{healthCheckController.validarIDC}"
+									update="banderaIDCId respuestaConsola" />
+							</h:column>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="SISE">
+						<p:panelGrid id="banderaSiseId" columns="2" styleClass="headerGrid">
+							<h:column>
+								<h:outputText value="RFC: " />
+							</h:column>
+							<h:column>
+								<p:inputText id="rfcSiseId" value="#{healthCheckController.rfcSise}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+							</h:column>
+							<h:column>
+								<p:graphicImage value="/resources/images/error.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk == false}">
+								</p:graphicImage>
+								<p:graphicImage value="/resources/images/success.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk}">
+								</p:graphicImage>
+							</h:column>
+							<h:column>
+								<p:commandButton value="Validar"
+									action="#{healthCheckController.validarSISE}"
+									update="banderaSiseId respuestaConsola" />
+							</h:column>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Buzon Selladora">
+						<p:panelGrid id="banderaSelladoraId" columns="2" styleClass="headerGrid">
+							<h:column>
+								<h:outputText value="Cadena Original:" />
+							</h:column>
+							<h:column>
+								<p:inputText id="cadenaOriginalId" value="#{healthCheckController.cadenaOriginal}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+							</h:column>
+							<h:column>
+								<p:graphicImage value="/resources/images/error.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk == false}">
+								</p:graphicImage>
+								<p:graphicImage value="/resources/images/success.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk}">
+								</p:graphicImage>
+							</h:column>
+							<h:column>
+								<p:commandButton value="Validar"
+									action="#{healthCheckController.validarBuzonSelladora}"
+									update="banderaSelladoraId respuestaConsola" />
+							</h:column>
+						</p:panelGrid>
+					</p:tab>validarEmpleadoPorTipoCentralArace(String tipo, String central, String arace)
+					<p:tab title="Empleado Por Tipo Central Arace">
+						<p:panelGrid id="banderaEmpleadoId" columns="2" styleClass="headerGrid">
+							<h:column>
+								<p:graphicImage value="/resources/images/error.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk == false}">
+								</p:graphicImage>
+								<p:graphicImage value="/resources/images/success.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk}">
+								</p:graphicImage>
+							</h:column>
+							<h:column>
+								<h:outputText value="Empleado Por Tipo Central Arace: " />
+							</h:column>
+							<h:column>
+								<p:inputText id="tipo" value="#{healthCheckController.tipo}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+								<p:inputText id="central" value="#{healthCheckController.central}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+								<p:inputText id="arace" value="#{healthCheckController.arace}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+								<p:commandButton value="Validar"
+									action="#{healthCheckController.validarEmpleadoPorTipoCentralArace}"
+									update="banderaEmpleadoId respuestaConsola" />
+							</h:column>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Buzon Tributario - medios comunicacion">
+						<p:panelGrid id="banderaMediosId" columns="2" styleClass="headerGrid">
+							<h:column>
+								<h:outputText value="RFC: " />
+							</h:column>
+							<h:column>
+								<p:inputText id="rfcMediosId" value="#{healthCheckController.rfcMedios}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+							</h:column>
+							<h:column>
+								<p:graphicImage value="/resources/images/error.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk == false}">
+								</p:graphicImage>
+								<p:graphicImage value="/resources/images/success.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk}">
+								</p:graphicImage>
+							</h:column>
+							<h:column>
+								<p:commandButton value="Validar"
+									action="#{healthCheckController.validarMediosComunicacion}"
+									update="banderaMediosId respuestaConsola" />
+							</h:column>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="NyV">
+						<p:panelGrid id="banderaNyVId" columns="2" styleClass="headerGrid">
+							<h:column>
+								<h:outputText value="Acto Administrativo: " />
+							</h:column>
+							<h:column>
+								<p:inputText id="folioActoAdministrativoId" value="#{healthCheckController.folioActoAdministrativo}"
+									style="width:200px;font-size:12px;" maxlength="50" />
+							</h:column>
+							<h:column>
+								<p:graphicImage value="/resources/images/error.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk == false}">
+								</p:graphicImage>
+								<p:graphicImage value="/resources/images/success.png" width="30px"
+									rendered="#{healthCheckController.healthDTO.servicioOk}">
+								</p:graphicImage>
+							</h:column>
+							<h:column>
+								<p:commandButton value="Validar"
+									action="#{healthCheckController.validarNyVConsultarActoAdministrativo}"
+									update="banderaNyVId respuestaConsola" />
+							</h:column>
+						</p:panelGrid>
+					</p:tab>
+					<p:tab title="Consola">
+						<h:column>
+							<p:inputTextarea rows="6" cols="125" id="respuestaConsola"
+								readonly="true"
+								value="#{healthCheckController.healthDTO.respuesta}" />
+						</h:column>
+					</p:tab>
+				</p:accordionPanel>
+
+			</p:panel>
+		</h:form>
+	</h:body>
+</ui:composition>

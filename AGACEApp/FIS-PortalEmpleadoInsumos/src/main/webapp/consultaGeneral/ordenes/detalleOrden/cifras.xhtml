@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<f:view xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <html xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui">
+        <h:head/>
+        <h:body>            
+            <h:outputScript library="js/" name="agace.js"/>
+            <h:outputStylesheet library="css/" name="agace.css"/>
+            <h:form id="formCifras" styleClass="panel-principal">
+            <p:panel id="panelPrincipalCifras" header="#{msj['label.cifras.panel']}" styleClass="panel-interno">
+            	<br/>
+            	<br/>	             
+	            <p:dataTable id="encabezadoCifras" value="#{cifrasConsultaManagedBean.totalCifras}" var="totalCifras"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}" style="width:80% !important;">
+                   	<f:facet name="header">
+                   		<h:outputText value="#{msj['label.cifras.resumen.titulo']}"/>
+                   	</f:facet>     
+                	<p:column headerText="#{msj['label.cifras.resumen.columna1']}" width="50%">
+                        <h:outputText value="#{totalCifras.descripcionTipo}"/>
+                    </p:column>
+                    <p:column headerText="#{msj['label.cifras.resumen.columna2']}" width="50%" style="text-align:right">
+                        $<h:outputText value="#{totalCifras.montoCifra}">
+                        	 <f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+                        </h:outputText>
+                    </p:column>      
+                    <p:columnGroup type="footer">
+		               <p:row>
+				            <p:column style="text-align:right" footerText="Cifras Totales:"/>
+				            <p:column style="text-align:right">
+				            	<f:facet name="footer">				            	
+					                $<h:outputText value="#{cifrasConsultaManagedBean.totalEncabezado}" >
+					                    <f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+					                </h:outputText>
+				                </f:facet>
+				            </p:column>
+			            </p:row>
+		            </p:columnGroup>                              
+                </p:dataTable>
+	            <br/>
+	            <br/>
+	            <br/>
+	            <br/> 
+	            <p:accordionPanel id="acordeonCifras" activeIndex="-1" widgetVar="acordeonCifras">
+	            	<p:ajax event="tabChange" listener="#{cifrasConsultaManagedBean.onTabChange}" update="@form"/>  
+	            	<p:tab title="#{msj['label.cifras.resumen.cobradas']}">
+	            		<h:panelGroup id="cifrasCobradasPanel" 
+	            			rendered="#{cifrasConsultaManagedBean.cifrasAttributeHelper.panelCifrasCobradasVisible}">
+	            			<ui:include src="cifrasCobradas.xhtml"/>
+	            		</h:panelGroup> 
+	            	</p:tab>	  
+	            	<p:tab title="#{msj['label.cifras.resumen.virtuales']}">
+	            		<h:panelGroup id="cifrasVirtualesPanel" 
+	            			rendered="#{cifrasConsultaManagedBean.cifrasAttributeHelper.panelCifrasVirtualesVisible}">
+	            			<ui:include src="cifrasVirtuales.xhtml"/>
+	            		</h:panelGroup>
+	            	</p:tab>
+	            	<p:tab title="#{msj['label.cifras.resumen.liquidadas']}">
+	            		<h:panelGroup id="cifrasLiquidadasPanel" 
+	            			rendered="#{cifrasConsultaManagedBean.cifrasAttributeHelper.panelCifrasLiquidadasVisible}">
+	            			<ui:include src="cifrasLiquidadas.xhtml"/>
+	            		</h:panelGroup>
+	            	</p:tab>          	
+	            </p:accordionPanel>   	                     
+            </p:panel>   
+            <br/>         
+            
+            <p:commandButton value="Pantalla Anterior" style="float:right;width:120px;"
+                                             action="#{detalleOficioUnificadoMB.redireccionaRegreso}"
+                                             ajax="true" process="@this" update="@form"/>
+            <p:dialog resizable="false" modal="true" header="Detalle de Impuestos" style="max-height:800px;overflow:auto;"
+           		widgetVar="detalleImpuestoPanelWidget" id="detalleImpuestoPanel" closable="false">           		
+           		<p:dataTable id="listaDetalleCifra" value="#{cifrasConsultaManagedBean.impuestosDetalle}" var="detalle" 
+           			editable="false" emptyMessage="#{msj['label.lista.vacia']}" style="width:100% !important;" tableStyle="width:auto">
+                   	<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.impuesto']}">
+      					<p:outputLabel value="#{detalle.impuestoConcepto.impuesto.descripcion}"/>
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.concepto']}">
+      					<p:outputLabel value="#{detalle.impuestoConcepto.concepto.descripcion}"/>
+      				</p:column>  
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.derivado']}">
+      					<p:outputLabel value="#{detalle.derivaAntecedente == 1 ? 'SI' : 'NO'}"/>
+      				</p:column>  
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.fecha']}">
+      					<h:outputText value="#{detalle.fechaPago}">
+           						<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+           				</h:outputText>
+      				</p:column>   
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.importe']}">
+      					$<h:outputText value="#{detalle.importe}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>
+           			</p:column>
+           			<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.actualizaciones']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.actualizacionesVisible}">
+      					$<h:outputText value="#{detalle.actualizaciones}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.multas']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.multasVisible}">
+      					$<h:outputText value="#{detalle.multas}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.recargos']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.recargosVisible}">
+      					$<h:outputText value="#{detalle.recargos}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.total']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.totalVisible}">
+      					$<h:outputText value="#{detalle.total}">
+           					<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+           				</h:outputText>           				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.parcialidadVisible}">
+      					<h:outputText value="#{detalle.parcialidad.idParcialidadHistorico 
+           							== Constantes.BIG_DECIMAL_CERO ? 'NO' : 'SI'}"/>          				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades.periodicidad']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.parcialidadVisible}">
+      					<h:outputText value="#{detalle.parcialidad.idParcialidadHistorico 
+           							== Constantes.BIG_DECIMAL_CERO ? 'N/A' : detalle.parcialidad.tipoParcialidad.tipoParcialidad}"/>       				
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades.numero']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.parcialidadVisible}">
+      					<h:outputText value="#{detalle.parcialidad.idParcialidadHistorico 
+           							== Constantes.BIG_DECIMAL_CERO ? 'N/A' : detalle.parcialidad.numeroParcialidades}"/>     				
+      				</p:column>      				
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.parcialidades.monto']}" 
+           				rendered="#{cifrasConsultaManagedBean.columnaDetalleHelper.parcialidadVisible}">
+           				<h:outputText  value="$" rendered="#{detalle.parcialidad.idParcialidadHistorico != Constantes.BIG_DECIMAL_CERO}"/>      					
+       					<h:outputText value="#{detalle.parcialidad.montoTotal}" 
+       							rendered="#{detalle.parcialidad.idParcialidadHistorico != Constantes.BIG_DECIMAL_CERO}">
+       						<f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+       					</h:outputText>  
+       					<h:outputText  value="N/A" rendered="#{detalle.parcialidad.idParcialidadHistorico == Constantes.BIG_DECIMAL_CERO}"/> 	
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.archivos']}">      					
+       					<p:commandButton icon="icono" onclick="PF('detalleDocumentoPanelWidget').show();" 
+           						process="@this" immediate="true" update=":formCifras:tablaDocumentosDetalle">
+           						<f:setPropertyActionListener value="#{detalle}" 
+                                        	target="#{cifrasConsultaManagedBean.impuestoSeleccionado}"/>
+           				</p:commandButton>		
+      				</p:column>
+      				<p:column headerText="#{msj['titulo.cifras.tabla.impuesto.detalle.observaciones']}"> 
+      					<h:outputText value="#{detalle.observaciones}"/>     					       						
+      				</p:column>
+               </p:dataTable>  
+               <br/>         		
+           	<p:commandButton value="Cerrar" onclick="PF('detalleImpuestoPanelWidget').hide();" process="@this" immediate="true" style="float: right;"/>           	
+           </p:dialog> 
+           <p:dialog header="#{msj['titulo.panel.cifras.documentos']}" resizable="false" modal="true" 
+           		widgetVar="detalleDocumentoPanelWidget" id="detalleDocumentoPanel" closable="false" width="400">
+           		<p:dataTable id="tablaDocumentosDetalle" value="#{cifrasConsultaManagedBean.impuestoSeleccionado.listaDocumentosCifra}" 
+           			var="documento" editable="false" emptyMessage="#{msj['label.lista.vacia']}">                                                   
+                      <p:column headerText="#{msj['column.label.fecha.documento']}" width="25%" styleClass="panel-principal">   
+                      	<h:outputText value="#{documento.fechaCreacion}">
+					  		<f:convertDateTime type="date" pattern="dd/MM/yyyy hh:mm"/>
+						</h:outputText>                          
+                      </p:column>
+                      <p:column headerText="#{msj['column.label.nombre.documento']}" width="40%" styleClass="panel-principal">
+                          <h:outputText value="#{documento.nombre}"/>
+                      </p:column>
+                      <p:column headerText="#{msj['column.label.archivo']}" width="15%" styleClass="panel-principal">
+                          <div align="center">
+                              <h:commandButton ajax="true" image="/resources/images/document.png" style="padding:0px 5px;"
+                                               >
+                                  <f:setPropertyActionListener value="#{documento}"
+                                  	target="#{cifrasConsultaManagedBean.cifrasAttributeHelper.documentoSeleccionado}"/>
+                                  <p:fileDownload contentDisposition="attachment" 
+                                  	value="#{cifrasConsultaManagedBean.cifrasAttributeHelper.documento}"/>
+                              </h:commandButton>
+                          </div>
+                      </p:column>                   
+               </p:dataTable>  
+               <br/>
+               <p:commandButton value="Cerrar" onclick="PF('detalleDocumentoPanelWidget').hide();" process="@this" immediate="true" style="float: right;"/>       
+           </p:dialog>           
+            <p:dialog resizable="false" modal="true" header="#{msj['btn.historico']}"
+           		widgetVar="cifraHistoricoPanelWidget" id="cifraHistoricoPanel" closable="false">
+            <p:dataTable id="tablaCifrasHistorico"
+                                    value="#{cifrasConsultaManagedBean.listaEncabezadoCifrasHistorico}" 
+                                    var="cifra"
+                                    editable="false" emptyMessage="#{msj['label.lista.vacia']}"
+                                    selection="#{cifrasConsultaManagedBean.encabezadoCifraHistoricoSeleccionada}" rowKey="#{cifra}"
+                                    widgetVar="tablaHistoricoCifrasWidget" style="width:400px !important;">                            
+                           <p:column headerText="#{msj['titulo.cifras.tabla.resumen.cifras']}" width="50%" >
+                           		<h:outputText value="#{cifra.tipoCifra.descripcion}"/>
+                           </p:column>                          
+                           <p:column headerText="Impuestos" width="18%">
+                           		<p:commandLink value="Impuestos" style="color:blue;" action="#{cifrasConsultaManagedBean.mostrarDetalleHistorico}" 
+	                           		process="@this" immediate="true" oncomplete="PF('detalleImpuestoPanelWidget').show();" 
+	                           			update=":formCifras:detalleImpuestoPanel :formCifras:tablaDocumentosDetalle">
+                               		<f:setPropertyActionListener value="#{cifra}" 
+                                        	target="#{cifrasConsultaManagedBean.encabezadoCifraHistoricoSeleccionada}"/>
+								</p:commandLink>                                         
+                           </p:column>
+                           <p:column headerText="#{msj['titulo.cifras.tabla.resumen.total']}" width="22%" style="text-align:right">
+                               $<h:outputText value="#{cifra.total}">
+                               		 <f:convertNumber pattern="###,###,###,##0.00" locale="es_MX"/>
+                               </h:outputText>
+                           </p:column>                                  
+                   </p:dataTable>
+                   <br/>
+                   <p:commandButton value="Cerrar" onclick="PF('cifraHistoricoPanelWidget').hide();" process="@this" immediate="true" style="float: right;"/>
+              </p:dialog>
+            
+            </h:form>         
+        </h:body>
+    </html>
+</f:view>
